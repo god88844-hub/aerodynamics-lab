@@ -100,8 +100,8 @@ aeroforge/
 | M0 | Environment + monorepo scaffold | **done** |
 | M1 | 6-DOF dynamics + component mass models | **done** |
 | M2 | Static propulsion models from sourced data | **done** |
-| M3 | Flight controller + stable hover | pending |
-| M4 | Scenarios + failure detection | pending |
+| M3 | Flight controller + stable hover | **done** |
+| M4 | Scenarios + failure detection | **done** |
 | M5 | Web UI editor | pending |
 | M6 | Batch evaluation / optimization | pending |
 | M7 | V&V reports, convergence, UQ | pending |

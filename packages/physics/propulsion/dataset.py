@@ -32,6 +32,7 @@ BLDC+ESC chain dominate. The lumped model is therefore a reported cross-check
 
 from __future__ import annotations
 
+import math
 from dataclasses import dataclass, field
 
 import numpy as np
@@ -48,6 +49,13 @@ VOLTAGE_EXTRAP_HIGH_FRAC = 1.15
 THROTTLE_EXTRAP_MIN_PCT = 35.0
 # Tolerance for "at the measured plane voltage".
 V_TOLERANCE_V = 0.3
+# Beyond this excursion from the plane voltage, the linear slope correction
+# is floored by a power-based current estimate (eta assumption flagged).
+FAR_FROM_PLANE_V = 2.0
+# Shaft-power estimate assumption for out-of-envelope current floors. The
+# same eta=0.8 assumption is used for the rotor reaction-torque estimate;
+# both are flagged estimates until a motor dyno run is captured.
+MOTOR_EFFICIENCY_ASSUMED = 0.8
 
 
 class OutOfEnvelopeError(ValueError):
@@ -255,8 +263,6 @@ class PowertrainDataset:
         value = float(plane.current_interp(rpm))
         dv = voltage - plane.voltage_v
         corrected = abs(dv) > V_TOLERANCE_V
-        if corrected:
-            value += self._current_voltage_slope * dv
         notes = []
         if len(self.planes) < 2 and corrected:
             raise OutOfEnvelopeError(
@@ -264,10 +270,25 @@ class PowertrainDataset:
                 f"possible for {voltage:.1f} V — capture bench data at the second voltage"
             )
         if corrected:
+            value += self._current_voltage_slope * dv
             notes.append(
                 f"linear voltage-slope correction {self._current_voltage_slope:+.4f} A/V "
                 "fitted from measured planes' overlap"
             )
+        if corrected and abs(dv) > FAR_FROM_PLANE_V:
+            # A linear slope correction over a large excursion is unreliable
+            # (it can go negative). Apply a physical floor: the shaft power at
+            # this rpm demands at least P_mech / V of current.
+            i_plane = max(float(plane.current_interp(rpm)), 0.0)
+            p_mech = MOTOR_EFFICIENCY_ASSUMED * plane.voltage_v * i_plane
+            i_power = p_mech / max(voltage, 5.0)
+            if i_power > value:
+                value = i_power
+                notes.append(
+                    f"far-from-plane voltage ({dv:+.1f} V): power-based floor applied "
+                    f"(eta={MOTOR_EFFICIENCY_ASSUMED:.2f} assumed, flagged estimate)"
+                )
+        value = max(value, 0.0)
         return QueryResult(
             value=max(value, 0.0),
             plane_voltage_v=plane.voltage_v,
@@ -407,6 +428,54 @@ class PowertrainDataset:
             voltage_extrapolated=res.voltage_extrapolated,
             throttle_extrapolated=res.throttle_extrapolated,
             note=res.note,
+        )
+
+    # ------------------------------------------ declared-extrapolation path
+
+    def thrust_rpm_extrapolated(self, thrust_gf: float) -> QueryResult:
+        """rpm estimate for thrust BELOW the measured static table minimum
+        (descent regime), via the static scaling the table itself follows
+        (T ∝ rpm² at fixed density): rpm = rpm_min · sqrt(T/T_min).
+
+        DECLARED extrapolation — callers must surface the flag; the strict
+        ``thrust_gf``/inverse APIs remain envelope-guarded.
+        """
+        gf_min = float(self._merged_thrust_gf.min())
+        rpm_min = float(self._merged_rpm[0])
+        if thrust_gf <= 0.0:
+            return QueryResult(value=0.0, plane_voltage_v=self._v_min)
+        if thrust_gf >= gf_min:
+            raise OutOfEnvelopeError("use the strict inverse APIs for in-envelope thrust")
+        rpm = rpm_min * math.sqrt(thrust_gf / gf_min)
+        return QueryResult(
+            value=rpm,
+            plane_voltage_v=self._v_min,
+            note="rpm below measured range: static-scaling extrapolation (T ∝ rpm²)",
+        )
+
+    def current_a_extrapolated(self, rpm: float, voltage: float) -> QueryResult:
+        """Current estimate outside the measured rpm ranges (nearest plane
+        PCHIP + fitted voltage slope, floored by the power-based estimate and
+        ceilinged at 1.5x the plane's max measured current — PCHIP
+        extrapolation far outside the table is not trusted beyond that).
+        DECLARED extrapolation — callers must surface the flag."""
+        plane = min(self.planes, key=lambda p: abs(p.voltage_v - voltage))
+        i_plane = max(float(plane.current_interp(rpm)), 0.0)
+        value = i_plane + self._current_voltage_slope * (voltage - plane.voltage_v)
+        p_mech = MOTOR_EFFICIENCY_ASSUMED * plane.voltage_v * i_plane
+        i_power = p_mech / max(voltage, 5.0)
+        value = max(value, i_power, 0.05)
+        ceiling = 1.5 * float(plane.current_a.max())
+        value = min(value, ceiling)
+        return QueryResult(
+            value=value,
+            plane_voltage_v=plane.voltage_v,
+            voltage_corrected=True,
+            voltage_extrapolated=self._voltage_extrapolated(voltage),
+            note=(
+                "current extrapolated outside measured rpm range "
+                f"(nearest plane + slope, power-based floor, ceiling {ceiling:.1f} A)"
+            ),
         )
 
     # ------------------------------------------------------------- metadata

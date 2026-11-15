@@ -262,3 +262,71 @@ commands used, test results, remaining known issues and next steps.
   also used implicitly through the mixer.
 
 ---
+
+## Milestone 4 — Flight Scenarios and Failure Cases (done)
+
+**Implemented**
+- `packages/physics/scenarios/runner.py` — scenario framework:
+  - piecewise-linear altitude/position profiles **with per-segment velocity
+    feedforward** and accel-shaped climb/deceleration segments,
+  - `LoopPowertrain`: sourced bench data in the loop — thrust -> rpm -> current
+    via the measured table (strict in-envelope path + **declared-extrapolation
+    path** for the descent regime below the table minimum: static-scaling rpm
+    and power-floored current, flagged per tick), battery SOC drain and bus
+    sag per tick, ESC/motor limit checks,
+  - failure monitors with a **declared policy** (runner docstring): CRITICAL
+    aborts = thrust above measured max (over-speed equivalent), current > 2x
+    continuous rating (instantaneous), current > continuous rating sustained
+    beyond the datasheet duration (thermal burnout), battery cutoff, ESC
+    over-voltage, arm bending at/above yield, hard ground impact, attitude
+    loss (>45 deg); warnings logged = battery land-now warning, structural
+    margin < 1.5,
+  - metrics: time-to-altitude (95% held >= 1 s), energy (Wh), max current,
+    final SOC, structural margin, success criteria (pre-registered callables).
+- `packages/physics/structures/{materials,beam}.py` — sourced materials DB
+  loader + cantilever-tube arm bending check (M = F·L, sigma = M·c/I);
+  model limits (no torsion/fatigue/buckling) documented. `DroneDesign`
+  extended with an optional `frame` block (fail-closed: declared frame with
+  unknown material or missing library refuses to run).
+- `packages/physics/controller/sensors.py` — seeded, deterministic sensor
+  model: Gaussian noise per channel + zero-order-hold latency.
+- Controller fixes found by the scenario tests (all documented in code):
+  proper PD altitude structure `a = kp*e + kd*(vz_des - vz) + ki*∫e` (the
+  velocity error must NOT go through a derivative channel — sustained
+  velocity errors produce zero derivative response), slew-limited (4 m/s²)
+  velocity feedforward, derivative low-pass (tau = 50 ms) against sensor
+  noise, ground-crash monitor distinguishes hard impact from gentle
+  touchdown, PID integral-tracking anti-windup.
+- CLI `--scenario flight`: takeoff -> 5 m hold -> land with full metrics.
+
+**Verified** (`python -m pytest` → **94 passed**; 11 new)
+- Takeoff-climb (5 m): completes, time-to-5 m = 2.34 s, overshoot 0.34 m,
+  energy 1.5 Wh, no critical events, all success criteria PASS.
+- Landing: gentle touchdown (|vz| < 1 m/s), settles on ground, no abort.
+- Forward flight (5 m at 2 m/s): arrives within 0.3 m and holds.
+- **Motor-failure injection** (spec Prompt 6): killing motor 0 at hover
+  aborts the run with a named unrecoverable-state event — never silently
+  completes.
+- Battery depleted (0 % SOC): immediate battery-cutoff abort.
+- **Forced over-speed** (spec M4): 25 N/rotor command above the measured
+  static max (18.44 N) reported as a critical failure — not silently accepted.
+- Structure yield: a 5x4.5 mm tube design fails closed under flight loads
+  (STRUCTURAL FAILURE, margin < 1); unknown frame material refuses to run.
+- Sensor robustness: 2 cm GNSS noise, 0.5 deg attitude noise, 20 ms latency —
+  hover remains stable (after the derivative-filter fix).
+- Flight CLI scenario: full mission report with metrics + success table.
+
+**Commands**
+- `python -m pytest`
+- `python scripts/run_simulation.py data/designs/quad_mn3508_6s.json --scenario flight`
+
+**Known issues / next steps**
+- Motor thermal model is the datasheet current/duration rule (no winding
+  temperature integration); ESC thermal cutoff is a declared I/t policy.
+- Sensor model has no bias/drift/dropouts; bus solve is quasi-static.
+- Scenarios defined in code; scenario JSON persistence deferred to the
+  API/UI milestone (M5).
+
+---
+
+

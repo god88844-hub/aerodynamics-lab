@@ -311,6 +311,92 @@ def run_hover_hold(design: DroneDesign, duration_s: float, control_dt_s: float) 
     }
 
 
+# ------------------------------------------------------ M4: flight scenario
+
+
+def run_flight(design: DroneDesign) -> dict:
+    """M4 full mission: takeoff -> climb to 5 m -> hold -> land, with the
+    sourced powertrain in the loop (currents, battery drain, failure monitors,
+    structural checks). Produces time-to-altitude and energy metrics."""
+    from physics.scenarios.runner import Scenario, run_scenario
+
+    if design.powertrain is None:
+        raise ValueError("flight scenario needs a powertrain block (sourced powertrain)")
+    library = ComponentLibrary(REPO_ROOT / "data" / "components")
+
+    scenario = Scenario(
+        name="flight_takeoff_hover_land",
+        duration_s=18.0,
+        altitude_waypoints=[
+            (0.0, 0.0), (1.5, 3.75), (2.5, 5.0),   # shaped climb to 5 m
+            (10.0, 5.0),                            # hold
+            (15.0, 0.0), (18.0, 0.0),               # descent + settle
+        ],
+        success_criteria=[
+            ("reached_5m", lambda v: v.time_to_altitude_s is not None),
+            ("gentle_landing", lambda v: abs(v.states[-1, 2]) < 0.10
+             and abs(v.states[-1, 5]) < 1.0),
+            ("no_critical_failure", lambda v: not any(e.critical for e in v.events)),
+        ],
+    )
+    res = run_scenario(design, scenario, library)
+    _, mass_props = build_multirotor(design)
+
+    max_current = float(np.nanmax(res.per_motor_current_a)) if res.per_motor_current_a is not None else None
+    min_soc = float(res.soc_pct.min()) if res.soc_pct is not None else None
+    return {
+        "scenario": "flight (M4 takeoff-hover-land, powertrain in the loop)",
+        "design": {
+            "name": design.name,
+            "mass_kg": mass_props.mass_kg,
+            "cog_m": mass_props.cog_m.tolist(),
+            "n_rotors": len(design.rotors),
+            "powertrain": design.powertrain.model_dump(),
+            "frame": design.frame.model_dump() if design.frame else None,
+        },
+        "mission": {
+            "profile": "takeoff -> 5 m hold -> land",
+            "duration_s": res.times[-1],
+            "aborted": res.aborted,
+            "abort_event": res.abort_event.message if res.abort_event else None,
+        },
+        "results": {
+            "time_to_5m_s": res.time_to_altitude_s,
+            "max_altitude_m": res.max_altitude_m,
+            "energy_used_wh": res.energy_wh,
+            "max_motor_current_a": max_current,
+            "final_soc_pct": min_soc,
+            "final_altitude_m": float(res.states[-1, 2]),
+            "final_vertical_speed_m_s": float(res.states[-1, 5]),
+            "structural_margin_min": res.structural_margin_min,
+        },
+        "events": [
+            {"t_s": e.t_s, "kind": e.kind, "critical": e.critical, "message": e.message}
+            for e in res.events
+        ],
+        "success": res.success,
+        "trustworthiness": {
+            "powertrain": {
+                "status": "sourced bench data in the loop (model of record)",
+                "caveat": "quasi-static bus solve; motor thermal rule is the "
+                "datasheet continuous-current/duration statement; below-table "
+                "thrust points are declared extrapolations",
+            },
+            "failure_policy": {
+                "status": "declared in physics/scenarios/runner.py",
+                "caveat": "critical events abort the run with a named cause; "
+                "warnings are logged",
+            },
+            "controller": {
+                "status": "deterministic closed loop, perfect state knowledge",
+                "caveat": "sensor noise/latency available via SensorConfig but "
+                "disabled in this run",
+            },
+            "verdict": "M4 mission simulation — NOT a flight-worthiness claim",
+        },
+    }
+
+
 # ---------------------------------------------------------------- report
 
 
@@ -325,7 +411,31 @@ def print_report(result: dict) -> None:
     print(f"  mass                 : {d['mass_kg']:.4f} kg")
     print(f"  CoG                  : {np.array2string(np.array(d['cog_m']), precision=4)} m")
 
-    if result["scenario"].startswith("hover-hold"):
+    if result["scenario"].startswith("flight"):
+        m = result["mission"]
+        rs = result["results"]
+        print(f"\n[MISSION] {m['profile']} | duration {m['duration_s']:.1f} s | "
+              f"aborted={m['aborted']}")
+        if m["abort_event"]:
+            print(f"  ABORT CAUSE: {m['abort_event']}")
+        print("\n[RESULTS]")
+        print(f"  time to 5 m          : {rs['time_to_5m_s']} s")
+        print(f"  max altitude         : {rs['max_altitude_m']:.2f} m")
+        print(f"  energy used          : {rs['energy_used_wh']:.1f} Wh")
+        print(f"  max motor current    : {rs['max_motor_current_a']} A")
+        print(f"  final SOC            : {rs['final_soc_pct']} %")
+        print(f"  final state          : z={rs['final_altitude_m']:.3f} m, "
+              f"vz={rs['final_vertical_speed_m_s']:.2f} m/s")
+        if rs["structural_margin_min"] is not None:
+            print(f"  min structural margin: {rs['structural_margin_min']:.2f}")
+        print("\n[EVENTS]")
+        for e in result["events"]:
+            tag = "CRITICAL" if e["critical"] else "warn"
+            print(f"  [{tag}] t={e['t_s']} {e['kind']}: {e['message'][:90]}")
+        print("\n[SUCCESS]")
+        for name, ok in result["success"].items():
+            print(f"  {name:24s}: {'PASS' if ok else 'FAIL'}")
+    elif result["scenario"].startswith("hover-hold"):
         rs = result["results"]
         print(f"\n[DISTURBANCES]")
         for d in result["disturbances"]:
@@ -419,9 +529,9 @@ def main() -> int:
     parser.add_argument("config", help="Path to a design snapshot JSON.")
     parser.add_argument(
         "--scenario",
-        choices=["auto", "hover-ideal", "hover-static", "hover-hold"],
+        choices=["auto", "hover-ideal", "hover-static", "hover-hold", "flight"],
         default="auto",
-        help="hover-static needs a powertrain block (default: auto-select)",
+        help="hover-static/flight need a powertrain block (default: auto-select)",
     )
     parser.add_argument("--duration", type=float, default=2.0,
                         help="hover-ideal duration [s] / hover-static max duration [s]")
@@ -447,6 +557,8 @@ def main() -> int:
         result = run_hover_static(design, args.duration, args.dt)
     elif scenario == "hover-hold":
         result = run_hover_hold(design, max(args.duration, 10.0), 0.004)
+    elif scenario == "flight":
+        result = run_flight(design)
     else:
         result = run_hover_ideal(design, args.duration, args.dt, args.solver)
 

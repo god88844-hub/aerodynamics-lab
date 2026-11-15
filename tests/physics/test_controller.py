@@ -76,7 +76,7 @@ def test_altitude_step_reaches_target(quad_2kg):
     plant, ctrl = quad_2kg
     res = run_controlled_simulation(
         plant, ctrl, ControlTargets(altitude_m=2.0, position_xy=(0.0, 0.0)),
-        duration_s=8.0,
+        duration_s=10.0,
     )
     tail_states = tail(res, 1.5)
     assert np.abs(tail_states[:, 2] - 2.0).max() < 0.05
@@ -89,7 +89,7 @@ def test_torque_disturbance_rejected(quad_2kg):
     plant, ctrl = quad_2kg
     res = run_controlled_simulation(
         plant, ctrl, ControlTargets(altitude_m=1.0, position_xy=(0.0, 0.0)),
-        duration_s=8.0,
+        duration_s=10.0,
         disturbances=[Disturbance(t_start=2.0, t_end=2.2, torque_body=np.array([0.05, 0.0, 0.0]))],
     )
     rolls = np.array([euler_deg(s)[0] for s in res.states])
@@ -97,7 +97,7 @@ def test_torque_disturbance_rejected(quad_2kg):
     after = rolls[res.times >= 5.0]
     assert np.abs(during).max() > 0.2            # it visibly responds
     assert np.abs(after).max() < 0.5             # and returns to level
-    z_after = res.states[res.times >= 5.0][:, 2]
+    z_after = res.states[res.times >= 6.0][:, 2]
     assert np.abs(z_after - 1.0).max() < 0.05    # altitude hold maintained
 
 

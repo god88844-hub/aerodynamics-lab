@@ -60,6 +60,20 @@ class PowertrainConfig(BaseModel):
     battery_id: str
 
 
+class FrameSpec(BaseModel):
+    """Structural frame description for arm stress checks.
+
+    Arms are modeled as cantilever circular tubes from the CoG to each rotor;
+    the material id must exist in data/components/materials.json (fail-closed:
+    a frame referencing an unknown material cannot pass structural checks).
+    """
+
+    arm_length_m: float = Field(gt=0.0, description="horizontal distance CoG -> rotor axis [m]")
+    tube_od_m: float = Field(gt=0.0)
+    tube_id_m: float = Field(gt=0.0)
+    material_id: str
+
+
 class DroneDesign(BaseModel):
     """Full design snapshot — the exact input to a simulation run."""
 
@@ -71,6 +85,11 @@ class DroneDesign(BaseModel):
         default=None,
         description="sourced powertrain for static/performance analysis; when "
         "absent, only ideal-actuator dynamics scenarios can run",
+    )
+    frame: FrameSpec | None = Field(
+        default=None,
+        description="frame geometry for structural checks; when absent the "
+        "structure monitor is skipped and flagged in reports",
     )
     drag_cd_a_m2: float | None = Field(
         default=None,

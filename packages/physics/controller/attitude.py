@@ -35,13 +35,17 @@ from physics.dynamics.rigid_body import unpack_state
 @dataclass
 class ControlTargets:
     """Commanded state. `position_xy=None` disables position hold (pure
-    attitude command mode); `altitude_m` is always active."""
+    attitude command mode); `altitude_m` is always active. `velocity_xy`
+    (feedforward from the trajectory profile) makes the position loop a
+    tracker instead of a pure regulator."""
 
     altitude_m: float
     roll_deg: float = 0.0
     pitch_deg: float = 0.0
     yaw_deg: float = 0.0
     position_xy: tuple[float, float] | None = None
+    velocity_xy: tuple[float, float] | None = None
+    velocity_z: float | None = None
 
 
 @dataclass
@@ -62,12 +66,12 @@ class ControlGains:
     # during a climb cannot unwind quickly at the wrong equilibrium. When a
     # bias exists (sourced powertrain + battery sag, M4), enable it with the
     # constructor's clamp (kept at +-1.5 m/s^2 = thrust-bias authority only).
-    kp_alt: float = 1.5
-    kd_alt: float = 2.45
+    kp_alt: float = 3.0
+    kd_alt: float = 5.0
     ki_alt: float = 0.0
-    # position hold (accel per m, accel per m/s)
-    kp_pos: float = 0.5
-    kd_pos: float = 1.41
+    # position hold (accel per m, accel per m/s); near-critical damping
+    kp_pos: float = 1.0
+    kd_pos: float = 2.0
     max_tilt_rad: float = 0.26  # ~15 deg
 
     @classmethod
@@ -81,6 +85,9 @@ class ControlGains:
             kp_rate_pitch=iyy / rate_time_constant,
             kp_rate_yaw=izz / (rate_time_constant * 1.2),
         )
+
+
+FF_SLEW_LIMIT_M_S2 = 4.0  # feedforward slew limit: bounds profile-step kicks
 
 
 class QuadcopterController:
@@ -98,17 +105,30 @@ class QuadcopterController:
         self.rate_roll = PID(g.kp_rate_roll, g.ki_rate, 0.0, (-torque_limit, torque_limit))
         self.rate_pitch = PID(g.kp_rate_pitch, g.ki_rate, 0.0, (-torque_limit, torque_limit))
         self.rate_yaw = PID(g.kp_rate_yaw, g.ki_rate * 0.5, 0.0, (-torque_limit, torque_limit))
-        self.altitude = PID(
-            g.kp_alt, g.ki_alt, g.kd_alt,
-            (-plant.body.mass_kg * 9.0, plant.body.mass_kg * 9.0),  # accel command limits
-            (-1.5, 1.5),  # integral = thrust-bias compensation only (m/s²)
+        # Altitude integral: bias compensation ONLY (off by default — see
+        # ControlGains.ki_alt). The P and D terms are applied directly in
+        # step() as a proper PD: a = kp*e_z + kd*(vz_des - vz) + ki*∫e_z
+        # (routing the velocity error through a derivative channel would give
+        # zero steady-state response to sustained velocity errors).
+        self.altitude_i = PID(
+            0.0, g.ki_alt, 0.0,
+            integral_limits=(-1.5, 1.5),
         )
         self._last_accel_cmd = 0.0
+        self._ff_vx = 0.0
+        self._ff_vy = 0.0
+        self._ff_vz = 0.0
 
     def reset(self) -> None:
-        for pid in (self.rate_roll, self.rate_pitch, self.rate_yaw, self.altitude):
+        for pid in (self.rate_roll, self.rate_pitch, self.rate_yaw, self.altitude_i):
             pid.reset()
         self._last_accel_cmd = 0.0
+        self._ff_vx = self._ff_vy = self._ff_vz = 0.0
+
+    @staticmethod
+    def _slew(current: float, target: float, dt: float) -> float:
+        delta = float(np.clip(target - current, -FF_SLEW_LIMIT_M_S2 * dt, FF_SLEW_LIMIT_M_S2 * dt))
+        return current + delta
 
     def step(self, state: np.ndarray, targets: ControlTargets, dt: float) -> np.ndarray:
         """One control period: returns per-rotor thrusts (N)."""
@@ -129,8 +149,12 @@ class QuadcopterController:
             ey_b = -sy * ex + cy * ey
             vx_b = cy * v[0] + sy * v[1]
             vy_b = -sy * v[0] + cy * v[1]
-            ax = self.gains.kp_pos * ex_b - self.gains.kd_pos * vx_b
-            ay = self.gains.kp_pos * ey_b - self.gains.kd_pos * vy_b
+            vx_des = targets.velocity_xy[0] if targets.velocity_xy else 0.0
+            vy_des = targets.velocity_xy[1] if targets.velocity_xy else 0.0
+            self._ff_vx = self._slew(self._ff_vx, vx_des, dt)
+            self._ff_vy = self._slew(self._ff_vy, vy_des, dt)
+            ax = self.gains.kp_pos * ex_b - self.gains.kd_pos * (vx_b - self._ff_vx)
+            ay = self.gains.kp_pos * ey_b - self.gains.kd_pos * (vy_b - self._ff_vy)
             # small-angle: tilt ≈ atan(a / g), capped
             tilt_x = float(np.clip(np.arctan2(ax, 9.81), -self.gains.max_tilt_rad, self.gains.max_tilt_rad))
             tilt_y = float(np.clip(np.arctan2(-ay, 9.81), -self.gains.max_tilt_rad, self.gains.max_tilt_rad))
@@ -150,9 +174,18 @@ class QuadcopterController:
         ty = self.rate_pitch.step(rate_y_des - w[1], w[1], dt)
         tz = self.rate_yaw.step(rate_z_des - w[2], w[2], dt)
 
-        # --- altitude: thrust with tilt compensation ------------------------
+        # --- altitude: proper PD on height + velocity error -----------------
         cos_tilt = max(np.cos(roll) * np.cos(pitch), 0.5)  # guards near-90° tilt
-        accel_cmd = self.altitude.step(targets.altitude_m - r[2], r[2], dt)
+        vz_des = targets.velocity_z if targets.velocity_z is not None else 0.0
+        self._ff_vz = self._slew(self._ff_vz, vz_des, dt)
+        e_z = targets.altitude_m - r[2]
+        i_term = self.altitude_i.step(e_z, 0.0, dt)
+        accel_cmd = (
+            self.gains.kp_alt * e_z
+            + self.gains.kd_alt * (self._ff_vz - v[2])
+            + i_term
+        )
+        accel_cmd = float(np.clip(accel_cmd, -mass * 9.0, mass * 9.0))
         self._last_accel_cmd = accel_cmd
         total_thrust = mass * (9.80665 + accel_cmd) / cos_tilt
 

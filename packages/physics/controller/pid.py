@@ -22,25 +22,35 @@ class PID:
     kd: float = 0.0
     output_limits: tuple[float, float] | None = None
     integral_limits: tuple[float, float] | None = None
+    derivative_filter_tau_s: float = 0.0  # low-pass on the derivative term
     # State
     integral: float = field(default=0.0)
+    _d_filtered: float = field(default=0.0, repr=False)
     _prev_measurement: float | None = field(default=None, repr=False)
 
     def reset(self) -> None:
         self.integral = 0.0
+        self._d_filtered = 0.0
         self._prev_measurement = None
 
     def step(self, error: float, measurement: float, dt: float) -> float:
         """One control step. Derivative acts on the measurement (derivative-on-
-        measurement), which avoids setpoint-derivative kicks."""
+        measurement), which avoids setpoint-derivative kicks; an optional
+        first-order low-pass (``derivative_filter_tau_s``) attenuates
+        measurement noise in the derivative channel (standard practice when
+        the measured signal is noisy, e.g. GNSS altitude)."""
         if dt <= 0.0:
             raise ValueError("dt must be > 0")
 
-        # Derivative on measurement.
+        # Derivative on measurement, optionally low-pass filtered.
         d = 0.0
         if self._prev_measurement is not None and self.kd != 0.0:
             d = -(measurement - self._prev_measurement) / dt
         self._prev_measurement = measurement
+        if self.derivative_filter_tau_s > 0.0:
+            alpha = dt / (self.derivative_filter_tau_s + dt)
+            self._d_filtered += alpha * (d - self._d_filtered)
+            d = self._d_filtered
 
         # Integral accumulation (anti-windup tracking may overwrite it below
         # when the output saturates).
