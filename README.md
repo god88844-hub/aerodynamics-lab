@@ -95,17 +95,9 @@ aeroforge/
 
 ## Milestone status
 
-| Milestone | Scope | Status |
-| --- | --- | --- |
-| M0 | Environment + monorepo scaffold | **done** |
-| M1 | 6-DOF dynamics + component mass models | **done** |
-| M2 | Static propulsion models from sourced data | **done** |
-| M3 | Flight controller + stable hover | **done** |
-| M4 | Scenarios + failure detection | **done** |
-| M5 | Web UI editor | **done** |
-| M6 | Batch evaluation / optimization | **done** |
-| M7 | V&V reports, convergence, UQ | **done** |
-| M8 | 60 kg multirotor capstone + credibility report | **done** |
+All milestones complete — see [docs/milestone_reports.md](docs/milestone_reports.md)
+for the full per-milestone changelog and [outputs/](outputs) for the
+generated capstone, V&V and Pareto reports.
 
 ## Deviations from the original build specification
 
