@@ -98,7 +98,8 @@ def generate_vv_report(
                 "full-throttle chain reproduction",
             ],
             "assumed_or_estimated": [
-                "rotor reaction torque k (derived from bench data with assumed eta=0.8)",
+                "rotor reaction torque k (sourced from the bench torque column when "
+                "published — e.g. P80 III; otherwise derived with assumed eta=0.8)",
                 "battery capacity/mass/IR (flagged estimates)",
                 "propeller mass (flagged estimate)",
                 "ESC rating (placeholder)",

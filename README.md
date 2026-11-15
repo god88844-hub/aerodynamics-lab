@@ -104,8 +104,8 @@ aeroforge/
 | M4 | Scenarios + failure detection | **done** |
 | M5 | Web UI editor | **done** |
 | M6 | Batch evaluation / optimization | **done** |
-| M7 | V&V reports, convergence, UQ | pending |
-| M8 | 60 kg multirotor capstone + credibility report | pending |
+| M7 | V&V reports, convergence, UQ | **done** |
+| M8 | 60 kg multirotor capstone + credibility report | **done** |
 
 ## Deviations from the original build specification
 

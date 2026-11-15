@@ -1,0 +1,15 @@
+{
+  "schema_version": "0.1",
+  "id": "generic_esc_80a_12s",
+  "name": "Generic 80 A BLDC ESC (12S-capable)",
+  "max_continuous_current_a": 80.0,
+  "max_voltage_v": 50.4,
+  "mass_kg": 0.15,
+  "source": {
+    "source": "Placeholder ESC rating sized with headroom over the P80 III's 60 A peak (180 s) rating",
+    "retrieved": "2026-11-15",
+    "uncertainty_pct": 20.0,
+    "estimated": true,
+    "notes": "No specific ESC datasheet captured yet; rating is an estimate. Replace with the actual ESC part before any flight-worthiness claim."
+  }
+}

@@ -1,0 +1,212 @@
+{
+  "design": {
+    "name": "quad_mn3508_6s_15x5",
+    "mass_kg": 3.7080000000000006,
+    "n_rotors": 4
+  },
+  "benchmarks": {
+    "propulsion": [
+      {
+        "name": "propulsion knot read-back (thrust + current)",
+        "status": "pass",
+        "metrics": {
+          "max_relative_error": 1.209434443846979e-16,
+          "points_checked": 20
+        },
+        "tolerances": {
+          "max_relative_error": 0.005
+        },
+        "notes": "interpolation must reproduce the measured table at the knots"
+      },
+      {
+        "name": "static thrust cross-voltage scatter",
+        "status": "pass",
+        "metrics": {
+          "scatter_pct": 3.890499904257863
+        },
+        "tolerances": {
+          "scatter_pct": 5.0
+        },
+        "notes": "scatter between the 14.8 V and 22.2 V planes in the overlap band"
+      },
+      {
+        "name": "full-throttle table reproduction @ 14.8 V",
+        "status": "pass",
+        "metrics": {
+          "thrust_rel_err_pct": 0.0,
+          "current_rel_err_pct": 0.0,
+          "power_rel_err_pct": 0.0,
+          "rpm_rel_err_pct": 0.0
+        },
+        "tolerances": {
+          "all_rel_err_pct": 0.5
+        },
+        "notes": "throttle->rpm->thrust/current chain reproduces the 100% table row"
+      },
+      {
+        "name": "lumped DC motor cross-check (cal 14.8 V -> val 22.2 V)",
+        "status": "reported",
+        "metrics": {
+          "ke_eff_v_s_per_rad": 0.023249179588461774,
+          "r_eff_ohm": 0.4358268591277043,
+          "current_rmse_a": 2.1342896855934046,
+          "current_max_abs_err_a": 4.6786406362978745,
+          "current_max_rel_err_pct": 35.1777491450968
+        },
+        "tolerances": {},
+        "notes": "lumped DC model residual \u2014 expected to be significant for BLDC+ESC (inductance/timing); the measured-table interpolation is the model of record. No gate: informational."
+      }
+    ],
+    "dynamics": [
+      {
+        "name": "hover trim equals weight",
+        "status": "pass",
+        "metrics": {
+          "relative_error": 1.9540235913383657e-16
+        },
+        "tolerances": {
+          "relative_error": 1e-09
+        }
+      }
+    ]
+  },
+  "convergence": [
+    {
+      "name": "time-step convergence (torque-free Euler dynamics)",
+      "metric": "max |omega - omega_ref| [rad/s]",
+      "tolerance": 1e-06,
+      "refinements": [
+        {
+          "level": 0,
+          "dt_s": 0.02,
+          "error": 1.213376353509547e-10
+        },
+        {
+          "level": 1,
+          "dt_s": 0.01,
+          "error": 7.570431740873952e-12
+        },
+        {
+          "level": 2,
+          "dt_s": 0.005,
+          "error": 4.712874247329325e-13
+        },
+        {
+          "level": 3,
+          "dt_s": 0.0025,
+          "error": 2.6498072296016572e-14
+        }
+      ],
+      "converged": true,
+      "converged_level": 0,
+      "notes": "reference dt=0.000625"
+    },
+    {
+      "name": "adaptive solver tolerance (free fall)",
+      "metric": "|v(1s) - g| [m/s]",
+      "tolerance": 1e-08,
+      "refinements": [
+        {
+          "level": 0,
+          "rtol": 1e-06,
+          "error": 0.0
+        },
+        {
+          "level": 1,
+          "rtol": 1e-08,
+          "error": 0.0
+        },
+        {
+          "level": 2,
+          "rtol": 1e-10,
+          "error": 0.0
+        }
+      ],
+      "converged": true,
+      "converged_level": 0,
+      "notes": ""
+    },
+    {
+      "name": "closed-loop integrator convergence (takeoff scenario)",
+      "metric": "RMS z deviation vs finest refinement [m]",
+      "tolerance": 0.002,
+      "refinements": [
+        {
+          "level": 0,
+          "substeps": 1,
+          "rms_z_deviation_m": 8.12271521429303e-14
+        },
+        {
+          "level": 1,
+          "substeps": 2,
+          "rms_z_deviation_m": 1.8794594586071415e-14
+        },
+        {
+          "level": 2,
+          "substeps": 4,
+          "rms_z_deviation_m": 0.0
+        }
+      ],
+      "converged": true,
+      "converged_level": 0,
+      "notes": ""
+    }
+  ],
+  "uncertainty": {
+    "quantity": "hover endurance (to 3.5 V/cell warning)",
+    "unit": "s",
+    "n_samples": 200,
+    "best_estimate": 3870.0,
+    "mean": 3853.8,
+    "std": 240.316,
+    "p05": 3480.0,
+    "p95": 4230.0,
+    "sensitivities": {
+      "battery_capacity": {
+        "endurance_low_s": 3480.0,
+        "endurance_high_s": 4260.0,
+        "delta_s": 780.0
+      },
+      "battery_resistance": {
+        "endurance_low_s": 3960.0,
+        "endurance_high_s": 3750.0,
+        "delta_s": 210.0
+      },
+      "thrust": {
+        "endurance_low_s": 3780.0,
+        "endurance_high_s": 3930.0,
+        "delta_s": 150.0
+      },
+      "motor_mass": {
+        "endurance_low_s": 3870.0,
+        "endurance_high_s": 3870.0,
+        "delta_s": 0.0
+      }
+    },
+    "notes": [
+      "thrust table \u00b13% (dataset uncertainty, MN.00011)",
+      "battery capacity \u00b110%; resistance \u00b150% (capacity/R flagged estimated \u2014 expected dominant uncertainty source)",
+      "motor mass \u00b12% (sourced)",
+      "deterministic seeding; static-hover endurance to the 3.5 V/cell warning",
+      "required hover thrust uses STANDARD_GRAVITY = 9.80665 m/s\u00b2 (site-specific g differs negligibly)"
+    ]
+  },
+  "needs_further_analysis": false,
+  "gated_failures": [],
+  "validated_vs_assumed": {
+    "validated": [
+      "dynamics core (analytical solutions: free fall, spin-up, conservation laws)",
+      "mass-property assembly (parallel-axis hand calculations)",
+      "propulsion static table (manufacturer bench data, read-back gate)",
+      "full-throttle chain reproduction"
+    ],
+    "assumed_or_estimated": [
+      "rotor reaction torque k (derived from bench data with assumed eta=0.8)",
+      "battery capacity/mass/IR (flagged estimates)",
+      "propeller mass (flagged estimate)",
+      "ESC rating (placeholder)",
+      "airframe drag CdA (unsourced approximation)",
+      "quasi-static bus solve; no thermal integration; no wind"
+    ]
+  }
+}

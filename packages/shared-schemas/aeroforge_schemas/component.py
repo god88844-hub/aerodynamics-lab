@@ -36,6 +36,9 @@ class TestDataPoint(BaseModel):
     current_a: float = Field(gt=0.0)
     power_w: float = Field(gt=0.0)
     thrust_gf: float = Field(ge=0.0, description="grams-force, as published")
+    torque_nm: float | None = Field(
+        default=None, description="shaft torque [N·m] when the source publishes it"
+    )
     rpm: float = Field(gt=0.0)
     prop: str = Field(description="prop identifier used in the bench test, verbatim from source")
     source: SourceInfo

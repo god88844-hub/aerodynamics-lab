@@ -1,0 +1,617 @@
+{
+  "report": "AeroForge capstone credibility report (M8)",
+  "design": {
+    "name": "hexa_p80_60kg",
+    "snapshot_notes": "Milestone 8 capstone: 60 kg maximum-takeoff-weight hexacopter on 6x T-Motor P80 III KV100 + G30*10.5 CF props (sourced bench data from the T-Motor product page; 21-row table verified row-by-row: thrust/power = published efficiency and power = V*I). AUW 60.000 kg incl. a 37.7 kg payload block (interpretation: '60 kg drone' = 60 kg MTOW). Rotor reaction torque per thrust 0.0224 N*m/N is SOURCED from the published bench torque column at the hover point (Q/T at 10 kg thrust = 98.1 N). Hexa layout at 0.85 m rotor radius gives 0.85 m adjacent spacing vs 0.762 m prop diameter (9 cm tip clearance). Battery mass/IR, prop mass, ESC rating and frame mass are ESTIMATED (flagged in the component files).",
+    "mass_kg": 60.0,
+    "n_rotors": 6,
+    "powertrain": {
+      "motor_id": "tmotor_p80iii_kv100",
+      "propeller_id": "tmotor_g30x105_cf",
+      "esc_id": "esc_80a_12s",
+      "battery_id": "generic_12s_22000mah"
+    },
+    "frame": {
+      "arm_length_m": 0.85,
+      "tube_od_m": 0.025,
+      "tube_id_m": 0.022,
+      "material_id": "cfrp_quasi_iso"
+    }
+  },
+  "design_goals": {
+    "G7_hover_in_measured_envelope": {
+      "passed": true,
+      "detail": {
+        "hover_flags": [
+          "current.note: linear voltage-slope correction +0.0000 A/V fitted from measured planes' overlap; power-based current estimate applied (V excursion -0.6 V, eta=0.80 assumed, flagged estimate)",
+          "current.note: linear voltage-slope correction +0.0000 A/V fitted from measured planes' overlap; power-based current estimate applied (V excursion -1.1 V, eta=0.80 assumed, flagged estimate)",
+          "current.note: linear voltage-slope correction +0.0000 A/V fitted from measured planes' overlap; power-based current estimate applied (V excursion -1.7 V, eta=0.80 assumed, flagged estimate)",
+          "current.note: linear voltage-slope correction +0.0000 A/V fitted from measured planes' overlap; power-based current estimate applied (V excursion -2.2 V, eta=0.80 assumed, flagged estimate)",
+          "current.note: linear voltage-slope correction +0.0000 A/V fitted from measured planes' overlap; power-based current estimate applied (V excursion -2.7 V, eta=0.80 assumed, flagged estimate)",
+          "current.note: linear voltage-slope correction +0.0000 A/V fitted from measured planes' overlap; power-based current estimate applied (V excursion -3.1 V, eta=0.80 assumed, flagged estimate)",
+          "current.note: linear voltage-slope correction +0.0000 A/V fitted from measured planes' overlap; power-based current estimate applied (V excursion -3.5 V, eta=0.80 assumed, flagged estimate)",
+          "current.note: linear voltage-slope correction +0.0000 A/V fitted from measured planes' overlap; power-based current estimate applied (V excursion -4.0 V, eta=0.80 assumed, flagged estimate)",
+          "current.note: linear voltage-slope correction +0.0000 A/V fitted from measured planes' overlap; power-based current estimate applied (V excursion -4.4 V, eta=0.80 assumed, flagged estimate)",
+          "current.note: linear voltage-slope correction +0.0000 A/V fitted from measured planes' overlap; power-based current estimate applied (V excursion -4.8 V, eta=0.80 assumed, flagged estimate)",
+          "current.note: linear voltage-slope correction +0.0000 A/V fitted from measured planes' overlap; power-based current estimate applied (V excursion -5.2 V, eta=0.80 assumed, flagged estimate)",
+          "current.note: linear voltage-slope correction +0.0000 A/V fitted from measured planes' overlap; power-based current estimate applied (V excursion -5.6 V, eta=0.80 assumed, flagged estimate)",
+          "current.note: linear voltage-slope correction +0.0000 A/V fitted from measured planes' overlap; power-based current estimate applied (V excursion -6.2 V, eta=0.80 assumed, flagged estimate)",
+          "current.voltage_corrected",
+          "current.voltage_extrapolated",
+          "note: rpm scaled proportionally with voltage (empirically supported by two-plane data; flagged extrapolation)",
+          "voltage_corrected",
+          "voltage_extrapolated"
+        ],
+        "hover_point": {
+          "throttle": 0.8214219529835988,
+          "v_bus_v": 47.33321871847624,
+          "per_rotor": {
+            "thrust_n": 98.06614748555032,
+            "rpm": 3189.140042448821,
+            "current_a": 28.396019377570198,
+            "power_w": 1344.0749959326197,
+            "envelope_flags": {
+              "voltage_corrected": true,
+              "voltage_extrapolated": true,
+              "throttle_extrapolated": false,
+              "note": "rpm scaled proportionally with voltage (empirically supported by two-plane data; flagged extrapolation)",
+              "current": {
+                "voltage_corrected": true,
+                "voltage_extrapolated": true,
+                "throttle_extrapolated": false,
+                "note": "linear voltage-slope correction +0.0000 A/V fitted from measured planes' overlap; power-based current estimate applied (V excursion -0.6 V, eta=0.80 assumed, flagged estimate)"
+              }
+            }
+          },
+          "total_current_a": 170.3761162654212,
+          "total_power_w": 8064.449975595719,
+          "hover_power_w_per_kg": 134.40749959326197
+        }
+      }
+    },
+    "G1_hover_hold_stable": {
+      "passed": true,
+      "detail": {
+        "peak_abs_roll_deg": 0.005929351502555911,
+        "peak_abs_pitch_deg": 0.149601776868867,
+        "tail_altitude_error_m": 0.0011188632683372113,
+        "tail_altitude_std_m": 0.00023961558607434123,
+        "tail_position_error_m": 0.002824029826731422,
+        "max_motor_thrust_n": 128.06650000000008,
+        "oscillation": "none detected"
+      }
+    },
+    "G2_climb_to_5m": {
+      "passed": true,
+      "detail": {
+        "time_to_5m_s": 2.356,
+        "max_altitude_m": 5.327558332443817,
+        "energy_used_wh": 40.29960833008615
+      }
+    },
+    "G3_gentle_landing": {
+      "passed": true,
+      "detail": {
+        "time_to_5m_s": 2.356,
+        "max_altitude_m": 5.327558332443817,
+        "energy_used_wh": 40.29960833008615,
+        "max_motor_current_a": 46.99,
+        "final_soc_pct": 96.10824561800989,
+        "final_altitude_m": -0.05507215901325389,
+        "final_vertical_speed_m_s": 0.038382570527235,
+        "structural_margin_min": 2.62888636848262
+      }
+    },
+    "G4_forward_maneuver": {
+      "passed": true,
+      "detail": {
+        "aborted": false,
+        "abort_event": null,
+        "events": [],
+        "success": {
+          "arrived": true,
+          "no_critical_failure": true
+        },
+        "final_state": {
+          "z_m": -0.005359942163130738,
+          "vz_m_s": 0.0037360718891419264,
+          "x_m": 7.560055925084116,
+          "y_m": 1.4966378289966596e-18
+        },
+        "max_altitude_m": 5.334550828565813,
+        "peak_tilt_deg": 12.288190267215331,
+        "energy_wh": 58.06248218373983
+      }
+    },
+    "G5_wind_gust_rejected": {
+      "passed": false,
+      "detail": {
+        "aborted": false,
+        "abort_event": null,
+        "events": [],
+        "success": {
+          "gust_rejected": false,
+          "no_critical_failure": true
+        },
+        "final_state": {
+          "z_m": 5.000082771839281,
+          "vz_m_s": -5.7682325221732914e-05,
+          "x_m": 7.229859858537071,
+          "y_m": -2.4189232080077658e-15
+        },
+        "max_altitude_m": 5.693498060462352,
+        "peak_tilt_deg": 0.0,
+        "energy_wh": 35.8636428695291,
+        "gust_force_n": 31.4,
+        "note": "equivalent constant lateral force for an 8 m/s gust on an assumed 0.8 m^2 frontal area (flagged approximation, no turbulence spectrum)"
+      }
+    },
+    "G6_motor_failure_outcome_recorded": {
+      "passed": true,
+      "detail": {
+        "outcome": "NOT RECOVERABLE \u2014 aborted: total tilt 45.7 deg > 45 deg \u2014 unrecoverable for this controller class",
+        "survived": false,
+        "events": [
+          {
+            "kind": "attitude_loss",
+            "critical": true
+          }
+        ]
+      }
+    },
+    "G9_endurance_with_uncertainty": {
+      "passed": true,
+      "detail": {
+        "quantity": "hover endurance (to 3.5 V/cell warning)",
+        "unit": "s",
+        "n_samples": 98,
+        "best_estimate": 360.0,
+        "mean": 344.388,
+        "std": 55.422,
+        "p05": 240.0,
+        "p95": 420.0,
+        "sensitivities": {
+          "battery_capacity": {
+            "endurance_low_s": 330.0,
+            "endurance_high_s": 390.0,
+            "delta_s": 60.0
+          },
+          "battery_resistance": {
+            "endurance_low_s": 420.0,
+            "endurance_high_s": 240.0,
+            "delta_s": 180.0
+          },
+          "thrust": {
+            "endurance_low_s": 330.0,
+            "endurance_high_s": 390.0,
+            "delta_s": 60.0
+          },
+          "motor_mass": {
+            "endurance_low_s": 360.0,
+            "endurance_high_s": 360.0,
+            "delta_s": 0.0
+          }
+        },
+        "notes": [
+          "thrust table \u00b13% (dataset uncertainty, MN.00011)",
+          "battery capacity \u00b110%; resistance \u00b150% (capacity/R flagged estimated \u2014 expected dominant uncertainty source)",
+          "motor mass \u00b12% (sourced)",
+          "deterministic seeding; static-hover endurance to the 3.5 V/cell warning",
+          "required hover thrust uses STANDARD_GRAVITY = 9.80665 m/s\u00b2 (site-specific g differs negligibly)"
+        ]
+      }
+    },
+    "G8_structural_margin": {
+      "passed": true,
+      "detail": {
+        "structural_margin_min": 2.62888636848262,
+        "basis": "worst-case arm load = max measured static thrust at the arm tip (hover margin is higher)"
+      }
+    }
+  },
+  "all_goals_passed": false,
+  "static_analysis": {
+    "hover_point": {
+      "throttle": 0.8214219529835988,
+      "v_bus_v": 47.33321871847624,
+      "per_rotor": {
+        "thrust_n": 98.06614748555032,
+        "rpm": 3189.140042448821,
+        "current_a": 28.396019377570198,
+        "power_w": 1344.0749959326197,
+        "envelope_flags": {
+          "voltage_corrected": true,
+          "voltage_extrapolated": true,
+          "throttle_extrapolated": false,
+          "note": "rpm scaled proportionally with voltage (empirically supported by two-plane data; flagged extrapolation)",
+          "current": {
+            "voltage_corrected": true,
+            "voltage_extrapolated": true,
+            "throttle_extrapolated": false,
+            "note": "linear voltage-slope correction +0.0000 A/V fitted from measured planes' overlap; power-based current estimate applied (V excursion -0.6 V, eta=0.80 assumed, flagged estimate)"
+          }
+        }
+      },
+      "total_current_a": 170.3761162654212,
+      "total_power_w": 8064.449975595719,
+      "hover_power_w_per_kg": 134.40749959326197
+    },
+    "endurance": {
+      "to_warning_s": 360.0,
+      "to_cutoff_s": null,
+      "energy_used_wh_at_warning": 761.0011634328566,
+      "min_cell_voltage_v": 3.474954671661591
+    },
+    "benchmarks": [
+      {
+        "name": "propulsion knot read-back (thrust + current)",
+        "status": "pass",
+        "metrics": {
+          "max_relative_error": 0.0,
+          "points_checked": 42
+        },
+        "tolerances": {
+          "max_relative_error": 0.005
+        },
+        "notes": "interpolation must reproduce the measured table at the knots"
+      },
+      {
+        "name": "static thrust cross-voltage scatter",
+        "status": "reported",
+        "metrics": {
+          "scatter_pct": 0.0
+        },
+        "tolerances": {
+          "scatter_pct": 5.0
+        },
+        "notes": "single voltage plane \u2014 no scatter measurable"
+      },
+      {
+        "name": "full-throttle table reproduction @ 47.9 V",
+        "status": "pass",
+        "metrics": {
+          "thrust_rel_err_pct": 0.0,
+          "current_rel_err_pct": 0.0,
+          "power_rel_err_pct": 0.0,
+          "rpm_rel_err_pct": 0.0
+        },
+        "tolerances": {
+          "all_rel_err_pct": 0.5
+        },
+        "notes": "throttle->rpm->thrust/current chain reproduces the 100% table row"
+      },
+      {
+        "name": "lumped DC motor cross-check",
+        "status": "reported",
+        "metrics": {},
+        "tolerances": {},
+        "notes": "requires two voltage planes"
+      }
+    ]
+  },
+  "mission_suite": {
+    "hover_hold": {
+      "peak_abs_roll_deg": 0.005929351502555911,
+      "peak_abs_pitch_deg": 0.149601776868867,
+      "tail_altitude_error_m": 0.0011188632683372113,
+      "tail_altitude_std_m": 0.00023961558607434123,
+      "tail_position_error_m": 0.002824029826731422,
+      "max_motor_thrust_n": 128.06650000000008,
+      "oscillation": "none detected"
+    },
+    "flight": {
+      "time_to_5m_s": 2.356,
+      "max_altitude_m": 5.327558332443817,
+      "energy_used_wh": 40.29960833008615,
+      "max_motor_current_a": 46.99,
+      "final_soc_pct": 96.10824561800989,
+      "final_altitude_m": -0.05507215901325389,
+      "final_vertical_speed_m_s": 0.038382570527235,
+      "structural_margin_min": 2.62888636848262
+    },
+    "forward_maneuver": {
+      "aborted": false,
+      "abort_event": null,
+      "events": [],
+      "success": {
+        "arrived": true,
+        "no_critical_failure": true
+      },
+      "final_state": {
+        "z_m": -0.005359942163130738,
+        "vz_m_s": 0.0037360718891419264,
+        "x_m": 7.560055925084116,
+        "y_m": 1.4966378289966596e-18
+      },
+      "max_altitude_m": 5.334550828565813,
+      "peak_tilt_deg": 12.288190267215331,
+      "energy_wh": 58.06248218373983
+    },
+    "wind_gust": {
+      "aborted": false,
+      "abort_event": null,
+      "events": [],
+      "success": {
+        "gust_rejected": false,
+        "no_critical_failure": true
+      },
+      "final_state": {
+        "z_m": 5.000082771839281,
+        "vz_m_s": -5.7682325221732914e-05,
+        "x_m": 7.229859858537071,
+        "y_m": -2.4189232080077658e-15
+      },
+      "max_altitude_m": 5.693498060462352,
+      "peak_tilt_deg": 0.0,
+      "energy_wh": 35.8636428695291
+    },
+    "motor_failure": {
+      "aborted": true,
+      "abort_event": "total tilt 45.7 deg > 45 deg \u2014 unrecoverable for this controller class",
+      "events": [
+        {
+          "t_s": 6.224,
+          "kind": "attitude_loss",
+          "critical": true,
+          "message": "total tilt 45.7 deg > 45 deg \u2014 unrecoverable for this controller class"
+        }
+      ],
+      "success": {},
+      "final_state": {
+        "z_m": 5.094093987074879,
+        "vz_m_s": -0.3185913109783058,
+        "x_m": 0.03169545075854665,
+        "y_m": 6.592315043294339e-05
+      },
+      "max_altitude_m": 5.334550828565813,
+      "peak_tilt_deg": 45.69513174200546,
+      "energy_wh": 13.96959649106657
+    }
+  },
+  "uncertainty": {
+    "quantity": "hover endurance (to 3.5 V/cell warning)",
+    "unit": "s",
+    "n_samples": 98,
+    "best_estimate": 360.0,
+    "mean": 344.388,
+    "std": 55.422,
+    "p05": 240.0,
+    "p95": 420.0,
+    "sensitivities": {
+      "battery_capacity": {
+        "endurance_low_s": 330.0,
+        "endurance_high_s": 390.0,
+        "delta_s": 60.0
+      },
+      "battery_resistance": {
+        "endurance_low_s": 420.0,
+        "endurance_high_s": 240.0,
+        "delta_s": 180.0
+      },
+      "thrust": {
+        "endurance_low_s": 330.0,
+        "endurance_high_s": 390.0,
+        "delta_s": 60.0
+      },
+      "motor_mass": {
+        "endurance_low_s": 360.0,
+        "endurance_high_s": 360.0,
+        "delta_s": 0.0
+      }
+    },
+    "notes": [
+      "thrust table \u00b13% (dataset uncertainty, MN.00011)",
+      "battery capacity \u00b110%; resistance \u00b150% (capacity/R flagged estimated \u2014 expected dominant uncertainty source)",
+      "motor mass \u00b12% (sourced)",
+      "deterministic seeding; static-hover endurance to the 3.5 V/cell warning",
+      "required hover thrust uses STANDARD_GRAVITY = 9.80665 m/s\u00b2 (site-specific g differs negligibly)"
+    ]
+  },
+  "vv_report": {
+    "design": {
+      "name": "hexa_p80_60kg",
+      "mass_kg": 60.0,
+      "n_rotors": 6
+    },
+    "benchmarks": {
+      "propulsion": [
+        {
+          "name": "propulsion knot read-back (thrust + current)",
+          "status": "pass",
+          "metrics": {
+            "max_relative_error": 0.0,
+            "points_checked": 42
+          },
+          "tolerances": {
+            "max_relative_error": 0.005
+          },
+          "notes": "interpolation must reproduce the measured table at the knots"
+        },
+        {
+          "name": "static thrust cross-voltage scatter",
+          "status": "reported",
+          "metrics": {
+            "scatter_pct": 0.0
+          },
+          "tolerances": {
+            "scatter_pct": 5.0
+          },
+          "notes": "single voltage plane \u2014 no scatter measurable"
+        },
+        {
+          "name": "full-throttle table reproduction @ 47.9 V",
+          "status": "pass",
+          "metrics": {
+            "thrust_rel_err_pct": 0.0,
+            "current_rel_err_pct": 0.0,
+            "power_rel_err_pct": 0.0,
+            "rpm_rel_err_pct": 0.0
+          },
+          "tolerances": {
+            "all_rel_err_pct": 0.5
+          },
+          "notes": "throttle->rpm->thrust/current chain reproduces the 100% table row"
+        },
+        {
+          "name": "lumped DC motor cross-check",
+          "status": "reported",
+          "metrics": {},
+          "tolerances": {},
+          "notes": "requires two voltage planes"
+        }
+      ],
+      "dynamics": [
+        {
+          "name": "hover trim equals weight",
+          "status": "pass",
+          "metrics": {
+            "relative_error": 1.9321385271153762e-16
+          },
+          "tolerances": {
+            "relative_error": 1e-09
+          }
+        }
+      ]
+    },
+    "convergence": [
+      {
+        "name": "time-step convergence (torque-free Euler dynamics)",
+        "metric": "max |omega - omega_ref| [rad/s]",
+        "tolerance": 1e-06,
+        "refinements": [
+          {
+            "level": 0,
+            "dt_s": 0.02,
+            "error": 1.213376353509547e-10
+          },
+          {
+            "level": 1,
+            "dt_s": 0.01,
+            "error": 7.570431740873952e-12
+          },
+          {
+            "level": 2,
+            "dt_s": 0.005,
+            "error": 4.712874247329325e-13
+          },
+          {
+            "level": 3,
+            "dt_s": 0.0025,
+            "error": 2.6498072296016572e-14
+          }
+        ],
+        "converged": true,
+        "converged_level": 0,
+        "notes": "reference dt=0.000625"
+      },
+      {
+        "name": "adaptive solver tolerance (free fall)",
+        "metric": "|v(1s) - g| [m/s]",
+        "tolerance": 1e-08,
+        "refinements": [
+          {
+            "level": 0,
+            "rtol": 1e-06,
+            "error": 0.0
+          },
+          {
+            "level": 1,
+            "rtol": 1e-08,
+            "error": 0.0
+          },
+          {
+            "level": 2,
+            "rtol": 1e-10,
+            "error": 0.0
+          }
+        ],
+        "converged": true,
+        "converged_level": 0,
+        "notes": ""
+      },
+      {
+        "name": "closed-loop integrator convergence (takeoff scenario)",
+        "metric": "RMS z deviation vs finest refinement [m]",
+        "tolerance": 0.002,
+        "refinements": [
+          {
+            "level": 0,
+            "substeps": 1,
+            "rms_z_deviation_m": 1.5223000583599758e-14
+          },
+          {
+            "level": 1,
+            "substeps": 2,
+            "rms_z_deviation_m": 8.444176784488223e-15
+          },
+          {
+            "level": 2,
+            "substeps": 4,
+            "rms_z_deviation_m": 0.0
+          }
+        ],
+        "converged": true,
+        "converged_level": 0,
+        "notes": ""
+      }
+    ],
+    "uncertainty": {
+      "quantity": "hover endurance (to 3.5 V/cell warning)",
+      "unit": "s",
+      "n_samples": 40,
+      "best_estimate": 360.0,
+      "mean": 352.5,
+      "std": 47.315,
+      "p05": 297.0,
+      "p95": 420.0,
+      "sensitivities": {
+        "battery_capacity": {
+          "endurance_low_s": 330.0,
+          "endurance_high_s": 390.0,
+          "delta_s": 60.0
+        },
+        "battery_resistance": {
+          "endurance_low_s": 420.0,
+          "endurance_high_s": 240.0,
+          "delta_s": 180.0
+        },
+        "thrust": {
+          "endurance_low_s": 330.0,
+          "endurance_high_s": 390.0,
+          "delta_s": 60.0
+        },
+        "motor_mass": {
+          "endurance_low_s": 360.0,
+          "endurance_high_s": 360.0,
+          "delta_s": 0.0
+        }
+      },
+      "notes": [
+        "thrust table \u00b13% (dataset uncertainty, MN.00011)",
+        "battery capacity \u00b110%; resistance \u00b150% (capacity/R flagged estimated \u2014 expected dominant uncertainty source)",
+        "motor mass \u00b12% (sourced)",
+        "deterministic seeding; static-hover endurance to the 3.5 V/cell warning",
+        "required hover thrust uses STANDARD_GRAVITY = 9.80665 m/s\u00b2 (site-specific g differs negligibly)"
+      ]
+    },
+    "needs_further_analysis": false,
+    "gated_failures": [],
+    "validated_vs_assumed": {
+      "validated": [
+        "dynamics core (analytical solutions: free fall, spin-up, conservation laws)",
+        "mass-property assembly (parallel-axis hand calculations)",
+        "propulsion static table (manufacturer bench data, read-back gate)",
+        "full-throttle chain reproduction"
+      ],
+      "assumed_or_estimated": [
+        "rotor reaction torque k (derived from bench data with assumed eta=0.8)",
+        "battery capacity/mass/IR (flagged estimates)",
+        "propeller mass (flagged estimate)",
+        "ESC rating (placeholder)",
+        "airframe drag CdA (unsourced approximation)",
+        "quasi-static bus solve; no thermal integration; no wind"
+      ]
+    }
+  },
+  "elapsed_s": 186.4
+}

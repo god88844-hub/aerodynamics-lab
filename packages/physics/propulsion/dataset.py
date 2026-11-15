@@ -258,24 +258,22 @@ class PowertrainDataset:
             )
 
         # Single covering plane (or voltage beyond the plane range): nearest
-        # plane by voltage + fitted slope correction.
+        # plane by voltage + fitted slope correction. For single-plane
+        # datasets the power-based estimate carries the extrapolation
+        # (flagged) instead of refusing: the ±15 % excursion limit still
+        # bounds how far this may go.
         plane = min(covering, key=lambda p: abs(p.voltage_v - voltage))
         value = float(plane.current_interp(rpm))
         dv = voltage - plane.voltage_v
         corrected = abs(dv) > V_TOLERANCE_V
         notes = []
-        if len(self.planes) < 2 and corrected:
-            raise OutOfEnvelopeError(
-                f"single-voltage dataset ({self._v_min} V): no voltage correction "
-                f"possible for {voltage:.1f} V — capture bench data at the second voltage"
-            )
         if corrected:
             value += self._current_voltage_slope * dv
             notes.append(
                 f"linear voltage-slope correction {self._current_voltage_slope:+.4f} A/V "
                 "fitted from measured planes' overlap"
             )
-        if corrected and abs(dv) > FAR_FROM_PLANE_V:
+        if corrected and (abs(dv) > FAR_FROM_PLANE_V or len(self.planes) < 2):
             # A linear slope correction over a large excursion is unreliable
             # (it can go negative). Apply a physical floor: the shaft power at
             # this rpm demands at least P_mech / V of current.
@@ -284,10 +282,10 @@ class PowertrainDataset:
             i_power = p_mech / max(voltage, 5.0)
             if i_power > value:
                 value = i_power
-                notes.append(
-                    f"far-from-plane voltage ({dv:+.1f} V): power-based floor applied "
-                    f"(eta={MOTOR_EFFICIENCY_ASSUMED:.2f} assumed, flagged estimate)"
-                )
+            notes.append(
+                f"power-based current estimate applied (V excursion {dv:+.1f} V, "
+                f"eta={MOTOR_EFFICIENCY_ASSUMED:.2f} assumed, flagged estimate)"
+            )
         value = max(value, 0.0)
         return QueryResult(
             value=max(value, 0.0),
@@ -329,7 +327,7 @@ class PowertrainDataset:
                 v1, v2 = self.planes[0].voltage_v, self.planes[-1].voltage_v
                 rpm = vals[0] + (vals[-1] - vals[0]) * (voltage - v1) / (v2 - v1)
             else:
-                rpm = vals[0]
+                rpm = vals[0] * (voltage / self.planes[0].voltage_v)
             return QueryResult(
                 value=rpm,
                 plane_voltage_v=self.planes[-1].voltage_v,
@@ -349,15 +347,23 @@ class PowertrainDataset:
                 note="rpm linearly interpolated in voltage between measured planes",
             )
         plane = covering[0]
+        rpm_at_plane = float(plane.rpm_from_throttle(throttle_pct))
         if abs(voltage - plane.voltage_v) <= V_TOLERANCE_V:
             return QueryResult(
-                value=float(plane.rpm_from_throttle(throttle_pct)),
+                value=rpm_at_plane,
                 plane_voltage_v=plane.voltage_v,
             )
-        raise OutOfEnvelopeError(
-            f"throttle->rpm at {voltage:.1f} V is not measurable: only the "
-            f"{plane.voltage_v} V plane covers this throttle range — capture bench "
-            "data at the second voltage"
+        # Far from the plane voltage: rpm scales proportionally with voltage
+        # at fixed throttle — empirically supported by the two-plane MN3508
+        # data (2600/3900 rpm over 14.8/22.2 V = exactly the voltage ratio).
+        rpm = rpm_at_plane * (voltage / plane.voltage_v)
+        return QueryResult(
+            value=rpm,
+            plane_voltage_v=plane.voltage_v,
+            voltage_corrected=True,
+            voltage_extrapolated=self._voltage_extrapolated(voltage),
+            note="rpm scaled proportionally with voltage (empirically supported "
+            "by two-plane data; flagged extrapolation)",
         )
 
     def thrust_at_throttle(self, throttle: float, voltage: float) -> QueryResult:

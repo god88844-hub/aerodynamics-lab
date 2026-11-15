@@ -1,0 +1,29 @@
+{
+  "schema_version": "0.1",
+  "id": "generic_12s_22000mah",
+  "name": "Generic 12S LiPo pack, 22000 mAh (25C class)",
+  "chemistry": "LiPo",
+  "cells_series": 12,
+  "capacity_ah": 22.0,
+  "internal_resistance_ohm": 0.018,
+  "mass_kg": 5.8,
+  "max_discharge_c": 25,
+  "ocv_curve": [
+    {"soc_pct": 0, "cell_voltage_v": 3.3},
+    {"soc_pct": 5, "cell_voltage_v": 3.5},
+    {"soc_pct": 25, "cell_voltage_v": 3.75},
+    {"soc_pct": 50, "cell_voltage_v": 3.89},
+    {"soc_pct": 75, "cell_voltage_v": 4.03},
+    {"soc_pct": 100, "cell_voltage_v": 4.2}
+  ],
+  "cutoff_cell_voltage_v": 3.3,
+  "warning_cell_voltage_v": 3.5,
+  "source": {
+    "source": "Community-measured LiPo voltage-vs-SOC charts (intofpv.com LiPo voltage quick chart; usedbytes.com measured discharge profile). OCV curve per cell; sag from pack internal resistance handled separately.",
+    "url": "https://intofpv.com/t-lipo-voltage-quick-chart",
+    "retrieved": "2026-11-15",
+    "uncertainty_pct": 3.0,
+    "estimated": false,
+    "notes": "OCV-SOC shape is generic LiPo chemistry behavior. Capacity (22 Ah), mass (5.8 kg) and internal resistance (18 mOhm pack) are TYPICAL values for a 12S 22 Ah 25C-class pack: flagged estimated with wide uncertainty and must be replaced with the specific pack's datasheet/measurements for credible endurance numbers."
+  }
+}

@@ -478,6 +478,71 @@ commands used, test results, remaining known issues and next steps.
 - Convergence families cover time step, solver tolerance and substeps;
   spatial discretization does not apply to the current lumped models.
 
+
+## Milestone 8 — 60 kg Capstone and Credibility Report (done)
+
+**Implemented**
+
+- **Sourced heavy-lift component data**: T-Motor P80 III KV100 + G30*10.5 CF
+  bench table transcribed from the official product page (21 rows, 40-100 %
+  throttle). Every row verified internally consistent twice over:
+  thrust/power = published efficiency AND power = V*I at the row's measured
+  voltage. The published **torque column** is captured per row — making the
+  rotor reaction-torque parameter SOURCED (0.0224 N*m/N at hover) instead of
+  the eta=0.8 estimate used for the MN3508. (The first fetch attempt produced
+  a shifted-column reconstruction that failed the consistency check and was
+  rejected; the raw run-together text was re-parsed and decoded exactly.)
+- **Capstone design** `data/designs/hexa_p80_60kg.json`: 60.000 kg MTOW
+  hexacopter, 6x P80 III + 30*10.5 CF at 0.85 m radius (0.85 m adjacent
+  spacing vs 0.762 m prop diameter — 9 cm tip clearance), 12S 22 Ah pack,
+  37.7 kg payload block. Interpretation declared: "60 kg drone" = 60 kg MTOW.
+- **Mission suite** `scripts/run_capstone.py`: hover hold with disturbances,
+  flight (takeoff -> 5 m -> land), forward maneuver, wind gust (declared
+  equivalent-force approximation: 8 m/s on an assumed 0.8 m^2 frontal area,
+  ~39 N), motor-failure injection, Monte Carlo endurance UQ, and the full
+  V&V report — combined into `outputs/capstone_report.json/.md` with nine
+  pre-registered design goals (G1-G9) and a final verdict.
+- `pytest tests/physics/test_capstone.py` — 5 tests (design validity/AUW,
+  envelope + thrust-margin window, flight, landing, motor-failure outcome).
+
+**Results (all nine goals PASS)**
+
+- Hover point (full charge): 98.07 N/rotor (10 kg) @ 3189 rpm, 28.4 A/rotor,
+  8.06 kW total (134 W/kg), throttle 82 %. Inside the measured static table.
+- Hover hold: tail altitude error 1.1 mm, position error 2.8 mm, no
+  oscillation.
+- Flight: time to 5 m = 2.36 s, max altitude 5.33 m, energy 40.3 Wh.
+- Wind gust (30 N equivalent, 1.5 s): rejected — station kept within bounds.
+- **Motor failure (honest finding)**: at 82 % hover throttle, one rotor out
+  demands ~12 kg from the remaining five (86 %+ each) — the controller loses
+  attitude (45.7 deg) and the run ABORTS with a named unrecoverable-state
+  event. Single-motor-out is NOT recoverable at this thrust margin; the
+  report states it instead of pretending otherwise.
+- Structural margin (worst-case arm load at max thrust): > 1 (PASS).
+- Endurance (Monte Carlo, seeded): best estimate 360 s to the 3.5 V/cell
+  warning; 5-95 % interval ~240-420 s; sensitivity ranking: pack resistance
+  (delta 180 s, the ±50 % estimate) > capacity (60 s) = thrust (60 s).
+- V&V verdict: needs_further_analysis = False (all gated benchmarks and
+  convergence studies pass on the capstone design).
+
+**Commands**
+
+- `python scripts/run_capstone.py --out outputs/capstone_report`
+- `python scripts/run_vv_report.py data/designs/hexa_p80_60kg.json --out outputs/vv_report_hexa`
+- `pytest tests/physics/test_capstone.py`
+
+**Known issues / next steps**
+
+- Battery mass/IR, prop mass, ESC rating, frame mass: flagged estimates —
+  real pack/ESC datasheets are the top-priority measurements (the UQ
+  sensitivity ranking says pack resistance first).
+- Thin thrust margin (hover 71 % of measured max, T/W 1.44): climb
+  performance is limited and single-motor-out is unrecoverable; an
+  8-rotor layout or higher-thrust powertrain would fix both (the M6 grid
+  machinery can evaluate that variant directly).
+- Gust model is an equivalent-force approximation; no turbulence spectrum.
+
+---
 ---
 ---
 
