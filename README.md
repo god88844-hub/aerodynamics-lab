@@ -111,10 +111,13 @@ aeroforge/
 
 Per the spec's instruction, deviations are documented as they arise:
 
-1. **Project location** — the original workspace
-   `C:\Users\Simulation apps\flights simulation` is read-only for the current
-   account (BUILTIN\Users has RX only), so the repo was created at
-   `C:\Users\god88\Simulation apps\flights simulation\aeroforge`.
+1. **Project location** — the designated workspace
+   `C:\Users\Simulation apps\flights simulation` was initially read-only for
+   the current account (ACL: BUILTIN\Users had RX only). With user approval
+   (UAC), full control was granted to `god88` via an elevated `icacls`, and
+   the repository now lives at the workspace root. The temporary copy under
+   `C:\Users\god88\Simulation apps\...` was removed after the move was
+   verified.
 2. **`packages/shared-schemas/`** — the package directory is named
    `aeroforge_schemas/` (Python module names cannot contain `-`).
 3. **Import strategy** — packages are made importable via `pythonpath`
