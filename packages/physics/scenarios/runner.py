@@ -352,6 +352,14 @@ def run_scenario(
 
     # Optional sourced powertrain in the loop (mixer ceiling + aux telemetry).
     aux_enabled = design.powertrain is not None and library is not None
+    if aux_enabled and (not design.powertrain.motor_id
+                        or not design.powertrain.propeller_id
+                        or not design.powertrain.esc_id
+                        or not design.powertrain.battery_id):
+        raise ValueError(
+            "powertrain block is incomplete (motor/propeller/esc/battery id "
+            "missing) — fail closed instead of simulating a partial powertrain"
+        )
     loop_pt: LoopPowertrain | None = None
     if aux_enabled:
         motor = library.motor(design.powertrain.motor_id)

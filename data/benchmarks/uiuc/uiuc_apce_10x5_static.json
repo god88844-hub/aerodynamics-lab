@@ -1,0 +1,21 @@
+{
+  "$schema": "aeroforge/benchmark-source@0.1",
+  "id": "uiuc_apce_10x5_static",
+  "title": "UIUC Propeller Database — APC Slow Fly 10x5, static wind-tunnel coefficients (RPM, CT, CP)",
+  "file": "apce_10x5_static_pg0819.txt",
+  "provenance": {
+    "source": "UIUC Propeller Database (Applied Aerodynamics Group, University of Illinois), volume-1 data file pg0819",
+    "url": "https://m-selig.ae.illinois.edu/props/propDB.html",
+    "citation": "Brandt, J.B. & Selig, M.S., 'Propeller Performance Data at Low Reynolds Numbers', AIAA 2011-1255; Dantsker, O.D. et al. data volumes",
+    "retrieved": "2026-11-16",
+    "measurement": "wind-tunnel static thrust/torque rig; coefficients CT = T/(rho n^2 D^4), CP = P/(rho n^3 D^5) with rho = 0.002377 slug/ft^3, D in ft, n in rev/s",
+    "independence": "INDEPENDENT of AeroForge: measured at UIUC, never used for AeroForge calibration or interpolation",
+    "license_note": "publicly distributed for research/education with attribution to the UIUC Applied Aerodynamics Group and the cited papers"
+  },
+  "propeller": {
+    "type": "APC Slow Fly 10x5",
+    "diameter_in": 10.0,
+    "pitch_in": 5.0
+  },
+  "used_for": "M9 Phase 5 blind prediction: momentum-theory shaft power vs measured power (FM declared from literature a priori, before comparison)"
+}

@@ -542,6 +542,109 @@ commands used, test results, remaining known issues and next steps.
   machinery can evaluate that variant directly).
 - Gust model is an equivalent-force approximation; no turbulence spectrum.
 
+
+## Milestone 9 — Independent Scientific Validation Audit (done)
+
+**Mandate**: determine with independently reproducible evidence how close
+AeroForge is to "simulation evidence substituting for physical validation
+within a demonstrably validated envelope" — without rebuilding, without
+confusing software tests with predictive accuracy, and without repairing
+failures before recording them.
+
+**Phase 1 — reproducibility** (`outputs/audit/phase1_reproducibility.md`):
+all prior claims re-verified independently at commit `8ec1eb4` — 122 pytest
+tests PASS (exit 0), web build + 6 vitest PASS, Docker image builds and the
+container serves `/api/health`, API endpoints verified live, and the capstone
+recomputed fresh: **deterministic replay** (hover power 8064.4 W and
+endurance 360.0 s bit-identical).
+
+**Phase 2+9 — evidence inventory and credibility gate**
+(`packages/physics/validation/credibility.py`,
+`scripts/audit_evidence_inventory.py`,
+`outputs/audit/phase2_evidence_inventory.*`): 17 subsystems classified with
+model, equations, inputs, sources, verification/calibration/validation data,
+errors, uncertainty, envelope, limitations and consequences. Strict
+four-status gate applied. Verdicts: **4 VALIDATED_FOR_THIS_DECISION**
+(rigid-body dynamics vs defined gravity and conservation laws; mass/inertia
+mathematical identities; first-order static power prediction vs independent
+wind-tunnel data; failure-detection logic), **13 PROMISING — FURTHER
+EVIDENCE REQUIRED** (motor thrust generalization, ESC, battery, rotor
+interaction, ground effect, drag, wind, flight control vs real logs, sensor
+models, structures, thermal, endurance). Zero results were upgraded for
+passing software tests alone.
+
+**Phase 3 — dataset audit** (`scripts/audit_datasets.py`,
+`outputs/audit/phase3_datasets.*`, regression tests
+`tests/audit/test_m9_datasets.py`): both datasets re-verified from the
+stored JSON. Two audit findings, recorded then fixed with regression tests:
+(F1) monotonicity must be evaluated per voltage plane — cross-plane
+interleaving produced a false decrease at the 820 gf plateau; (F2) per-row
+measured voltages added to the P80 dataset as provenance — power == V·I
+verified to publication rounding (≤ 0.14 % worst). New physics checks: P80
+**motor efficiency 0.73–0.84** and **figure of merit 0.80–0.82** — both
+inside declared literature bands, an independent plausibility validation of
+the manufacturer data.
+
+**Phase 4+5 — independent data and blind predictions**
+(`data/benchmarks/uiuc/`, `scripts/audit_blind_prediction.py`,
+`outputs/audit/phase5_blind_predictions.*` + plots): archived **UIUC
+wind-tunnel data (APC SF 10x5, Brandt & Selig / Dantsker)** as an
+independent, never-calibrated-on dataset. Pre-declared tolerance (MAPE ≤ 15
+%) frozen before comparison. **Blind comparison A (genuinely blind,
+UIUC)**: momentum-theory power prediction vs measured — MAPE **6.4 %**, all
+16 points within ±15 %. **Weak-form comparison B (P80 bench held out from
+the prediction path)**: MAPE **4.5 %**. These are the first independently
+validated predictions in the repository. Blocks without data (motor thrust
+generalization, real flight logs, specific-pack discharge) recorded as
+validation blockers, not invented.
+
+**Phase 6 — capstone audit** (`scripts/audit_capstone.py`,
+`outputs/audit/phase6_capstone_audit.*`): independent recompute — AUW 60.000
+kg ✓, tip clearance 0.088 m ✓, hover 98.1 N/rotor at 80.9 % throttle, thrust
+margin 1.40, **energy audit**: 806.5 Wh consumed to the warning threshold
+(the 8.06 kW × 360 s cross-check reconciles by direct ∫P·dt), 17.04 Ah at
+7.74C (within the 25C rating), sag 3.07 V; **modeled 360 s endurance is
+optimistic by ~10–20 %** once unmodeled C-rate derating and thermal R growth
+are quantified with declared assumptions; structural margin depends on the
+±20 % handbook yield band; unmodeled mechanisms for the capstone listed
+explicitly (rotor interaction, ground effect, gust spectra, thermal,
+flight-log validation).
+
+**Phase 7 — failure modes** (`tests/audit/test_m9_failure_modes.py`, 9
+tests): sensor bias (found a real bug: bias was dropped when noise/latency
+were zero — fixed, test is the regression), latency/noise robustness,
+motor-torque disturbance (observable = differential thrust), ESC saturation
+schedule shortfall, CG shift within/outside authority, depleted-pack
+collapse, and explicit unmodeled-mechanism refusals. Audit finding **F4**:
+the controller's ±10 N·m torque limit did not scale with vehicle size —
+now inertia-scaled with a regression test (a 5 cm CG offset is now held;
+30 cm honestly aborts with attitude loss).
+
+**Phase 8 — numerical verification and uncertainty separation**
+(`tests/audit/test_m9_numerical.py`, 8 tests): quaternion normalization
+through full missions, coordinate-frame consistency (cos-tilt thrust
+projection), force/moment balance vs mixer geometry, mass constancy, energy
+bounds, deterministic replay, UQ seed reproducibility, and uncertainty-type
+separation (parameter / measurement / numerical / model-form /
+environmental) — model-form and environmental are declared **gaps**, not
+represented as parameter variation.
+
+**Phase 10 — deliverables**: `docs/audit/M9_AUDIT.md` (final report with
+calibration-vs-validation ledger, prioritized validation-gap backlog and the
+acceptance answer), `outputs/audit/m9_summary.json` + phase artifacts,
+plots, and the M9 test suites (`tests/audit/`, 30 tests). Full suite green
+(152 tests).
+
+**Final answer to the acceptance question**: AeroForge currently supports,
+with independently validated evidence: (1) first-order hover/shaft power
+estimation within ±15 % MAPE for small APC-class props in the UIUC regime;
+(2) rigid-body response under applied forces and defined gravity to
+numerical precision; (3) mass/CoG/inertia bookkeeping. Everything else is
+PROMISING with named, prioritized evidence gaps — most importantly real pack
+discharge data, held-out motor/prop bench points, and real flight telemetry.
+No result was manufactured.
+
+---
 ---
 ---
 ---

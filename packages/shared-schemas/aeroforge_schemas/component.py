@@ -32,7 +32,16 @@ class TestDataPoint(BaseModel):
     """One row of a manufacturer thrust-bench table (static conditions)."""
 
     throttle_pct: float = Field(ge=0.0, le=100.0)
-    voltage_v: float = Field(gt=0.0)
+    voltage_v: float = Field(
+        gt=0.0,
+        description="bus voltage of the interpolation plane this row belongs to "
+        "(rows are grouped into voltage planes by this value)",
+    )
+    voltage_measured_v: float | None = Field(
+        default=None,
+        description="actual measured bus voltage of the row, when the source "
+        "publishes per-row sag (provenance; the plane uses voltage_v)",
+    )
     current_a: float = Field(gt=0.0)
     power_w: float = Field(gt=0.0)
     thrust_gf: float = Field(ge=0.0, description="grams-force, as published")

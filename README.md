@@ -96,8 +96,11 @@ aeroforge/
 ## Milestone status
 
 All milestones complete — see [docs/milestone_reports.md](docs/milestone_reports.md)
-for the full per-milestone changelog and [outputs/](outputs) for the
-generated capstone, V&V and Pareto reports.
+for the full per-milestone changelog, [docs/audit/M9_AUDIT.md](docs/audit/M9_AUDIT.md)
+for the independent scientific validation audit (which capabilities are
+independently validated, with what measured error, and which evidence gaps
+remain), and [outputs/](outputs) for the generated capstone, V&V and Pareto
+reports.
 
 ## Deviations from the original build specification
 

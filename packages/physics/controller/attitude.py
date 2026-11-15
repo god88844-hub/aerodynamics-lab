@@ -101,10 +101,21 @@ class QuadcopterController:
         self.gains = gains or ControlGains.for_plant(plant)
         self.mixer = mixer or Mixer(plant)
         g = self.gains
-        torque_limit = 10.0  # generous torque clamp (N·m) for rate PIDs
-        self.rate_roll = PID(g.kp_rate_roll, g.ki_rate, 0.0, (-torque_limit, torque_limit))
-        self.rate_pitch = PID(g.kp_rate_pitch, g.ki_rate, 0.0, (-torque_limit, torque_limit))
-        self.rate_yaw = PID(g.kp_rate_yaw, g.ki_rate * 0.5, 0.0, (-torque_limit, torque_limit))
+        # Torque authority must scale with the vehicle: a 60 kg hexa needs
+        # ~100x the roll/pitch torque of a 2 kg quad for the same bandwidth.
+        # Limit = the torque required to track max_rate on the relevant axis,
+        # times 1.5 for control authority over trim transients (M9 finding:
+        # fixed +/-10 N*m broke CG-offset rejection on large vehicles).
+        inertia = plant.body.inertia_about_cog
+        torque_limit_roll = abs(g.kp_rate_roll) * g.max_rate_rad_s * 1.5
+        torque_limit_pitch = abs(g.kp_rate_pitch) * g.max_rate_rad_s * 1.5
+        torque_limit_yaw = abs(g.kp_rate_yaw) * g.max_rate_rad_s * 1.5
+        torque_limit_roll = max(10.0, torque_limit_roll)
+        torque_limit_pitch = max(10.0, torque_limit_pitch)
+        torque_limit_yaw = max(10.0, torque_limit_yaw, float(inertia[2, 2]) * 2.0)
+        self.rate_roll = PID(g.kp_rate_roll, g.ki_rate, 0.0, (-torque_limit_roll, torque_limit_roll))
+        self.rate_pitch = PID(g.kp_rate_pitch, g.ki_rate, 0.0, (-torque_limit_pitch, torque_limit_pitch))
+        self.rate_yaw = PID(g.kp_rate_yaw, g.ki_rate * 0.5, 0.0, (-torque_limit_yaw, torque_limit_yaw))
         # Altitude integral: bias compensation ONLY (off by default — see
         # ControlGains.ki_alt). The P and D terms are applied directly in
         # step() as a proper PD: a = kp*e_z + kd*(vz_des - vz) + ki*∫e_z

@@ -29,6 +29,11 @@ class SensorConfig:
     sigma_rate_deg_s: float = 0.0
     latency_s: float = 0.0
     control_dt_s: float = 0.004
+    # Constant biases (M9 failure-mode testing): the controller never sees
+    # them compensated — a real gyro/accelerometer bias behaves this way.
+    bias_position_m: tuple[float, float, float] = (0.0, 0.0, 0.0)
+    bias_velocity_m_s: tuple[float, float, float] = (0.0, 0.0, 0.0)
+    bias_rate_rad_s: tuple[float, float, float] = (0.0, 0.0, 0.0)
 
 
 class SensorModel:
@@ -40,7 +45,12 @@ class SensorModel:
     def _noisy(self, state: np.ndarray) -> np.ndarray:
         cfg = self.cfg
         s = state.copy()
-        c = self.cfg
+        if cfg.bias_position_m:
+            s[0:3] = s[0:3] + np.asarray(cfg.bias_position_m)
+        if cfg.bias_velocity_m_s:
+            s[3:6] = s[3:6] + np.asarray(cfg.bias_velocity_m_s)
+        if cfg.bias_rate_rad_s:
+            s[10:13] = s[10:13] + np.asarray(cfg.bias_rate_rad_s)
         if cfg.sigma_position_m > 0:
             s[0:3] = s[0:3] + self._rng.normal(0.0, cfg.sigma_position_m, 3)
         if cfg.sigma_velocity_m_s > 0:
@@ -56,8 +66,11 @@ class SensorModel:
     def measure(self, state: np.ndarray, t: float) -> np.ndarray:
         """Return the controller's view of the state at time t."""
         cfg = self.cfg
-        if cfg.latency_s <= 0.0 and cfg.sigma_position_m == 0 and cfg.sigma_velocity_m_s == 0 \
-                and cfg.sigma_attitude_deg == 0 and cfg.sigma_rate_deg_s == 0:
+        has_bias = any(cfg.bias_position_m) or any(cfg.bias_velocity_m_s) \
+            or any(cfg.bias_rate_rad_s)
+        if (cfg.latency_s <= 0.0 and not has_bias
+                and cfg.sigma_position_m == 0 and cfg.sigma_velocity_m_s == 0
+                and cfg.sigma_attitude_deg == 0 and cfg.sigma_rate_deg_s == 0):
             return state
         # Zero-order-hold latency: measurements arrive delayed.
         self._buffer.append((t, np.asarray(state, dtype=float).copy()))
