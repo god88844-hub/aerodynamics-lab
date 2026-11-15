@@ -1,0 +1,50 @@
+{
+  "schema_version": "0.1",
+  "name": "example_quad_2kg",
+  "parts": [
+    {
+      "name": "center_frame",
+      "mass_kg": 1.2,
+      "position_m": [0.0, 0.0, 0.0],
+      "inertia_about_own_cog_kg_m2": [
+        [0.01625, 0.0, 0.0],
+        [0.0, 0.01625, 0.0],
+        [0.0, 0.0, 0.032]
+      ]
+    },
+    {
+      "name": "battery",
+      "mass_kg": 0.4,
+      "position_m": [0.0, 0.0, -0.02]
+    },
+    {
+      "name": "motor_front_right",
+      "mass_kg": 0.1,
+      "position_m": [0.25, 0.25, 0.02]
+    },
+    {
+      "name": "motor_front_left",
+      "mass_kg": 0.1,
+      "position_m": [-0.25, 0.25, 0.02]
+    },
+    {
+      "name": "motor_rear_left",
+      "mass_kg": 0.1,
+      "position_m": [-0.25, -0.25, 0.02]
+    },
+    {
+      "name": "motor_rear_right",
+      "mass_kg": 0.1,
+      "position_m": [0.25, -0.25, 0.02]
+    }
+  ],
+  "rotors": [
+    { "position_m": [0.25, 0.25, 0.02], "spin_direction": -1 },
+    { "position_m": [-0.25, 0.25, 0.02], "spin_direction": 1 },
+    { "position_m": [-0.25, -0.25, 0.02], "spin_direction": -1 },
+    { "position_m": [0.25, -0.25, 0.02], "spin_direction": 1 }
+  ],
+  "drag_cd_a_m2": 0.01,
+  "rotor_torque_per_thrust_n_m_per_n": 0.0,
+  "notes": "Synthetic dynamics-verification quadcopter (Milestone 1). Masses and inertias are round-number placeholders for testing the dynamics math; they are NOT sourced component data. The propulsion evidence database (M2) replaces them with sourced hardware. Frame inertia computed from a 1.2 kg, 0.4x0.4x0.05 m solid box (geometry.primitives.box_inertia)."
+}

@@ -3,3 +3,7 @@
 Used by the FastAPI backend and by the physics packages to guarantee that a
 saved design snapshot is exactly what the simulator executes (traceability).
 """
+
+from aeroforge_schemas.design import DroneDesign, PartInstance, RotorInstance
+
+__all__ = ["DroneDesign", "PartInstance", "RotorInstance"]

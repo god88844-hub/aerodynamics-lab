@@ -98,7 +98,7 @@ aeroforge/
 | Milestone | Scope | Status |
 | --- | --- | --- |
 | M0 | Environment + monorepo scaffold | **done** |
-| M1 | 6-DOF dynamics + component mass models | pending |
+| M1 | 6-DOF dynamics + component mass models | **done** |
 | M2 | Static propulsion models from sourced data | pending |
 | M3 | Flight controller + stable hover | pending |
 | M4 | Scenarios + failure detection | pending |
