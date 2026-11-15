@@ -432,6 +432,53 @@ commands used, test results, remaining known issues and next steps.
   added on the same evaluator if the parameter space grows.
 - Endurance is static-hover only (M4 caveats apply: no wind, perfect hold).
 
+
+## Milestone 7 — Verification, Validation and Uncertainty (done)
+
+**Implemented**
+
+- `packages/physics/validation/convergence.py` — three convergence studies:
+  torque-free Euler dynamics vs fine reference (step family), adaptive
+  solver tolerance sweep (rtol 1e-6 to 1e-10 on free fall), and closed-loop
+  integrator convergence (takeoff scenario, substeps 1/2/4, RMS z deviation
+  vs finest refinement). Each declares its tolerance and converged level.
+- `packages/physics/validation/uq.py` — Monte Carlo over declared parameter
+  uncertainties (seeded, deterministic): battery capacity +/-10 %, pack
+  resistance +/-50 % (flagged estimate), thrust table +/-3 % (dataset
+  uncertainty), motor mass +/-2 % (sourced). Thrust uncertainty uses the
+  exact equivalence "hovering mass/factor with the nominal table". Outputs
+  best estimate, mean, std, 5/95 percentiles and one-at-a-time sensitivity
+  ranking.
+- `packages/physics/validation/report.py` — V&V report generator: gated
+  benchmarks (propulsion + hover-trim-equals-weight), convergence summary,
+  UQ, an explicit **needs_further_analysis** flag when any gate fails, and
+  validated-vs-assumed lists. JSON + Markdown renderers.
+- `scripts/run_vv_report.py` — CLI writing outputs/vv_report.json/.md
+  (exit 1 when gates fail).
+
+**Verified** (`pytest tests/physics/test_vv.py` — 8 passed)
+
+- Convergence: analytic, solver-tolerance and closed-loop studies all
+  converge (a sign bug in the solver-tolerance metric was caught by the
+  test and fixed — the 19.61 m/s "error" was a missing |vz| absolute value).
+- UQ: 200-sample Monte Carlo on the reference quad — endurance best
+  estimate 3870 s, std 240 s, 5-95 % interval 3480-4230 s; sensitivities
+  rank battery capacity (delta 780 s) > pack resistance (delta 210 s) >
+  thrust (delta 150 s) > motor mass (delta 0) — telling the user exactly
+  which measurement to buy next. Seed determinism verified.
+- Report gating: an artificially tightened tolerance flips the report to
+  needs_further_analysis with named failures (spec acceptance).
+- Full V&V report generated for the reference quad: all gates PASS
+  (outputs/vv_report.json / .md).
+
+**Known issues / next steps**
+
+- UQ is one-at-a-time sensitivity + marginal Monte Carlo; correlated
+  sampling (e.g. capacity vs resistance) can be added when pack data lands.
+- Convergence families cover time step, solver tolerance and substeps;
+  spatial discretization does not apply to the current lumped models.
+
+---
 ---
 
 ---
