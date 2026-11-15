@@ -1,0 +1,60 @@
+{
+  "$schema": "aeroforge/materials@0.1",
+  "description": "Structural material properties used by frame stress checks. All values are sourced and carry an explicit uncertainty; a component check that needs a material not listed here must have that material added with a source, or the check must fail closed (report 'unknown property', not 'pass').",
+  "units": {
+    "density_kg_m3": "kg/m^3",
+    "youngs_modulus_pa": "Pa",
+    "yield_strength_pa": "Pa",
+    "ultimate_tensile_strength_pa": "Pa"
+  },
+  "materials": [
+    {
+      "id": "alu_6061_t6",
+      "name": "Aluminum 6061-T6",
+      "category": "metal",
+      "density_kg_m3": 2700,
+      "youngs_modulus_pa": 68900000000,
+      "yield_strength_pa": 276000000,
+      "ultimate_tensile_strength_pa": 310000000,
+      "notes": "Common for machined motor mounts and booms.",
+      "source": "ASM Metals Handbook / MatWeb standard published values (T6 temper)",
+      "uncertainty_pct": 2
+    },
+    {
+      "id": "cfrp_quasi_iso",
+      "name": "Quasi-isotropic CFRP laminate (epoxy)",
+      "category": "composite",
+      "density_kg_m3": 1550,
+      "youngs_modulus_pa": 45000000000,
+      "yield_strength_pa": 500000000,
+      "ultimate_tensile_strength_pa": 550000000,
+      "notes": "Layup-dependent: values represent a typical [0/45/-45/90]s carbon/epoxy laminate. 'yield' is approximate (composites do not yield like metals); used as the allowable strength for frame checks.",
+      "source": "Typical quasi-isotropic laminate properties, Composite Materials Handbook series / manufacturer laminate data sheets",
+      "uncertainty_pct": 20
+    },
+    {
+      "id": "pa12_nylon",
+      "name": "Nylon PA12 (SLS / MJF print)",
+      "category": "polymer",
+      "density_kg_m3": 1010,
+      "youngs_modulus_pa": 1650000000,
+      "yield_strength_pa": 45000000,
+      "ultimate_tensile_strength_pa": 48000000,
+      "notes": "Common for printed motor mounts and camera plates; sensitive to moisture and temperature.",
+      "source": "Typical PA12 powder-bed fusion material datasheets (e.g., HP MJF PA12, EOS PA2200)",
+      "uncertainty_pct": 15
+    },
+    {
+      "id": "pla_fdg",
+      "name": "PLA (FDM print)",
+      "category": "polymer",
+      "density_kg_m3": 1240,
+      "youngs_modulus_pa": 3500000000,
+      "yield_strength_pa": 60000000,
+      "ultimate_tensile_strength_pa": 60000000,
+      "notes": "Prototype-grade; print orientation and infill strongly affect strength (uncertainty does not cover layer-adhesion knockdowns — flag as 'needs print-specific test data' for load-bearing parts).",
+      "source": "Typical published PLA tensile properties (e.g., MatWeb generic PLA, manufacturer datasheets)",
+      "uncertainty_pct": 25
+    }
+  ]
+}

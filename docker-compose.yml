@@ -1,0 +1,35 @@
+services:
+  api:
+    build:
+      context: .
+      dockerfile: apps/api/Dockerfile
+    ports:
+      - "8000:8000"
+    environment:
+      # Development default: file-backed SQLite. Production: enable the
+      # `postgres` profile and set AEROFORGE_DB_URL to the db service.
+      - AEROFORGE_DB_URL=sqlite:///./aeroforge.db
+
+  db:
+    image: postgres:16-alpine
+    profiles: ["postgres"]
+    environment:
+      POSTGRES_USER: aeroforge
+      POSTGRES_PASSWORD: aeroforge
+      POSTGRES_DB: aeroforge
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+  web:
+    build:
+      context: .
+      dockerfile: apps/web/Dockerfile
+    ports:
+      - "5173:80"
+    depends_on:
+      - api
+
+volumes:
+  pgdata:

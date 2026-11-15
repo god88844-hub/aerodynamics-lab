@@ -1,0 +1,10 @@
+# Repository-level tooling configuration.
+#
+# Python packages live under packages/ and packages/shared-schemas and are
+# made importable via pytest's `pythonpath` (and PYTHONPATH for the API and
+# Docker). No distribution packaging yet; see docs/dev_guide.md.
+
+[tool.pytest.ini_options]
+pythonpath = ["packages", "packages/shared-schemas", "apps/api"]
+testpaths = ["tests"]
+addopts = "-q"

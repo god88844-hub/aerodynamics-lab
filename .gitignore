@@ -1,0 +1,27 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Node
+node_modules/
+apps/web/dist/
+
+# Local state / outputs
+*.sqlite3
+*.db
+outputs/
+reports/
+
+# Environment
+.env
+.env.local
+
+# OS
+.DS_Store
+Thumbs.db
