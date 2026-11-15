@@ -106,22 +106,17 @@ reports.
 
 Per the spec's instruction, deviations are documented as they arise:
 
-1. **Project location** — the designated workspace
-   `C:\Users\Simulation apps\flights simulation` was initially read-only for
-   the current account (ACL: BUILTIN\Users had RX only). With user approval
-   (UAC), full control was granted to `god88` via an elevated `icacls`, and
-   the repository now lives at the workspace root. The temporary copy under
-   `C:\Users\god88\Simulation apps\...` was removed after the move was
-   verified.
-2. **`packages/shared-schemas/`** — the package directory is named
+1. **`packages/shared-schemas/`** — the package directory is named
    `aeroforge_schemas/` (Python module names cannot contain `-`).
-3. **Import strategy** — packages are made importable via `pythonpath`
+2. **Import strategy** — packages are made importable via `pythonpath`
    configuration (pytest / uvicorn / Docker `PYTHONPATH`) rather than an
    editable pip install; revisit if packaging for distribution is needed.
-4. **uvicorn module path** — run as `app.main:app` from `apps/api/`
+3. **uvicorn module path** — run as `app.main:app` from `apps/api/`
    (the spec's `api.app.main:app` would require an extra top-level shim).
-5. **Tailwind CSS** — will be added with the editor UI (M5) using Tailwind v4
-   with the Vite plugin; not needed for the M0 app shell.
-6. **Persistence stack** — SQLAlchemy/Alembic are pinned in
+4. **Persistence stack** — SQLAlchemy/Alembic are pinned in
    `apps/api/requirements.txt`; the migration environment is initialized with
    design persistence (M5) when there are real tables to migrate.
+
+## License
+
+[Apache License 2.0](LICENSE) — Copyright 2026 AeroForge contributors.

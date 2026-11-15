@@ -1,0 +1,591 @@
+{
+  "audit": "M9 Phase 2+9 \u2014 evidence inventory and credibility verdicts",
+  "evidence_categories": {
+    "VERIFIED_IMPLEMENTATION": "software behavior verified vs analytical ground truth",
+    "CALIBRATED_TO_MEASUREMENTS": "model built from/reproduces measurement (own calibration \u2014 not independent validation)",
+    "INDEPENDENTLY_VALIDATED": "held-out physical comparison with pre-declared tolerance met",
+    "APPROXIMATE / ASSUMED": "declared approximation or assumption",
+    "NOT VALIDATED": "no independent physical evidence",
+    "FAILED VALIDATION": "held-out comparison exceeded tolerance"
+  },
+  "credibility_counts": {
+    "PROMISING_FURTHER_EVIDENCE_REQUIRED": 16,
+    "VALIDATED_FOR_THIS_DECISION": 1
+  },
+  "subsystems": [
+    {
+      "subsystem": "Rigid-body dynamics (6-DOF)",
+      "model": "packages/physics/dynamics/rigid_body.py + quadrotor.py (M1)",
+      "governing_equations": "Newton\u2013Euler: F = m\u00b7a, \u03c4 = I\u00b7\u03c9\u0307 + \u03c9\u00d7(I\u03c9); quaternion attitude kinematics",
+      "inputs": "mass, inertia tensor (assembled from parts), applied forces/torques",
+      "parameter_sources": "mass/inertia from design snapshot parts; gravity g = 9.80665 m/s\u00b2 (BIPM defined constant)",
+      "parameter_class": "sourced (g: defined constant; mass/inertia: design data)",
+      "numerical_verification": "free fall v(1 s) = g \u00b1 1e-6; principal-axis spin-up \u03c9 = \u03c4/I\u00b7t; torque-free conservation of energy and |L_world| < 1e-8; RK4 order-4 step-halving; scipy agreement (tests/physics/test_rigid_body.py)",
+      "calibration_data": "none required (structural equations + defined constants)",
+      "independent_validation_data": "verification evidence only: analytical identities and the DEFINED standard gravity. Independent PHYSICAL validation of an assembled aircraft (measured trajectories) does not exist yet \u2014 M9 rev 2 reclassified this from 'independently validated' per external review",
+      "prediction_errors": "free fall \u00b11e-6 m/s (spec gate \u00b10.01)",
+      "uncertainty": "numerical: bounded by convergence studies; model-form: flat non-rotating Earth, constant g, rigid body \u2014 declared",
+      "validated_envelope": "flat non-rotating Earth, |v| < ~30 m/s, near-Earth altitudes",
+      "limitations": [
+        "no Coriolis/centrifugal",
+        "constant g",
+        "no structural flexure",
+        "no aerodynamic coupling inside the core"
+      ],
+      "consequences_if_wrong": "dynamics errors would corrupt every trajectory prediction",
+      "evidence_categories": [
+        "VERIFIED IMPLEMENTATION"
+      ],
+      "credibility": {
+        "status": "PROMISING_FURTHER_EVIDENCE_REQUIRED",
+        "basis": "functions and is verified in software, but no independent physical validation evidence exists yet",
+        "independent_evidence": [],
+        "missing_evidence": [
+          "independent physical validation dataset"
+        ],
+        "measured_prediction_error": null,
+        "validated_envelope": null
+      }
+    },
+    {
+      "subsystem": "Mass and inertia assembly",
+      "model": "packages/physics/dynamics/mass_properties.py; geometry/primitives.py",
+      "governing_equations": "parallel-axis theorem; solid-box/cylinder inertia formulas",
+      "inputs": "part masses and positions (design snapshot)",
+      "parameter_sources": "motor masses sourced (MN3508 103 g, P80 III 649 g); other part masses flagged estimates in component files",
+      "parameter_class": "mixed: sourced masses + estimated masses",
+      "numerical_verification": "two-point dumbbell, box formula, multi-part transfer vs hand computation (tests/physics/test_mass_properties.py)",
+      "calibration_data": "none (mathematical identities)",
+      "independent_validation_data": "verification evidence only: mathematical identities. Physical validation requires a measured real assembly (weighed vehicle, measured inertia) \u2014 M9 rev 2 reclassified from 'independently validated'",
+      "prediction_errors": "exact to float precision",
+      "uncertainty": "driven entirely by part-mass data quality (flagged per part)",
+      "validated_envelope": "rigid assemblies in the design snapshot",
+      "limitations": [
+        "assembly is rigid; no fuel burn",
+        "inertia of irregular parts must be supplied (point-mass fallback)"
+      ],
+      "consequences_if_wrong": "wrong inertia \u2192 wrong attitude dynamics; wrong mass \u2192 wrong thrust margins and endurance",
+      "evidence_categories": [
+        "VERIFIED IMPLEMENTATION"
+      ],
+      "credibility": {
+        "status": "PROMISING_FURTHER_EVIDENCE_REQUIRED",
+        "basis": "functions and is verified in software, but no independent physical validation evidence exists yet",
+        "independent_evidence": [],
+        "missing_evidence": [
+          "independent physical validation dataset"
+        ],
+        "measured_prediction_error": null,
+        "validated_envelope": null
+      }
+    },
+    {
+      "subsystem": "Motor thrust",
+      "model": "packages/physics/propulsion/dataset.py \u2014 PCHIP interpolation of manufacturer bench tables (MN3508: 2 voltage planes; P80 III: 1 plane, 21 rows)",
+      "governing_equations": "monotone PCHIP through measured (rpm, thrust) knots; NO physics-based generalization (no blade-element model)",
+      "inputs": "rpm, bus voltage",
+      "parameter_sources": "T-Motor MN3508 report MN.00011; T-Motor P80 III product page (both row-verified: T/P = published efficiency, P = V\u00b7I)",
+      "parameter_class": "sourced (measured manufacturer bench data)",
+      "numerical_verification": "knot read-back exact (M2/M9 benchmarks); monotonicity per plane",
+      "calibration_data": "the manufacturer tables ARE the model (interpolation of calibration data)",
+      "independent_validation_data": "NONE for thrust generalization: reproducing table knots is calibration, not validation; no held-out measurements exist for these motor+prop pairs",
+      "prediction_errors": null,
+      "uncertainty": "dataset uncertainty \u00b13 % (source-stated); interpolation between knots unquantified",
+      "validated_envelope": "MN3508: 2600\u20135900 rpm, planes 14.8/22.2 V \u00b115 %; P80 III: 1719\u20133747 rpm, plane 47.9 V \u00b115 %; thrust within [table min, max]",
+      "limitations": [
+        "no advance ratio / forward flight",
+        "no prop-on-prop or wall effects",
+        "single-plane datasets rely on flagged voltage extrapolation",
+        "flat-thrust region (820 gf) makes rpm inversion ill-conditioned"
+      ],
+      "consequences_if_wrong": "thrust overestimate \u2192 unrealistic performance verdicts; underestimate \u2192 false infeasibility",
+      "evidence_categories": [
+        "VERIFIED IMPLEMENTATION",
+        "CALIBRATED TO MEASUREMENTS",
+        "NOT VALIDATED for generalization"
+      ],
+      "credibility": {
+        "status": "PROMISING_FURTHER_EVIDENCE_REQUIRED",
+        "basis": "functions and is verified in software, but no independent physical validation evidence exists yet",
+        "independent_evidence": [],
+        "missing_evidence": [
+          "independent physical validation dataset"
+        ],
+        "measured_prediction_error": null,
+        "validated_envelope": null
+      }
+    },
+    {
+      "subsystem": "Propeller torque / reaction torque",
+      "model": "constant k = Q/T per design (rotor_torque_per_thrust); k sourced from the P80 bench torque column at hover (0.0224 N\u00b7m/N); MN3508 k=0 in the reference design (manufacturer published no torque column)",
+      "governing_equations": "\u03c4_z = \u2212\u03a3 spin_i \u00b7 k \u00b7 T_i",
+      "inputs": "per-rotor thrust, spin direction, k",
+      "parameter_sources": "P80 III: published torque column (row-verified via C2 motor-eta band); MN3508: no torque published \u2192 k unknown",
+      "parameter_class": "sourced for P80 (single-point at hover); unknown for MN3508",
+      "numerical_verification": "mixer wrench reconstruction tests",
+      "calibration_data": "P80: k at the hover thrust point (single point, not the full curve)",
+      "independent_validation_data": "the k value comes from the manufacturer bench data (calibration data for our own use) \u2014 no independent torque measurements",
+      "prediction_errors": null,
+      "uncertainty": "\u00b1(variation across the table) \u2014 not sampled in UQ",
+      "validated_envelope": "near-hover thrust ratios",
+      "limitations": [
+        "constant k (true k grows with thrust)",
+        "no gyroscopic precession moments"
+      ],
+      "consequences_if_wrong": "wrong yaw authority \u2192 yaw control divergence in flight",
+      "evidence_categories": [
+        "CALIBRATED TO MEASUREMENTS (single point)",
+        "APPROXIMATE / ASSUMED (constant-k away from hover)"
+      ],
+      "credibility": {
+        "status": "PROMISING_FURTHER_EVIDENCE_REQUIRED",
+        "basis": "functions and is verified in software, but no independent physical validation evidence exists yet",
+        "independent_evidence": [],
+        "missing_evidence": [
+          "independent physical validation dataset"
+        ],
+        "measured_prediction_error": null,
+        "validated_envelope": null
+      }
+    },
+    {
+      "subsystem": "Motor electrical power / current",
+      "model": "P = V\u00b7I identity + per-plane PCHIP current(rpm) with fitted voltage-slope correction and power-based floor (declared extrapolation)",
+      "governing_equations": "P_elec = V_bus\u00b7I; current(rpm, V) interpolated between measured planes",
+      "inputs": "rpm, bus voltage",
+      "parameter_sources": "manufacturer bench tables (row voltages captured for P80 III)",
+      "parameter_class": "sourced (measured) + declared extrapolation policy",
+      "numerical_verification": "C1 identity to publication rounding (\u22640.5 %); plane normalization \u22642 %",
+      "calibration_data": "manufacturer tables (calibration data)",
+      "independent_validation_data": "momentum-theory electrical-power prediction vs P80 bench: MAPE 4.46 %, 100 % within \u00b115 % (WEAK-FORM \u2014 priors literature-informed); vs UIUC wind-tunnel power: MAPE 6.4 % (BLIND, genuinely independent)",
+      "prediction_errors": null,
+      "uncertainty": "thrust/eta prior bands declared in the blind comparisons",
+      "validated_envelope": "static conditions; voltages within \u00b115 % of measured planes; rpm within table",
+      "limitations": [
+        "lumped DC model does NOT close (35 % residual \u2014 documented finding)",
+        "no inductance/timing model",
+        "single-plane datasets need flagged extrapolation"
+      ],
+      "consequences_if_wrong": "current/power error \u2192 wrong endurance, wrong thermal margins",
+      "evidence_categories": [
+        "VERIFIED IMPLEMENTATION",
+        "CALIBRATED TO MEASUREMENTS",
+        "INDEPENDENTLY VALIDATED (momentum-theory power path vs UIUC wind-tunnel data, MAPE 6.4 % < 15 % declared \u2014 validates the estimation METHOD for this prop class, not an assembled drone)"
+      ],
+      "credibility": {
+        "status": "VALIDATED_FOR_THIS_DECISION",
+        "basis": "independent physical evidence within pre-declared tolerance, no relevant unmodeled mechanisms",
+        "independent_evidence": [
+          "UIUC APC SF 10x5 wind-tunnel power: MAPE 6.4 %, 16 points, all within \u00b115 % (pre-declared)"
+        ],
+        "missing_evidence": [],
+        "measured_prediction_error": null,
+        "validated_envelope": null
+      }
+    },
+    {
+      "subsystem": "ESC behavior",
+      "model": "static current/voltage limit checks only (packages/physics/propulsion/esc.py)",
+      "governing_equations": "none (limit comparisons)",
+      "inputs": "current, voltage",
+      "parameter_sources": "placeholder ratings, flagged estimated",
+      "parameter_class": "assumed",
+      "numerical_verification": "unit tests of limit checks",
+      "calibration_data": "none",
+      "independent_validation_data": "none",
+      "prediction_errors": null,
+      "uncertainty": "rating uncertainty \u00b120 % flagged",
+      "validated_envelope": "steady current/voltage limits only",
+      "limitations": [
+        "no PWM dynamics",
+        "no switching losses",
+        "no thermal model",
+        "no timing/advance effects (the 35 % lumped-DC residual lives here)"
+      ],
+      "consequences_if_wrong": "ESC behavior errors distort the motor electrical chain",
+      "evidence_categories": [
+        "APPROXIMATE / ASSUMED",
+        "NOT VALIDATED"
+      ],
+      "credibility": {
+        "status": "PROMISING_FURTHER_EVIDENCE_REQUIRED",
+        "basis": "functions and is verified in software, but no independent physical validation evidence exists yet",
+        "independent_evidence": [],
+        "missing_evidence": [
+          "independent physical validation dataset"
+        ],
+        "measured_prediction_error": null,
+        "validated_envelope": null
+      }
+    },
+    {
+      "subsystem": "Battery discharge and voltage sag",
+      "model": "OCV(SOC) PCHIP (community-sourced curve) + single pack R (constant) + coulomb counting (packages/physics/propulsion/battery.py)",
+      "governing_equations": "V_load = OCV(SOC) \u2212 I\u00b7R_pack; dSOC = \u2212100\u00b7I\u00b7dt/(3600\u00b7C)",
+      "inputs": "SOC, current",
+      "parameter_sources": "OCV shape: community-measured LiPo charts (intofpv/usedbytes); R and capacity: TYPICAL values flagged estimated",
+      "parameter_class": "mixed: OCV shape sourced (community), R/capacity estimated",
+      "numerical_verification": "OCV read-back, sag arithmetic, coulomb counting (unit tests)",
+      "calibration_data": "OCV curve itself came from community measurements (calibration data for the curve; not independent)",
+      "independent_validation_data": "NONE for our specific packs \u2014 no measured discharge of the modeled packs",
+      "prediction_errors": null,
+      "uncertainty": "capacity \u00b110 %, R \u00b150 % sampled in UQ; dominant endurance sensitivity",
+      "validated_envelope": "steady discharge, < ~8 C in the audited designs",
+      "limitations": [
+        "no temperature dependence",
+        "no C-rate capacity derating",
+        "no cycle aging",
+        "no cell imbalance",
+        "constant R"
+      ],
+      "consequences_if_wrong": "endurance estimates optimistic (audit: ~10-20 % once derating/thermal are accounted); sag errors \u2192 premature/late warnings",
+      "evidence_categories": [
+        "APPROXIMATE / ASSUMED",
+        "NOT VALIDATED"
+      ],
+      "credibility": {
+        "status": "PROMISING_FURTHER_EVIDENCE_REQUIRED",
+        "basis": "functions and is verified in software, but no independent physical validation evidence exists yet",
+        "independent_evidence": [],
+        "missing_evidence": [
+          "independent physical validation dataset"
+        ],
+        "measured_prediction_error": null,
+        "validated_envelope": null
+      }
+    },
+    {
+      "subsystem": "Rotor-to-rotor interaction",
+      "model": "NOT IMPLEMENTED",
+      "governing_equations": "\u2014",
+      "inputs": "\u2014",
+      "parameter_sources": "\u2014",
+      "parameter_class": "\u2014",
+      "numerical_verification": "\u2014",
+      "calibration_data": "\u2014",
+      "independent_validation_data": "\u2014",
+      "prediction_errors": null,
+      "uncertainty": "\u2014",
+      "validated_envelope": "\u2014",
+      "limitations": [
+        "hover/flight of multi-rotor layouts carries unquantified interference thrust/power penalties"
+      ],
+      "consequences_if_wrong": "hexa/octa endurance and hover thrust overestimated (typically low-single-digit % at large spacing, larger when discs overlap)",
+      "evidence_categories": [
+        "NOT VALIDATED"
+      ],
+      "credibility": {
+        "status": "PROMISING_FURTHER_EVIDENCE_REQUIRED",
+        "basis": "functions and is verified in software, but no independent physical validation evidence exists yet",
+        "independent_evidence": [],
+        "missing_evidence": [
+          "independent physical validation dataset"
+        ],
+        "measured_prediction_error": null,
+        "validated_envelope": null
+      }
+    },
+    {
+      "subsystem": "Ground effect",
+      "model": "NOT IMPLEMENTED",
+      "governing_equations": "\u2014",
+      "inputs": "\u2014",
+      "parameter_sources": "\u2014",
+      "parameter_class": "\u2014",
+      "numerical_verification": "\u2014",
+      "calibration_data": "\u2014",
+      "independent_validation_data": "\u2014",
+      "prediction_errors": null,
+      "uncertainty": "\u2014",
+      "validated_envelope": "takeoff/landing within ~1 rotor diameter of the ground",
+      "limitations": [
+        "takeoff/landing thrust and power near the ground are wrong by the classic ground-effect factor (up to ~10-20 % at half-rotor height)"
+      ],
+      "consequences_if_wrong": "landing/takeoff power needs misestimated",
+      "evidence_categories": [
+        "NOT VALIDATED"
+      ],
+      "credibility": {
+        "status": "PROMISING_FURTHER_EVIDENCE_REQUIRED",
+        "basis": "functions and is verified in software, but no independent physical validation evidence exists yet",
+        "independent_evidence": [],
+        "missing_evidence": [
+          "independent physical validation dataset"
+        ],
+        "measured_prediction_error": null,
+        "validated_envelope": null
+      }
+    },
+    {
+      "subsystem": "Aerodynamic drag (airframe)",
+      "model": "quadratic drag with single equivalent CdA (packages/physics/aerodynamics/drag.py)",
+      "governing_equations": "F = \u22120.5\u00b7\u03c1\u00b7CdA\u00b7|v|\u00b7v",
+      "inputs": "velocity, CdA, air density",
+      "parameter_sources": "CdA values in designs are UNSOURCED guesses; \u03c1 = ISA sea level (sourced)",
+      "parameter_class": "assumed (CdA)",
+      "numerical_verification": "force formula unit-tested",
+      "calibration_data": "none",
+      "independent_validation_data": "none",
+      "prediction_errors": null,
+      "uncertainty": "CdA dominates; hover/vertical phases barely affected (v\u22480)",
+      "validated_envelope": "incompressible, constant density, no AOA dependence",
+      "limitations": [
+        "no angle-of-attack dependence",
+        "no interference drag",
+        "constant density with altitude"
+      ],
+      "consequences_if_wrong": "forward-flight speed/power predictions unreliable",
+      "evidence_categories": [
+        "APPROXIMATE / ASSUMED",
+        "NOT VALIDATED"
+      ],
+      "credibility": {
+        "status": "PROMISING_FURTHER_EVIDENCE_REQUIRED",
+        "basis": "functions and is verified in software, but no independent physical validation evidence exists yet",
+        "independent_evidence": [],
+        "missing_evidence": [
+          "independent physical validation dataset"
+        ],
+        "measured_prediction_error": null,
+        "validated_envelope": null
+      }
+    },
+    {
+      "subsystem": "Wind and gusts",
+      "model": "equivalent constant lateral FORCE over a time window (capstone: 8 m/s on assumed 0.8 m\u00b2 area \u2248 39 N)",
+      "governing_equations": "step force input",
+      "inputs": "declared force, window",
+      "parameter_sources": "declared approximation (assumed frontal area)",
+      "parameter_class": "assumed",
+      "numerical_verification": "scenario tests assert rejection/offset behavior",
+      "calibration_data": "none",
+      "independent_validation_data": "none",
+      "prediction_errors": null,
+      "uncertainty": "frontal area and gust profile assumed",
+      "validated_envelope": "none \u2014 the force profile is not a validated wind model",
+      "limitations": [
+        "no turbulence spectrum",
+        "no directionality",
+        "no aeroelastic coupling"
+      ],
+      "consequences_if_wrong": "gust-rejection verdicts do not transfer to real wind events",
+      "evidence_categories": [
+        "APPROXIMATE / ASSUMED",
+        "NOT VALIDATED"
+      ],
+      "credibility": {
+        "status": "PROMISING_FURTHER_EVIDENCE_REQUIRED",
+        "basis": "functions and is verified in software, but no independent physical validation evidence exists yet",
+        "independent_evidence": [],
+        "missing_evidence": [
+          "independent physical validation dataset"
+        ],
+        "measured_prediction_error": null,
+        "validated_envelope": null
+      }
+    },
+    {
+      "subsystem": "Flight control",
+      "model": "cascaded PID (position\u2192attitude\u2192rate\u2192mixer) with inertia-derived gains, slew-limited feedforward, derivative filtering, anti-windup",
+      "governing_equations": "standard cascade PID; quaternion attitude; wrench mixer (least squares)",
+      "inputs": "controller state (true or measured), targets, gains",
+      "parameter_sources": "gains derived from assembled mass/inertia; control architecture from standard multirotor practice",
+      "parameter_class": "derived (gains) + architecture assumption",
+      "numerical_verification": "hover hold, altitude step, disturbance rejection, 5\u00b0 roll within \u00b10.1\u00b0, yaw hold, mixer wrench reconstruction, saturation flags (tests)",
+      "calibration_data": "none",
+      "independent_validation_data": "NO flight-log validation: no real flight controller telemetry has been compared against these loops",
+      "prediction_errors": null,
+      "uncertainty": "perfect state knowledge in audited runs; noise/latency modeled but not measured; sensor bias modeled (M9)",
+      "validated_envelope": "near-hover regimes in simulation; deterministic",
+      "limitations": [
+        "no actuator dynamics/lag",
+        "no real sensor stack",
+        "no wind",
+        "torque authority now inertia-scaled (M9 finding F4)"
+      ],
+      "consequences_if_wrong": "control verdicts do not transfer to real flight controllers",
+      "evidence_categories": [
+        "VERIFIED IMPLEMENTATION (software behavior)",
+        "NOT VALIDATED (physical flight)"
+      ],
+      "credibility": {
+        "status": "PROMISING_FURTHER_EVIDENCE_REQUIRED",
+        "basis": "functions and is verified in software, but no independent physical validation evidence exists yet",
+        "independent_evidence": [],
+        "missing_evidence": [
+          "independent physical validation dataset"
+        ],
+        "measured_prediction_error": null,
+        "validated_envelope": null
+      }
+    },
+    {
+      "subsystem": "Sensor noise and latency",
+      "model": "Gaussian noise + zero-order-hold latency + constant bias (packages/physics/controller/sensors.py)",
+      "governing_equations": "additive noise per channel; small-angle quaternion noise",
+      "inputs": "declared sigmas/biases",
+      "parameter_sources": "typical values declared in tests; NOT measured from real sensors",
+      "parameter_class": "assumed",
+      "numerical_verification": "bias application verified (M9 regression), noise determinism",
+      "calibration_data": "none",
+      "independent_validation_data": "none",
+      "prediction_errors": null,
+      "uncertainty": "declared bands only",
+      "validated_envelope": "whatever sigmas are declared",
+      "limitations": [
+        "no scale-factor errors",
+        "no vibration spectra",
+        "no dropouts",
+        "no EKF/state-estimator modeling"
+      ],
+      "consequences_if_wrong": "real sensor stacks may behave worse than modeled",
+      "evidence_categories": [
+        "APPROXIMATE / ASSUMED"
+      ],
+      "credibility": {
+        "status": "PROMISING_FURTHER_EVIDENCE_REQUIRED",
+        "basis": "functions and is verified in software, but no independent physical validation evidence exists yet",
+        "independent_evidence": [],
+        "missing_evidence": [
+          "independent physical validation dataset"
+        ],
+        "measured_prediction_error": null,
+        "validated_envelope": null
+      }
+    },
+    {
+      "subsystem": "Structural loads",
+      "model": "cantilever bending of circular tube arms: \u03c3 = M\u00b7c/I, M = F\u00b7L (packages/physics/structures/beam.py)",
+      "governing_equations": "Euler\u2013Bernoulli bending at the root",
+      "inputs": "max rotor thrust, arm length, tube OD/ID, material yield",
+      "parameter_sources": "material properties from sourced handbook bands (flagged \u00b120 %); tube geometry declared in snapshots (not measured)",
+      "parameter_class": "mixed: sourced material bands + declared geometry",
+      "numerical_verification": "bending stress vs hand calculation (M9/M4 tests)",
+      "calibration_data": "none",
+      "independent_validation_data": "none \u2014 no coupon tests, no load-cell measurements",
+      "prediction_errors": null,
+      "uncertainty": "material \u00b120 %; geometry as declared",
+      "validated_envelope": "static bending at the arm root",
+      "limitations": [
+        "bending only: no torsion/joints/buckling/fatigue/vibration",
+        "worst-case single-arm load"
+      ],
+      "consequences_if_wrong": "structural margin could be substantially wrong",
+      "evidence_categories": [
+        "VERIFIED IMPLEMENTATION (formula)",
+        "APPROXIMATE / ASSUMED (inputs)",
+        "NOT VALIDATED"
+      ],
+      "credibility": {
+        "status": "PROMISING_FURTHER_EVIDENCE_REQUIRED",
+        "basis": "functions and is verified in software, but no independent physical validation evidence exists yet",
+        "independent_evidence": [],
+        "missing_evidence": [
+          "independent physical validation dataset"
+        ],
+        "measured_prediction_error": null,
+        "validated_envelope": null
+      }
+    },
+    {
+      "subsystem": "Thermal limits",
+      "model": "datasheet current/duration rule (I > I_max sustained beyond rated duration \u2192 burnout; I > 2\u00d7I_max \u2192 instantaneous) \u2014 NO thermal integration",
+      "governing_equations": "threshold rule",
+      "inputs": "per-motor current, time",
+      "parameter_sources": "manufacturer current/duration statements (14 A/180 s; 60 A/180 s)",
+      "parameter_class": "sourced (rule), no thermal physics",
+      "numerical_verification": "failure-detection tests (overcurrent, burnout paths)",
+      "calibration_data": "rule taken directly from datasheets",
+      "independent_validation_data": "none",
+      "prediction_errors": null,
+      "uncertainty": "no winding-temperature state exists in the model",
+      "validated_envelope": "static current/duration margin checks",
+      "limitations": [
+        "no temperature state",
+        "no cooling curves",
+        "no ESC heating"
+      ],
+      "consequences_if_wrong": "real motors may burn out earlier or later than modeled",
+      "evidence_categories": [
+        "CALIBRATED TO MEASUREMENTS (rule from datasheet)",
+        "NOT VALIDATED (thermal physics)"
+      ],
+      "credibility": {
+        "status": "PROMISING_FURTHER_EVIDENCE_REQUIRED",
+        "basis": "functions and is verified in software, but no independent physical validation evidence exists yet",
+        "independent_evidence": [],
+        "missing_evidence": [
+          "independent physical validation dataset"
+        ],
+        "measured_prediction_error": null,
+        "validated_envelope": null
+      }
+    },
+    {
+      "subsystem": "Failure detection",
+      "model": "declared critical/warning policy over powertrain, structure, ground, attitude, thrust-envelope monitors (packages/physics/scenarios/runner.py)",
+      "governing_equations": "threshold monitors + named aborts",
+      "inputs": "telemetry + limits",
+      "parameter_sources": "limits from component data (sourced where available)",
+      "parameter_class": "sourced limits + declared policy",
+      "numerical_verification": "motor failure, depleted battery, over-speed, structural overload tests; bias/latency interaction tests (M9)",
+      "calibration_data": "n/a",
+      "independent_validation_data": "verification evidence only: software behavior tested in simulation. Hardware-in-the-loop or real-failure validation does not exist \u2014 M9 rev 2 reclassified from 'independently validated'",
+      "prediction_errors": null,
+      "uncertainty": "\u2014",
+      "validated_envelope": "simulated telemetry only",
+      "limitations": [
+        "detects only the modeled mechanisms (audit lists unmodeled ones)",
+        "no hardware-in-the-loop"
+      ],
+      "consequences_if_wrong": "undetected real-world failure modes remain possible",
+      "evidence_categories": [
+        "VERIFIED IMPLEMENTATION"
+      ],
+      "credibility": {
+        "status": "PROMISING_FURTHER_EVIDENCE_REQUIRED",
+        "basis": "functions and is verified in software, but no independent physical validation evidence exists yet",
+        "independent_evidence": [],
+        "missing_evidence": [
+          "independent physical validation dataset"
+        ],
+        "measured_prediction_error": null,
+        "validated_envelope": null
+      }
+    },
+    {
+      "subsystem": "Flight endurance",
+      "model": "static-hover coulomb drain to the 3.5 V/cell warning through the sourced powertrain chain",
+      "governing_equations": "coulomb counting + sag + OCV",
+      "inputs": "hover current (sourced table), pack capacity/R (estimated)",
+      "parameter_sources": "hover current sourced; capacity/R estimated (flagged)",
+      "parameter_class": "mixed",
+      "numerical_verification": "M2/M9 tests; deterministic replay",
+      "calibration_data": "the current chain is calibrated to bench data; the pack is not",
+      "independent_validation_data": "NO measured endurance of any real aircraft",
+      "prediction_errors": null,
+      "uncertainty": "dominated by battery estimates (capacity/R); no C-rate derating modeled",
+      "validated_envelope": "static hover, < 8 C discharge, no temperature effects",
+      "limitations": [
+        "no temperature",
+        "no derating",
+        "no real-flight power transients"
+      ],
+      "consequences_if_wrong": "mission-endurance decisions unreliable until pack data exists",
+      "evidence_categories": [
+        "CALIBRATED TO MEASUREMENTS (current chain)",
+        "NOT VALIDATED (endurance vs measurement)"
+      ],
+      "credibility": {
+        "status": "PROMISING_FURTHER_EVIDENCE_REQUIRED",
+        "basis": "functions and is verified in software, but no independent physical validation evidence exists yet",
+        "independent_evidence": [],
+        "missing_evidence": [
+          "independent physical validation dataset"
+        ],
+        "measured_prediction_error": null,
+        "validated_envelope": null
+      }
+    }
+  ]
+}

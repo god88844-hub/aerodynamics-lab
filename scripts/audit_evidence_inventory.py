@@ -75,8 +75,10 @@ def build_inventory() -> list[dict[str, Any]]:
                      "conservation of energy and |L_world| < 1e-8; RK4 order-4 step-halving; "
                      "scipy agreement (tests/physics/test_rigid_body.py)",
         calibration="none required (structural equations + defined constants)",
-        independent="the equations and g are 300-years-validated physics; predictions of "
-                    "gravitational response are exact against the DEFINED standard gravity",
+        independent="verification evidence only: analytical identities and the DEFINED standard "
+                    "gravity. Independent PHYSICAL validation of an assembled aircraft "
+                    "(measured trajectories) does not exist yet — M9 rev 2 reclassified this "
+                    "from 'independently validated' per external review",
         errors="free fall ±1e-6 m/s (spec gate ±0.01)",
         uncertainty="numerical: bounded by convergence studies; model-form: flat non-rotating "
                     "Earth, constant g, rigid body — declared",
@@ -84,13 +86,10 @@ def build_inventory() -> list[dict[str, Any]]:
         limitations=["no Coriolis/centrifugal", "constant g", "no structural flexure",
                      "no aerodynamic coupling inside the core"],
         consequences="dynamics errors would corrupt every trajectory prediction",
-        categories=[VI, "INDEPENDENTLY VALIDATED (Newton-Euler + defined g; exact within "
-                         "numerical error)"],
+        categories=[VI],
         credibility=gate("rigid-body 6-DOF response",
-                         independent_evidence=["defined standard gravity reproduced to 1e-6 "
-                                               "in free fall; Newton–Euler conservation laws verified"],
-                         independent_error_within_tolerance=True,
-                         has_known_model_gaps=False),
+                         independent_evidence=[],
+                         has_known_model_gaps=True),
     ))
 
     inv.append(_sub(
@@ -104,7 +103,9 @@ def build_inventory() -> list[dict[str, Any]]:
         verification="two-point dumbbell, box formula, multi-part transfer vs hand computation "
                      "(tests/physics/test_mass_properties.py)",
         calibration="none (mathematical identities)",
-        independent="mathematical identity — exact",
+        independent="verification evidence only: mathematical identities. Physical validation "
+                    "requires a measured real assembly (weighed vehicle, measured inertia) — "
+                    "M9 rev 2 reclassified from 'independently validated'",
         errors="exact to float precision",
         uncertainty="driven entirely by part-mass data quality (flagged per part)",
         envelope="rigid assemblies in the design snapshot",
@@ -114,9 +115,8 @@ def build_inventory() -> list[dict[str, Any]]:
                      "margins and endurance",
         categories=[VI],
         credibility=gate("mass/inertia assembly",
-                         independent_evidence=["mathematical identity verified vs hand "
-                                               "computation to float precision"],
-                         independent_error_within_tolerance=True, has_known_model_gaps=False),
+                         independent_evidence=[],
+                         has_known_model_gaps=True),
     ))
 
     inv.append(_sub(
@@ -197,7 +197,8 @@ def build_inventory() -> list[dict[str, Any]]:
                      "extrapolation"],
         consequences="current/power error → wrong endurance, wrong thermal margins",
         categories=[VI, C, "INDEPENDENTLY VALIDATED (momentum-theory power path vs UIUC "
-                           "wind-tunnel data, MAPE 6.4 % < 15 % declared, static regime)"],
+                           "wind-tunnel data, MAPE 6.4 % < 15 % declared — validates the "
+                           "estimation METHOD for this prop class, not an assembled drone)"],
         credibility=gate("first-order static power prediction (momentum theory path)",
                          independent_evidence=["UIUC APC SF 10x5 wind-tunnel power: MAPE 6.4 %, "
                                                "16 points, all within ±15 % (pre-declared)"],
@@ -414,7 +415,9 @@ def build_inventory() -> list[dict[str, Any]]:
         verification="motor failure, depleted battery, over-speed, structural overload tests; "
                      "bias/latency interaction tests (M9)",
         calibration="n/a",
-        independent="n/a (software behavior)",
+        independent="verification evidence only: software behavior tested in simulation. "
+                    "Hardware-in-the-loop or real-failure validation does not exist — "
+                    "M9 rev 2 reclassified from 'independently validated'",
         prediction_errors="—",
         uncertainty="—",
         envelope="simulated telemetry only",
@@ -423,10 +426,8 @@ def build_inventory() -> list[dict[str, Any]]:
         consequences="undetected real-world failure modes remain possible",
         categories=[VI],
         credibility=gate("failure detection logic",
-                         independent_evidence=["named-abort behavior verified for battery "
-                                               "collapse, over-speed, structure, attitude loss"],
-                         independent_error_within_tolerance=True,
-                         has_known_model_gaps=False),
+                         independent_evidence=[],
+                         has_known_model_gaps=True),
     ))
 
     inv.append(_sub(

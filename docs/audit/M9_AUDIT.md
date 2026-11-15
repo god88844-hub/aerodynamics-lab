@@ -14,10 +14,10 @@ All prior claims reproduced independently before any changes were made (recorded
 
 ## 2. Evidence inventory and credibility verdicts
 
-Credibility counts across 17 subsystems: **4 VALIDATED_FOR_THIS_DECISION, 13 PROMISING**, 0 FAILED, 0 INCONCLUSIVE. Full inventory: [phase2_evidence_inventory.md](phase2_evidence_inventory.md).
+Credibility counts across 17 subsystems: **1 VALIDATED_FOR_THIS_DECISION, 16 PROMISING**, 0 FAILED, 0 INCONCLUSIVE. Full inventory: [phase2_evidence_inventory.md](phase2_evidence_inventory.md).
 
-- **VALIDATED_FOR_THIS_DECISION** — Rigid-body dynamics (6-DOF): independent physical evidence within pre-declared tolerance, no relevant unmodeled mechanisms
-- **VALIDATED_FOR_THIS_DECISION** — Mass and inertia assembly: independent physical evidence within pre-declared tolerance, no relevant unmodeled mechanisms
+- **PROMISING_FURTHER_EVIDENCE_REQUIRED** — Rigid-body dynamics (6-DOF): functions and is verified in software, but no independent physical validation evidence exists yet
+- **PROMISING_FURTHER_EVIDENCE_REQUIRED** — Mass and inertia assembly: functions and is verified in software, but no independent physical validation evidence exists yet
 - **PROMISING_FURTHER_EVIDENCE_REQUIRED** — Motor thrust: functions and is verified in software, but no independent physical validation evidence exists yet
 - **PROMISING_FURTHER_EVIDENCE_REQUIRED** — Propeller torque / reaction torque: functions and is verified in software, but no independent physical validation evidence exists yet
 - **VALIDATED_FOR_THIS_DECISION** — Motor electrical power / current: independent physical evidence within pre-declared tolerance, no relevant unmodeled mechanisms
@@ -31,7 +31,7 @@ Credibility counts across 17 subsystems: **4 VALIDATED_FOR_THIS_DECISION, 13 PRO
 - **PROMISING_FURTHER_EVIDENCE_REQUIRED** — Sensor noise and latency: functions and is verified in software, but no independent physical validation evidence exists yet
 - **PROMISING_FURTHER_EVIDENCE_REQUIRED** — Structural loads: functions and is verified in software, but no independent physical validation evidence exists yet
 - **PROMISING_FURTHER_EVIDENCE_REQUIRED** — Thermal limits: functions and is verified in software, but no independent physical validation evidence exists yet
-- **VALIDATED_FOR_THIS_DECISION** — Failure detection: independent physical evidence within pre-declared tolerance, no relevant unmodeled mechanisms
+- **PROMISING_FURTHER_EVIDENCE_REQUIRED** — Failure detection: functions and is verified in software, but no independent physical validation evidence exists yet
 - **PROMISING_FURTHER_EVIDENCE_REQUIRED** — Flight endurance: functions and is verified in software, but no independent physical validation evidence exists yet
 
 ## 3. Calibration-vs-validation data ledger
@@ -110,12 +110,12 @@ Capstone energy accounting (independent recompute): **806.5 Wh** consumed to the
 
 ## 10. Final credibility verdicts
 
-**Answer to the acceptance question** — the physical engineering decisions AeroForge can currently support with independently validated evidence:
+**Answer to the acceptance question (rev 2, after external review)** — the physical engineering decisions AeroForge can currently support with independently validated evidence:
 
-1. **First-order hover/shaft power estimation (±15 % MAPE) for small APC-class propellers in the UIUC test regime** — validated against independent wind-tunnel measurements with a literature FM prior.
-2. **Rigid-body response under applied forces and defined gravity** — validated to numerical precision against 300-years-validated physics and the defined standard gravity.
-3. **Mass/CoG/inertia bookkeeping** — exact mathematical identities over design data of known provenance.
+1. **First-order static shaft/electrical power estimation (±15 % MAPE declared, 6.4 % measured)** — validated against the independent UIUC wind-tunnel measurements for the APC SF 10x5 prop. This validates the momentum-theory estimation *method* for that prop class and regime; it is NOT a validation of any assembled aircraft.
 
-Everything else — thrust beyond table interpolation, battery endurance for specific packs, flight-control transfer to real hardware, structural margins against real coupons, wind response — is **PROMISING with named, prioritized evidence gaps**, not validated. In particular: the 60 kg capstone is a **simulated feasibility study** (hover/climb/land/gust behavior consistent within the model), NOT a flight-worthiness or human-carrying claim; its endurance is optimistic by ~10–20 % once unmodeled battery effects are accounted for.
+Everything else is **verification evidence** (rigid-body equations vs analytical identities and defined constants; mass bookkeeping; failure-detection logic) or **PROMISING with named, prioritized evidence gaps**. Verification is valuable but is not physical-validation equivalence: independent physical validation of an *assembled* aircraft requires measured flight/dynemo data that the repository does not yet have. In particular: the 60 kg capstone is a **simulated feasibility study**, NOT a flight-worthiness or human-carrying claim; its endurance is optimistic by ~10–20 % once unmodeled battery effects are accounted for.
+
+Rev 2 changes (external review): rigid-body dynamics, mass/inertia assembly and failure-detection logic were reclassified from 'independently validated' to verified-implementation + PROMISING; the CI-incompatible route-object smoke test was replaced with an HTTP contract test; Apache-2.0 license added.
 
 No result was manufactured: two audit-script bugs, one sensor-path bug, one controller-scaling gap and two recording refinements were found BY the audit and fixed WITH regression tests after the as-found results were recorded.

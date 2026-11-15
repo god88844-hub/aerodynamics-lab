@@ -644,6 +644,23 @@ PROMISING with named, prioritized evidence gaps — most importantly real pack
 discharge data, held-out motor/prop bench points, and real flight telemetry.
 No result was manufactured.
 
+
+
+**Rev 2 (external review)**: GitHub CI caught a version-compatibility failure
+(newer FastAPI wraps included routers in objects without `.path`) — the
+smoke test now verifies the HTTP health contract via TestClient. Apache-2.0
+license added; README made platform-neutral. Evidence reclassification
+applied per review: rigid-body dynamics, mass/inertia assembly and
+failure-detection logic were reclassified from "independently validated" to
+**verified-implementation + PROMISING** — verification evidence is valuable
+but is not physical-validation equivalence of an assembled aircraft. The
+independently validated set is now exactly one capability: first-order
+static power estimation vs the UIUC wind-tunnel data (MAPE 6.4 % vs the
+pre-declared 15 %). Credibility counts: 1 VALIDATED / 16 PROMISING. The
+next validation priorities are unchanged: pack discharge measurement,
+held-out motor/prop bench points, real flight telemetry.
+
+---
 ---
 ---
 ---
