@@ -390,6 +390,50 @@ commands used, test results, remaining known issues and next steps.
   placeholder (real blade geometry later).
 - Chart set covers the main channels; per-channel toggles deferred.
 
+
+## Milestone 6 — Batch Evaluation and Optimization (done)
+
+**Implemented**
+- `packages/optimization/batch.py`:
+  - `FastHoverEvaluator` — static-hover endurance on the sourced powertrain
+    model with a **precomputed thrust→rpm LUT verified against the strict
+    brentq path** (the invariant asserted is thrust reconstruction; rpm
+    recovery is checked only where the measured table is not flat — the
+    820 gf plateau shared by the two voltage planes makes the inverse
+    ill-conditioned there by nature);
+  - declared-extrapolation for below-table thrusts (descent regime),
+    flagged per candidate;
+  - `battery_spec_for_capacity` — pack clones across the grid with mass ∝
+    capacity and R ∝ 1/capacity (**ESTIMATED relations, flagged**);
+  - `with_rotor_layout` / `with_payload` — quad/hexa regeneration at any
+    arm length, inheriting sourced component masses;
+  - validation gates per candidate: hover thrust within the measured table,
+    trim feasibility, **structural margin ≥ 1** (arm bending at hover load);
+    infeasible candidates are flagged with the reason — never silently
+    dropped;
+  - `pareto_front` — non-dominated set over (total mass ↓, endurance ↑).
+- `scripts/run_optimization.py` — grid CLI writing JSON + CSV
+  (outputs/pareto.json/.csv), reporting feasible counts and the frontier.
+
+**Verified** (`pytest tests/physics/test_optimization.py` — 7 passed)
+- LUT vs strict inverse: thrust reconstruction within 0.5 %.
+- Grid: 24-candidate box fully evaluated; every infeasible candidate
+  carries its reason; heavy payload (40 kg) flagged 'exceeds measured max'.
+- Pareto property verified exhaustively (no feasible point dominates any
+  frontier point).
+- Battery scaling monotone (mass ↑, R ↓ with capacity).
+- Rotor regeneration: hexa layout exact radii + alternating spins.
+- **Spec acceptance**: 480 candidates in **3.1 s** (370 feasible, 110
+  flagged, 50-candidate Pareto frontier of hover endurance vs mass).
+
+**Known issues / next steps**
+- Battery mass/R scaling is an estimate until real pack datasheets land.
+- Grid search is exhaustive and deterministic; Optuna-style search can be
+  added on the same evaluator if the parameter space grows.
+- Endurance is static-hover only (M4 caveats apply: no wind, perfect hold).
+
+---
+
 ---
 
 ---

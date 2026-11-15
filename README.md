@@ -103,7 +103,7 @@ aeroforge/
 | M3 | Flight controller + stable hover | **done** |
 | M4 | Scenarios + failure detection | **done** |
 | M5 | Web UI editor | **done** |
-| M6 | Batch evaluation / optimization | pending |
+| M6 | Batch evaluation / optimization | **done** |
 | M7 | V&V reports, convergence, UQ | pending |
 | M8 | 60 kg multirotor capstone + credibility report | pending |
 
