@@ -1,0 +1,101 @@
+{
+  "schema_version": "0.1",
+  "name": "quad_mn3508_6s_15x5",
+  "parts": [
+    {
+      "name": "frame",
+      "mass_kg": 1.2,
+      "position_m": [0.0, 0.0, 0.0],
+      "inertia_about_own_cog_kg_m2": [
+        [0.01625, 0.0, 0.0],
+        [0.0, 0.01625, 0.0],
+        [0.0, 0.0, 0.032]
+      ]
+    },
+    {
+      "name": "battery",
+      "mass_kg": 1.55,
+      "position_m": [0.0, 0.0, -0.03]
+    },
+    {
+      "name": "fc_and_payload",
+      "mass_kg": 0.35,
+      "position_m": [0.0, 0.0, 0.03]
+    },
+    {
+      "name": "motor_front_right",
+      "mass_kg": 0.103,
+      "position_m": [0.25, 0.25, 0.02]
+    },
+    {
+      "name": "motor_front_left",
+      "mass_kg": 0.103,
+      "position_m": [-0.25, 0.25, 0.02]
+    },
+    {
+      "name": "motor_rear_left",
+      "mass_kg": 0.103,
+      "position_m": [-0.25, -0.25, 0.02]
+    },
+    {
+      "name": "motor_rear_right",
+      "mass_kg": 0.103,
+      "position_m": [0.25, -0.25, 0.02]
+    },
+    {
+      "name": "esc_front_right",
+      "mass_kg": 0.03,
+      "position_m": [0.15, 0.15, 0.0]
+    },
+    {
+      "name": "esc_front_left",
+      "mass_kg": 0.03,
+      "position_m": [-0.15, 0.15, 0.0]
+    },
+    {
+      "name": "esc_rear_left",
+      "mass_kg": 0.03,
+      "position_m": [-0.15, -0.15, 0.0]
+    },
+    {
+      "name": "esc_rear_right",
+      "mass_kg": 0.03,
+      "position_m": [0.15, -0.15, 0.0]
+    },
+    {
+      "name": "prop_front_right",
+      "mass_kg": 0.019,
+      "position_m": [0.25, 0.25, 0.045]
+    },
+    {
+      "name": "prop_front_left",
+      "mass_kg": 0.019,
+      "position_m": [-0.25, 0.25, 0.045]
+    },
+    {
+      "name": "prop_rear_left",
+      "mass_kg": 0.019,
+      "position_m": [-0.25, -0.25, 0.045]
+    },
+    {
+      "name": "prop_rear_right",
+      "mass_kg": 0.019,
+      "position_m": [0.25, -0.25, 0.045]
+    }
+  ],
+  "rotors": [
+    { "position_m": [0.25, 0.25, 0.02], "spin_direction": -1, "motor_id": "tmotor_mn3508_kv380", "propeller_id": "tmotor_p15x5_cf" },
+    { "position_m": [-0.25, 0.25, 0.02], "spin_direction": 1, "motor_id": "tmotor_mn3508_kv380", "propeller_id": "tmotor_p15x5_cf" },
+    { "position_m": [-0.25, -0.25, 0.02], "spin_direction": -1, "motor_id": "tmotor_mn3508_kv380", "propeller_id": "tmotor_p15x5_cf" },
+    { "position_m": [0.25, -0.25, 0.02], "spin_direction": 1, "motor_id": "tmotor_mn3508_kv380", "propeller_id": "tmotor_p15x5_cf" }
+  ],
+  "powertrain": {
+    "motor_id": "tmotor_mn3508_kv380",
+    "propeller_id": "tmotor_p15x5_cf",
+    "esc_id": "generic_esc_20a",
+    "battery_id": "generic_6s_lipo_16000mah"
+  },
+  "drag_cd_a_m2": 0.02,
+  "rotor_torque_per_thrust_n_m_per_n": 0.0,
+  "notes": "Milestone 2 reference design: 4x T-Motor MN3508 KV380 + 15x5 CF props (sourced bench data, T-Motor report MN.00011) on a generic 6S 16000 mAh pack. Motor mass is sourced (datasheet); frame/FC/ESC/battery masses and prop mass are ESTIMATED placeholders (flagged in the component files) and must be replaced with measured values for credible endurance numbers. Geometry (arm length 0.25 m) is a design choice, not a hardware bill of materials."
+}

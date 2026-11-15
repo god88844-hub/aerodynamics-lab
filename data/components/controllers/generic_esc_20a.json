@@ -1,0 +1,15 @@
+{
+  "schema_version": "0.1",
+  "id": "generic_esc_20a",
+  "name": "Generic 20 A BLDC ESC (6S-capable)",
+  "max_continuous_current_a": 20.0,
+  "max_voltage_v": 25.2,
+  "mass_kg": 0.03,
+  "source": {
+    "source": "Placeholder ESC rating sized with headroom over the motor's 14 A max continuous current",
+    "retrieved": "2026-11-15",
+    "uncertainty_pct": 20.0,
+    "estimated": true,
+    "notes": "No specific ESC datasheet captured yet; rating is an estimate. Replace with the actual ESC part (e.g. a sourced T-Motor/Hobbywing ESC) before any flight-worthiness claim."
+  }
+}

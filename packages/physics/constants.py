@@ -11,3 +11,7 @@ STANDARD_GRAVITY = 9.80665  # m/s^2
 
 # ISA standard atmosphere at mean sea level, 15 °C, 101325 Pa (ICAO Doc 7488).
 SEA_LEVEL_AIR_DENSITY = 1.225  # kg/m^3
+
+# grams-force -> newtons. Exact by definition: 1 gf = 1e-3 kg × standard g.
+# Manufacturer thrust tables publish grams-force; convert with this constant.
+GF_TO_N = 1e-3 * 9.80665  # N per gf

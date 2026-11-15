@@ -1,0 +1,44 @@
+{
+  "schema_version": "0.1",
+  "id": "tmotor_mn3508_kv380",
+  "name": "T-Motor MN3508 KV380 (Navigator type)",
+  "kv_rpm_per_v": 380,
+  "internal_resistance_ohm": 0.205,
+  "idle_current_a": 0.4,
+  "idle_current_voltage_v": 10.0,
+  "max_continuous_current_a": 14.0,
+  "max_continuous_power_w": 310.0,
+  "max_continuous_duration_s": 180,
+  "mass_kg": 0.103,
+  "cells_min": 3,
+  "cells_max": 6,
+  "configuration": "12N14P",
+  "source": {
+    "source": "T-Motor official test report MN.00011 (MN3508 KV380): specifications and load-testing data, DC power supply, static bench",
+    "url": "https://modelavia.pro/assets/images/tds_motor/t-mn3508-kv.pdf",
+    "report_id": "MN.00011",
+    "retrieved": "2026-11-15",
+    "uncertainty_pct": 3.0,
+    "estimated": false,
+    "notes": "Load table transcribed from datasheet page 3 ('Load Testing Data'); every row is internally consistent (thrust/power matches published efficiency). Internal resistance 205 mOhm is the manufacturer winding measurement. Datasheet note: temperature refers to motor surface at 100% throttle after 10 min run."
+  },
+  "test_data": [
+    {"throttle_pct": 50, "voltage_v": 14.8, "current_a": 1.6, "power_w": 23.68, "thrust_gf": 430, "rpm": 2600, "prop": "T-MOTOR 15*5CF", "source": {"source": "T-Motor test report MN.00011, p.3", "report_id": "MN.00011", "uncertainty_pct": 3.0}},
+    {"throttle_pct": 65, "voltage_v": 14.8, "current_a": 3.4, "power_w": 50.32, "thrust_gf": 670, "rpm": 3400, "prop": "T-MOTOR 15*5CF", "source": {"source": "T-Motor test report MN.00011, p.3", "report_id": "MN.00011", "uncertainty_pct": 3.0}},
+    {"throttle_pct": 75, "voltage_v": 14.8, "current_a": 5.0, "power_w": 74.0, "thrust_gf": 820, "rpm": 3800, "prop": "T-MOTOR 15*5CF", "source": {"source": "T-Motor test report MN.00011, p.3", "report_id": "MN.00011", "uncertainty_pct": 3.0}},
+    {"throttle_pct": 85, "voltage_v": 14.8, "current_a": 6.4, "power_w": 94.72, "thrust_gf": 1000, "rpm": 4200, "prop": "T-MOTOR 15*5CF", "source": {"source": "T-Motor test report MN.00011, p.3", "report_id": "MN.00011", "uncertainty_pct": 3.0}},
+    {"throttle_pct": 100, "voltage_v": 14.8, "current_a": 7.5, "power_w": 111.0, "thrust_gf": 1100, "rpm": 4500, "prop": "T-MOTOR 15*5CF", "source": {"source": "T-Motor test report MN.00011, p.3", "report_id": "MN.00011", "uncertainty_pct": 3.0}},
+
+    {"throttle_pct": 50, "voltage_v": 22.2, "current_a": 3.6, "power_w": 79.92, "thrust_gf": 820, "rpm": 3900, "prop": "T-MOTOR 15*5CF", "source": {"source": "T-Motor test report MN.00011, p.3", "report_id": "MN.00011", "uncertainty_pct": 3.0}},
+    {"throttle_pct": 65, "voltage_v": 22.2, "current_a": 6.1, "power_w": 135.42, "thrust_gf": 1200, "rpm": 4800, "prop": "T-MOTOR 15*5CF", "source": {"source": "T-Motor test report MN.00011, p.3", "report_id": "MN.00011", "uncertainty_pct": 3.0}},
+    {"throttle_pct": 75, "voltage_v": 22.2, "current_a": 9.5, "power_w": 210.9, "thrust_gf": 1500, "rpm": 5300, "prop": "T-MOTOR 15*5CF", "source": {"source": "T-Motor test report MN.00011, p.3", "report_id": "MN.00011", "uncertainty_pct": 3.0}},
+    {"throttle_pct": 85, "voltage_v": 22.2, "current_a": 11.3, "power_w": 250.86, "thrust_gf": 1700, "rpm": 5700, "prop": "T-MOTOR 15*5CF", "source": {"source": "T-Motor test report MN.00011, p.3", "report_id": "MN.00011", "uncertainty_pct": 3.0}},
+    {"throttle_pct": 100, "voltage_v": 22.2, "current_a": 13.3, "power_w": 295.26, "thrust_gf": 1880, "rpm": 5900, "prop": "T-MOTOR 15*5CF", "source": {"source": "T-Motor test report MN.00011, p.3", "report_id": "MN.00011", "uncertainty_pct": 3.0}},
+
+    {"throttle_pct": 50, "voltage_v": 22.2, "current_a": 2.9, "power_w": 64.38, "thrust_gf": 710, "rpm": 4300, "prop": "T-MOTOR 14*4.8CF", "source": {"source": "T-Motor test report MN.00011, p.3", "report_id": "MN.00011", "uncertainty_pct": 3.0}},
+    {"throttle_pct": 65, "voltage_v": 22.2, "current_a": 5.3, "power_w": 117.66, "thrust_gf": 1100, "rpm": 5300, "prop": "T-MOTOR 14*4.8CF", "source": {"source": "T-Motor test report MN.00011, p.3", "report_id": "MN.00011", "uncertainty_pct": 3.0}},
+    {"throttle_pct": 75, "voltage_v": 22.2, "current_a": 7.5, "power_w": 166.5, "thrust_gf": 1350, "rpm": 5700, "prop": "T-MOTOR 14*4.8CF", "source": {"source": "T-Motor test report MN.00011, p.3", "report_id": "MN.00011", "uncertainty_pct": 3.0}},
+    {"throttle_pct": 85, "voltage_v": 22.2, "current_a": 9.8, "power_w": 217.56, "thrust_gf": 1580, "rpm": 6000, "prop": "T-MOTOR 14*4.8CF", "source": {"source": "T-Motor test report MN.00011, p.3", "report_id": "MN.00011", "uncertainty_pct": 3.0}},
+    {"throttle_pct": 100, "voltage_v": 22.2, "current_a": 11.5, "power_w": 255.3, "thrust_gf": 1730, "rpm": 6500, "prop": "T-MOTOR 14*4.8CF", "source": {"source": "T-Motor test report MN.00011, p.3", "report_id": "MN.00011", "uncertainty_pct": 3.0}}
+  ]
+}

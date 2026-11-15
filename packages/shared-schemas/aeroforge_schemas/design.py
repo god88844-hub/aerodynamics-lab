@@ -46,6 +46,20 @@ class RotorInstance(BaseModel):
     )
 
 
+class PowertrainConfig(BaseModel):
+    """Uniform powertrain selection for all rotors (v1 multirotor scope).
+
+    Component ids resolve through the component evidence database
+    (data/components/**); every component file is schema-validated and
+    carries its own provenance and uncertainty.
+    """
+
+    motor_id: str
+    propeller_id: str
+    esc_id: str
+    battery_id: str
+
+
 class DroneDesign(BaseModel):
     """Full design snapshot — the exact input to a simulation run."""
 
@@ -53,6 +67,11 @@ class DroneDesign(BaseModel):
     name: str
     parts: list[PartInstance] = Field(min_length=1)
     rotors: list[RotorInstance] = Field(min_length=1)
+    powertrain: PowertrainConfig | None = Field(
+        default=None,
+        description="sourced powertrain for static/performance analysis; when "
+        "absent, only ideal-actuator dynamics scenarios can run",
+    )
     drag_cd_a_m2: float | None = Field(
         default=None,
         gt=0.0,

@@ -1,0 +1,18 @@
+{
+  "schema_version": "0.1",
+  "id": "tmotor_p15x5_cf",
+  "name": "T-Motor P15*5 CF propeller (15x5 inch, carbon fiber)",
+  "diameter_in": 15.0,
+  "pitch_in": 5.0,
+  "mass_kg": 0.019,
+  "material": "carbon fiber",
+  "motor_test_data_key": "T-MOTOR 15*5CF",
+  "source": {
+    "source": "T-Motor P-series propeller product listing (mass and geometry); used in T-Motor test report MN.00011 bench data",
+    "url": "https://store.tmotor.com/",
+    "retrieved": "2026-11-15",
+    "uncertainty_pct": 30.0,
+    "estimated": true,
+    "notes": "Prop mass is NOT in the test report; 19 g is an estimate from the product listing and MUST be replaced with a measured value for any mass-critical design (flagged estimated, uncertainty 30%)."
+  }
+}

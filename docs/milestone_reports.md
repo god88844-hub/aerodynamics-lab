@@ -107,3 +107,94 @@ commands used, test results, remaining known issues and next steps.
   motor/prop/ESC/battery data and interpolation benchmarks (<0.5 % gate).
 - Rotor reaction torque uses a uniform k until per-component data lands.
 - No wind/turbulence model yet (M4); no sensor/controller loop yet (M3).
+
+## Milestone 2 — Static Propulsion Models (done)
+
+**Implemented**
+- **Sourced component database** (transcribed from the manufacturer test
+  report, every datum carrying source + uncertainty):
+  - `data/components/motors/tmotor_mn3508_kv380.json` — T-Motor MN3508 KV380:
+    specs (205 mΩ, idle 0.4 A @ 10 V, 14 A / 310 W @ 180 s, 103 g, 12N14P,
+    3–6S) plus the full load-test table for T-MOTOR 15*5CF at **14.8 V and
+    22.2 V** and 14*4.8CF at 22.2 V (throttle / current / power / thrust / RPM
+    per row; every row verified internally consistent: thrust ÷ power equals
+    the published efficiency). Source: T-Motor test report MN.00011
+    (modelavia.pro PDF mirror of the datasheet), retrieved 2026-11-15.
+  - `data/components/propellers/tmotor_p15x5_cf.json` — geometry sourced;
+    **mass flagged estimated** (±30 %) until measured.
+  - `data/components/batteries/generic_6s_lipo_16000mah.json` — OCV-SOC curve
+    sourced from community-measured LiPo charts; capacity/mass/IR flagged
+    estimated with wide uncertainty.
+  - `data/components/controllers/generic_esc_20a.json` — placeholder rating,
+    flagged estimated.
+- **Schemas** (`aeroforge_schemas/component.py`): MotorSpec / PropellerSpec /
+  BatterySpec / EscSpec / SourceInfo / TestDataPoint; `DroneDesign` extended
+  with an optional `powertrain` block (additive, schema-compatible).
+- **Propulsion models** (`packages/physics/propulsion/`):
+  - `dataset.py` — *model of record*: monotone PCHIP interpolation of the
+    measured table. Thrust(rpm) merged across voltage planes (static thrust is
+    rpm-driven; cross-plane scatter 3.9 % recorded as dataset scatter).
+    Current(rpm, V): per-plane PCHIP; linear-in-voltage between planes;
+    fitted-slope correction beyond the outer planes (flagged); ±15 % voltage
+    excursion hard limit; throttle↔rpm mappings implemented as exact inverses
+    of each other (composite inversion); **thrust is never extrapolated** —
+    out-of-envelope queries raise `OutOfEnvelopeError`.
+  - `battery.py` — OCV(SOC) + pack-R sag + coulomb counting; fail-closed when
+    internal resistance unknown; warning (3.5 V/cell) / cutoff (3.3 V/cell).
+  - `esc.py` — current/voltage limit checks. `powertrain.py` — N-unit static
+    powertrain: bus-voltage fixed-point solve, thrust→throttle inverse,
+    `static_hover` endurance sim (thrust re-trimmed to m·g each step),
+    ESC/motor limit monitoring, envelope-flag collection.
+  - `loader.py` — `ComponentLibrary` with schema validation on load.
+- **Validation framework** (`packages/physics/validation/benchmarks.py`) —
+  pre-registered tolerances, pass/fail vs informational "reported" status.
+- **CLI** (`scripts/run_simulation.py`) — `--scenario {auto, hover-ideal,
+  hover-static}`; the static report includes benchmark table, hover point
+  with envelope flags, endurance, limit issues, and a trustworthiness section
+  (provenance, estimated components, battery caveat, static-only caveat).
+- Design snapshot `data/designs/quad_mn3508_6s.json` — 3.708 kg quad on 4×
+  MN3508+15×5CF+6S16Ah with battery-mass consistency cross-check.
+
+**Key V&V finding (documented, not hidden):** a lumped DC motor model using
+the datasheet Kv and winding resistance does **not** reproduce the loaded
+bench points (calibrated on 14.8 V, validated on 22.2 V: current RMSE 2.13 A,
+max error 35 %) — BLDC+ESC inductance/timing effects dominate. The measured
+table is therefore the model of record; the lumped model is a reported
+cross-check benchmark only.
+
+**Verified** (`python -m pytest` → **66 passed**; 24 new)
+- Knot read-back within 5e-15 % (gate 0.5 %) at all 20 points; full-throttle
+  chain reproduces the 22.2 V table row exactly; cross-voltage scatter 3.89 %
+  (gate 5 %).
+- Envelope enforcement: rpm/throttle/voltage excursions refused or flagged
+  (never silently extrapolated); single-plane dataset refuses foreign voltage.
+- Battery: OCV read-back, sag arithmetic, coulomb counting, warning/cutoff
+  states, fail-closed on unknown IR.
+- Static hover (3.708 kg): thrust held at m·g (rel. err < 1e-4); 4091 rpm,
+  2.91 A/rotor, 291 W total (78 W/kg), 64.3 min to the 3.5 V/cell warning;
+  over-load (100 N) and depleted-battery starts fail closed; ESC over-current
+  detection works.
+- Full suite (M0+M1+M2) green; both CLI scenarios produce full reports.
+
+**Commands**
+- `python -m pytest`
+- `python scripts/run_simulation.py data/designs/quad_mn3508_6s.json --duration 7200 --dt 10`
+- `python scripts/run_simulation.py data/designs/quad_example_2kg.json --scenario hover-ideal`
+
+**Known issues / next steps**
+- Prop mass, ESC rating, battery capacity/mass/IR are flagged estimates —
+  replace with measured data before trusting endurance numbers.
+- Hover operating point sits below the lowest measured throttle knot (45.7 %
+  vs 50 %) and above the 22.2 V plane (full-charge 6S) — both are flagged
+  extrapolations; a second bench voltage (e.g. 18.5 V) would tighten them.
+- No thermal model, no motor dynamics/lag, no forward-flight advance ratio
+  (M3/M4 scope).
+
+---
+
+
+Running changelog per the build specification's "Reporting Progress" section:
+after each milestone — what was implemented and tested, new files/modules,
+commands used, test results, remaining known issues and next steps.
+
+---
