@@ -1,7 +1,14 @@
+@import 'tailwindcss';
+
 :root {
-  color-scheme: light dark;
+  color-scheme: dark;
 }
 
 body {
   margin: 0;
+}
+
+/* Numeric inputs in panels: compact monospace */
+input[type='number'] {
+  font-variant-numeric: tabular-nums;
 }

@@ -1,21 +1,10 @@
-"""Run an AeroForge simulation scenario from a design snapshot.
+"""CLI entry point for running AeroForge simulation scenarios.
 
-Scenarios
----------
-hover-ideal (M1):  6-DOF dynamics verification — mass/CoG/inertia assembly,
-                   analytic hover trim, RK4/scipy integration. Actuators are
-                   IDEAL (commanded thrust == delivered thrust).
-hover-static (M2): sourced-powertrain static analysis — throttle/current/rpm
-                   from measured manufacturer bench data (model of record),
-                   battery sag + endurance, component limit checks, pre-
-                   registered propulsion benchmarks, envelope flags.
+Thin wrapper over packages/physics/scenarios/service.py (the canonical
+runners shared with the API). Usage mirrors the service scenarios:
 
-Both scenarios print an engineering report with Design / Scenario / Results /
-Trustworthiness sections. Every caveat is explicit; neither scenario is a
-flight-worthiness claim (dynamics + controller validation arrive in M3/M4).
-
-Usage:
-    python scripts/run_simulation.py data/designs/quad_mn3508_6s.json
+    python scripts/run_simulation.py data/designs/quad_mn3508_6s.json            # auto
+    python scripts/run_simulation.py data/designs/quad_mn3508_6s.json --scenario flight
     python scripts/run_simulation.py data/designs/quad_example_2kg.json --scenario hover-ideal
 """
 
@@ -33,385 +22,84 @@ for _p in (REPO_ROOT / "packages", REPO_ROOT / "packages" / "shared-schemas"):
 import numpy as np  # noqa: E402
 
 from aeroforge_schemas.design import DroneDesign  # noqa: E402
-from physics import __version__ as physics_version  # noqa: E402
-from physics.constants import STANDARD_GRAVITY  # noqa: E402
-from physics.dynamics.design_adapter import build_multirotor  # noqa: E402
-from physics.dynamics.rigid_body import make_state, normalize_state, unpack_state  # noqa: E402
-from physics.integration.rk4 import integrate_fixed  # noqa: E402
-from physics.integration.scipy_solver import integrate_ivp  # noqa: E402
-from physics.controller.attitude import ControlTargets, QuadcopterController  # noqa: E402
-from physics.controller.mixer import Mixer  # noqa: E402
-from physics.controller.simulation import Disturbance, run_controlled_simulation  # noqa: E402
-from physics.dynamics.quaternion import rotation_matrix  # noqa: E402
-from physics.propulsion.battery import BatteryPack  # noqa: E402
-from physics.propulsion.dataset import PowertrainDataset  # noqa: E402
-from physics.propulsion.esc import Esc  # noqa: E402
-from physics.propulsion.loader import ComponentLibrary  # noqa: E402
-from physics.propulsion.powertrain import StaticPowertrain  # noqa: E402
-from physics.validation.benchmarks import run_propulsion_benchmarks  # noqa: E402
-
-
-# --------------------------------------------------------------- M1: ideal
-
-
-def run_hover_ideal(design: DroneDesign, duration_s: float, dt_s: float, solver: str) -> dict:
-    """M1 stationary-hover verification with ideal actuators."""
-    plant, mass = build_multirotor(design)
-    trim = plant.hover_trim()
-
-    x0 = make_state(
-        r_world=np.zeros(3),
-        v_world=np.zeros(3),
-        q_bw=np.array([1.0, 0.0, 0.0, 0.0]),
-        omega_body=np.zeros(3),
-    )
-    f = lambda t, x: plant.derivs(x, trim)  # noqa: E731
-
-    if solver == "rk4":
-        times, states = integrate_fixed(f, x0, 0.0, duration_s, dt_s, post_step=normalize_state)
-    elif solver == "ivp":
-        times, states = integrate_ivp(f, x0, 0.0, duration_s, post_step=normalize_state, max_step=0.05)
-    else:  # pragma: no cover
-        raise ValueError(f"unknown solver {solver!r}")
-
-    max_net_accel = max(
-        float(np.linalg.norm(f(t, x)[3:6])) for t, x in zip(times, states)
-    )
-    r_final, v_final, _, _ = unpack_state(states[-1])
-    return {
-        "scenario": "hover-ideal (M1 dynamics verification)",
-        "design": {
-            "name": design.name,
-            "mass_kg": mass.mass_kg,
-            "cog_m": mass.cog_m.tolist(),
-            "principal_moments_kg_m2": mass.principal_moments.tolist(),
-            "n_rotors": len(design.rotors),
-        },
-        "trim": {
-            "per_rotor_thrust_n": trim.tolist(),
-            "total_thrust_n": float(np.sum(trim)),
-            "weight_n": mass.mass_kg * STANDARD_GRAVITY,
-        },
-        "integration": {"duration_s": duration_s, "dt_s": dt_s, "solver": solver,
-                        "gravity_m_s2": STANDARD_GRAVITY},
-        "results": {
-            "final_altitude_m": float(r_final[2]),
-            "horizontal_drift_m": float(np.hypot(r_final[0], r_final[1])),
-            "final_speed_m_s": float(np.linalg.norm(v_final)),
-            "max_net_acceleration_m_s2": max_net_accel,
-        },
-        "trustworthiness": {
-            "dynamics_core": {"status": "verified",
-                              "evidence": "unit tests vs analytical solutions — tests/physics/"},
-            "mass_properties": {"status": "verified",
-                                "evidence": "parallel-axis assembly tests vs known cases"},
-            "actuator_model": {"status": "idealized placeholder",
-                               "caveat": "commanded thrust == delivered thrust; no motor/prop/"
-                               "ESC/battery dynamics. Run --scenario hover-static for the "
-                               "sourced powertrain analysis."},
-            "verdict": "M1 dynamics verification only — not a flight-worthiness claim",
-        },
-    }
-
-
-# ------------------------------------------------------------ M2: static
-
-
-def run_hover_static(design: DroneDesign, max_duration_s: float, dt_s: float) -> dict:
-    """M2 static hover on the sourced powertrain: throttle/current/endurance."""
-    if design.powertrain is None:
-        raise ValueError(
-            "design has no powertrain block — add one or use --scenario hover-ideal"
-        )
-    lib = ComponentLibrary(REPO_ROOT / "data" / "components")
-    motor = lib.motor(design.powertrain.motor_id)
-    prop = lib.propeller(design.powertrain.propeller_id)
-    battery_spec = lib.battery(design.powertrain.battery_id)
-    esc_spec = lib.esc(design.powertrain.esc_id)
-
-    dataset = PowertrainDataset(motor, prop.motor_test_data_key or prop.id)
-    battery = BatteryPack(battery_spec)
-    powertrain = StaticPowertrain(dataset, Esc(esc_spec), battery, units=len(design.rotors))
-
-    _, mass_props = build_multirotor(design)
-    total_mass = mass_props.mass_kg
-
-    # Traceability cross-check: the battery Part in the design must match the
-    # battery component's spec mass within the estimate's uncertainty.
-    battery_part = next((p for p in design.parts if "battery" in p.name.lower()), None)
-    consistency = "ok"
-    if battery_part is not None and battery_spec.mass_kg is not None:
-        rel = abs(battery_part.mass_kg - battery_spec.mass_kg) / battery_spec.mass_kg
-        if rel > 0.25:
-            raise ValueError(
-                f"design battery part mass {battery_part.mass_kg} kg differs from "
-                f"component spec {battery_spec.mass_kg} kg by {rel * 100:.0f}% — "
-                "fix the design or the component entry"
-            )
-        elif rel > 1e-9:
-            consistency = f"within {rel * 100:.1f}% of component spec"
-
-    hover = powertrain.static_hover(
-        total_mass, max_duration_s=max_duration_s, dt_s=dt_s
-    )
-    benchmarks = run_propulsion_benchmarks(dataset)
-
-    estimated_components = []
-    for label, spec in (("motor", motor), ("propeller", prop),
-                        ("battery", battery_spec), ("esc", esc_spec)):
-        if spec.source.estimated:
-            estimated_components.append(label)
-    if prop.mass_kg is None:
-        estimated_components.append("propeller mass (unknown — user must supply)")
-
-    return {
-        "scenario": "hover-static (M2 sourced powertrain)",
-        "design": {
-            "name": design.name,
-            "mass_kg": total_mass,
-            "cog_m": mass_props.cog_m.tolist(),
-            "n_rotors": len(design.rotors),
-            "powertrain": design.powertrain.model_dump(),
-            "battery_mass_consistency": consistency,
-        },
-        "benchmarks": [
-            {"name": b.name, "status": b.status, "metrics": b.metrics,
-             "tolerances": b.tolerances, "notes": b.notes}
-            for b in benchmarks
-        ],
-        "hover_point": {
-            "throttle": hover.hover_point.throttle,
-            "v_bus_v": hover.hover_point.v_bus,
-            "per_rotor": {
-                "thrust_n": hover.hover_point.per_unit.thrust_n,
-                "rpm": hover.hover_point.per_unit.rpm,
-                "current_a": hover.hover_point.per_unit.current_a,
-                "power_w": hover.hover_point.per_unit.power_w,
-                "envelope_flags": hover.hover_point.per_unit.flags,
-            },
-            "total_current_a": hover.hover_point.total_current_a,
-            "total_power_w": hover.hover_point.total_power_w,
-            "hover_power_w_per_kg": hover.hover_point.total_power_w / total_mass,
-        },
-        "endurance": {
-            "to_warning_s": hover.endurance_to_warning_s,
-            "to_cutoff_s": hover.endurance_to_cutoff_s,
-            "energy_used_wh_at_warning": hover.energy_used_wh,
-            "min_cell_voltage_v": hover.min_cell_voltage_v,
-        },
-        "limits": {"issues": hover.limit_issues},
-        "trustworthiness": {
-            "propulsion_data": {
-                "status": "measured bench data (model of record)",
-                "source": dataset.provenance,
-                "envelope": dataset.envelope(),
-            },
-            "hover_envelope_flags": hover.envelope_flags,
-            "estimated_components": estimated_components,
-            "battery_model": {
-                "status": "first-order OCV + R model",
-                "caveat": battery_spec.source.notes or "",
-            },
-            "static_only": {
-                "caveat": "no forward-flight advance ratio, no wind, no controller "
-                "dynamics (M3/M4), no thermal integration; endurance carries the "
-                "battery estimates' uncertainty"
-            },
-            "verdict": "M2 static analysis on sourced bench data — NOT a "
-            "flight-worthiness claim",
-        },
-    }
-
-
-# ------------------------------------------------------- M3: closed loop
-
-
-def run_hover_hold(design: DroneDesign, duration_s: float, control_dt_s: float) -> dict:
-    """M3 closed-loop hover: position/altitude hold with scheduled torque and
-    force disturbances; reports peak attitude, settling, oscillation metrics."""
-    plant, mass_props = build_multirotor(design)
-    controller = QuadcopterController(plant)
-
-    mixer_limit = None
-    if design.powertrain is not None:
-        lib = ComponentLibrary(REPO_ROOT / "data" / "components")
-        motor = lib.motor(design.powertrain.motor_id)
-        prop = lib.propeller(design.powertrain.propeller_id)
-        dataset = PowertrainDataset(motor, prop.motor_test_data_key or prop.id)
-        from physics.constants import GF_TO_N
-
-        # Max measured static thrust per rotor (merged table upper bound).
-        rpm_hi = dataset.envelope()["rpm_range_merged"][1]
-        mixer_limit = float(dataset.thrust_n(rpm_hi).value)
-        controller.mixer = Mixer(plant, max_thrust_per_rotor_n=mixer_limit)
-
-    targets = ControlTargets(altitude_m=1.0, position_xy=(0.0, 0.0))
-    disturbances = [
-        Disturbance(t_start=duration_s * 0.4, t_end=duration_s * 0.4 + 0.2,
-                    torque_body=np.array([0.05, 0.0, 0.0])),
-        Disturbance(t_start=duration_s * 0.6, t_end=duration_s * 0.6 + 0.5,
-                    force_world=np.array([2.0, 0.0, 0.0])),
-    ]
-    res = run_controlled_simulation(
-        plant, controller, targets, duration_s=duration_s,
-        control_dt_s=control_dt_s, disturbances=disturbances,
-    )
-
-    def euler(s):
-        R = rotation_matrix(s[6:10])
-        return (np.degrees(np.arctan2(R[2, 1], R[2, 2])),
-                np.degrees(np.arcsin(np.clip(-R[2, 0], -1, 1))),
-                np.degrees(np.arctan2(R[1, 0], R[0, 0])))
-
-    rolls, pitches, yaws = np.array([euler(s) for s in res.states]).T
-    tail_mask = res.times >= res.times[-1] - 2.0
-    z_tail = res.states[tail_mask, 2]
-    x_tail = res.states[tail_mask, 0]
-    y_tail = res.states[tail_mask, 1]
-    thrust_max = float(res.thrusts.max())
-
-    return {
-        "scenario": "hover-hold (M3 closed loop)",
-        "design": {
-            "name": design.name,
-            "mass_kg": mass_props.mass_kg,
-            "cog_m": mass_props.cog_m.tolist(),
-            "n_rotors": len(design.rotors),
-            "mixer_thrust_limit_n_per_rotor": mixer_limit,
-        },
-        "disturbances": [
-            {"t_s": [d.t_start, d.t_end],
-             "force_world_n": None if d.force_world is None else d.force_world.tolist(),
-             "torque_body_nm": None if d.torque_body is None else d.torque_body.tolist()}
-            for d in disturbances
-        ],
-        "results": {
-            "peak_abs_roll_deg": float(np.abs(rolls).max()),
-            "peak_abs_pitch_deg": float(np.abs(pitches).max()),
-            "tail_altitude_error_m": float(np.abs(z_tail - 1.0).max()),
-            "tail_altitude_std_m": float(np.std(z_tail)),
-            "tail_position_error_m": float(max(np.abs(x_tail).max(), np.abs(y_tail).max())),
-            "max_motor_thrust_n": thrust_max,
-            "oscillation": "persistent" if float(np.std(z_tail)) > 0.02 else "none detected",
-        },
-        "trustworthiness": {
-            "controller": {
-                "status": "deterministic closed loop, perfect state knowledge",
-                "caveat": "no sensor noise/latency yet (M4 sensor models); ideal "
-                "actuators (thrust commands delivered instantly, bounded by the "
-                "dataset max when a powertrain is attached)",
-            },
-            "gains": {
-                "status": "derived from assembled mass/inertia",
-                "evidence": "ControlGains.for_plant(); hover/disurbance acceptance "
-                "tests in tests/physics/test_controller.py",
-            },
-            "verdict": "M3 stability verification only — not a flight-worthiness claim",
-        },
-    }
-
-
-# ------------------------------------------------------ M4: flight scenario
-
-
-def run_flight(design: DroneDesign) -> dict:
-    """M4 full mission: takeoff -> climb to 5 m -> hold -> land, with the
-    sourced powertrain in the loop (currents, battery drain, failure monitors,
-    structural checks). Produces time-to-altitude and energy metrics."""
-    from physics.scenarios.runner import Scenario, run_scenario
-
-    if design.powertrain is None:
-        raise ValueError("flight scenario needs a powertrain block (sourced powertrain)")
-    library = ComponentLibrary(REPO_ROOT / "data" / "components")
-
-    scenario = Scenario(
-        name="flight_takeoff_hover_land",
-        duration_s=18.0,
-        altitude_waypoints=[
-            (0.0, 0.0), (1.5, 3.75), (2.5, 5.0),   # shaped climb to 5 m
-            (10.0, 5.0),                            # hold
-            (15.0, 0.0), (18.0, 0.0),               # descent + settle
-        ],
-        success_criteria=[
-            ("reached_5m", lambda v: v.time_to_altitude_s is not None),
-            ("gentle_landing", lambda v: abs(v.states[-1, 2]) < 0.10
-             and abs(v.states[-1, 5]) < 1.0),
-            ("no_critical_failure", lambda v: not any(e.critical for e in v.events)),
-        ],
-    )
-    res = run_scenario(design, scenario, library)
-    _, mass_props = build_multirotor(design)
-
-    max_current = float(np.nanmax(res.per_motor_current_a)) if res.per_motor_current_a is not None else None
-    min_soc = float(res.soc_pct.min()) if res.soc_pct is not None else None
-    return {
-        "scenario": "flight (M4 takeoff-hover-land, powertrain in the loop)",
-        "design": {
-            "name": design.name,
-            "mass_kg": mass_props.mass_kg,
-            "cog_m": mass_props.cog_m.tolist(),
-            "n_rotors": len(design.rotors),
-            "powertrain": design.powertrain.model_dump(),
-            "frame": design.frame.model_dump() if design.frame else None,
-        },
-        "mission": {
-            "profile": "takeoff -> 5 m hold -> land",
-            "duration_s": res.times[-1],
-            "aborted": res.aborted,
-            "abort_event": res.abort_event.message if res.abort_event else None,
-        },
-        "results": {
-            "time_to_5m_s": res.time_to_altitude_s,
-            "max_altitude_m": res.max_altitude_m,
-            "energy_used_wh": res.energy_wh,
-            "max_motor_current_a": max_current,
-            "final_soc_pct": min_soc,
-            "final_altitude_m": float(res.states[-1, 2]),
-            "final_vertical_speed_m_s": float(res.states[-1, 5]),
-            "structural_margin_min": res.structural_margin_min,
-        },
-        "events": [
-            {"t_s": e.t_s, "kind": e.kind, "critical": e.critical, "message": e.message}
-            for e in res.events
-        ],
-        "success": res.success,
-        "trustworthiness": {
-            "powertrain": {
-                "status": "sourced bench data in the loop (model of record)",
-                "caveat": "quasi-static bus solve; motor thermal rule is the "
-                "datasheet continuous-current/duration statement; below-table "
-                "thrust points are declared extrapolations",
-            },
-            "failure_policy": {
-                "status": "declared in physics/scenarios/runner.py",
-                "caveat": "critical events abort the run with a named cause; "
-                "warnings are logged",
-            },
-            "controller": {
-                "status": "deterministic closed loop, perfect state knowledge",
-                "caveat": "sensor noise/latency available via SensorConfig but "
-                "disabled in this run",
-            },
-            "verdict": "M4 mission simulation — NOT a flight-worthiness claim",
-        },
-    }
-
-
-# ---------------------------------------------------------------- report
+from physics.scenarios import service  # noqa: E402
 
 
 def print_report(result: dict) -> None:
     print("=" * 66)
-    print(f"AeroForge simulation report — physics {physics_version}")
+    print(f"AeroForge simulation report — physics {result.get('physics_version')}")
     print(f"scenario: {result['scenario']}")
     print("=" * 66)
 
     d = result["design"]
-    print(f"\n[DESIGN] {d['name']}  ({d['n_rotors']} rotors)")
+    print(f"\n[DESIGN] {d['name']}  ({d.get('n_rotors')} rotors)")
     print(f"  mass                 : {d['mass_kg']:.4f} kg")
     print(f"  CoG                  : {np.array2string(np.array(d['cog_m']), precision=4)} m")
 
-    if result["scenario"].startswith("flight"):
+    scenario = result["scenario"]
+    if scenario.startswith("hover-ideal"):
+        tr = result["trim"]
+        integ = result["integration"]
+        rs = result["results"]
+        print("\n[TRIM] hover thrusts (ΣF=0, Στ=0)")
+        for i, t in enumerate(tr["per_rotor_thrust_n"]):
+            print(f"  rotor {i + 1}: {t:.4f} N")
+        print(f"  total: {tr['total_thrust_n']:.4f} N  (weight: {tr['weight_n']:.4f} N)")
+        print(
+            f"\n[SCENARIO] duration {integ['duration_s']} s | dt {integ['dt_s']} s | "
+            f"solver {integ['solver']} | g = {integ['gravity_m_s2']} m/s²"
+        )
+        print("\n[RESULTS]")
+        print(f"  final altitude       : {rs['final_altitude_m']:+.6e} m")
+        print(f"  horizontal drift     : {rs['horizontal_drift_m']:.3e} m")
+        print(f"  final speed          : {rs['final_speed_m_s']:.3e} m/s")
+        print(f"  max |net accel|      : {rs['max_net_acceleration_m_s2']:.3e} m/s²")
+    elif scenario.startswith("hover-static"):
+        hp = result["hover_point"]
+        pr = hp["per_rotor"]
+        en = result["endurance"]
+        print(f"  powertrain           : {d['powertrain']['motor_id']} + "
+              f"{d['powertrain']['propeller_id']}")
+        print(f"  battery              : {d['powertrain']['battery_id']} "
+              f"(mass consistency: {d['battery_mass_consistency']})")
+        print("\n[BENCHMARKS] pre-registered tolerances")
+        for b in result["benchmarks"]:
+            metrics = ", ".join(f"{k}={v:.3g}" for k, v in b["metrics"].items())
+            print(f"  [{b['status'].upper():8s}] {b['name']}: {metrics}")
+        print("\n[HOVER POINT] (full charge)")
+        print(f"  throttle             : {hp['throttle'] * 100:.1f} %")
+        print(f"  bus voltage          : {hp['v_bus_v']:.2f} V")
+        print(f"  per rotor            : {pr['thrust_n']:.2f} N @ {pr['rpm']:.0f} rpm, "
+              f"{pr['current_a']:.2f} A, {pr['power_w']:.1f} W")
+        print(f"  totals               : {hp['total_current_a']:.2f} A, "
+              f"{hp['total_power_w']:.1f} W  ({hp['hover_power_w_per_kg']:.0f} W/kg)")
+        flags = {k: v for k, v in pr["envelope_flags"].items() if v and k != "note"}
+        if flags:
+            print(f"  envelope flags       : {list(flags)}")
+        warn_s = en["to_warning_s"]
+        print("\n[ENDURANCE] (stationary hover, perfect altitude hold)")
+        if warn_s is not None:
+            print(f"  to warning (3.5 V/cell): {warn_s:.0f} s ({warn_s / 60.0:.1f} min)")
+        print(f"  energy to warning    : {en['energy_used_wh_at_warning']:.1f} Wh")
+        print(f"  min cell voltage     : {en['min_cell_voltage_v']:.2f} V")
+        if result["limits"]["issues"]:
+            print("  LIMIT ISSUES:")
+            for issue in result["limits"]["issues"]:
+                print(f"    - {issue}")
+    elif scenario.startswith("hover-hold"):
+        rs = result["results"]
+        print("\n[DISTURBANCES]")
+        for d in result["disturbances"]:
+            print(f"  t={d['t_s']} force={d['force_world_n']} torque={d['torque_body_nm']}")
+        print("\n[RESULTS] (closed-loop hover with disturbances)")
+        print(f"  peak |roll|          : {rs['peak_abs_roll_deg']:.2f} deg")
+        print(f"  peak |pitch|         : {rs['peak_abs_pitch_deg']:.2f} deg")
+        print(f"  tail altitude error  : {rs['tail_altitude_error_m']:.4f} m "
+              f"(std {rs['tail_altitude_std_m']:.4f})")
+        print(f"  tail position error  : {rs['tail_position_error_m']:.4f} m")
+        print(f"  max motor thrust     : {rs['max_motor_thrust_n']:.2f} N")
+        print(f"  oscillation          : {rs['oscillation']}")
+    elif scenario.startswith("flight"):
         m = result["mission"]
         rs = result["results"]
         print(f"\n[MISSION] {m['profile']} | duration {m['duration_s']:.1f} s | "
@@ -435,74 +123,6 @@ def print_report(result: dict) -> None:
         print("\n[SUCCESS]")
         for name, ok in result["success"].items():
             print(f"  {name:24s}: {'PASS' if ok else 'FAIL'}")
-    elif result["scenario"].startswith("hover-hold"):
-        rs = result["results"]
-        print(f"\n[DISTURBANCES]")
-        for d in result["disturbances"]:
-            print(f"  t={d['t_s']} force={d['force_world_n']} torque={d['torque_body_nm']}")
-        print("\n[RESULTS] (8-10 s closed-loop hover with disturbances)")
-        print(f"  peak |roll|          : {rs['peak_abs_roll_deg']:.2f} deg")
-        print(f"  peak |pitch|         : {rs['peak_abs_pitch_deg']:.2f} deg")
-        print(f"  tail altitude error  : {rs['tail_altitude_error_m']:.4f} m "
-              f"(std {rs['tail_altitude_std_m']:.4f})")
-        print(f"  tail position error  : {rs['tail_position_error_m']:.4f} m")
-        print(f"  max motor thrust     : {rs['max_motor_thrust_n']:.2f} N")
-        print(f"  oscillation          : {rs['oscillation']}")
-    elif result["scenario"].startswith("hover-ideal"):
-        tr = result["trim"]
-        integ = result["integration"]
-        rs = result["results"]
-        print("\n[TRIM] hover thrusts (ΣF=0, Στ=0)")
-        for i, t in enumerate(tr["per_rotor_thrust_n"]):
-            print(f"  rotor {i + 1}: {t:.4f} N")
-        print(f"  total: {tr['total_thrust_n']:.4f} N  (weight: {tr['weight_n']:.4f} N)")
-        print(
-            f"\n[SCENARIO] duration {integ['duration_s']} s | dt {integ['dt_s']} s | "
-            f"solver {integ['solver']} | g = {integ['gravity_m_s2']} m/s²"
-        )
-        print("\n[RESULTS]")
-        print(f"  final altitude       : {rs['final_altitude_m']:+.6e} m")
-        print(f"  horizontal drift     : {rs['horizontal_drift_m']:.3e} m")
-        print(f"  final speed          : {rs['final_speed_m_s']:.3e} m/s")
-        print(f"  max |net accel|      : {rs['max_net_acceleration_m_s2']:.3e} m/s²")
-    else:
-        hp = result["hover_point"]
-        pr = hp["per_rotor"]
-        en = result["endurance"]
-        print(f"  powertrain           : {d['powertrain']['motor_id']} + "
-              f"{d['powertrain']['propeller_id']}")
-        print(f"  battery              : {d['powertrain']['battery_id']} "
-              f"(mass consistency: {d['battery_mass_consistency']})")
-
-        print("\n[BENCHMARKS] pre-registered tolerances")
-        for b in result["benchmarks"]:
-            metrics = ", ".join(f"{k}={v:.3g}" for k, v in b["metrics"].items())
-            print(f"  [{b['status'].upper():8s}] {b['name']}: {metrics}")
-
-        print("\n[HOVER POINT] (full charge)")
-        print(f"  throttle             : {hp['throttle'] * 100:.1f} %")
-        print(f"  bus voltage          : {hp['v_bus_v']:.2f} V")
-        print(f"  per rotor            : {pr['thrust_n']:.2f} N @ {pr['rpm']:.0f} rpm, "
-              f"{pr['current_a']:.2f} A, {pr['power_w']:.1f} W")
-        print(f"  totals               : {hp['total_current_a']:.2f} A, "
-              f"{hp['total_power_w']:.1f} W  ({hp['hover_power_w_per_kg']:.0f} W/kg)")
-        flags = {k: v for k, v in pr["envelope_flags"].items() if v and k != "note"}
-        if flags:
-            print(f"  envelope flags       : {flags}")
-            if pr["envelope_flags"].get("note"):
-                print(f"    note: {pr['envelope_flags']['note']}")
-
-        warn_s = en["to_warning_s"]
-        print("\n[ENDURANCE] (stationary hover, perfect altitude hold)")
-        if warn_s is not None:
-            print(f"  to warning (3.5 V/cell): {warn_s:.0f} s "
-                  f"({warn_s / 60.0:.1f} min)")
-        print(f"  energy to warning    : {en['energy_used_wh_at_warning']:.1f} Wh")
-        print(f"  min cell voltage     : {en['min_cell_voltage_v']:.2f} V")
-        if result["limits"]["issues"]:
-            print("  LIMIT ISSUES:")
-            for issue in result["limits"]["issues"]:
-                print(f"    - {issue}")
 
     print("\n[TRUSTWORTHINESS]")
     for key, entry in result["trustworthiness"].items():
@@ -515,7 +135,7 @@ def print_report(result: dict) -> None:
                 print(f"    - {entry['evidence']}")
         else:
             print(f"  {key}: {entry}")
-    if result["scenario"].startswith("hover-static"):
+    if scenario.startswith("hover-static"):
         tw = result["trustworthiness"]
         if tw.get("hover_envelope_flags"):
             print(f"    - hover envelope flags: {tw['hover_envelope_flags']}")
@@ -553,14 +173,19 @@ def main() -> int:
     if scenario == "auto":
         scenario = "hover-static" if design.powertrain is not None else "hover-ideal"
 
-    if scenario == "hover-static":
-        result = run_hover_static(design, args.duration, args.dt)
-    elif scenario == "hover-hold":
-        result = run_hover_hold(design, max(args.duration, 10.0), 0.004)
-    elif scenario == "flight":
-        result = run_flight(design)
-    else:
-        result = run_hover_ideal(design, args.duration, args.dt, args.solver)
+    try:
+        if scenario == "hover-static":
+            result = service.run_hover_static(design, max_duration_s=max(args.duration, 7200.0),
+                                              dt_s=args.dt)
+        elif scenario == "hover-hold":
+            result = service.run_hover_hold(design, max(args.duration, 10.0), 0.004)
+        elif scenario == "flight":
+            result = service.run_flight(design)
+        else:
+            result = service.run_hover_ideal(design, args.duration, args.dt, args.solver)
+    except ValueError as exc:
+        print(f"error: {exc}", file=sys.stderr)
+        return 2
 
     if args.json:
         print(json.dumps(result, indent=2))

@@ -1,36 +1,84 @@
-import { useEffect, useState } from 'react'
+/** App shell: header + three-pane layout (design editor | 3D viewport |
+  results & charts). */
 
-interface Health {
-  status: string
-  service: string
-  version: string
+import { useQuery } from '@tanstack/react-query'
+import { useEffect } from 'react'
+import { api } from './services/api'
+import { useDesignStore } from './state/designStore'
+import { computeCog } from './state/designStore'
+import { usePreview, useReferenceDesign } from './services/queries'
+import { DesignPanel } from './panels/DesignPanel'
+import { ScenarioPanel } from './panels/ScenarioPanel'
+import { ResultsPanel } from './panels/ResultsPanel'
+import { TelemetryCharts } from './charts/TelemetryCharts'
+import { DroneViewport } from './viewport/DroneViewport'
+
+function ApiStatus() {
+  const health = useQuery({
+    queryKey: ['health'],
+    queryFn: () => api.get<{ status: string; version: string }>('/health'),
+    refetchInterval: 15000,
+    retry: 1,
+  })
+  if (health.isLoading) return <span className="text-xs text-slate-500">API…</span>
+  if (health.isError || !health.data) return <span className="text-xs text-rose-400">API offline</span>
+  return (
+    <span className="flex items-center gap-1 text-xs text-emerald-500">
+      <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
+      API v{health.data.version}
+    </span>
+  )
 }
 
 export default function App() {
-  const [health, setHealth] = useState<Health | null>(null)
-  const [error, setError] = useState<string | null>(null)
+  const design = useDesignStore((s) => s.design)
+  const result = useDesignStore((s) => s.result)
+  const setSnapshot = useDesignStore((s) => s.setSnapshot)
+  const reference = useReferenceDesign()
+  const preview = usePreview(design)
+  const cog = preview.data?.cog_m ?? computeCog(design)
+  const principalAxes = preview.data?.principal_axes ?? null
 
+  // First load: seed the editor with the reference design when empty.
   useEffect(() => {
-    fetch('/api/health')
-      .then((r) => (r.ok ? r.json() : Promise.reject(new Error(`HTTP ${r.status}`))))
-      .then((data: Health) => setHealth(data))
-      .catch((e: Error) => setError(e.message))
-  }, [])
+    if (reference.data && design.parts.length === 0 && design.rotors.length === 0) {
+      setSnapshot(reference.data.snapshot, null)
+    }
+  }, [reference.data, design.parts.length, design.rotors.length, setSnapshot])
 
   return (
-    <main style={{ fontFamily: 'system-ui, sans-serif', padding: 32 }}>
-      <h1>AeroForge</h1>
-      <p>Physics-based drone simulation lab</p>
-      <p style={{ color: '#64748b' }}>
-        Every result will carry a best estimate, uncertainty, credibility rating, and caveats
-        (NASA-STD-7009 / ASME V&amp;V 10). Multi-rotor only in v1.
-      </p>
-      {health && (
-        <p style={{ color: '#16a34a' }}>
-          API: {health.status} — {health.service} v{health.version}
-        </p>
-      )}
-      {error && <p style={{ color: 'crimson' }}>API unreachable: {error}</p>}
-    </main>
+    <div className="flex h-screen flex-col bg-slate-950 text-slate-200">
+      <header className="flex items-center gap-3 border-b border-slate-800 px-4 py-2">
+        <h1 className="text-lg font-semibold tracking-tight">AeroForge</h1>
+        <span className="text-xs text-slate-500">
+          physics-based drone simulation lab · multi-rotor v1
+        </span>
+        <div className="ml-auto">
+          <ApiStatus />
+        </div>
+      </header>
+      <main className="flex min-h-0 flex-1">
+        <aside className="w-80 shrink-0 overflow-y-auto border-r border-slate-800">
+          <DesignPanel />
+          <div className="border-t border-slate-800">
+            <ScenarioPanel />
+          </div>
+        </aside>
+        <section className="relative min-w-0 flex-1">
+          <DroneViewport design={design} cog={cog} principalAxes={principalAxes} result={result} />
+          {result?.telemetry && (
+            <div className="absolute bottom-2 left-2 rounded bg-slate-900/80 px-2 py-1 text-[10px] text-cyan-400">
+              flight path: green = start · red = end
+            </div>
+          )}
+        </section>
+        <aside className="w-96 shrink-0 overflow-y-auto border-l border-slate-800">
+          <ResultsPanel result={result} />
+          <div className="border-t border-slate-800">
+            <TelemetryCharts result={result} />
+          </div>
+        </aside>
+      </main>
+    </div>
   )
 }

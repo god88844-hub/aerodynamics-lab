@@ -327,6 +327,71 @@ commands used, test results, remaining known issues and next steps.
 - Scenarios defined in code; scenario JSON persistence deferred to the
   API/UI milestone (M5).
 
+
+## Milestone 5 — User Interface and Editor (done)
+
+**Implemented**
+- **Scenario service extraction** — the run_* functions moved from the CLI
+  into `packages/physics/scenarios/service.py` (canonical runners shared by
+  CLI and API), each now returning decimated telemetry for plotting.
+- **API backend** (`apps/api`):
+  - persistence: SQLAlchemy models (designs with immutable snapshot_json +
+    simulation_runs with verbatim result_json), SQLite dev default,
+    AEROFORGE_DB_URL override; Alembic migration 0001 verified end-to-end;
+  - routes: designs CRUD (schema-validated on every write, 422 on invalid),
+    `GET /designs/reference` (seeds the editor), `POST /designs/preview`
+    (mass/CoG/principal axes/trim feasibility), `POST /designs/{id}/simulate`
+    (runs and stores the run), `GET /simulations/{id}`, history listing,
+    `GET /components` (evidence DB summaries + materials); CORS for the dev
+    origin; physics refusals return status=failed results (an engineering
+    outcome, not a crash).
+- **Web UI** (`apps/web`, React 19 + Tailwind v4 + R3F + Zustand + TanStack
+  Query + recharts):
+  - 3D viewport: quad model from the snapshot (center plate, arms, motors,
+    translucent prop discs, battery), **CoG marker + principal axes** from
+    the physics preview, grid, orbit controls, flight-path line (green start
+    / red end) after a run;
+  - design editor: name, **arm length** (regenerates motor/ESC/prop/rotor
+    placement), **battery position + mass**, powertrain pickers fed by the
+    evidence DB (estimated components flagged), frame material/tube fields,
+    drag CdA; live physics preview panel;
+  - scenario panel: flight / hover-static / hover-hold / hover-ideal;
+    Simulate saves the design first (stored run references the exact
+    snapshot — traceability);
+  - results panel: mission metrics, hover point + endurance + benchmarks,
+    disturbance response, events (critical/warn), success-criteria chips,
+    trustworthiness section (always);
+  - charts: altitude/vz, per-motor currents, battery SOC + bus voltage.
+
+**Verified**
+- Backend: `pytest tests/integration/test_api.py` — 8 passed (CRUD cycle,
+  invalid snapshot 422, preview mass properties, flight end-to-end with
+  telemetry, hover-static end-to-end with benchmark gates, physics-refusal
+  reported as failed-status, component listing).
+- Frontend: `npm run build` (tsc clean) and `vitest` — 6 passed (store arm-
+  length regeneration, CoG, results panel rendering incl. failure banner).
+- **Browser end-to-end (IAB)**: loaded localhost:5173, reference design
+  auto-seeded (mass 3.708 kg, trim 9.09 N/rotor shown live), pressed
+  Simulate → mission results (time to 5 m 2.34 s, max altitude 5.34 m,
+  energy 1.49 Wh, max current 7.09 A, structural margin 13.24x), PASS chips,
+  trustworthiness section, all charts, and the cyan flight path visible in
+  the 3D viewport. Screenshot archived in the session artifacts.
+
+**Commands**
+- API: `cd apps/api && uvicorn app.main:app --port 8000`
+- Web: `cd apps/web && npm run dev`
+- Tests: `pytest`, `cd apps/web && npm test`
+- Migrations: `cd apps/api && alembic upgrade head`
+
+**Known issues / next steps**
+- Simulations run synchronously in the request (fine for the current
+  scenario durations; a job queue arrives with M6 batch work if needed).
+- Single-user dev persistence; no auth. Prop disc rendering is a visual
+  placeholder (real blade geometry later).
+- Chart set covers the main channels; per-channel toggles deferred.
+
+---
+
 ---
 
 
