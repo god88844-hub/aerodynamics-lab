@@ -40,6 +40,8 @@ commands used, test results, remaining known issues and next steps.
 
 ---
 
+---
+
 ## Milestone 1 — 6-DOF Dynamics & Component Models (done)
 
 **Implemented**
@@ -107,6 +109,8 @@ commands used, test results, remaining known issues and next steps.
   motor/prop/ESC/battery data and interpolation benchmarks (<0.5 % gate).
 - Rotor reaction torque uses a uniform k until per-component data lands.
 - No wind/turbulence model yet (M4); no sensor/controller loop yet (M3).
+
+---
 
 ## Milestone 2 — Static Propulsion Models (done)
 
@@ -196,5 +200,65 @@ cross-check benchmark only.
 Running changelog per the build specification's "Reporting Progress" section:
 after each milestone — what was implemented and tested, new files/modules,
 commands used, test results, remaining known issues and next steps.
+
+---
+
+---
+
+## Milestone 3 — Flight Controller and Stability (done)
+
+**Implemented**
+- `packages/physics/controller/pid.py` — discrete PID with derivative-on-
+  measurement and **integral-tracking anti-windup** (when the output
+  saturates, the integral is held at the value that produces the saturated
+  output — no stored windup, instant recovery on error reversal).
+- `packages/physics/controller/mixer.py` — geometry-aware wrench mixer:
+  [total thrust, tx, ty, tz] -> per-rotor thrusts via the plant's A matrix
+  (same equations as hover_trim); iterative negative-clip re-solve, optional
+  per-rotor thrust ceiling (from the sourced dataset when attached), and
+  status flags (clipped_negative / saturated_max / torque_residual).
+- `packages/physics/controller/attitude.py` — cascade controller:
+  position hold (yaw-compensated, tilt-capped) -> attitude P -> rate PI ->
+  mixer; altitude PID with tilt compensation (1/cos(tilt)). Gains derived
+  from the assembled mass/inertia (ControlGains.for_plant) — the 2 kg and
+  3.7 kg quads both stabilize without hand tuning. Integral authority is
+  deliberately zero for altitude with ideal actuators (no bias to integrate;
+  any climb-integrated windup cannot unwind quickly) — documented, and
+  reserved for the battery-sag bias case (M4), clamped to ±1.5 m/s².
+- `packages/physics/controller/simulation.py` — deterministic closed-loop
+  harness: fixed control period (default 250 Hz) with RK4 substeps, scheduled
+  disturbance forces (world) / torques (body), full telemetry, controller
+  reset per run.
+- CLI `--scenario hover-hold`: 10 s closed-loop hover with a torque impulse
+  (t=4 s) and a force push (t=6 s); reports peak attitude, tail errors,
+  oscillation metric, mixer thrust ceiling.
+
+**Verified** (`python -m pytest` → **83 passed**; 17 new)
+- PID: P-only offset = kp/(1+kp)·target exactly; integral eliminates steady-
+  state error; derivative reduces overshoot >4x on a double integrator;
+  anti-windup recovers immediately on error reversal.
+- Hover hold (2 kg): 1 m hold, tail error < 5 cm, std < 1 cm, attitude < 1°;
+  altitude step reaches target within 5 cm.
+- Disturbance rejection: 0.05 N·m roll impulse — visible response (0.4°),
+  return to level < 0.5°, altitude hold maintained; 2 N force push —
+  excursion then position-hold recovery (< 5 cm, |v| < 5 cm/s).
+- **Spec checkpoint (Prompt 5)**: 5° roll command held within ±0.1°
+  (measured mean error < 0.05°, std < 0.05°); returns to level within ±0.1°
+  when released. Pitch command held symmetrically.
+- Yaw hold 30° on the MN3508 design (reaction torque k=0.015 N·m/N derived
+  from bench data P/ω, flagged estimate ±30 %).
+- Mixer: exact wrench reconstruction at zero saturation; negative-demand
+  clipping and max-thrust saturation flagged; gains scale with inertia.
+
+**Commands**
+- `python -m pytest`
+- `python scripts/run_simulation.py data/designs/quad_mn3508_6s.json --scenario hover-hold`
+
+**Known issues / next steps**
+- Perfect state knowledge (no sensor noise/latency) and ideal actuators —
+  M4 adds sensor models, delay, and failure detection; powertrain-in-the-loop
+  (battery sag feeding the mixer ceiling) is wired in M4 scenarios.
+- Hover trim (spec M3 item) is the M1 hover_trim() least-squares solve, now
+  also used implicitly through the mixer.
 
 ---

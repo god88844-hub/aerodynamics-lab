@@ -39,6 +39,10 @@ from physics.dynamics.design_adapter import build_multirotor  # noqa: E402
 from physics.dynamics.rigid_body import make_state, normalize_state, unpack_state  # noqa: E402
 from physics.integration.rk4 import integrate_fixed  # noqa: E402
 from physics.integration.scipy_solver import integrate_ivp  # noqa: E402
+from physics.controller.attitude import ControlTargets, QuadcopterController  # noqa: E402
+from physics.controller.mixer import Mixer  # noqa: E402
+from physics.controller.simulation import Disturbance, run_controlled_simulation  # noqa: E402
+from physics.dynamics.quaternion import rotation_matrix  # noqa: E402
 from physics.propulsion.battery import BatteryPack  # noqa: E402
 from physics.propulsion.dataset import PowertrainDataset  # noqa: E402
 from physics.propulsion.esc import Esc  # noqa: E402
@@ -219,6 +223,94 @@ def run_hover_static(design: DroneDesign, max_duration_s: float, dt_s: float) ->
     }
 
 
+# ------------------------------------------------------- M3: closed loop
+
+
+def run_hover_hold(design: DroneDesign, duration_s: float, control_dt_s: float) -> dict:
+    """M3 closed-loop hover: position/altitude hold with scheduled torque and
+    force disturbances; reports peak attitude, settling, oscillation metrics."""
+    plant, mass_props = build_multirotor(design)
+    controller = QuadcopterController(plant)
+
+    mixer_limit = None
+    if design.powertrain is not None:
+        lib = ComponentLibrary(REPO_ROOT / "data" / "components")
+        motor = lib.motor(design.powertrain.motor_id)
+        prop = lib.propeller(design.powertrain.propeller_id)
+        dataset = PowertrainDataset(motor, prop.motor_test_data_key or prop.id)
+        from physics.constants import GF_TO_N
+
+        # Max measured static thrust per rotor (merged table upper bound).
+        rpm_hi = dataset.envelope()["rpm_range_merged"][1]
+        mixer_limit = float(dataset.thrust_n(rpm_hi).value)
+        controller.mixer = Mixer(plant, max_thrust_per_rotor_n=mixer_limit)
+
+    targets = ControlTargets(altitude_m=1.0, position_xy=(0.0, 0.0))
+    disturbances = [
+        Disturbance(t_start=duration_s * 0.4, t_end=duration_s * 0.4 + 0.2,
+                    torque_body=np.array([0.05, 0.0, 0.0])),
+        Disturbance(t_start=duration_s * 0.6, t_end=duration_s * 0.6 + 0.5,
+                    force_world=np.array([2.0, 0.0, 0.0])),
+    ]
+    res = run_controlled_simulation(
+        plant, controller, targets, duration_s=duration_s,
+        control_dt_s=control_dt_s, disturbances=disturbances,
+    )
+
+    def euler(s):
+        R = rotation_matrix(s[6:10])
+        return (np.degrees(np.arctan2(R[2, 1], R[2, 2])),
+                np.degrees(np.arcsin(np.clip(-R[2, 0], -1, 1))),
+                np.degrees(np.arctan2(R[1, 0], R[0, 0])))
+
+    rolls, pitches, yaws = np.array([euler(s) for s in res.states]).T
+    tail_mask = res.times >= res.times[-1] - 2.0
+    z_tail = res.states[tail_mask, 2]
+    x_tail = res.states[tail_mask, 0]
+    y_tail = res.states[tail_mask, 1]
+    thrust_max = float(res.thrusts.max())
+
+    return {
+        "scenario": "hover-hold (M3 closed loop)",
+        "design": {
+            "name": design.name,
+            "mass_kg": mass_props.mass_kg,
+            "cog_m": mass_props.cog_m.tolist(),
+            "n_rotors": len(design.rotors),
+            "mixer_thrust_limit_n_per_rotor": mixer_limit,
+        },
+        "disturbances": [
+            {"t_s": [d.t_start, d.t_end],
+             "force_world_n": None if d.force_world is None else d.force_world.tolist(),
+             "torque_body_nm": None if d.torque_body is None else d.torque_body.tolist()}
+            for d in disturbances
+        ],
+        "results": {
+            "peak_abs_roll_deg": float(np.abs(rolls).max()),
+            "peak_abs_pitch_deg": float(np.abs(pitches).max()),
+            "tail_altitude_error_m": float(np.abs(z_tail - 1.0).max()),
+            "tail_altitude_std_m": float(np.std(z_tail)),
+            "tail_position_error_m": float(max(np.abs(x_tail).max(), np.abs(y_tail).max())),
+            "max_motor_thrust_n": thrust_max,
+            "oscillation": "persistent" if float(np.std(z_tail)) > 0.02 else "none detected",
+        },
+        "trustworthiness": {
+            "controller": {
+                "status": "deterministic closed loop, perfect state knowledge",
+                "caveat": "no sensor noise/latency yet (M4 sensor models); ideal "
+                "actuators (thrust commands delivered instantly, bounded by the "
+                "dataset max when a powertrain is attached)",
+            },
+            "gains": {
+                "status": "derived from assembled mass/inertia",
+                "evidence": "ControlGains.for_plant(); hover/disurbance acceptance "
+                "tests in tests/physics/test_controller.py",
+            },
+            "verdict": "M3 stability verification only — not a flight-worthiness claim",
+        },
+    }
+
+
 # ---------------------------------------------------------------- report
 
 
@@ -233,7 +325,20 @@ def print_report(result: dict) -> None:
     print(f"  mass                 : {d['mass_kg']:.4f} kg")
     print(f"  CoG                  : {np.array2string(np.array(d['cog_m']), precision=4)} m")
 
-    if result["scenario"].startswith("hover-ideal"):
+    if result["scenario"].startswith("hover-hold"):
+        rs = result["results"]
+        print(f"\n[DISTURBANCES]")
+        for d in result["disturbances"]:
+            print(f"  t={d['t_s']} force={d['force_world_n']} torque={d['torque_body_nm']}")
+        print("\n[RESULTS] (8-10 s closed-loop hover with disturbances)")
+        print(f"  peak |roll|          : {rs['peak_abs_roll_deg']:.2f} deg")
+        print(f"  peak |pitch|         : {rs['peak_abs_pitch_deg']:.2f} deg")
+        print(f"  tail altitude error  : {rs['tail_altitude_error_m']:.4f} m "
+              f"(std {rs['tail_altitude_std_m']:.4f})")
+        print(f"  tail position error  : {rs['tail_position_error_m']:.4f} m")
+        print(f"  max motor thrust     : {rs['max_motor_thrust_n']:.2f} N")
+        print(f"  oscillation          : {rs['oscillation']}")
+    elif result["scenario"].startswith("hover-ideal"):
         tr = result["trim"]
         integ = result["integration"]
         rs = result["results"]
@@ -314,7 +419,7 @@ def main() -> int:
     parser.add_argument("config", help="Path to a design snapshot JSON.")
     parser.add_argument(
         "--scenario",
-        choices=["auto", "hover-ideal", "hover-static"],
+        choices=["auto", "hover-ideal", "hover-static", "hover-hold"],
         default="auto",
         help="hover-static needs a powertrain block (default: auto-select)",
     )
@@ -340,6 +445,8 @@ def main() -> int:
 
     if scenario == "hover-static":
         result = run_hover_static(design, args.duration, args.dt)
+    elif scenario == "hover-hold":
+        result = run_hover_hold(design, max(args.duration, 10.0), 0.004)
     else:
         result = run_hover_ideal(design, args.duration, args.dt, args.solver)
 
