@@ -35,6 +35,8 @@ def evidence_client():
                 db.flush()
                 data = {
                     "status": "completed",
+                    "mission": {"aborted": False},
+                    "success": {"reached_5m": True, "gentle_landing": True},
                     "telemetry": {
                         "t": [i / 2 for i in range(21)],
                         "z": [-i for i in range(21)],

@@ -145,6 +145,15 @@ def evaluate_flight_evidence(
     """Score a stored *pre-existing* flight run; report never alters it."""
     if simulation_report.get("status") != "completed" or not scenario.startswith("flight"):
         raise ValueError("flight evidence requires a successful stored flight simulation")
+    mission = simulation_report.get("mission")
+    success = simulation_report.get("success")
+    if not isinstance(mission, dict) or not isinstance(success, dict) or not success:
+        raise ValueError("stored flight report lacks mission outcome and success criteria")
+    if not isinstance(mission.get("aborted"), bool) or any(
+        not isinstance(outcome, bool) for outcome in success.values()
+    ):
+        raise ValueError("stored mission outcomes must be explicit booleans")
+    mission_succeeded = not mission["aborted"] and all(success.values())
     tel = simulation_report.get("telemetry")
     if not isinstance(tel, dict):
         raise ValueError("stored flight simulation has no telemetry")
@@ -195,6 +204,8 @@ def evaluate_flight_evidence(
 
     if body.dataset_kind == "synthetic_fixture":
         verdict = "SYNTHETIC_VERIFICATION_ONLY"
+    elif not mission_succeeded:
+        verdict = "SIMULATED_MISSION_FAILED_OR_ABORTED"
     elif not body.hardware_matches_simulated_design:
         verdict = "UNCONFIRMED_HARDWARE_CONFIGURATION"
     elif not body.unused_for_model_calibration:
@@ -234,6 +245,7 @@ def evaluate_flight_evidence(
         },
         "channels": comparison,
         "all_predeclared_tolerances_met": threshold_met,
+        "simulated_mission_succeeded": mission_succeeded,
         "verdict": verdict,
         "simulation_modified": False,
         "limitations": [
@@ -243,6 +255,7 @@ def evaluate_flight_evidence(
             "Altitude is relative to takeoff and positive up; no GPS datum or sensor bias is corrected",
             "Battery current sums modeled motor currents and may omit auxiliary loads or ESC losses",
             "Linear interpolation between recorded simulator samples is not a higher-fidelity solution",
+            "Reported prediction match does not override failed or aborted simulated mission criteria",
             "Only reported sampled channels and conditions are scored, not full flight safety or unseen failures",
             "No measurement uncertainty, sensor calibration or independent replicated test coverage is established",
             "Comparison cannot certify an aircraft or quantify the probability of real-world mission success",

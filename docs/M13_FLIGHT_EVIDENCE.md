@@ -76,13 +76,17 @@ zero-filled or inferred.
 
 ## Hard evidence gates
 
-- 404 if no stored simulation; 422 for failed/non-flight simulations, bad
+- 404 if no stored simulation; 422 for failed/non-flight simulations or missing
+  explicit mission success criteria, bad
   channel data, invalid timestamps, unmeasured channels, or missing/invalid
   predeclared tolerances.
 - No extrapolation outside the simulated interval, no implicit time offset.
 - Mission coverage must be at least **80%** and original simulation
   telemetry samples spaced no more than **0.5 seconds**, or the quality
   check refuses a positive conclusion.
+- An aborted simulation or any failed simulated mission success criterion
+  prevents a positive reported validation verdict, even if the log matches
+  the predicted crash or failure.
 - All supplied channels must meet the operator's individually declared
   maximum-absolute-error thresholds for a positive *reported tolerance*
   outcome. A few sample points do not establish unseen transients.

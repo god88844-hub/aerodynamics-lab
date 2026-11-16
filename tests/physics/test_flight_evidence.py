@@ -9,7 +9,10 @@ from physics.validation.flight_evidence import FlightEvidenceRequest, evaluate_f
 
 def sim():
     return {
-        "status": "completed", "telemetry": {
+        "status": "completed",
+        "mission": {"aborted": False},
+        "success": {"reached_5m": True, "gentle_landing": True},
+        "telemetry": {
             "t": [0.5 * i for i in range(21)],
             "z": [-1.0 * i for i in range(21)],
             "vz": [-2.0] * 21,
@@ -158,3 +161,19 @@ def test_request_never_mutates_original_simulation_or_observations():
     prior = copy.deepcopy((record, data))
     compute(data, record)
     assert (record, data) == prior
+
+
+def test_abort_or_failed_mission_never_gets_positive_physical_verdict():
+    data = payload("physical_measurements")
+    record = sim()
+    record["mission"]["aborted"] = True
+    out = compute(data, record)
+    assert out["verdict"] == "SIMULATED_MISSION_FAILED_OR_ABORTED"
+    assert out["simulated_mission_succeeded"] is False
+    record = sim()
+    record["success"]["gentle_landing"] = False
+    assert compute(data, record)["verdict"] == "SIMULATED_MISSION_FAILED_OR_ABORTED"
+    record = sim()
+    record.pop("success")
+    with pytest.raises(ValueError, match="lacks mission outcome"):
+        compute(data, record)
