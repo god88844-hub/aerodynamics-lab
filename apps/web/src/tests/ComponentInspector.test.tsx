@@ -1,5 +1,5 @@
-import { fireEvent, render, screen } from '@testing-library/react'
-import { beforeEach, describe, expect, it } from 'vitest'
+import { cleanup, fireEvent, render, screen } from '@testing-library/react'
+import { afterEach, beforeEach, describe, expect, it } from 'vitest'
 import { ComponentInspector } from '../editor/ComponentInspector'
 import { useDesignStore } from '../state/designStore'
 import type { DroneDesign } from '../types/api'
@@ -14,6 +14,7 @@ const design: DroneDesign = {
   rotor_torque_per_thrust_n_m_per_n: 0.01,
 }
 beforeEach(() => useDesignStore.getState().setSnapshot(structuredClone(design), null))
+afterEach(() => cleanup())
 
 describe('3D component inspector UI', () => {
   it('adds and edits a physical point-mass payload through the form', () => {
