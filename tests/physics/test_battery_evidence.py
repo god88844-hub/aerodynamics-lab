@@ -171,7 +171,7 @@ def test_actual_battery_ocv_curve_support_is_respected():
     data = payload()
     data["samples"][0]["soc_pct"] = 5
     with pytest.raises(ValueError, match="OCV curve support"):
-        calculate(data)
+        calculate(data, spec)
 
 
 def test_high_c_rate_stays_flagged_not_called_validated():
