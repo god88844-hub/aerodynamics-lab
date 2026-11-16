@@ -57,6 +57,7 @@ def _states_telemetry(times, states, thrusts, currents=None, v_bus=None, soc=Non
         "x": s[:, 0].tolist(),
         "y": s[:, 1].tolist(),
         "z": s[:, 2].tolist(),
+        "q_wxyz": s[:, 6:10].tolist(),
         "vz": s[:, 5].tolist(),
         "motor_thrusts_n": np.asarray(thrusts)[idx].tolist(),
     }
