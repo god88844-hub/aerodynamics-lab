@@ -10,6 +10,7 @@ import { usePreview, useReferenceDesign } from './services/queries'
 import { DesignPanel } from './panels/DesignPanel'
 import { ComponentInspector } from './editor/ComponentInspector'
 import { ScenarioPanel } from './panels/ScenarioPanel'
+import { StructuralLabPanel } from './panels/StructuralLabPanel'
 import { ResultsPanel } from './panels/ResultsPanel'
 import { TelemetryCharts } from './charts/TelemetryCharts'
 import { PlaybackWorkspace } from './playback/PlaybackWorkspace'
@@ -64,6 +65,9 @@ export default function App() {
           <div className="border-t border-slate-800"><DesignPanel /></div>
           <div className="border-t border-slate-800">
             <ScenarioPanel />
+          </div>
+          <div className="border-t border-slate-800">
+            <StructuralLabPanel design={design} />
           </div>
         </aside>
         <section className="relative min-w-0 flex-1">

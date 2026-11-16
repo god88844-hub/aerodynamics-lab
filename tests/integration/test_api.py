@@ -158,3 +158,38 @@ def test_simulation_failure_is_reported_not_crashing(client):
     body = r.json()
     assert body["status"] == "failed"
     assert "powertrain" in body["error"]
+
+
+def test_structural_envelope_returns_auditable_per_rotor_loads(client, design_payload):
+    r = client.post("/api/designs/structural-envelope", json={
+        "snapshot": design_payload,
+        "cases": [
+            {"name": "static_hover_user_defined", "thrusts_n": [9.1] * 4},
+            {"name": "asymmetric_user_defined", "thrusts_n": [10, 12, 8, 9]},
+        ],
+    })
+    assert r.status_code == 200, r.text
+    data = r.json()
+    assert len(data["cases"]) == 2
+    assert all(len(case["rotors"]) == 4 for case in data["cases"])
+    assert data["governing"]["case"] == "asymmetric_user_defined"
+    assert data["governing"]["rotor_index"] == 1
+    assert data["governing"]["span_m"] > design_payload["frame"]["arm_length_m"]
+    assert "static" in data["failure_threshold"]
+    assert data["verdict"] in ("ANALYTICAL_STATIC_SCREEN_ONLY",
+                               "EXCEEDS_DECLARED_ALLOWABLE")
+
+
+def test_structural_envelope_rejects_bad_cases_and_missing_frame(client, design_payload):
+    invalid = client.post("/api/designs/structural-envelope", json={
+        "snapshot": design_payload,
+        "cases": [{"name": "wrong_size", "thrusts_n": [1, 2]}],
+    })
+    assert invalid.status_code == 422
+    without_frame = dict(design_payload)
+    without_frame.pop("frame")
+    missing = client.post("/api/designs/structural-envelope", json={
+        "snapshot": without_frame,
+        "cases": [{"name": "hover", "thrusts_n": [1, 1, 1, 1]}],
+    })
+    assert missing.status_code == 422
