@@ -1,8 +1,12 @@
 """Frame arm structural checks (cantilever bending of circular tubes).
 
-MODEL STATUS: static bending at the arm root, conservative:
-  M_root = F_motor * arm_length      (worst-case arm carries the full motor thrust)
-  sigma   = M * c / I                (c = OD/2, I = tube second moment of area)
+MODEL STATUS: static bending at the assumed frame root (body-frame origin):
+  L_i = max(frame's declared span, planar distance from origin to rotor i)
+  M_root,i = F_i * L_i               (per-rotor loads, no load sharing)
+  sigma_i = M_i * c / I              (c = OD/2, I = tube second moment)
+  Worst margin is min over rotors. When declared vs geometric spans disagree,
+  the larger span is used to avoid optimistic underestimation and a warning
+  is attached to the flight report. The exact root support remains assumed.
 
 NOT modeled (flagged in results): torsion from the motor reaction torque,
 vibration/fatigue, stress concentrations at clamps, buckling of thin walls,
@@ -20,6 +24,38 @@ import math
 from dataclasses import dataclass
 
 from physics.structures.materials import MaterialProps
+
+
+def effective_arm_spans_m(
+    declared_length_m: float,
+    rotor_positions_m,
+) -> list[float]:
+    """Conservative per-rotor horizontal cantilever lengths in meters.
+
+    The assumed frame root is the design-body origin, NOT the aircraft CoG.
+    With thrust along body +z, the bending lever is hypot(x, y); z does
+    not contribute to this bending moment. Use max(declared, geometric)
+    until the structural root and arm geometry are explicitly modeled.
+
+    Reject invalid or zero-span rotors instead of inventing a beam length.
+    """
+    if not math.isfinite(declared_length_m) or declared_length_m <= 0:
+        raise ValueError("declared structural arm length must be finite and positive")
+    lengths: list[float] = []
+    for index, position in enumerate(rotor_positions_m):
+        point = tuple(position)
+        if len(point) != 3 or not all(math.isfinite(v) for v in point):
+            raise ValueError(f"rotor {index} position must be a finite 3-vector")
+        radial = math.hypot(point[0], point[1])
+        if radial <= 1e-9:
+            raise ValueError(
+                f"rotor {index} has zero horizontal lever arm: "
+                "cantilever root geometry requires review"
+            )
+        lengths.append(max(declared_length_m, radial))
+    if not lengths:
+        raise ValueError("cannot check structure without any rotor positions")
+    return lengths
 
 
 def tube_second_moment(od_m: float, id_m: float) -> float:

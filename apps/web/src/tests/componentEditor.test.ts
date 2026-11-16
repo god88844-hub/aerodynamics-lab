@@ -82,7 +82,8 @@ describe('component editor', () => {
   })
   it('keeps rotor and part placements coupled for Quad-X scaling', () => {
     get().setArmLength(0.4)
-    expect(get().design.rotors[0].position_m).toEqual([0.4, 0.4, 0.02])
-    expect(get().design.parts.find((p) => p.name === 'motor_front_right')?.position_m).toEqual([0.4, 0.4, 0.02])
+    expect(get().design.rotors[0].position_m[0]).toBeCloseTo(0.4 / Math.SQRT2)
+    expect(get().design.rotors[0].position_m[1]).toBeCloseTo(0.4 / Math.SQRT2)
+    expect(get().design.parts.find((p) => p.name === 'motor_front_right')?.position_m[0]).toBeCloseTo(0.4 / Math.SQRT2)
   })
 })

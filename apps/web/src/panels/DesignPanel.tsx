@@ -3,7 +3,7 @@
 
 import { useDesignStore } from '../state/designStore'
 import { useComponents, useDesignsList, usePreview, useSaveDesign } from '../services/queries'
-import { batteryPart } from '../state/designStore'
+import { batteryPart, quadXRadius } from '../state/designStore'
 import { NumberField, SectionTitle, SelectField, TextField } from './fields'
 import { analyzeGeometry } from '../editor/geometryChecks'
 
@@ -35,7 +35,8 @@ export function DesignPanel() {
   }))
   const matOpts = (components.data?.materials ?? []).map((m) => ({ value: m.id, label: m.name }))
 
-  const armLength = design.frame?.arm_length_m ?? 0.25
+  const radialArmSpan = quadXRadius(design)
+  const armLength = radialArmSpan ?? design.frame?.arm_length_m ?? 0.25
   const selectedProp = components.data?.propellers.find(
     (p) => p.id === design.powertrain?.propeller_id,
   )
@@ -76,17 +77,25 @@ export function DesignPanel() {
         <SectionTitle>Design</SectionTitle>
         <TextField label="name" value={design.name} onChange={setName} />
         <NumberField
-          label="arm length"
+          label="rotor radial span"
           unit="m"
           value={armLength}
           step={0.01}
           min={0.05}
           max={2}
+          disabled={radialArmSpan === null}
           onChange={(v) => setArmLength(v)}
         />
-        {design.rotors.length !== 4 && (
+        {radialArmSpan === null && (
           <p className="text-xs text-amber-400">
-            Only Quad-X arm scaling is implemented. Rotor assemblies are locked for other layouts.
+            Rotor-span editing requires a symmetric, ordered Quad-X. Other layouts are locked.
+          </p>
+        )}
+        {design.frame && Math.abs(design.frame.arm_length_m - armLength) > 1e-6 && (
+          <p className="text-xs text-amber-400">
+            Saved frame arm span ({design.frame.arm_length_m.toFixed(3)} m)
+            differs from rotor radius ({armLength.toFixed(3)} m).
+            Editing radial span synchronizes the frame declaration.
           </p>
         )}
         <NumberField
@@ -144,7 +153,7 @@ export function DesignPanel() {
           onChange={(v) =>
             setFrame({
               ...design.frame,
-              arm_length_m: armLength,
+              arm_length_m: design.frame?.arm_length_m ?? armLength,
               tube_od_m: design.frame?.tube_od_m ?? 0.012,
               tube_id_m: design.frame?.tube_id_m ?? 0.010,
               material_id: v,
@@ -153,9 +162,9 @@ export function DesignPanel() {
         {design.frame && (
           <>
             <NumberField label="tube OD" unit="m" value={design.frame.tube_od_m} step={0.001} min={0.003}
-              onChange={(v) => setFrame({ ...design.frame!, tube_od_m: v, arm_length_m: armLength })} />
+              onChange={(v) => setFrame({ ...design.frame!, tube_od_m: v })} />
             <NumberField label="tube ID" unit="m" value={design.frame.tube_id_m} step={0.001} min={0.002}
-              onChange={(v) => setFrame({ ...design.frame!, tube_id_m: v, arm_length_m: armLength })} />
+              onChange={(v) => setFrame({ ...design.frame!, tube_id_m: v })} />
           </>
         )}
         {design.frame && (

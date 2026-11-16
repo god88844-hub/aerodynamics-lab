@@ -41,7 +41,7 @@ from physics.integration.rk4 import rk4_step
 from physics.propulsion.battery import BatteryPack
 from physics.propulsion.dataset import PowertrainDataset
 from physics.propulsion.esc import Esc
-from physics.structures.beam import check_arm
+from physics.structures.beam import check_arm, effective_arm_spans_m
 from physics.structures.materials import MaterialProps, load_materials
 
 
@@ -284,17 +284,34 @@ def check_ground(
 def check_structure(
     thrusts: np.ndarray,
     t: float,
-    arm_length_m: float,
+    effective_arm_lengths_m: list[float],
     tube_od_m: float,
     tube_id_m: float,
     material: MaterialProps,
 ) -> tuple[FailureEvent | None, float]:
-    worst = check_arm(float(np.max(thrusts)), arm_length_m, tube_od_m, tube_id_m, material)
+    """Check each rotor's own thrust and effective lever, not max thrust
+    against one (possibly underestimated) declared arm length."""
+    forces = np.asarray(thrusts, dtype=float)
+    spans = np.asarray(effective_arm_lengths_m, dtype=float)
+    if (forces.ndim != 1 or spans.ndim != 1 or len(forces) == 0
+            or forces.shape != spans.shape or not np.all(np.isfinite(forces))
+            or not np.all(np.isfinite(spans)) or np.any(forces < 0)
+            or np.any(spans <= 0)):
+        raise ValueError("structural check needs matching finite thrust/span vectors")
+
+    checks = [
+        check_arm(float(force), float(span), tube_od_m, tube_id_m, material)
+        for force, span in zip(forces, spans)
+    ]
+    worst_i = int(np.argmin([check.margin for check in checks]))
+    worst = checks[worst_i]
     event = None
     if not worst.ok:
         event = FailureEvent(
             t, "structure_yield", True,
-            f"STRUCTURAL FAILURE: {worst.message} — margin {worst.margin:.2f} < 1.0"
+            f"STRUCTURAL FAILURE: rotor {worst_i} at effective span "
+            f"{spans[worst_i]:.4f} m: {worst.message} "
+            f"— margin {worst.margin:.2f} < 1.0"
         )
     return event, worst.margin
 
@@ -377,6 +394,7 @@ def run_scenario(
 
     # Structural check setup (fail-closed: a declared frame must be checkable).
     material: MaterialProps | None = None
+    effective_spans_m: list[float] | None = None
     if design.frame is not None:
         if library is None:
             raise ValueError(
@@ -390,6 +408,9 @@ def run_scenario(
                 "— structural check cannot run (fail closed)"
             )
         material = materials[design.frame.material_id]
+        effective_spans_m = effective_arm_spans_m(
+            design.frame.arm_length_m, [rotor.position_m for rotor in design.rotors]
+        )
 
     sensors = SensorModel(scenario.sensor_config) if scenario.sensor_config else None
 
@@ -415,6 +436,25 @@ def run_scenario(
                      "simulated; energy is not reported (ideal actuators)")
     if design.frame is None:
         notes.append("no frame geometry in design: structural monitor skipped")
+    else:
+        assert effective_spans_m is not None  # computed fail-closed above
+        radial_spans = [
+            float(np.hypot(rotor.position_m[0], rotor.position_m[1]))
+            for rotor in design.rotors
+        ]
+        if any(abs(span - design.frame.arm_length_m) > 1e-6 for span in radial_spans):
+            notes.append(
+                "STRUCTURAL GEOMETRY MISMATCH: frame.arm_length_m differs from "
+                "the rotor's body-frame radial distance; using per-rotor "
+                "max(declared, geometric) span. Review frame-root assumptions. "
+                "Earlier structural margins must be recalculated."
+            )
+        notes.append(
+            "structural check: independent per-rotor static cantilever bending "
+            "from assumed body-frame root, effective spans (m): "
+            + ", ".join(f"{length:.4f}" for length in effective_spans_m)
+            + "; no fasteners, dynamics, torsion or fatigue"
+        )
     if scenario.sensor_config is None:
         notes.append("perfect state knowledge (sensor noise/latency disabled)")
 
@@ -459,7 +499,7 @@ def run_scenario(
             events.append(ev)
         if material is not None and design.frame is not None:
             ev, margin = check_structure(
-                thrusts, t, design.frame.arm_length_m,
+                thrusts, t, effective_spans_m,
                 design.frame.tube_od_m, design.frame.tube_id_m, material)
             struct_margins.append(margin)
             if ev:

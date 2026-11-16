@@ -6,32 +6,52 @@ import { create } from 'zustand'
 import type { DroneDesign, FrameSpec, PowertrainConfig, PrimitiveGeometry, Vec3 } from '../types/api'
 
 const ROTOR_SIGNS: [number, number][] = [[1, 1], [-1, 1], [-1, -1], [1, -1]]
-const MOTOR_DZ = 0.02
-const ESC_DZ = 0
-const PROP_DZ = 0.045
 const MAX_HISTORY = 40
 type SimulationResult = import('../types/api').SimulationResult
 
-/** Current editor supports uniformly scaling a conventional Quad-X only. */
-export function applyArmLength(design: DroneDesign, armLength: number): DroneDesign {
-  if (!Number.isFinite(armLength) || armLength <= 0 || design.rotors.length !== 4) return design
-  const pos = (i: number, dz: number): Vec3 => {
+/** True radial center-to-rotor distance for a symmetric, ordered Quad-X.
+ * Never offer a geometry edit on an arbitrary four-rotor layout. */
+export function quadXRadius(design: DroneDesign): number | null {
+  if (design.rotors.length !== 4) return null
+  const first = design.rotors[0].position_m
+  const radius = Math.hypot(first[0], first[1])
+  if (!Number.isFinite(radius) || radius <= 0) return null
+  for (let i = 0; i < 4; i++) {
+    const p = design.rotors[i].position_m
     const [sx, sy] = ROTOR_SIGNS[i]
-    return [sx * armLength, sy * armLength, dz]
+    const r = Math.hypot(p[0], p[1])
+    if (!p.every(Number.isFinite) ||
+        Math.sign(p[0]) !== sx || Math.sign(p[1]) !== sy ||
+        Math.abs(Math.abs(p[0]) - Math.abs(p[1])) > radius * 1e-4 ||
+        Math.abs(r - radius) > radius * 1e-4) return null
   }
+  return radius
+}
+
+/** Set *radial* arm span, scaling all coupled XY positions together.
+ * Keep each component's original Z position and proportional ESC placement. */
+export function applyArmLength(design: DroneDesign, armLength: number): DroneDesign {
+  const current = quadXRadius(design)
+  if (current === null || !Number.isFinite(armLength) || armLength <= 0) return design
+  if (Math.abs(current - armLength) <= 1e-12 &&
+      (!design.frame || Math.abs(design.frame.arm_length_m - armLength) <= 1e-12)) {
+    return design
+  }
+  const factor = armLength / current
+  const scaleXY = (p: Vec3): Vec3 => [p[0] * factor, p[1] * factor, p[2]]
   const suffixes = ['front_right', 'front_left', 'rear_left', 'rear_right']
-  const parts = design.parts.map((p) => {
-    const idx = suffixes.findIndex((s) => p.name.endsWith(s))
-    if (idx < 0) return p
-    if (p.name.startsWith('motor_')) return { ...p, position_m: pos(idx, MOTOR_DZ) }
-    if (p.name.startsWith('esc_')) return { ...p, position_m: pos(idx, ESC_DZ) }
-    if (p.name.startsWith('prop_')) return { ...p, position_m: pos(idx, PROP_DZ) }
-    return p
+  const parts = design.parts.map((part) => {
+    const isCoupled = suffixes.some((suffix) => part.name.endsWith(suffix)) &&
+      (part.name.startsWith('motor_') || part.name.startsWith('esc_') ||
+        part.name.startsWith('prop_'))
+    return isCoupled ? { ...part, position_m: scaleXY(part.position_m) } : part
   })
   return {
     ...design,
     parts,
-    rotors: design.rotors.map((r, i) => ({ ...r, position_m: pos(i, MOTOR_DZ) })),
+    rotors: design.rotors.map((rotor) => ({
+      ...rotor, position_m: scaleXY(rotor.position_m),
+    })),
     frame: design.frame ? { ...design.frame, arm_length_m: armLength } : design.frame,
   }
 }

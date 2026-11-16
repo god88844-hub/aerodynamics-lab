@@ -33,14 +33,14 @@ describe('applyArmLength', () => {
   it('moves motors, props and rotors to the new arm length', () => {
     const scaled = applyArmLength(baseDesign, 0.4)
     const motor = scaled.parts.find((p) => p.name === 'motor_front_right')!
-    expect(motor.position_m[0]).toBeCloseTo(0.4)
-    expect(motor.position_m[1]).toBeCloseTo(0.4)
+    expect(motor.position_m[0]).toBeCloseTo(0.4 / Math.SQRT2)
+    expect(motor.position_m[1]).toBeCloseTo(0.4 / Math.SQRT2)
     expect(motor.position_m[2]).toBeCloseTo(0.02)
     const prop = scaled.parts.find((p) => p.name === 'prop_rear_left')!
-    expect(prop.position_m[0]).toBeCloseTo(-0.4)
-    expect(prop.position_m[1]).toBeCloseTo(-0.4)
-    expect(scaled.rotors[1].position_m[0]).toBeCloseTo(-0.4)
-    expect(scaled.rotors[1].position_m[1]).toBeCloseTo(0.4)
+    expect(prop.position_m[0]).toBeCloseTo(-0.4 / Math.SQRT2)
+    expect(prop.position_m[1]).toBeCloseTo(-0.4 / Math.SQRT2)
+    expect(scaled.rotors[1].position_m[0]).toBeCloseTo(-0.4 / Math.SQRT2)
+    expect(scaled.rotors[1].position_m[1]).toBeCloseTo(0.4 / Math.SQRT2)
     // frame arm length follows when present
     if (scaled.frame) expect(scaled.frame.arm_length_m).toBe(0.4)
   })
