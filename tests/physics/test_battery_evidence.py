@@ -123,8 +123,8 @@ def test_extrapolation_never_counts_as_heldout_in_envelope():
     lambda d: d["samples"][-1].update({"terminal_voltage_v": -1}),
     lambda d: d["samples"][-1].update({"split": "training_guess"}),
     lambda d: d["samples"].pop(),
-    lambda d: d["samples"][1].update({"current_a": 1}),
-    lambda d: d["samples"][2].update({"current_a": 1}),
+    lambda d: (d["samples"][1].update({"current_a": 1}),
+               d["samples"][2].update({"current_a": 1})),
 ])
 def test_malformed_measurement_or_evidence_metadata_rejected(change):
     data = payload()
@@ -153,7 +153,7 @@ def test_unknown_nominal_resistance_is_explicitly_unscored():
 
 def test_too_high_current_refused_consistent_with_pack_voltage_sag_guard():
     data = payload()
-    data["samples"][-1] = sample("h2", "held_out", 55, 200)
+    data["samples"][-1] = sample("h2", "held_out", 55, 200, voltage=7.0)
     with pytest.raises(ValueError, match="excessive voltage sag"):
         calculate(data)
 
