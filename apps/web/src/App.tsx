@@ -11,7 +11,7 @@ import { DesignPanel } from './panels/DesignPanel'
 import { ScenarioPanel } from './panels/ScenarioPanel'
 import { ResultsPanel } from './panels/ResultsPanel'
 import { TelemetryCharts } from './charts/TelemetryCharts'
-import { DroneViewport } from './viewport/DroneViewport'
+import { PlaybackWorkspace } from './playback/PlaybackWorkspace'
 
 function ApiStatus() {
   const health = useQuery({
@@ -65,12 +65,7 @@ export default function App() {
           </div>
         </aside>
         <section className="relative min-w-0 flex-1">
-          <DroneViewport design={design} cog={cog} principalAxes={principalAxes} result={result} />
-          {result?.telemetry && (
-            <div className="absolute bottom-2 left-2 rounded bg-slate-900/80 px-2 py-1 text-[10px] text-cyan-400">
-              flight path: green = start · red = end
-            </div>
-          )}
+          <PlaybackWorkspace design={design} cog={cog} principalAxes={principalAxes} result={result} />
         </section>
         <aside className="w-96 shrink-0 overflow-y-auto border-l border-slate-800">
           <ResultsPanel result={result} />

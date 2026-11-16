@@ -108,6 +108,8 @@ export interface Telemetry {
   x: number[]
   y: number[]
   z: number[]
+  /** Body-to-world solver quaternion, scalar first: [w, x, y, z]. */
+  q_wxyz?: [number, number, number, number][]
   vz: number[]
   motor_thrusts_n: number[][]
   motor_current_a?: number[][]
