@@ -143,12 +143,30 @@ export function DroneModel({ design, cog, principalAxes, editingEnabled = true }
       ))}
 
       {/* battery */}
-      {battery && (
+      {battery && !battery.geometry && (
         <mesh position={worldToScene(battery.position_m)}>
           <boxGeometry args={[0.16, 0.06, 0.09]} />
           <meshStandardMaterial color={BATTERY_COLOR} />
         </mesh>
       )}
+      {/* Dimensioned primitives display the exact declared bounding geometry.
+          Their density, material, and connection details remain unmodeled. */}
+      {design.parts.filter((p) => p.geometry && canMovePart(p.name)).map((p) => {
+        const geometry = p.geometry!
+        const [sx, sy, sz] = geometry.dimensions_m
+        const highlighted = p.name === selectedPart
+        return (
+          <mesh key={`primitive_${p.name}`} position={worldToScene(p.position_m)}
+            onClick={(event) => { event.stopPropagation(); selectPart(p.name) }}>
+            {geometry.shape === 'box'
+              ? <boxGeometry args={[sx, sz, sy]} />
+              : <cylinderGeometry args={[sx / 2, sx / 2, sz, 32]} />}
+            <meshStandardMaterial color={highlighted ? '#fef08a'
+              : p.name.toLowerCase().includes('battery') ? BATTERY_COLOR : '#fb923c'}
+              transparent opacity={0.72} />
+          </mesh>
+        )
+      })}
 
       {/* Every part has a clickable center-of-gravity anchor; mesh sizes are
           schematic, not dimensions used for structural or clearance analysis. */}

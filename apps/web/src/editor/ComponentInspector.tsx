@@ -1,16 +1,36 @@
 /** M10.2 component tree, precise edits and center-to-center measurements.
  * The numeric editor operates on the physical mass/CoG snapshot, not mesh geometry. */
 import { useDesignStore, canMovePart, componentSeparationM } from '../state/designStore'
-import type { Vec3 } from '../types/api'
+import type { PrimitiveGeometry, Vec3 } from '../types/api'
 import { SectionTitle } from '../panels/fields'
 
 export function ComponentInspector() {
-  const { design, selectedPart, selectPart, setPartPosition, setPartMass,
+  const { design, selectedPart, selectPart, setPartPosition, setPartMass, setPartGeometry,
     addPayload, removeSelectedPayload, undo, redo, past, future,
     measureFrom, measureTo, setMeasureFrom, setMeasureTo,
     gizmoEnabled, setGizmoEnabled, snapStepM, setSnapStepM } = useDesignStore()
   const part = design.parts.find((p) => p.name === selectedPart)
   const movable = part ? canMovePart(part.name) : false
+  const geometryEditable = movable && part?.inertia_about_own_cog_kg_m2 == null
+  const geometry = part?.geometry
+  const setShape = (shape: 'none' | PrimitiveGeometry['shape']) => {
+    if (!part || !geometryEditable) return
+    const previous = geometry?.dimensions_m ?? [0.12, 0.12, 0.05]
+    const dimensions: Vec3 = shape === 'cylinder'
+      ? [previous[0], previous[0], previous[2]]
+      : [...previous]
+    setPartGeometry(part.name, shape === 'none' ? null : {
+      shape, dimensions_m: dimensions,
+    })
+  }
+  const changeDimension = (axis: number, value: number) => {
+    if (!part || !geometryEditable || !geometry ||
+        !Number.isFinite(value) || value <= 0) return
+    const dimensions: Vec3 = [...geometry.dimensions_m]
+    dimensions[axis] = value
+    if (geometry.shape === 'cylinder' && axis === 0) dimensions[1] = value
+    setPartGeometry(part.name, { ...geometry, dimensions_m: dimensions })
+  }
   const distance = componentSeparationM(design, measureFrom, measureTo)
   const measurementOptions = [
     <option value="" key="none">— select component —</option>,
@@ -103,6 +123,48 @@ export function ComponentInspector() {
               onChange={(e) => setPartMass(part.name, Number(e.target.value))}
               className="w-28 rounded border border-slate-700 bg-slate-950 px-2 py-1 text-right font-mono disabled:opacity-40" />
           </label>
+          {movable && (
+            <div className="space-y-2 border-t border-slate-700 pt-2">
+              <label className="flex items-center justify-between gap-2 text-xs text-slate-400">
+                Primitive geometry
+                <select aria-label="Primitive geometry" value={geometry?.shape ?? 'none'}
+                  disabled={!geometryEditable}
+                  onChange={(e) => setShape(e.target.value as 'none' | PrimitiveGeometry['shape'])}
+                  className="w-28 rounded border border-slate-700 bg-slate-950 px-1 py-1 text-xs">
+                  <option value="none">Point mass</option>
+                  <option value="box">Solid box</option>
+                  <option value="cylinder">Solid cylinder</option>
+                </select>
+              </label>
+              {geometry && (
+                <>
+                  {(geometry.shape === 'box'
+                    ? (['X width', 'Y depth', 'Z height'] as const)
+                    : (['Diameter', 'Z height'] as const)).map((label, i) => {
+                    const axis = geometry.shape === 'box' ? i : (i === 0 ? 0 : 2)
+                    return (
+                      <label key={label} className="flex items-center justify-between gap-2 text-xs text-slate-400">
+                        {label} [m]
+                        <input type="number" aria-label={`${label} [m]`}
+                          value={geometry.dimensions_m[axis]} min="0.001" step="0.005"
+                          onChange={(e) => changeDimension(axis, Number(e.target.value))}
+                          className="w-28 rounded border border-slate-700 bg-slate-950 px-2 py-1 text-right font-mono" />
+                      </label>
+                    )
+                  })}
+                  <p className="text-[10px] text-slate-500">
+                    Declared dimensions; physics estimates own-CoG inertia assuming
+                    uniform mass density. The entered mass remains unchanged.
+                  </p>
+                </>
+              )}
+              {!geometryEditable && (
+                <p className="text-[10px] text-amber-400">
+                  Explicit part inertia exists; geometry and mass editing are locked to preserve evidence.
+                </p>
+              )}
+            </div>
+          )}
           {!movable && (
             <p className="text-[10px] text-amber-400">
               Coupled part locked: edit arm length or sourced component data to preserve the motor/rotor and structural model.
@@ -142,8 +204,9 @@ export function ComponentInspector() {
           {distance === null ? 'Choose two components' : `${distance.toFixed(3)} m center-to-center`}
         </p>
         <p className="text-[10px] text-slate-500">
-          Marker and measurement visuals are schematic. Payloads are point masses; size,
-          aerodynamics, collision and clearance are not computed by this editor.
+          Parts without declared dimensions remain point masses or schematic meshes.
+          Primitive dimensions support approximate inertia and conservative bounding-box
+          interference warnings, not certified CAD clearance or aerodynamics.
         </p>
       </div>
     </section>

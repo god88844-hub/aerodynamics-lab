@@ -3,7 +3,7 @@
  * Rotor component positions are locked: moving one without its matching rotor
  * and structural model would silently invalidate flight physics. */
 import { create } from 'zustand'
-import type { DroneDesign, FrameSpec, PowertrainConfig, Vec3 } from '../types/api'
+import type { DroneDesign, FrameSpec, PowertrainConfig, PrimitiveGeometry, Vec3 } from '../types/api'
 
 const ROTOR_SIGNS: [number, number][] = [[1, 1], [-1, 1], [-1, -1], [1, -1]]
 const MOTOR_DZ = 0.02
@@ -91,6 +91,7 @@ interface DesignState {
   setMeasureTo: (name: string | null) => void
   setPartPosition: (name: string, position: Vec3) => void
   setPartMass: (name: string, mass: number) => void
+  setPartGeometry: (name: string, geometry: PrimitiveGeometry | null) => void
   addPayload: () => void
   removeSelectedPayload: () => void
   undo: () => void
@@ -164,8 +165,24 @@ export const useDesignStore = create<DesignState>((set) => ({
   setPartMass: (name, mass) => set((s) => updateDesign(s, (d) => {
     if (!canMovePart(name) || !Number.isFinite(mass) || mass <= 0) return d
     const previous = d.parts.find((p) => p.name === name)
-    if (!previous || previous.mass_kg === mass) return d
+    if (!previous || previous.mass_kg === mass ||
+        previous.inertia_about_own_cog_kg_m2 != null) return d
     return { ...d, parts: d.parts.map((p) => p.name === name ? { ...p, mass_kg: mass } : p) }
+  })),
+  setPartGeometry: (name, geometry) => set((s) => updateDesign(s, (d) => {
+    if (!canMovePart(name)) return d
+    const previous = d.parts.find((p) => p.name === name)
+    // Never silently replace, invalidate or synthesize a measured inertia.
+    if (!previous || previous.inertia_about_own_cog_kg_m2 != null) return d
+    if (geometry !== null) {
+      const [x, y, z] = geometry.dimensions_m
+      if (![x, y, z].every((v) => Number.isFinite(v) && v > 0)) return d
+      if (geometry.shape !== 'box' && geometry.shape !== 'cylinder') return d
+      if (geometry.shape === 'cylinder' && Math.abs(x - y) > 1e-9) return d
+    }
+    if (JSON.stringify(previous.geometry ?? null) === JSON.stringify(geometry)) return d
+    return { ...d, parts: d.parts.map((p) =>
+      p.name === name ? { ...p, geometry } : p) }
   })),
   addPayload: () => set((s) => {
     let index = 1
@@ -218,7 +235,9 @@ export const useDesignStore = create<DesignState>((set) => ({
       p.name.toLowerCase().includes('battery') ? { ...p, position_m: [...pos] as Vec3 } : p) }
   })),
   setBatteryMass: (kg) => set((s) => updateDesign(s, (d) => {
-    if (!Number.isFinite(kg) || kg <= 0) return d
+    if (!Number.isFinite(kg) || kg <= 0 ||
+        d.parts.some((p) => p.name.toLowerCase().includes('battery') &&
+          p.inertia_about_own_cog_kg_m2 != null)) return d
     return { ...d, parts: d.parts.map((p) =>
       p.name.toLowerCase().includes('battery') ? { ...p, mass_kg: kg } : p) }
   })),

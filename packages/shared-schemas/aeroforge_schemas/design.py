@@ -9,11 +9,37 @@ unit-bearing field names make this explicit.
 
 from __future__ import annotations
 
+import math
 from typing import Literal
+
+from pydantic import model_validator
 
 from pydantic import BaseModel, Field
 
 SCHEMA_VERSION = "0.1"
+
+
+class PrimitiveGeometry(BaseModel):
+    """Optional, *declared* uniform-density primitive geometry.
+
+    dimensions_m = (x, y, z), aligned to the design body frame. For a solid
+    cylinder, x == y == diameter and z is height; cylinder axis is body +z.
+    Geometry is not a manufacturer's measured mass or inertia.
+    """
+
+    shape: Literal["box", "cylinder"]
+    dimensions_m: tuple[float, float, float]
+
+    @model_validator(mode="after")
+    def physical_dimensions(self) -> "PrimitiveGeometry":
+        dims = self.dimensions_m
+        if any(not math.isfinite(d) or d <= 0.0 for d in dims):
+            raise ValueError("primitive dimensions must be finite and > 0 m")
+        if self.shape == "cylinder" and not math.isclose(
+            dims[0], dims[1], rel_tol=1e-9, abs_tol=1e-12
+        ):
+            raise ValueError("cylinder x/y dimensions must be equal diameters")
+        return self
 
 
 class PartInstance(BaseModel):
@@ -23,6 +49,11 @@ class PartInstance(BaseModel):
     mass_kg: float = Field(gt=0.0, description="part mass [kg]")
     position_m: tuple[float, float, float] = Field(
         description="body-frame position of the part's own CoG [m]"
+    )
+    geometry: PrimitiveGeometry | None = Field(
+        default=None,
+        description="optional dimensions for schematic 3D rendering and a "
+        "uniform-density own-CoG inertia *estimate* when measured inertia is absent",
     )
     inertia_about_own_cog_kg_m2: list[list[float]] | None = Field(
         default=None,

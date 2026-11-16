@@ -10,6 +10,7 @@ from __future__ import annotations
 import numpy as np
 
 from aeroforge_schemas.design import DroneDesign
+from geometry.primitives import box_inertia, cylinder_inertia_z
 from physics.aerodynamics.drag import AirframeDrag
 from physics.dynamics.mass_properties import MassProperties, Part, assemble_mass_properties
 from physics.dynamics.quadrotor import MultirotorPlant, Rotor
@@ -26,7 +27,16 @@ def build_multirotor(design: DroneDesign) -> tuple[MultirotorPlant, MassProperti
     for p in design.parts:
         inertia = None
         if p.inertia_about_own_cog_kg_m2 is not None:
+            # Independent measured/declared inertia always overrides geometry.
             inertia = np.asarray(p.inertia_about_own_cog_kg_m2, dtype=float)
+        elif p.geometry is not None:
+            x, y, z = p.geometry.dimensions_m
+            if p.geometry.shape == "box":
+                inertia = box_inertia(p.mass_kg, x, y, z)
+            elif p.geometry.shape == "cylinder":
+                inertia = cylinder_inertia_z(p.mass_kg, x / 2.0, z)
+            else:  # pragma: no cover - schema validates the shape
+                raise ValueError(f"unsupported primitive geometry: {p.geometry.shape}")
         parts.append(
             Part(
                 name=p.name,
