@@ -12,6 +12,7 @@ import { ComponentInspector } from './editor/ComponentInspector'
 import { ScenarioPanel } from './panels/ScenarioPanel'
 import { StructuralLabPanel } from './panels/StructuralLabPanel'
 import { BatteryEvidencePanel } from './panels/BatteryEvidencePanel'
+import { FlightEvidencePanel } from './panels/FlightEvidencePanel'
 import { ResultsPanel } from './panels/ResultsPanel'
 import { TelemetryCharts } from './charts/TelemetryCharts'
 import { PlaybackWorkspace } from './playback/PlaybackWorkspace'
@@ -79,6 +80,7 @@ export default function App() {
         </section>
         <aside className="w-96 shrink-0 overflow-y-auto border-l border-slate-800">
           <ResultsPanel result={result} />
+          <div className="border-t border-slate-800"><FlightEvidencePanel result={result} /></div>
           <div className="border-t border-slate-800">
             <TelemetryCharts result={result} />
           </div>

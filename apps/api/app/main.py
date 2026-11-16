@@ -9,7 +9,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.persistence.database import init_db
-from app.routes import components, designs, health, simulations
+from app.routes import components, designs, flight_evidence, health, simulations
 
 
 @asynccontextmanager
@@ -41,3 +41,4 @@ app.include_router(health.router, prefix="/api")
 app.include_router(components.router, prefix="/api")
 app.include_router(designs.router, prefix="/api")
 app.include_router(simulations.router, prefix="/api")
+app.include_router(flight_evidence.router, prefix="/api")
