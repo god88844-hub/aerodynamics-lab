@@ -8,9 +8,11 @@ export function ComponentInspector() {
   const { design, selectedPart, selectPart, setPartPosition, setPartMass, setPartGeometry,
     addPayload, removeSelectedPayload, undo, redo, past, future,
     measureFrom, measureTo, setMeasureFrom, setMeasureTo,
-    gizmoEnabled, setGizmoEnabled, snapStepM, setSnapStepM } = useDesignStore()
+    gizmoEnabled, setGizmoEnabled, snapStepM, setSnapStepM,
+    addMountForSelectedPart, detachSelectedPart } = useDesignStore()
   const part = design.parts.find((p) => p.name === selectedPart)
   const movable = part ? canMovePart(part.name) : false
+  const positionMovable = movable && !part?.mount_id
   const geometryEditable = movable && part?.inertia_about_own_cog_kg_m2 == null
   const geometry = part?.geometry
   const setShape = (shape: 'none' | PrimitiveGeometry['shape']) => {
@@ -37,7 +39,7 @@ export function ComponentInspector() {
     ...design.parts.map((p) => <option key={p.name} value={p.name}>{p.name}</option>),
   ]
   const updateCoordinate = (axis: number, value: number) => {
-    if (!part || !movable || !Number.isFinite(value)) return
+    if (!part || !positionMovable || !Number.isFinite(value)) return
     const next: Vec3 = [...part.position_m]
     next[axis] = value
     setPartPosition(part.name, next)
@@ -111,7 +113,7 @@ export function ComponentInspector() {
             <label key={axis} className="flex items-center justify-between text-xs text-slate-400">
               Position {axis} [m]
               <input type="number" aria-label={`Position ${axis} [m]`} step="0.005"
-                disabled={!movable} value={part.position_m[i]}
+                disabled={!positionMovable} value={part.position_m[i]}
                 onChange={(e) => updateCoordinate(i, Number(e.target.value))}
                 className="w-28 rounded border border-slate-700 bg-slate-950 px-2 py-1 text-right font-mono disabled:opacity-40" />
             </label>
@@ -163,6 +165,26 @@ export function ComponentInspector() {
                   Explicit part inertia exists; geometry and mass editing are locked to preserve evidence.
                 </p>
               )}
+            </div>
+          )}
+          {movable && design.frame && (
+            <div className="space-y-2 border-t border-slate-700 pt-2">
+              <p className="text-xs text-slate-400">
+                Frame mount: {part.mount_id ?? 'not attached'}
+              </p>
+              {part.mount_id
+                ? <button type="button" onClick={detachSelectedPart}
+                    className="rounded border border-amber-800 px-2 py-1 text-xs text-amber-200">
+                    Detach component from mount
+                  </button>
+                : <button type="button" onClick={addMountForSelectedPart}
+                    className="rounded border border-cyan-800 px-2 py-1 text-xs text-cyan-200">
+                    Create mount at component CoG and attach
+                  </button>}
+              {part.mount_id && <p className="text-[10px] text-amber-400">
+                Position is locked to its frame mount. Edit mount coordinates in
+                Frame settings, or detach before independent movement.
+              </p>}
             </div>
           )}
           {!movable && (
