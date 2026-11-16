@@ -43,11 +43,12 @@ python -m uvicorn app.main:app --reload --port 8000
 # http://127.0.0.1:8000/api/health
 ```
 
-### Frontend (Node 20+, React + TypeScript + Vite)
+### Frontend (Node.js 22.12+, React + TypeScript + Vite)
 
 ```bash
 cd apps/web
-npm install
+npm ci
+npm audit --audit-level=moderate
 npm run dev
 # http://localhost:5173  (proxies /api to 127.0.0.1:8000)
 ```
