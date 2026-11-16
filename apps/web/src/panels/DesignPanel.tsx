@@ -107,10 +107,13 @@ export function DesignPanel() {
               Battery is mounted. Edit the mount coordinates in Frame settings.
             </p>}
             <NumberField label="x" unit="m" value={battery.position_m[0]} step={0.005}
+              disabled={!!battery.mount_id}
               onChange={(v) => setBatteryPosition([v, battery.position_m[1], battery.position_m[2]])} />
             <NumberField label="y" unit="m" value={battery.position_m[1]} step={0.005}
+              disabled={!!battery.mount_id}
               onChange={(v) => setBatteryPosition([battery.position_m[0], v, battery.position_m[2]])} />
             <NumberField label="z" unit="m" value={battery.position_m[2]} step={0.005}
+              disabled={!!battery.mount_id}
               onChange={(v) => setBatteryPosition([battery.position_m[0], battery.position_m[1], v])} />
             <NumberField label="mass" unit="kg" value={battery.mass_kg} step={0.05} min={0.05}
               onChange={setBatteryMass} />

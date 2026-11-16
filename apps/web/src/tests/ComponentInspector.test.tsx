@@ -17,6 +17,21 @@ beforeEach(() => useDesignStore.getState().setSnapshot(structuredClone(design), 
 afterEach(() => cleanup())
 
 describe('3D component inspector UI', () => {
+  it('disables independent position editing when attached, then unlocks on detach', () => {
+    useDesignStore.getState().setSnapshot({
+      ...structuredClone(design),
+      frame: { arm_length_m: .25, tube_od_m: .012, tube_id_m: .009,
+        material_id: 'cfrp_quasi_iso' },
+    }, null)
+    render(<ComponentInspector />)
+    fireEvent.change(screen.getByLabelText('Selected component'), {
+      target: { value: 'battery' },
+    })
+    fireEvent.click(screen.getByRole('button', { name: /Create mount at component CoG/i }))
+    expect((screen.getByLabelText('Position X [m]') as HTMLInputElement).disabled).toBe(true)
+    fireEvent.click(screen.getByRole('button', { name: /Detach component from mount/i }))
+    expect((screen.getByLabelText('Position X [m]') as HTMLInputElement).disabled).toBe(false)
+  })
   it('adds and edits a physical point-mass payload through the form', () => {
     render(<ComponentInspector />)
     fireEvent.click(screen.getByRole('button', { name: /add payload point mass/i }))

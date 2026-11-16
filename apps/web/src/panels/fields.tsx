@@ -1,6 +1,6 @@
 /** Small shared form controls for the editor panels. */
 
-export function NumberField({ label, value, onChange, step = 0.01, min, max, unit }: {
+export function NumberField({ label, value, onChange, step = 0.01, min, max, unit, disabled = false }: {
   label: string
   value: number
   onChange: (v: number) => void
@@ -8,6 +8,7 @@ export function NumberField({ label, value, onChange, step = 0.01, min, max, uni
   min?: number
   max?: number
   unit?: string
+  disabled?: boolean
 }) {
   return (
     <label className="flex items-center justify-between gap-2 text-xs">
@@ -16,6 +17,7 @@ export function NumberField({ label, value, onChange, step = 0.01, min, max, uni
       </span>
       <input
         type="number"
+        disabled={disabled}
         className="w-24 rounded border border-slate-700 bg-slate-900 px-2 py-1 text-right text-slate-200 focus:border-cyan-600 focus:outline-none"
         value={value}
         step={step}
