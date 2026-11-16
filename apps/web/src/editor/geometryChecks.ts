@@ -84,7 +84,11 @@ export function analyzeGeometry(
       Math.hypot(r.position_m[0], r.position_m[1])))
     if (radial > design.frame.arm_length_m + 1e-6) issues.push({
       code: 'arm_span_underestimate', severity: 'warning',
-      message: `Frame arm span ${design.frame.arm_length_m.toFixed(3)} m is shorter than the furthest rotor's radial offset ${radial.toFixed(3)} m. Cantilever stress uses declared length and may be optimistic.`,
+      message: `Declared arm span ${design.frame.arm_length_m.toFixed(3)} m is shorter than the furthest rotor radius ${radial.toFixed(3)} m. The structural solver now uses the larger effective span; review frame geometry and rerun earlier predictions.`,
+    })
+    else if (design.frame.arm_length_m > radial + 1e-6) issues.push({
+      code: 'arm_span_overestimate', severity: 'info',
+      message: `Declared arm span ${design.frame.arm_length_m.toFixed(3)} m exceeds the rotor radius ${radial.toFixed(3)} m. The structural solver conservatively uses the declared span; check the assumed frame root.`,
     })
   }
   // Conservative AABB broad-phase for declared primitives only. A cylinder's

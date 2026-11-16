@@ -114,7 +114,12 @@ class FrameSpec(BaseModel):
     a frame referencing an unknown material cannot pass structural checks).
     """
 
-    arm_length_m: float = Field(gt=0.0, description="horizontal distance CoG -> rotor axis [m]")
+    arm_length_m: float = Field(
+        gt=0.0,
+        description="declared horizontal cantilever span from assumed frame root "
+        "at body origin [m]. Flight structural checks conservatively use "
+        "max(declared span, actual planar rotor radius) per rotor",
+    )
     tube_od_m: float = Field(gt=0.0)
     tube_id_m: float = Field(gt=0.0)
     material_id: str
