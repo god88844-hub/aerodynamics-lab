@@ -11,6 +11,7 @@ export interface PrimitiveGeometry {
 
 export interface PartInstance {
   name: string
+  mount_id?: string | null
   mass_kg: number
   position_m: Vec3
   geometry?: PrimitiveGeometry | null
@@ -31,11 +32,18 @@ export interface PowertrainConfig {
   battery_id: string
 }
 
+export interface FrameMount {
+  id: string
+  position_m: Vec3
+}
+
 export interface FrameSpec {
   arm_length_m: number
   tube_od_m: number
   tube_id_m: number
   material_id: string
+  plate_dimensions_m?: Vec3 | null
+  mount_points?: FrameMount[]
 }
 
 export interface DroneDesign {
