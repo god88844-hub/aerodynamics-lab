@@ -237,3 +237,81 @@ def test_structural_envelope_rejects_bad_joint_capacity_and_wrong_torque_count(c
         "evidence_source": "fixture",
     }
     assert client.post("/api/designs/structural-envelope", json=base).status_code == 422
+
+
+def test_battery_evidence_api_reports_holdout_without_mutating_component(client):
+    from physics.propulsion.loader import ComponentLibrary
+    from physics.propulsion.battery import BatteryPack
+
+    lib = ComponentLibrary(REPO_ROOT / "data" / "components")
+    spec = lib.battery("generic_6s_lipo_16000mah")
+    pack = BatteryPack(spec)
+    def sample(id, split, soc, current):
+        return {
+            "id": id, "split": split, "soc_pct": soc, "current_a": current,
+            "terminal_voltage_v": pack.ocv_pack(soc) - .024 * current,
+        }
+    body = {
+        "battery_id": spec.id,
+        "dataset_kind": "synthetic_fixture",
+        "calibration_run_id": "math_fixture_A",
+        "heldout_run_id": "math_fixture_B",
+        "calibration_source": "Synthetic OCV minus constant I*R voltage",
+        "heldout_source": "Separate synthetic points for code verification",
+        "predeclared_max_abs_percentage_error_pct": 1.0,
+        "samples": [
+            sample("c1", "calibration", 40, 10),
+            sample("c2", "calibration", 50, 20),
+            sample("c3", "calibration", 60, 30),
+            sample("h1", "held_out", 45, 15),
+            sample("h2", "held_out", 55, 25),
+        ],
+    }
+    response = client.post("/api/components/battery-evidence", json=body)
+    assert response.status_code == 200, response.text
+    result = response.json()
+    assert result["fit"]["fitted_pack_resistance_ohm"] == pytest.approx(.024, rel=1e-10)
+    assert result["verdict"] == "SYNTHETIC_VERIFICATION_ONLY"
+    assert len(result["heldout"]["rows"]) == 2
+    assert not result["simulation_battery_modified"]
+    assert lib.battery(spec.id).internal_resistance_ohm == .020
+
+
+def test_battery_evidence_rejects_fake_data_and_unknown_pack(client):
+    incomplete = {
+        "battery_id": "generic_6s_lipo_16000mah",
+        "dataset_kind": "physical_measurements",
+        "calibration_run_id": "one", "heldout_run_id": "one",
+        "calibration_source": "operator", "heldout_source": "operator",
+        "predeclared_max_abs_percentage_error_pct": 10,
+        "samples": [],
+    }
+    assert client.post("/api/components/battery-evidence", json=incomplete).status_code == 422
+    incomplete["battery_id"] = "../../escape"
+    assert client.post("/api/components/battery-evidence", json=incomplete).status_code == 422
+
+
+def test_battery_evidence_unknown_battery_returns_404(client):
+    from physics.propulsion.loader import ComponentLibrary
+    from physics.propulsion.battery import BatteryPack
+
+    spec = ComponentLibrary(REPO_ROOT / "data" / "components").battery("generic_6s_lipo_16000mah")
+    pack = BatteryPack(spec)
+    samples = []
+    for i, (split, soc, current) in enumerate([
+        ("calibration", 40, 10), ("calibration", 50, 20),
+        ("calibration", 60, 30), ("held_out", 45, 15), ("held_out", 55, 25),
+    ]):
+        samples.append({"id": f"r{i}", "split": split, "soc_pct": soc,
+                        "current_a": current,
+                        "terminal_voltage_v": pack.ocv_pack(soc) - .02 * current})
+    payload = {
+        "battery_id": "nonexistent_pack",
+        "dataset_kind": "synthetic_fixture",
+        "calibration_run_id": "A", "heldout_run_id": "B",
+        "calibration_source": "synthetic fixture",
+        "heldout_source": "synthetic fixture",
+        "predeclared_max_abs_percentage_error_pct": 1,
+        "samples": samples,
+    }
+    assert client.post("/api/components/battery-evidence", json=payload).status_code == 404
