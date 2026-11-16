@@ -13,6 +13,7 @@ import { ScenarioPanel } from './panels/ScenarioPanel'
 import { StructuralLabPanel } from './panels/StructuralLabPanel'
 import { BatteryEvidencePanel } from './panels/BatteryEvidencePanel'
 import { FlightEvidencePanel } from './panels/FlightEvidencePanel'
+import { PropulsionEvidencePanel } from './panels/PropulsionEvidencePanel'
 import { ResultsPanel } from './panels/ResultsPanel'
 import { TelemetryCharts } from './charts/TelemetryCharts'
 import { PlaybackWorkspace } from './playback/PlaybackWorkspace'
@@ -73,6 +74,9 @@ export default function App() {
           </div>
           <div className="border-t border-slate-800">
             <BatteryEvidencePanel design={design} />
+          </div>
+          <div className="border-t border-slate-800">
+            <PropulsionEvidencePanel design={design} />
           </div>
         </aside>
         <section className="relative min-w-0 flex-1">
