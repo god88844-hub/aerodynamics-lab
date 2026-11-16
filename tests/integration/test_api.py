@@ -193,3 +193,47 @@ def test_structural_envelope_rejects_bad_cases_and_missing_frame(client, design_
         "cases": [{"name": "hover", "thrusts_n": [1, 1, 1, 1]}],
     })
     assert missing.status_code == 422
+
+
+def test_structural_envelope_opt_in_torsion_and_joints(client, design_payload):
+    r = client.post("/api/designs/structural-envelope", json={
+        "snapshot": design_payload,
+        "cases": [{"name": "joint_screen", "thrusts_n": [4, 5, 6, 7],
+                   "axial_torques_n_m": [0.3, 0.2, -0.3, 0.1]}],
+        "shear_allowable_pa": 30e6,
+        "shear_allowable_source": "operator-entered report",
+        "joint_allowables": {
+            "bending_moment_n_m": 4.0, "axial_torque_n_m": .5,
+            "evidence_source": "user supplied joint test",
+        },
+    })
+    assert r.status_code == 200, r.text
+    result = r.json()
+    assert result["advanced_loads"]["axial_torque_cases_with_data"] == 1
+    assert result["advanced_loads"]["combined_interaction"] == "NOT_MODELED"
+    assert result["cases"][0]["rotors"][2]["arm_axial_torque_n_m"] == -0.3
+    assert result["advanced_loads"]["screening_verdict"] == "INCOMPLETE_EVIDENCE"
+
+
+def test_structural_envelope_omitted_torque_stays_unknown(client, design_payload):
+    r = client.post("/api/designs/structural-envelope", json={
+        "snapshot": design_payload,
+        "cases": [{"name": "legacy", "thrusts_n": [4, 5, 6, 7]}],
+    })
+    assert r.status_code == 200, r.text
+    result = r.json()
+    assert result["advanced_loads"]["axial_torque_cases_with_data"] == 0
+    assert result["cases"][0]["rotors"][0]["arm_axial_torque_n_m"] is None
+    assert result["advanced_loads"]["joint_bending_screen"] is None
+
+
+def test_structural_envelope_rejects_bad_joint_capacity_and_wrong_torque_count(client, design_payload):
+    base = {"snapshot": design_payload, "cases": [
+        {"name": "bad", "thrusts_n": [1, 1, 1, 1], "axial_torques_n_m": [1, 2]}]}
+    assert client.post("/api/designs/structural-envelope", json=base).status_code == 422
+    base["cases"][0]["axial_torques_n_m"] = [1, 1, 1, 1]
+    base["joint_allowables"] = {
+        "bending_moment_n_m": 0, "axial_torque_n_m": 1,
+        "evidence_source": "fixture",
+    }
+    assert client.post("/api/designs/structural-envelope", json=base).status_code == 422

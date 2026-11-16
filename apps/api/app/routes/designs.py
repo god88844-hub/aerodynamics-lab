@@ -27,11 +27,22 @@ class DesignUpdate(BaseModel):
 class StructuralLoadCase(BaseModel):
     name: str
     thrusts_n: list[float]
+    # Explicit torque ABOUT THE ARM AXIS, not rotor reaction torque about body Z.
+    axial_torques_n_m: list[float] | None = None
+
+
+class JointAllowables(BaseModel):
+    bending_moment_n_m: float
+    axial_torque_n_m: float
+    evidence_source: str
 
 
 class StructuralEnvelopeRequest(BaseModel):
     snapshot: dict
     cases: list[StructuralLoadCase]
+    shear_allowable_pa: float | None = None
+    shear_allowable_source: str | None = None
+    joint_allowables: JointAllowables | None = None
 
 
 def _design_summary(design: Design) -> dict:
@@ -94,17 +105,22 @@ def structural_envelope(body: StructuralEnvelopeRequest) -> dict:
     This is analytical verification, not a statement of flight safety.
     """
     from app.services.component_service import REPO_ROOT
-    from physics.structures.envelope import evaluate_load_envelope
+    from physics.structures.advanced import evaluate_advanced_envelope
     from physics.structures.materials import load_materials
 
     design = _validated_snapshot(body.snapshot)
     material_file = REPO_ROOT / "data" / "components" / "materials.json"
     materials = load_materials(material_file)
     try:
-        return evaluate_load_envelope(
+        return evaluate_advanced_envelope(
             design,
-            [(case.name, case.thrusts_n) for case in body.cases],
+            [(case.name, case.thrusts_n, case.axial_torques_n_m)
+             for case in body.cases],
             materials,
+            shear_allowable_pa=body.shear_allowable_pa,
+            shear_allowable_source=body.shear_allowable_source,
+            joint_allowables=body.joint_allowables.model_dump()
+            if body.joint_allowables else None,
         )
     except (ValueError, TypeError) as exc:
         raise HTTPException(status_code=422, detail=str(exc)) from exc
