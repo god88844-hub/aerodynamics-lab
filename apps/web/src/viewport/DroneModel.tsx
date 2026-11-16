@@ -2,9 +2,11 @@
   World convention: world z = altitude maps to scene Y (three.js is Y-up);
   scene = [x, z, -y]. Units: 1 scene unit = 1 m. */
 
-import { Html, Line } from '@react-three/drei'
+import { Html, Line, TransformControls } from '@react-three/drei'
 import { useDesignStore, componentSeparationM } from '../state/designStore'
-import { useMemo } from 'react'
+import { useMemo, useRef } from 'react'
+import { bodyPointToScene, scenePointToBody, snapBodyPoint } from '../editor/geometryChecks'
+import { canMovePart } from '../state/designStore'
 import * as THREE from 'three'
 import type { DroneDesign, Vec3 } from '../types/api'
 
@@ -17,6 +19,38 @@ const COG_COLOR = '#c084fc'
 
 function worldToScene(v: Vec3): [number, number, number] {
   return [v[0], v[2], -v[1]]
+}
+
+/** Translation controls apply to an editor-only group; the store commits
+ * exactly once on pointer release. All positions remain body-frame SI. */
+function DragHandle({ name, position, stepM }: {
+  name: string
+  position: Vec3
+  stepM: number
+}) {
+  const group = useRef<THREE.Group>(null)
+  const move = useDesignStore((s) => s.setPartPosition)
+  const setDragging = useDesignStore((s) => s.setGizmoDragging)
+  const commit = () => {
+    setDragging(false)
+    const p = group.current?.position
+    if (!p) return
+    const body = scenePointToBody([p.x, p.y, p.z])
+    move(name, snapBodyPoint(body, stepM))
+  }
+  return (
+    <TransformControls mode="translate"
+      translationSnap={stepM > 0 ? stepM : undefined}
+      onMouseDown={() => setDragging(true)}
+      onMouseUp={commit}>
+      <group ref={group} position={bodyPointToScene(position)}>
+        <mesh>
+          <sphereGeometry args={[0.025, 16, 16]} />
+          <meshStandardMaterial color="#fde047" emissive="#ca8a04" emissiveIntensity={0.4} />
+        </mesh>
+      </group>
+    </TransformControls>
+  )
 }
 
 /** Cylinder from point a to point b (scene coords). */
@@ -41,12 +75,15 @@ function Arm({ a, b, radius = 0.008 }: { a: [number, number, number]; b: [number
   )
 }
 
-export function DroneModel({ design, cog, principalAxes }: {
+export function DroneModel({ design, cog, principalAxes, editingEnabled = true }: {
   design: DroneDesign
   cog: Vec3
   principalAxes: number[][] | null
+  editingEnabled?: boolean
 }) {
   const selectedPart = useDesignStore((s) => s.selectedPart)
+  const gizmoEnabled = useDesignStore((s) => s.gizmoEnabled)
+  const snapStepM = useDesignStore((s) => s.snapStepM)
   const selectPart = useDesignStore((s) => s.selectPart)
   const measureFrom = useDesignStore((s) => s.measureFrom)
   const measureTo = useDesignStore((s) => s.measureTo)
@@ -117,6 +154,7 @@ export function DroneModel({ design, cog, principalAxes }: {
           schematic, not dimensions used for structural or clearance analysis. */}
       {design.parts.map((p) => {
         const selected = p.name === selectedPart
+        if (selected && canMovePart(p.name) && gizmoEnabled && editingEnabled) return null
         return (
           <mesh key={p.name} name={p.name} position={worldToScene(p.position_m)}
             userData={{ partName: p.name }}
@@ -127,6 +165,10 @@ export function DroneModel({ design, cog, principalAxes }: {
           </mesh>
         )
       })}
+      {editingEnabled && gizmoEnabled &&
+        design.parts.filter((p) => p.name === selectedPart && canMovePart(p.name))
+          .map((p) => <DragHandle key={p.name} name={p.name}
+            position={p.position_m} stepM={snapStepM} />)}
       {selectedPart && design.parts.some((p) => p.name === selectedPart) && (
         <Html position={worldToScene(design.parts.find((p) => p.name === selectedPart)!.position_m)}
           center distanceFactor={6} style={{ pointerEvents: 'none' }}>

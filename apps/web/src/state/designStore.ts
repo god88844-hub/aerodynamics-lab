@@ -74,6 +74,13 @@ interface DesignState {
   selectedPart: string | null
   measureFrom: string | null
   measureTo: string | null
+  /** Presentation-only settings: never included in a physics design snapshot. */
+  gizmoEnabled: boolean
+  gizmoDragging: boolean
+  snapStepM: number
+  setGizmoEnabled: (enabled: boolean) => void
+  setGizmoDragging: (dragging: boolean) => void
+  setSnapStepM: (step: number) => void
   past: DroneDesign[]
   future: DroneDesign[]
   setSnapshot: (snapshot: DroneDesign, id: number | null) => void
@@ -121,11 +128,20 @@ export const useDesignStore = create<DesignState>((set) => ({
   selectedPart: null,
   measureFrom: null,
   measureTo: null,
+  gizmoEnabled: true,
+  gizmoDragging: false,
+  snapStepM: 0.01,
+  setGizmoEnabled: (enabled) => set({ gizmoEnabled: enabled, gizmoDragging: false }),
+  setGizmoDragging: (dragging) => set({ gizmoDragging: dragging }),
+  setSnapStepM: (step) => {
+    if ([0, 0.005, 0.01, 0.05, 0.1].includes(step)) set({ snapStepM: step })
+  },
   past: [],
   future: [],
   setSnapshot: (snapshot, id) => set({
     design: snapshot, designId: id, result: null,
-    selectedPart: null, measureFrom: null, measureTo: null, past: [], future: [],
+    selectedPart: null, measureFrom: null, measureTo: null,
+    gizmoDragging: false, past: [], future: [],
   }),
   setResult: (result) => set({ result }),
   setScenario: (scenario) => set({ scenario }),
