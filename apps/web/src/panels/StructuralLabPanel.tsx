@@ -49,6 +49,12 @@ export function StructuralLabPanel({ design }: { design: DroneDesign }) {
   const [error, setError] = useState<string | null>(null)
   const [running, setRunning] = useState(false)
   const requestVersion = useRef(0)
+  const invalidateResult = () => {
+    requestVersion.current += 1
+    setReport(null)
+    setError(null)
+    setRunning(false)
+  }
   useEffect(() => {
     // Discard pending responses if the design is edited before they arrive.
     requestVersion.current += 1
@@ -104,7 +110,7 @@ export function StructuralLabPanel({ design }: { design: DroneDesign }) {
         in newtons, in design rotor order. After | you may enter explicit
         signed arm-axis torques in N·m. No loads are guessed.
       </p>
-      <textarea rows={3} value={input} onChange={(e) => setInput(e.target.value)}
+      <textarea rows={3} value={input} onChange={(e) => { invalidateResult(); setInput(e.target.value) }}
         aria-label="Named structural load cases"
         placeholder={`hover: ${design.rotors.map(() => '?').join(', ')}`}
         className="w-full rounded border border-slate-700 bg-slate-950 p-2 font-mono text-xs"
@@ -121,35 +127,35 @@ export function StructuralLabPanel({ design }: { design: DroneDesign }) {
             Tube shear allowable (MPa)
             <input type="number" min="0" step="1" value={shearMpa}
               aria-label="Tube shear allowable MPa"
-              onChange={(e) => setShearMpa(e.target.value)}
+              onChange={(e) => { invalidateResult(); setShearMpa(e.target.value) }}
               className="mt-1 w-full rounded border border-slate-700 bg-slate-950 p-1" />
           </label>
           <label className="block text-slate-300">
             Shear allowable evidence source
             <input type="text" value={shearSource} maxLength={240}
               aria-label="Shear evidence source"
-              onChange={(e) => setShearSource(e.target.value)}
+              onChange={(e) => { invalidateResult(); setShearSource(e.target.value) }}
               className="mt-1 w-full rounded border border-slate-700 bg-slate-950 p-1" />
           </label>
           <label className="block text-slate-300">
             Joint bending capacity (N·m)
             <input type="number" min="0" step=".1" value={jointMoment}
               aria-label="Joint bending capacity"
-              onChange={(e) => setJointMoment(e.target.value)}
+              onChange={(e) => { invalidateResult(); setJointMoment(e.target.value) }}
               className="mt-1 w-full rounded border border-slate-700 bg-slate-950 p-1" />
           </label>
           <label className="block text-slate-300">
             Joint arm-axis torque capacity (N·m)
             <input type="number" min="0" step=".1" value={jointTorque}
               aria-label="Joint arm-axis torque capacity"
-              onChange={(e) => setJointTorque(e.target.value)}
+              onChange={(e) => { invalidateResult(); setJointTorque(e.target.value) }}
               className="mt-1 w-full rounded border border-slate-700 bg-slate-950 p-1" />
           </label>
           <label className="block text-slate-300">
             Joint capacity evidence source
             <input type="text" value={jointSource} maxLength={240}
               aria-label="Joint evidence source"
-              onChange={(e) => setJointSource(e.target.value)}
+              onChange={(e) => { invalidateResult(); setJointSource(e.target.value) }}
               className="mt-1 w-full rounded border border-slate-700 bg-slate-950 p-1" />
           </label>
         </div>
