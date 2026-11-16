@@ -49,6 +49,27 @@ export function analyzeGeometry(
       message: `Invalid mass or position for part: ${p.name}`,
     })
   }
+  const mountIds = new Set<string>()
+  for (const mount of design.frame?.mount_points ?? []) {
+    if (mountIds.has(mount.id)) issues.push({
+      code: 'duplicate_frame_mount', severity: 'error',
+      message: `Duplicate frame mount id: ${mount.id}`,
+    })
+    mountIds.add(mount.id)
+  }
+  for (const part of design.parts) {
+    if (!part.mount_id) continue
+    const mount = (design.frame?.mount_points ?? []).find((m) => m.id === part.mount_id)
+    if (!mount) issues.push({
+      code: 'missing_frame_mount', severity: 'error',
+      message: `Part ${part.name} refers to missing mount ${part.mount_id}`,
+    })
+    else if (part.position_m.some((v, i) => Math.abs(v - mount.position_m[i]) > 1e-8))
+      issues.push({
+        code: 'misaligned_frame_mount', severity: 'error',
+        message: `Part ${part.name} position differs from mount ${part.mount_id}`,
+      })
+  }
   if (design.frame && (!Number.isFinite(design.frame.tube_od_m) ||
       !Number.isFinite(design.frame.tube_id_m) ||
       design.frame.tube_id_m <= 0 ||
@@ -56,6 +77,14 @@ export function analyzeGeometry(
     issues.push({
       code: 'invalid_frame_tube', severity: 'error',
       message: 'Frame tube inner diameter must be positive and smaller than outer diameter.',
+    })
+  }
+  if (design.frame && design.rotors.length) {
+    const radial = Math.max(...design.rotors.map((r) =>
+      Math.hypot(r.position_m[0], r.position_m[1])))
+    if (radial > design.frame.arm_length_m + 1e-6) issues.push({
+      code: 'arm_span_underestimate', severity: 'warning',
+      message: `Frame arm span ${design.frame.arm_length_m.toFixed(3)} m is shorter than the furthest rotor's radial offset ${radial.toFixed(3)} m. Cantilever stress uses declared length and may be optimistic.`,
     })
   }
   // Conservative AABB broad-phase for declared primitives only. A cylinder's

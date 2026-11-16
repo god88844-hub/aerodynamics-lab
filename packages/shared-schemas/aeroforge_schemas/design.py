@@ -42,10 +42,25 @@ class PrimitiveGeometry(BaseModel):
         return self
 
 
+class FrameMount(BaseModel):
+    """A named frame anchor in body coordinates, not a fastener model."""
+
+    id: str = Field(min_length=1, pattern=r"^[A-Za-z0-9_-]+$")
+    position_m: tuple[float, float, float]
+
+    @model_validator(mode="after")
+    def finite_position(self) -> "FrameMount":
+        if any(not math.isfinite(v) for v in self.position_m):
+            raise ValueError("mount position must be finite")
+        return self
+
+
 class PartInstance(BaseModel):
     """A physical part with mass and (optionally) its own inertia."""
 
     name: str
+    mount_id: str | None = Field(default=None, description="optional frame mount id; "
+        "attached part CoG position must match mount coordinates")
     mass_kg: float = Field(gt=0.0, description="part mass [kg]")
     position_m: tuple[float, float, float] = Field(
         description="body-frame position of the part's own CoG [m]"
@@ -103,6 +118,26 @@ class FrameSpec(BaseModel):
     tube_od_m: float = Field(gt=0.0)
     tube_id_m: float = Field(gt=0.0)
     material_id: str
+    plate_dimensions_m: tuple[float, float, float] | None = Field(
+        default=None, description="declared visual plate envelope in meters; "
+        "does not override measured frame mass/inertia")
+    mount_points: list[FrameMount] = Field(default_factory=list)
+
+    @model_validator(mode="after")
+    def frame_dimensions(self) -> "FrameSpec":
+        if not all(math.isfinite(v) and v > 0 for v in
+                   (self.arm_length_m, self.tube_od_m, self.tube_id_m)):
+            raise ValueError("frame tube dimensions must be positive and finite")
+        if self.tube_id_m >= self.tube_od_m:
+            raise ValueError("frame tube ID must be smaller than OD")
+        if self.plate_dimensions_m is not None and any(
+            not math.isfinite(v) or v <= 0 for v in self.plate_dimensions_m
+        ):
+            raise ValueError("plate dimensions must be finite positive meters")
+        ids = [mount.id for mount in self.mount_points]
+        if len(ids) != len(set(ids)):
+            raise ValueError("frame mount ids must be unique")
+        return self
 
 
 class DroneDesign(BaseModel):
@@ -134,3 +169,22 @@ class DroneDesign(BaseModel):
         "approximation, per-component values arrive with the propulsion DB (M2)",
     )
     notes: str | None = Field(default=None, description="free-form notes; include data provenance")
+
+    @model_validator(mode="after")
+    def consistent_attachments(self) -> "DroneDesign":
+        positions = {m.id: m.position_m for m in self.frame.mount_points} if self.frame else {}
+        occupied: set[str] = set()
+        for p in self.parts:
+            if p.mount_id is None:
+                continue
+            if not (p.name.startswith("payload_") or "battery" in p.name.lower()):
+                raise ValueError("only batteries and payloads can reference frame mounts")
+            if p.mount_id not in positions:
+                raise ValueError(f"part {p.name}: unknown frame mount {p.mount_id}")
+            if p.mount_id in occupied:
+                raise ValueError(f"mount {p.mount_id} assigned to more than one part")
+            occupied.add(p.mount_id)
+            if any(not math.isclose(x, y, rel_tol=0, abs_tol=1e-8)
+                   for x, y in zip(p.position_m, positions[p.mount_id])):
+                raise ValueError(f"part {p.name} differs from frame mount position")
+        return self

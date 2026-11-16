@@ -9,7 +9,8 @@ import { analyzeGeometry } from '../editor/geometryChecks'
 
 export function DesignPanel() {
   const { design, designId, setSnapshot, setName, setArmLength, setBatteryPosition,
-          setBatteryMass, setPowertrain, setFrame, setDrag } = useDesignStore()
+          setBatteryMass, setPowertrain, setFrame, setDrag,
+          setPlateDimensions, setMountPosition, removeMount } = useDesignStore()
   const components = useComponents()
   const designsList = useDesignsList()
   const preview = usePreview(design)
@@ -102,11 +103,17 @@ export function DesignPanel() {
         <SectionTitle>Battery placement</SectionTitle>
         {battery ? (
           <>
+            {battery.mount_id && <p className="text-xs text-amber-400">
+              Battery is mounted. Edit the mount coordinates in Frame settings.
+            </p>}
             <NumberField label="x" unit="m" value={battery.position_m[0]} step={0.005}
+              disabled={!!battery.mount_id}
               onChange={(v) => setBatteryPosition([v, battery.position_m[1], battery.position_m[2]])} />
             <NumberField label="y" unit="m" value={battery.position_m[1]} step={0.005}
+              disabled={!!battery.mount_id}
               onChange={(v) => setBatteryPosition([battery.position_m[0], v, battery.position_m[2]])} />
             <NumberField label="z" unit="m" value={battery.position_m[2]} step={0.005}
+              disabled={!!battery.mount_id}
               onChange={(v) => setBatteryPosition([battery.position_m[0], battery.position_m[1], v])} />
             <NumberField label="mass" unit="kg" value={battery.mass_kg} step={0.05} min={0.05}
               onChange={setBatteryMass} />
@@ -136,6 +143,7 @@ export function DesignPanel() {
         <SelectField label="material" value={design.frame?.material_id ?? ''} options={matOpts}
           onChange={(v) =>
             setFrame({
+              ...design.frame,
               arm_length_m: armLength,
               tube_od_m: design.frame?.tube_od_m ?? 0.012,
               tube_id_m: design.frame?.tube_id_m ?? 0.010,
@@ -149,6 +157,58 @@ export function DesignPanel() {
             <NumberField label="tube ID" unit="m" value={design.frame.tube_id_m} step={0.001} min={0.002}
               onChange={(v) => setFrame({ ...design.frame!, tube_id_m: v, arm_length_m: armLength })} />
           </>
+        )}
+        {design.frame && (
+          <div className="space-y-2 border-t border-slate-800 pt-2">
+            <label className="flex items-center gap-2 text-xs text-slate-300">
+              <input type="checkbox" checked={!!design.frame.plate_dimensions_m}
+                aria-label="Dimensioned center plate"
+                onChange={(e) => setPlateDimensions(e.target.checked ? [0.16, 0.16, 0.03] : null)}
+                className="accent-cyan-500" />
+              Dimensioned center plate (visual only)
+            </label>
+            {design.frame.plate_dimensions_m &&
+              (['X width', 'Y depth', 'Z thickness'] as const).map((label, index) => (
+                <NumberField key={label} label={`plate ${label}`} unit="m"
+                  value={design.frame!.plate_dimensions_m![index]} min={0.001} step={0.005}
+                  onChange={(v) => {
+                    const current = design.frame!.plate_dimensions_m!
+                    const next = [...current] as [number, number, number]
+                    next[index] = v
+                    setPlateDimensions(next)
+                  }} />
+              ))}
+            <p className="text-[10px] text-slate-500">
+              Tube outside diameter controls the rendered arm thickness. Plate geometry
+              does not change the existing measured frame mass or inertia.
+            </p>
+            <SectionTitle>Frame mounting points</SectionTitle>
+            {(design.frame.mount_points ?? []).map((mount) => (
+              <div key={mount.id} className="space-y-1 rounded border border-slate-800 p-2">
+                <div className="flex items-center justify-between text-xs text-slate-300">
+                  <span>{mount.id}</span>
+                  <button type="button" onClick={() => removeMount(mount.id)}
+                    aria-label={`Remove ${mount.id}`}
+                    className="text-rose-300">Remove</button>
+                </div>
+                {(['X', 'Y', 'Z'] as const).map((axis, i) => (
+                  <NumberField key={axis} label={`${mount.id} ${axis}`} unit="m"
+                    value={mount.position_m[i]} step={0.005}
+                    onChange={(v) => {
+                      const next = [...mount.position_m] as [number, number, number]
+                      next[i] = v
+                      setMountPosition(mount.id, next)
+                    }} />
+                ))}
+              </div>
+            ))}
+            {(design.frame.mount_points ?? []).length === 0 && (
+              <p className="text-xs text-slate-500">
+                Select a battery or payload in the 3D component inspector,
+                then create a mount at its CoG.
+              </p>
+            )}
+          </div>
         )}
         {!design.frame && (
           <p className="text-xs text-slate-500">no frame — structural monitor skipped (flagged)</p>

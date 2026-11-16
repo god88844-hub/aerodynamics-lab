@@ -92,6 +92,11 @@ interface DesignState {
   setPartPosition: (name: string, position: Vec3) => void
   setPartMass: (name: string, mass: number) => void
   setPartGeometry: (name: string, geometry: PrimitiveGeometry | null) => void
+  setPlateDimensions: (dims: Vec3 | null) => void
+  addMountForSelectedPart: () => void
+  detachSelectedPart: () => void
+  setMountPosition: (mountId: string, pos: Vec3) => void
+  removeMount: (mountId: string) => void
   addPayload: () => void
   removeSelectedPayload: () => void
   undo: () => void
@@ -158,7 +163,8 @@ export const useDesignStore = create<DesignState>((set) => ({
   setPartPosition: (name, position) => set((s) => updateDesign(s, (d) => {
     if (!canMovePart(name) || !position.every(Number.isFinite)) return d
     const previous = d.parts.find((p) => p.name === name)
-    if (!previous || position.every((v, i) => v === previous.position_m[i])) return d
+    if (!previous || previous.mount_id ||
+        position.every((v, i) => v === previous.position_m[i])) return d
     return { ...d, parts: d.parts.map((p) =>
       p.name === name ? { ...p, position_m: [...position] as Vec3 } : p) }
   })),
@@ -183,6 +189,54 @@ export const useDesignStore = create<DesignState>((set) => ({
     if (JSON.stringify(previous.geometry ?? null) === JSON.stringify(geometry)) return d
     return { ...d, parts: d.parts.map((p) =>
       p.name === name ? { ...p, geometry } : p) }
+  })),
+  setPlateDimensions: (dims) => set((s) => updateDesign(s, (d) => {
+    if (!d.frame || (dims !== null && !dims.every((v) => Number.isFinite(v) && v > 0))) return d
+    if (JSON.stringify(d.frame.plate_dimensions_m ?? null) === JSON.stringify(dims)) return d
+    return { ...d, frame: { ...d.frame, plate_dimensions_m: dims } }
+  })),
+  addMountForSelectedPart: () => set((s) => updateDesign(s, (d) => {
+    if (!d.frame || !s.selectedPart || !canMovePart(s.selectedPart)) return d
+    const part = d.parts.find((p) => p.name === s.selectedPart)
+    if (!part || part.mount_id) return d
+    const mounts = d.frame.mount_points ?? []
+    let index = 1
+    while (mounts.some((m) => m.id === `mount_${index}`)) index++
+    const id = `mount_${index}`
+    return {
+      ...d,
+      frame: { ...d.frame, mount_points: [
+        ...mounts, { id, position_m: [...part.position_m] as Vec3 },
+      ] },
+      parts: d.parts.map((p) => p.name === part.name ? { ...p, mount_id: id } : p),
+    }
+  })),
+  detachSelectedPart: () => set((s) => updateDesign(s, (d) => {
+    const part = d.parts.find((p) => p.name === s.selectedPart)
+    if (!part?.mount_id) return d
+    return { ...d, parts: d.parts.map((p) =>
+      p.name === part.name ? { ...p, mount_id: null } : p) }
+  })),
+  setMountPosition: (mountId, pos) => set((s) => updateDesign(s, (d) => {
+    if (!d.frame || !pos.every(Number.isFinite)) return d
+    const mount = (d.frame.mount_points ?? []).find((m) => m.id === mountId)
+    if (!mount || pos.every((v, i) => v === mount.position_m[i])) return d
+    const newPos: Vec3 = [...pos]
+    return {
+      ...d,
+      frame: { ...d.frame, mount_points: (d.frame.mount_points ?? []).map((m) =>
+        m.id === mountId ? { ...m, position_m: [...newPos] as Vec3 } : m) },
+      parts: d.parts.map((p) => p.mount_id === mountId
+        ? { ...p, position_m: [...newPos] as Vec3 } : p),
+    }
+  })),
+  removeMount: (mountId) => set((s) => updateDesign(s, (d) => {
+    if (!d.frame || !(d.frame.mount_points ?? []).some((m) => m.id === mountId)) return d
+    return {
+      ...d,
+      frame: { ...d.frame, mount_points: (d.frame.mount_points ?? []).filter((m) => m.id !== mountId) },
+      parts: d.parts.map((p) => p.mount_id === mountId ? { ...p, mount_id: null } : p),
+    }
   })),
   addPayload: () => set((s) => {
     let index = 1
@@ -231,8 +285,13 @@ export const useDesignStore = create<DesignState>((set) => ({
   setArmLength: (m) => set((s) => updateDesign(s, (d) => applyArmLength(d, m))),
   setBatteryPosition: (pos) => set((s) => updateDesign(s, (d) => {
     if (!pos.every(Number.isFinite)) return d
+    const movable = d.parts.some((p) =>
+      p.name.toLowerCase().includes('battery') && !p.mount_id &&
+      pos.some((v, i) => v !== p.position_m[i]))
+    if (!movable) return d
     return { ...d, parts: d.parts.map((p) =>
-      p.name.toLowerCase().includes('battery') ? { ...p, position_m: [...pos] as Vec3 } : p) }
+      p.name.toLowerCase().includes('battery') && !p.mount_id
+        ? { ...p, position_m: [...pos] as Vec3 } : p) }
   })),
   setBatteryMass: (kg) => set((s) => updateDesign(s, (d) => {
     if (!Number.isFinite(kg) || kg <= 0 ||

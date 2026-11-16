@@ -103,11 +103,22 @@ export function DroneModel({ design, cog, principalAxes, editingEnabled = true }
 
   return (
     <group>
-      {/* center plate */}
+      {/* Declared plate dimensions control the visual envelope only.
+          Frame mass and inertia are still sourced from its physical parts. */}
       <mesh position={worldToScene([0, 0, 0])}>
-        <boxGeometry args={[0.16, 0.03, 0.16]} />
+        <boxGeometry args={design.frame?.plate_dimensions_m
+          ? [design.frame.plate_dimensions_m[0],
+             design.frame.plate_dimensions_m[2],
+             design.frame.plate_dimensions_m[1]]
+          : [0.16, 0.03, 0.16]} />
         <meshStandardMaterial color={BODY_COLOR} />
       </mesh>
+      {(design.frame?.mount_points ?? []).map((mount) => (
+        <mesh key={mount.id} position={worldToScene(mount.position_m)}>
+          <sphereGeometry args={[0.012, 12, 12]} />
+          <meshStandardMaterial color="#f472b6" emissive="#831843" emissiveIntensity={0.4} />
+        </mesh>
+      ))}
 
       {/* arms: center plate edge -> each motor */}
       {motorParts.map((p, i) => {
@@ -116,7 +127,7 @@ export function DroneModel({ design, cog, principalAxes, editingEnabled = true }
         const b = worldToScene(p.position_m)
         return (
           <group key={p.name}>
-            <Arm a={a} b={b} />
+            <Arm a={a} b={b} radius={design.frame ? design.frame.tube_od_m / 2 : 0.008} />
             <mesh position={worldToScene(p.position_m)}>
               <cylinderGeometry args={[0.021, 0.021, 0.035, 16]} />
               <meshStandardMaterial color={MOTOR_COLOR} />
@@ -172,7 +183,8 @@ export function DroneModel({ design, cog, principalAxes, editingEnabled = true }
           schematic, not dimensions used for structural or clearance analysis. */}
       {design.parts.map((p) => {
         const selected = p.name === selectedPart
-        if (selected && canMovePart(p.name) && gizmoEnabled && editingEnabled) return null
+        if (selected && canMovePart(p.name) && !p.mount_id &&
+            gizmoEnabled && editingEnabled) return null
         return (
           <mesh key={p.name} name={p.name} position={worldToScene(p.position_m)}
             userData={{ partName: p.name }}
@@ -184,7 +196,8 @@ export function DroneModel({ design, cog, principalAxes, editingEnabled = true }
         )
       })}
       {editingEnabled && gizmoEnabled &&
-        design.parts.filter((p) => p.name === selectedPart && canMovePart(p.name))
+        design.parts.filter((p) => p.name === selectedPart &&
+          canMovePart(p.name) && !p.mount_id)
           .map((p) => <DragHandle key={p.name} name={p.name}
             position={p.position_m} stepM={snapStepM} />)}
       {selectedPart && design.parts.some((p) => p.name === selectedPart) && (
