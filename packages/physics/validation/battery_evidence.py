@@ -153,8 +153,9 @@ def evaluate_battery_evidence(
         current_min <= s.current_a <= current_max and
         soc_min <= s.soc_pct <= soc_max for s in held
     )
+    # Unpublished C-rating is unknown, never a reported within-rating pass.
     over_limit = (
-        spec.max_discharge_c is not None and any(
+        None if spec.max_discharge_c is None else any(
             row["c_rate"] > spec.max_discharge_c for row in holdout_rows
         )
     )
@@ -216,7 +217,7 @@ def evaluate_battery_evidence(
                 body.predeclared_max_abs_percentage_error_pct,
             "meets_predeclared_error_tolerance": threshold_met,
             "max_observed_c_rate": max(row["c_rate"] for row in holdout_rows),
-            "above_declared_c_rate_limit": bool(over_limit),
+            "above_declared_c_rate_limit": over_limit,
         },
         "temperature": {
             "recorded_count": len(temps),
