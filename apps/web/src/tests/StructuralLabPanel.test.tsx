@@ -6,6 +6,7 @@ import type { DroneDesign } from '../types/api'
 const sample: DroneDesign = {
   schema_version: '0.1',
   name: 'structural_screen_ui',
+  rotor_torque_per_thrust_n_m_per_n: 0,
   parts: [{ name: 'frame', mass_kg: 1, position_m: [0, 0, 0] }],
   rotors: [
     { position_m: [0.2, 0.2, 0], spin_direction: 1 },
