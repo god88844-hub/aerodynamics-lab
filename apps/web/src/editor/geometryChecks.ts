@@ -58,6 +58,33 @@ export function analyzeGeometry(
       message: 'Frame tube inner diameter must be positive and smaller than outer diameter.',
     })
   }
+  // Conservative AABB broad-phase for declared primitives only. A cylinder's
+  // enclosing box can overlap while the actual bodies do not.
+  const solids = design.parts.filter((p) => p.geometry != null)
+  for (let i = 0; i < solids.length; i += 1) {
+    for (let j = i + 1; j < solids.length; j += 1) {
+      const a = solids[i]
+      const b = solids[j]
+      const ga = a.geometry!
+      const gb = b.geometry!
+      if (![...ga.dimensions_m, ...gb.dimensions_m].every((v) => Number.isFinite(v) && v > 0)) {
+        issues.push({
+          code: 'invalid_primitive', severity: 'error',
+          message: `Invalid declared dimensions in ${a.name} or ${b.name}`,
+        })
+        continue
+      }
+      const intersections = [0, 1, 2].map((axis) =>
+        (ga.dimensions_m[axis] + gb.dimensions_m[axis]) / 2 -
+        Math.abs(a.position_m[axis] - b.position_m[axis]))
+      if (intersections.every((depth) => depth > 1e-9)) {
+        issues.push({
+          code: 'primitive_aabb_interference', severity: 'warning',
+          message: `${a.name} and ${b.name}: declared bounding boxes intersect (broad-phase only; intentional nesting and cylinder shapes need review).`,
+        })
+      }
+    }
+  }
   if (propDiameterIn == null || !Number.isFinite(propDiameterIn) || propDiameterIn <= 0) {
     issues.push({
       code: 'unknown_prop_diameter', severity: 'info',

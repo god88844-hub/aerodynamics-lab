@@ -2,10 +2,18 @@
 
 export type Vec3 = [number, number, number]
 
+/** Declared dimensions in design body axes, meters.
+ * Cylinder dimensions = (diameter, diameter, length along +z). */
+export interface PrimitiveGeometry {
+  shape: 'box' | 'cylinder'
+  dimensions_m: Vec3
+}
+
 export interface PartInstance {
   name: string
   mass_kg: number
   position_m: Vec3
+  geometry?: PrimitiveGeometry | null
   inertia_about_own_cog_kg_m2?: number[][] | null
 }
 
