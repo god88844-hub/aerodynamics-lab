@@ -6,7 +6,7 @@ on:
       - feature/m11-security-dependency-audit
 
 permissions:
-  contents: read
+  contents: write
 
 jobs:
   npm-advisory-triage:
@@ -53,3 +53,40 @@ jobs:
             error: data.error,
           }));
           NODE
+
+  propose-vitest-remediation:
+    name: Migrate Vitest and verify patched lockfile
+    needs: npm-advisory-triage
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: apps/web
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: apps/web/package-lock.json
+      - name: Upgrade only Vitest major and resolve transitive patches
+        run: npm install --save-dev 'vitest@^5.1.0' --package-lock-only --ignore-scripts
+      - name: Reinstall exactly as CI and validate build plus frontend tests
+        run: |
+          npm ci
+          npm run build
+          npm test
+      - name: Reject remaining npm advisories
+        run: npm audit --audit-level=moderate
+      - name: Commit only validated package manifest and lockfile
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add package.json package-lock.json
+          if ! git diff --cached --quiet; then
+            git commit -m "security: upgrade Vitest and lock patched test dependencies"
+            git push origin HEAD:refs/heads/feature/m11-security-dependency-audit
+          else
+            echo "No dependency changes required."
+          fi
