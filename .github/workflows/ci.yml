@@ -31,6 +31,8 @@ jobs:
           cache-dependency-path: apps/web/package-lock.json
       - name: Install frontend dependencies
         run: npm ci
+      - name: Audit all frontend dependencies (including development tools)
+        run: npm audit --audit-level=moderate
       - name: Typecheck + build
         run: npm run build
       - name: Unit tests
