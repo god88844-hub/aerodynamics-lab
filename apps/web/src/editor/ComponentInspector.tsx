@@ -7,7 +7,8 @@ import { SectionTitle } from '../panels/fields'
 export function ComponentInspector() {
   const { design, selectedPart, selectPart, setPartPosition, setPartMass,
     addPayload, removeSelectedPayload, undo, redo, past, future,
-    measureFrom, measureTo, setMeasureFrom, setMeasureTo } = useDesignStore()
+    measureFrom, measureTo, setMeasureFrom, setMeasureTo,
+    gizmoEnabled, setGizmoEnabled, snapStepM, setSnapStepM } = useDesignStore()
   const part = design.parts.find((p) => p.name === selectedPart)
   const movable = part ? canMovePart(part.name) : false
   const distance = componentSeparationM(design, measureFrom, measureTo)
@@ -39,6 +40,30 @@ export function ComponentInspector() {
         Select a component here or click its marker in the 3D view.
         Coordinates locate part centers of gravity (m).
       </p>
+      <div className="space-y-2 rounded border border-slate-800 bg-slate-900/40 p-2">
+        <label className="flex items-center gap-2 text-xs text-slate-300">
+          <input type="checkbox" aria-label="Enable 3D translate handles"
+            checked={gizmoEnabled} onChange={(e) => setGizmoEnabled(e.target.checked)}
+            className="accent-cyan-500" />
+          Drag selected battery/payload using 3D axis handles
+        </label>
+        <label className="flex items-center justify-between gap-2 text-xs text-slate-400">
+          Grid snap
+          <select aria-label="Translation snap increment" value={snapStepM}
+            onChange={(e) => setSnapStepM(Number(e.target.value))}
+            className="rounded border border-slate-700 bg-slate-900 px-2 py-1 text-xs">
+            <option value={0}>Off</option>
+            <option value={0.005}>5 mm</option>
+            <option value={0.01}>10 mm</option>
+            <option value={0.05}>50 mm</option>
+            <option value={0.1}>100 mm</option>
+          </select>
+        </label>
+        <p className="text-[10px] text-slate-500">
+          Dragging commits one undoable design edit on release. Rotor/ESC/frame parts
+          stay locked to preserve coupled physics assumptions.
+        </p>
+      </div>
       <label className="block space-y-1 text-xs text-slate-300">
         <span>Component ({design.parts.length})</span>
         <select value={selectedPart ?? ''} onChange={(e) => selectPart(e.target.value || null)}

@@ -5,6 +5,7 @@ import { useDesignStore } from '../state/designStore'
 import { useComponents, useDesignsList, usePreview, useSaveDesign } from '../services/queries'
 import { batteryPart } from '../state/designStore'
 import { NumberField, SectionTitle, SelectField, TextField } from './fields'
+import { analyzeGeometry } from '../editor/geometryChecks'
 
 export function DesignPanel() {
   const { design, designId, setSnapshot, setName, setArmLength, setBatteryPosition,
@@ -34,6 +35,10 @@ export function DesignPanel() {
   const matOpts = (components.data?.materials ?? []).map((m) => ({ value: m.id, label: m.name }))
 
   const armLength = design.frame?.arm_length_m ?? 0.25
+  const selectedProp = components.data?.propellers.find(
+    (p) => p.id === design.powertrain?.propeller_id,
+  )
+  const constraints = analyzeGeometry(design, selectedProp?.diameter_in)
 
   const onSave = async () => {
     const saved = await save.mutateAsync(design)
@@ -150,6 +155,26 @@ export function DesignPanel() {
         )}
       </section>
 
+      <section className="space-y-2" aria-label="Geometry preflight">
+        <SectionTitle>Geometry preflight</SectionTitle>
+        {constraints.length === 0
+          ? <p className="text-xs text-emerald-400">
+              No detectable geometry inconsistencies in the limited checks below.
+            </p>
+          : constraints.map((issue, i) => (
+              <p key={i} className={`text-xs ${
+                issue.severity === 'error' ? 'text-rose-300'
+                  : issue.severity === 'warning' ? 'text-amber-300'
+                    : 'text-slate-400'
+              }`}>
+                [{issue.severity.toUpperCase()}] {issue.message}
+              </p>
+            ))}
+        <p className="text-[10px] text-slate-500">
+          Preliminary dimension/data checks only. No CAD collision solving,
+          rotor-interaction CFD, structural certification or flight-worthiness verdict.
+        </p>
+      </section>
       <section className="space-y-2">
         <SectionTitle>Preview (from physics core)</SectionTitle>
         {preview.data && (

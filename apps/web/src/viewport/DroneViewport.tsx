@@ -9,6 +9,7 @@ import type { DroneDesign, SimulationResult, Vec3 } from '../types/api'
 import { DroneModel } from './DroneModel'
 import type { FlightPose } from '../playback/flightPlayback'
 import { hasSpatialTelemetry } from '../playback/flightPlayback'
+import { useDesignStore } from '../state/designStore'
 
 const frameRotation = new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(1, 0, 0), -Math.PI / 2)
 
@@ -69,6 +70,7 @@ export function DroneViewport({ design, cog, principalAxes, result, pose = null,
   pose?: FlightPose | null
   follow?: boolean
 }) {
+  const gizmoDragging = useDesignStore((s) => s.gizmoDragging)
   const scale = 8 // grid spans ±4 m around the drone
   const position: [number, number, number] = pose ? worldToScene(pose.position_world_m) : [0, 0, 0]
   const quaternion = pose?.attitude_world_wxyz ? sceneAttitude(pose.attitude_world_wxyz) : undefined
@@ -89,11 +91,12 @@ export function DroneViewport({ design, cog, principalAxes, result, pose = null,
         fadeDistance={30}
       />
       <group position={position} quaternion={quaternion}>
-        <DroneModel design={design} cog={cog} principalAxes={principalAxes} />
+        <DroneModel design={design} cog={cog} principalAxes={principalAxes}
+          editingEnabled={!result?.telemetry} />
       </group>
       {result?.telemetry && <FlightPath telemetry={result.telemetry} />}
       {follow && <FollowCamera positionWorld={pose?.position_world_m ?? null} />}
-      <OrbitControls makeDefault enabled={!follow} />
+      <OrbitControls makeDefault enabled={!follow && !gizmoDragging} />
     </Canvas>
   )
 }
