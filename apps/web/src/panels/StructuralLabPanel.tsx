@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import type { DroneDesign } from '../types/api'
 import { api } from '../services/api'
 import { parseStructuralCases } from '../editor/structuralCases'
@@ -28,11 +28,16 @@ export function StructuralLabPanel({ design }: { design: DroneDesign }) {
   const [report, setReport] = useState<StructuralEnvelopeResult | null>(null)
   const [error, setError] = useState<string | null>(null)
   const [running, setRunning] = useState(false)
+  const requestVersion = useRef(0)
   useEffect(() => {
+    // Discard pending responses if the design is edited before they arrive.
+    requestVersion.current += 1
+    setRunning(false)
     setReport(null)
     setError(null)
   }, [design])
   const evaluate = async () => {
+    const version = ++requestVersion.current
     setError(null)
     setReport(null)
     try {
@@ -41,11 +46,11 @@ export function StructuralLabPanel({ design }: { design: DroneDesign }) {
       const response = await api.post<StructuralEnvelopeResult>(
         '/designs/structural-envelope', { snapshot: design, cases },
       )
-      setReport(response)
+      if (requestVersion.current === version) setReport(response)
     } catch (e) {
-      setError((e as Error).message)
+      if (requestVersion.current === version) setError((e as Error).message)
     } finally {
-      setRunning(false)
+      if (requestVersion.current === version) setRunning(false)
     }
   }
   return (
