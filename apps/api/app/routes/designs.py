@@ -24,6 +24,16 @@ class DesignUpdate(BaseModel):
     snapshot: dict
 
 
+class StructuralLoadCase(BaseModel):
+    name: str
+    thrusts_n: list[float]
+
+
+class StructuralEnvelopeRequest(BaseModel):
+    snapshot: dict
+    cases: list[StructuralLoadCase]
+
+
 def _design_summary(design: Design) -> dict:
     return {"id": design.id, "name": design.name,
             "created_at": design.created_at.isoformat(),
@@ -75,6 +85,29 @@ def preview_design(body: DesignCreate) -> dict:
 
     design = _validated_snapshot(body.snapshot)
     return service.design_preview(design)
+
+
+@router.post("/structural-envelope")
+def structural_envelope(body: StructuralEnvelopeRequest) -> dict:
+    """Analyze caller-supplied static rotor loads against declared arm geometry.
+
+    This is analytical verification, not a statement of flight safety.
+    """
+    from app.services.component_service import REPO_ROOT
+    from physics.structures.envelope import evaluate_load_envelope
+    from physics.structures.materials import load_materials
+
+    design = _validated_snapshot(body.snapshot)
+    material_file = REPO_ROOT / "data" / "components" / "materials.json"
+    materials = load_materials(material_file)
+    try:
+        return evaluate_load_envelope(
+            design,
+            [(case.name, case.thrusts_n) for case in body.cases],
+            materials,
+        )
+    except (ValueError, TypeError) as exc:
+        raise HTTPException(status_code=422, detail=str(exc)) from exc
 
 
 @router.get("/{design_id}")
