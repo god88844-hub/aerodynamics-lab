@@ -78,6 +78,11 @@ export function DesignPanel() {
           max={2}
           onChange={(v) => setArmLength(v)}
         />
+        {design.rotors.length !== 4 && (
+          <p className="text-xs text-amber-400">
+            Only Quad-X arm scaling is implemented. Rotor assemblies are locked for other layouts.
+          </p>
+        )}
         <NumberField
           label="drag CdA"
           unit="m²"

@@ -8,6 +8,7 @@ import { useDesignStore } from './state/designStore'
 import { computeCog } from './state/designStore'
 import { usePreview, useReferenceDesign } from './services/queries'
 import { DesignPanel } from './panels/DesignPanel'
+import { ComponentInspector } from './editor/ComponentInspector'
 import { ScenarioPanel } from './panels/ScenarioPanel'
 import { ResultsPanel } from './panels/ResultsPanel'
 import { TelemetryCharts } from './charts/TelemetryCharts'
@@ -59,7 +60,8 @@ export default function App() {
       </header>
       <main className="flex min-h-0 flex-1">
         <aside className="w-80 shrink-0 overflow-y-auto border-r border-slate-800">
-          <DesignPanel />
+          <ComponentInspector />
+          <div className="border-t border-slate-800"><DesignPanel /></div>
           <div className="border-t border-slate-800">
             <ScenarioPanel />
           </div>
