@@ -2,7 +2,8 @@
   World convention: world z = altitude maps to scene Y (three.js is Y-up);
   scene = [x, z, -y]. Units: 1 scene unit = 1 m. */
 
-import { Line } from '@react-three/drei'
+import { Html, Line } from '@react-three/drei'
+import { useDesignStore, componentSeparationM } from '../state/designStore'
 import { useMemo } from 'react'
 import * as THREE from 'three'
 import type { DroneDesign, Vec3 } from '../types/api'
@@ -45,6 +46,13 @@ export function DroneModel({ design, cog, principalAxes }: {
   cog: Vec3
   principalAxes: number[][] | null
 }) {
+  const selectedPart = useDesignStore((s) => s.selectedPart)
+  const selectPart = useDesignStore((s) => s.selectPart)
+  const measureFrom = useDesignStore((s) => s.measureFrom)
+  const measureTo = useDesignStore((s) => s.measureTo)
+  const measuredDistance = componentSeparationM(design, measureFrom, measureTo)
+  const startPart = design.parts.find((p) => p.name === measureFrom)
+  const endPart = design.parts.find((p) => p.name === measureTo)
   const motorParts = design.parts.filter((p) => p.name.startsWith('motor_'))
   const escParts = design.parts.filter((p) => p.name.startsWith('esc_'))
   const propParts = design.parts.filter((p) => p.name.startsWith('prop_'))
@@ -103,6 +111,44 @@ export function DroneModel({ design, cog, principalAxes }: {
           <boxGeometry args={[0.16, 0.06, 0.09]} />
           <meshStandardMaterial color={BATTERY_COLOR} />
         </mesh>
+      )}
+
+      {/* Every part has a clickable center-of-gravity anchor; mesh sizes are
+          schematic, not dimensions used for structural or clearance analysis. */}
+      {design.parts.map((p) => {
+        const selected = p.name === selectedPart
+        return (
+          <mesh key={p.name} name={p.name} position={worldToScene(p.position_m)}
+            userData={{ partName: p.name }}
+            onClick={(event) => { event.stopPropagation(); selectPart(p.name) }}>
+            <sphereGeometry args={[selected ? 0.022 : 0.012, 14, 14]} />
+            <meshStandardMaterial color={selected ? '#fef08a' : '#38bdf8'}
+              emissive={selected ? '#ca8a04' : '#164e63'} emissiveIntensity={0.35} />
+          </mesh>
+        )
+      })}
+      {selectedPart && design.parts.some((p) => p.name === selectedPart) && (
+        <Html position={worldToScene(design.parts.find((p) => p.name === selectedPart)!.position_m)}
+          center distanceFactor={6} style={{ pointerEvents: 'none' }}>
+          <span className="whitespace-nowrap rounded bg-slate-950/90 px-2 py-1 text-[10px] text-cyan-100">
+            {selectedPart}
+          </span>
+        </Html>
+      )}
+      {startPart && endPart && measuredDistance !== null && measuredDistance > 0 && (
+        <group>
+          <Line points={[worldToScene(startPart.position_m), worldToScene(endPart.position_m)]}
+            color="#facc15" lineWidth={2} />
+          <Html position={worldToScene([
+            (startPart.position_m[0] + endPart.position_m[0]) / 2,
+            (startPart.position_m[1] + endPart.position_m[1]) / 2,
+            (startPart.position_m[2] + endPart.position_m[2]) / 2,
+          ])} center distanceFactor={6} style={{ pointerEvents: 'none' }}>
+            <span className="whitespace-nowrap rounded bg-yellow-950/95 px-2 py-1 font-mono text-[10px] text-yellow-200">
+              {measuredDistance.toFixed(3)} m
+            </span>
+          </Html>
+        </group>
       )}
 
       {/* center of gravity marker */}

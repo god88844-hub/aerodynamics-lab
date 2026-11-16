@@ -1,26 +1,22 @@
-/** Design store (Zustand): holds the current design snapshot and edit
-  actions. Regenerating rotor placement from the arm length is the core
-  editor operation (spec M5: "editing arm length, propeller size, and
-  battery location"). */
-
+/** Design state for M10.2: selected physical parts, reversible edits, and
+ * measurement anchors. The backend remains authoritative for mass/inertia.
+ * Rotor component positions are locked: moving one without its matching rotor
+ * and structural model would silently invalidate flight physics. */
 import { create } from 'zustand'
 import type { DroneDesign, FrameSpec, PowertrainConfig, Vec3 } from '../types/api'
 
-/** Quad-X layout: arm_length_m is the X/Y offset of each rotor axis
-  (matches the reference designs in data/designs). */
-const ROTOR_SIGNS: [number, number][] = [
-  [1, 1],
-  [-1, 1],
-  [-1, -1],
-  [1, -1],
-]
+const ROTOR_SIGNS: [number, number][] = [[1, 1], [-1, 1], [-1, -1], [1, -1]]
 const MOTOR_DZ = 0.02
-const ESC_DZ = 0.0
+const ESC_DZ = 0
 const PROP_DZ = 0.045
+const MAX_HISTORY = 40
+type SimulationResult = import('../types/api').SimulationResult
 
+/** Current editor supports uniformly scaling a conventional Quad-X only. */
 export function applyArmLength(design: DroneDesign, armLength: number): DroneDesign {
+  if (!Number.isFinite(armLength) || armLength <= 0 || design.rotors.length !== 4) return design
   const pos = (i: number, dz: number): Vec3 => {
-    const [sx, sy] = ROTOR_SIGNS[i % 4]
+    const [sx, sy] = ROTOR_SIGNS[i]
     return [sx * armLength, sy * armLength, dz]
   }
   const suffixes = ['front_right', 'front_left', 'rear_left', 'rear_right']
@@ -32,38 +28,66 @@ export function applyArmLength(design: DroneDesign, armLength: number): DroneDes
     if (p.name.startsWith('prop_')) return { ...p, position_m: pos(idx, PROP_DZ) }
     return p
   })
-  const rotors = design.rotors.map((r, i) => ({ ...r, position_m: pos(i, MOTOR_DZ) }))
-  const frame = design.frame ? { ...design.frame, arm_length_m: armLength } : design.frame
-  return { ...design, parts, rotors, frame }
+  return {
+    ...design,
+    parts,
+    rotors: design.rotors.map((r, i) => ({ ...r, position_m: pos(i, MOTOR_DZ) })),
+    frame: design.frame ? { ...design.frame, arm_length_m: armLength } : design.frame,
+  }
 }
 
-/** Client-side CoG for the viewport marker (authoritative preview comes
-  from the API's /designs/preview). */
+/** Design coordinates are component centers of gravity (meters), not mesh vertices. */
 export function computeCog(design: DroneDesign): Vec3 {
-  let m = 0
-  const acc: Vec3 = [0, 0, 0]
-  for (const p of design.parts) {
-    m += p.mass_kg
-    acc[0] += p.mass_kg * p.position_m[0]
-    acc[1] += p.mass_kg * p.position_m[1]
-    acc[2] += p.mass_kg * p.position_m[2]
+  let total = 0
+  const weighted: Vec3 = [0, 0, 0]
+  for (const part of design.parts) {
+    if (!(part.mass_kg > 0) || !Number.isFinite(part.mass_kg)) continue
+    total += part.mass_kg
+    for (let i = 0; i < 3; i++) weighted[i] += part.mass_kg * part.position_m[i]
   }
-  if (m === 0) return [0, 0, 0]
-  return [acc[0] / m, acc[1] / m, acc[2] / m]
+  return total > 0 ? weighted.map((v) => v / total) as Vec3 : [0, 0, 0]
 }
 
 export function batteryPart(design: DroneDesign) {
   return design.parts.find((p) => p.name.toLowerCase().includes('battery'))
 }
 
+/** Only point-mass payloads and batteries may be repositioned independently.
+ * Frame, motors, ESC and propeller coordinates encode coupled assumptions. */
+export function canMovePart(name: string): boolean {
+  return name.startsWith('payload_') || name.toLowerCase().includes('battery')
+}
+
+export function componentSeparationM(design: DroneDesign, a: string | null, b: string | null): number | null {
+  if (!a || !b) return null
+  const p = design.parts.find((part) => part.name === a)
+  const q = design.parts.find((part) => part.name === b)
+  if (!p || !q) return null
+  return Math.hypot(...p.position_m.map((v, i) => v - q.position_m[i]))
+}
+
 interface DesignState {
   design: DroneDesign
   designId: number | null
-  result: import('../types/api').SimulationResult | null
+  result: SimulationResult | null
   scenario: string
+  selectedPart: string | null
+  measureFrom: string | null
+  measureTo: string | null
+  past: DroneDesign[]
+  future: DroneDesign[]
   setSnapshot: (snapshot: DroneDesign, id: number | null) => void
-  setResult: (result: import('../types/api').SimulationResult | null) => void
-  setScenario: (s: string) => void
+  setResult: (result: SimulationResult | null) => void
+  setScenario: (scenario: string) => void
+  selectPart: (name: string | null) => void
+  setMeasureFrom: (name: string | null) => void
+  setMeasureTo: (name: string | null) => void
+  setPartPosition: (name: string, position: Vec3) => void
+  setPartMass: (name: string, mass: number) => void
+  addPayload: () => void
+  removeSelectedPayload: () => void
+  undo: () => void
+  redo: () => void
   setName: (name: string) => void
   setArmLength: (m: number) => void
   setBatteryPosition: (pos: Vec3) => void
@@ -73,43 +97,116 @@ interface DesignState {
   setDrag: (cda: number | null) => void
 }
 
+function updateDesign(s: DesignState, apply: (d: DroneDesign) => DroneDesign): Partial<DesignState> {
+  const next = apply(s.design)
+  if (next === s.design) return {}
+  return {
+    design: next,
+    result: null, // stale trajectory and metrics must never survive a design change
+    past: [...s.past.slice(-(MAX_HISTORY - 1)), s.design],
+    future: [],
+  }
+}
+
+const initialDesign: DroneDesign = {
+  schema_version: '0.1', name: 'new_quad', parts: [], rotors: [],
+  drag_cd_a_m2: 0.02, rotor_torque_per_thrust_n_m_per_n: 0.015, notes: null,
+}
+
 export const useDesignStore = create<DesignState>((set) => ({
-  design: {
-    schema_version: '0.1',
-    name: 'new_quad',
-    parts: [],
-    rotors: [],
-    drag_cd_a_m2: 0.02,
-    rotor_torque_per_thrust_n_m_per_n: 0.015,
-    notes: null,
-  },
+  design: initialDesign,
   designId: null,
   result: null,
   scenario: 'flight',
-  setSnapshot: (snapshot, id) => set({ design: snapshot, designId: id, result: null }),
+  selectedPart: null,
+  measureFrom: null,
+  measureTo: null,
+  past: [],
+  future: [],
+  setSnapshot: (snapshot, id) => set({
+    design: snapshot, designId: id, result: null,
+    selectedPart: null, measureFrom: null, measureTo: null, past: [], future: [],
+  }),
   setResult: (result) => set({ result }),
   setScenario: (scenario) => set({ scenario }),
-  setName: (name) => set((s) => ({ design: { ...s.design, name } })),
-  setArmLength: (m) => set((s) => ({ design: applyArmLength(s.design, m) })),
-  setBatteryPosition: (pos) =>
-    set((s) => ({
-      design: {
-        ...s.design,
-        parts: s.design.parts.map((p) =>
-          p.name.toLowerCase().includes('battery') ? { ...p, position_m: pos } : p,
-        ),
-      },
-    })),
-  setBatteryMass: (kg) =>
-    set((s) => ({
-      design: {
-        ...s.design,
-        parts: s.design.parts.map((p) =>
-          p.name.toLowerCase().includes('battery') ? { ...p, mass_kg: kg } : p,
-        ),
-      },
-    })),
-  setPowertrain: (p) => set((s) => ({ design: { ...s.design, powertrain: p } })),
-  setFrame: (f) => set((s) => ({ design: { ...s.design, frame: f } })),
-  setDrag: (cda) => set((s) => ({ design: { ...s.design, drag_cd_a_m2: cda } })),
+  selectPart: (name) => set((s) => ({
+    selectedPart: name && s.design.parts.some((p) => p.name === name) ? name : null,
+  })),
+  setMeasureFrom: (name) => set((s) => ({
+    measureFrom: name && s.design.parts.some((p) => p.name === name) ? name : null,
+  })),
+  setMeasureTo: (name) => set((s) => ({
+    measureTo: name && s.design.parts.some((p) => p.name === name) ? name : null,
+  })),
+  setPartPosition: (name, position) => set((s) => updateDesign(s, (d) => {
+    if (!canMovePart(name) || !position.every(Number.isFinite)) return d
+    const previous = d.parts.find((p) => p.name === name)
+    if (!previous || position.every((v, i) => v === previous.position_m[i])) return d
+    return { ...d, parts: d.parts.map((p) =>
+      p.name === name ? { ...p, position_m: [...position] as Vec3 } : p) }
+  })),
+  setPartMass: (name, mass) => set((s) => updateDesign(s, (d) => {
+    if (!canMovePart(name) || !Number.isFinite(mass) || mass <= 0) return d
+    const previous = d.parts.find((p) => p.name === name)
+    if (!previous || previous.mass_kg === mass) return d
+    return { ...d, parts: d.parts.map((p) => p.name === name ? { ...p, mass_kg: mass } : p) }
+  })),
+  addPayload: () => set((s) => {
+    let index = 1
+    while (s.design.parts.some((p) => p.name === `payload_${index}`)) index += 1
+    const name = `payload_${index}`
+    return {
+      ...updateDesign(s, (d) => ({
+        ...d, parts: [...d.parts, { name, mass_kg: 0.25, position_m: [0, 0, 0] }],
+      })),
+      selectedPart: name,
+    }
+  }),
+  removeSelectedPayload: () => set((s) => {
+    const name = s.selectedPart
+    if (!name?.startsWith('payload_') || !s.design.parts.some((p) => p.name === name)) return {}
+    return {
+      ...updateDesign(s, (d) => ({ ...d, parts: d.parts.filter((p) => p.name !== name) })),
+      selectedPart: null,
+      measureFrom: s.measureFrom === name ? null : s.measureFrom,
+      measureTo: s.measureTo === name ? null : s.measureTo,
+    }
+  }),
+  undo: () => set((s) => {
+    const previous = s.past[s.past.length - 1]
+    if (!previous) return {}
+    return {
+      design: previous, result: null, past: s.past.slice(0, -1),
+      future: [s.design, ...s.future].slice(0, MAX_HISTORY),
+      selectedPart: s.selectedPart && previous.parts.some((p) => p.name === s.selectedPart)
+        ? s.selectedPart : null,
+      measureFrom: s.measureFrom && previous.parts.some((p) => p.name === s.measureFrom)
+        ? s.measureFrom : null,
+      measureTo: s.measureTo && previous.parts.some((p) => p.name === s.measureTo)
+        ? s.measureTo : null,
+    }
+  }),
+  redo: () => set((s) => {
+    const next = s.future[0]
+    if (!next) return {}
+    return {
+      design: next, result: null, future: s.future.slice(1),
+      past: [...s.past.slice(-(MAX_HISTORY - 1)), s.design],
+    }
+  }),
+  setName: (name) => set((s) => updateDesign(s, (d) => name === d.name ? d : { ...d, name })),
+  setArmLength: (m) => set((s) => updateDesign(s, (d) => applyArmLength(d, m))),
+  setBatteryPosition: (pos) => set((s) => updateDesign(s, (d) => {
+    if (!pos.every(Number.isFinite)) return d
+    return { ...d, parts: d.parts.map((p) =>
+      p.name.toLowerCase().includes('battery') ? { ...p, position_m: [...pos] as Vec3 } : p) }
+  })),
+  setBatteryMass: (kg) => set((s) => updateDesign(s, (d) => {
+    if (!Number.isFinite(kg) || kg <= 0) return d
+    return { ...d, parts: d.parts.map((p) =>
+      p.name.toLowerCase().includes('battery') ? { ...p, mass_kg: kg } : p) }
+  })),
+  setPowertrain: (p) => set((s) => updateDesign(s, (d) => ({ ...d, powertrain: p }))),
+  setFrame: (f) => set((s) => updateDesign(s, (d) => ({ ...d, frame: f }))),
+  setDrag: (cda) => set((s) => updateDesign(s, (d) => ({ ...d, drag_cd_a_m2: cda }))),
 }))
