@@ -43,7 +43,7 @@ interface BatteryEvidenceReport {
     within_calibration_envelope: boolean
     meets_predeclared_error_tolerance: boolean
     max_observed_c_rate: number
-    above_declared_c_rate_limit: boolean
+    above_declared_c_rate_limit: boolean | null
   }
   temperature: { recorded_count: number; missing_count: number; modeled: boolean }
   limitations: string[]
@@ -193,7 +193,8 @@ export function BatteryEvidencePanel({ design }: { design: DroneDesign }) {
           <p>Within measured calibration envelope: {report.heldout.within_calibration_envelope ? 'yes' : 'no'}</p>
           <p>Predeclared voltage-error tolerance met: {report.heldout.meets_predeclared_error_tolerance ? 'yes' : 'no'}</p>
           <p>Highest held-out load: {report.heldout.max_observed_c_rate.toFixed(2)}C</p>
-          <p>Above declared C-rating: {report.heldout.above_declared_c_rate_limit ? 'yes' : 'no'}</p>
+          <p>Above declared C-rating: {report.heldout.above_declared_c_rate_limit == null
+            ? 'unknown (no rating supplied)' : report.heldout.above_declared_c_rate_limit ? 'yes' : 'no'}</p>
           <p>Temperature correction modeled: no</p>
           <p>Original model comparison: {report.heldout.nominal_model_status.replaceAll('_', ' ')}</p>
           {report.heldout.nominal_model_metrics &&
