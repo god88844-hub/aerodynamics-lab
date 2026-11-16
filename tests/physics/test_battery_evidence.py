@@ -191,3 +191,10 @@ def test_temperature_is_only_metadata_and_never_implicitly_modeled():
     assert result["temperature"]["recorded_count"] == 1
     assert result["temperature"]["missing_count"] == 4
     assert result["temperature"]["modeled"] is False
+
+
+def test_missing_nominal_c_rating_is_unknown_not_safe():
+    spec = pack_spec()
+    spec.max_discharge_c = None
+    result = calculate(spec=spec)
+    assert result["heldout"]["above_declared_c_rate_limit"] is None
