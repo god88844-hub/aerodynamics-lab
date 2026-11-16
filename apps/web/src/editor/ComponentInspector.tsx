@@ -15,8 +15,12 @@ export function ComponentInspector() {
   const geometry = part?.geometry
   const setShape = (shape: 'none' | PrimitiveGeometry['shape']) => {
     if (!part || !geometryEditable) return
+    const previous = geometry?.dimensions_m ?? [0.12, 0.12, 0.05]
+    const dimensions: Vec3 = shape === 'cylinder'
+      ? [previous[0], previous[0], previous[2]]
+      : [...previous]
     setPartGeometry(part.name, shape === 'none' ? null : {
-      shape, dimensions_m: geometry?.dimensions_m ?? [0.12, 0.12, 0.05],
+      shape, dimensions_m: dimensions,
     })
   }
   const changeDimension = (axis: number, value: number) => {
