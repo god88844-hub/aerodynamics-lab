@@ -17,6 +17,20 @@ describe('operator-supplied structural load cases', () => {
   ])('rejects bad input instead of synthesizing thrust data', (source, count) => {
     expect(() => parseStructuralCases(source, count)).toThrow()
   })
+  it('parses optional signed arm-axis torque vectors, never inferred from thrust', () => {
+    expect(parseStructuralCases('takeoff: 1,2 | -0.1,0.2', 2)).toEqual([
+      { name: 'takeoff', thrusts_n: [1, 2], axial_torques_n_m: [-0.1, 0.2] },
+    ])
+  })
+  it.each([
+    'case: 1, 2 | 0.1',
+    'case: 1, 2 | ',
+    'case: 1, 2 | NaN, 1',
+    'case: 1, 2 | Infinity, 1',
+    'case: 1, 2 | 0.1,0.2 | 0.3,0.4',
+  ])('rejects malformed advanced torque vectors', (source) => {
+    expect(() => parseStructuralCases(source, 2)).toThrow()
+  })
   it('rejects a design without rotors', () => {
     expect(() => parseStructuralCases('hover: 2', 0)).toThrow()
   })
