@@ -226,6 +226,7 @@ def test_frozen_protocol_tamper_is_blocking():
     data["frozen_protocol"]["acceptance_metrics"][0]["maximum_absolute_prediction_error"] = 10
     report = score(data)
     assert report["protocol"]["readiness_status"] == "FROZEN_PROTOCOL_TAMPERED"
+    assert not report["claimed_voltage_compatibility_only_samplewise"]
     assert not report["decision_equivalent_to_physical_testing"]
 
 
@@ -261,3 +262,38 @@ def test_evidence_and_spec_are_read_only():
     original = copy.deepcopy((d, spec.model_dump()))
     score(d, spec=spec)
     assert (d, spec.model_dump()) == original
+
+
+
+def test_unphysically_large_but_finite_voltage_blocks_squared_residual_overflow():
+    data = request(physical=True)
+    evidence = data["runs"][1]["evidence"]
+    lines = evidence["csv_text"].splitlines()
+    fields = lines[1].split(",")
+    fields[1] = "1e200"
+    lines[1] = ",".join(fields)
+    evidence["csv_text"] = "\n".join(lines) + "\n"
+    evidence["manifest"]["raw_sha256"] = sha256(evidence["csv_text"].encode()).hexdigest()
+    result = score(data)
+    assert result["runs"][1]["conditional_voltage_replay"] is None
+    assert any("Observed voltage exceeds reference OCV support" in v
+               for v in result["runs"][1]["blockers"])
+    assert result["decision_equivalent_to_physical_testing"] is False
+
+
+def test_sparse_real_time_samples_cannot_report_measured_energy_or_charge():
+    data = request(physical=True)
+    evidence = data["runs"][1]["evidence"]
+    lines = evidence["csv_text"].splitlines()
+    fields = lines[2].split(",")
+    fields[0] = "100"
+    lines[2] = ",".join(fields)
+    evidence["csv_text"] = "\n".join(lines) + "\n"
+    evidence["manifest"]["raw_sha256"] = sha256(evidence["csv_text"].encode()).hexdigest()
+    report = score(data)
+    prediction = report["runs"][1]["conditional_voltage_replay"]
+    assert prediction is not None
+    assert prediction["measured_charge_ah"] is None
+    assert prediction["measured_delivered_energy_wh"] is None
+    assert not report["claimed_voltage_compatibility_only_samplewise"]
+    assert report["decision_equivalent_to_physical_testing"] is False
