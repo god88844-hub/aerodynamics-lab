@@ -9,7 +9,7 @@ from physics.validation.holdout_intervals import audit_heldout_intervals
 def campaign():
     def run(name, group):
         return {
-            "run_id": name, "group_id": group, "source_sha256": "a" * 64,
+            "run_id": name, "group_id": group, "source_sha256": ("a" if name == "run-A" else "d") * 64,
             "dataset_kind": "reported_physical_measurements",
             "hardware_match": True, "unused_for_calibration": True,
             "samples": [
@@ -84,6 +84,13 @@ def test_duplicate_or_leaked_groups_rejected():
     c = campaign()
     c["holdout_runs"][1]["group_id"] = "group-A"
     with pytest.raises(ValueError, match="duplicate"):
+        audit_heldout_intervals(**c)
+
+
+def test_identical_source_bytes_cannot_count_as_two_independent_runs():
+    c = campaign()
+    c["holdout_runs"][1]["source_sha256"] = c["holdout_runs"][0]["source_sha256"]
+    with pytest.raises(ValueError, match="duplicate original source digest"):
         audit_heldout_intervals(**c)
 
 
