@@ -92,6 +92,7 @@
           ],
           "min_measured_voltage_v": 3.6656437,
           "min_predicted_voltage_v": 3.736085103,
+          "max_predicted_current_a": 14.453632214,
           "voltage_residual_v": {
             "mae": 0.069814104,
             "rmse": 0.070357414,
@@ -126,6 +127,7 @@
           ],
           "min_measured_voltage_v": 3.6603665,
           "min_predicted_voltage_v": 3.718039318,
+          "max_predicted_current_a": 4.303343411,
           "voltage_residual_v": {
             "mae": 0.050804935,
             "rmse": 0.055764804,
@@ -160,6 +162,7 @@
           ],
           "min_measured_voltage_v": 3.1553392,
           "min_predicted_voltage_v": 3.305578067,
+          "max_predicted_current_a": 16.3360232,
           "voltage_residual_v": {
             "mae": 0.120463566,
             "rmse": 0.126182399,
@@ -176,10 +179,14 @@
       },
       "max_sample_interval_s": 10.000000475,
       "modeled_final_soc_pct": 45.526200695,
-      "measured_voltage_at_or_below_2_5_v": false,
-      "predicted_voltage_at_or_below_2_5_v": false,
-      "measured_temperature_at_or_above_70_c": false,
-      "measured_current_above_30_a": false
+      "limit_flags": {
+        "measured_voltage_at_or_below_2_5_v": false,
+        "predicted_voltage_at_or_below_2_5_v": false,
+        "measured_temperature_at_or_above_70_c": false,
+        "measured_current_above_30_a": false,
+        "predicted_current_above_30_a": false
+      },
+      "sampled_limit_breached": false
     },
     {
       "tester_cycle": "1",
@@ -205,6 +212,7 @@
           ],
           "min_measured_voltage_v": 3.669306,
           "min_predicted_voltage_v": 3.736080556,
+          "max_predicted_current_a": 14.453649807,
           "voltage_residual_v": {
             "mae": 0.06634371,
             "rmse": 0.067294761,
@@ -239,6 +247,7 @@
           ],
           "min_measured_voltage_v": 3.6612329,
           "min_predicted_voltage_v": 3.718031096,
+          "max_predicted_current_a": 4.303352927,
           "voltage_residual_v": {
             "mae": 0.04937408,
             "rmse": 0.054384965,
@@ -273,6 +282,7 @@
           ],
           "min_measured_voltage_v": 3.1472266,
           "min_predicted_voltage_v": 3.305565515,
+          "max_predicted_current_a": 16.336085235,
           "voltage_residual_v": {
             "mae": 0.124208077,
             "rmse": 0.130749701,
@@ -289,10 +299,14 @@
       },
       "max_sample_interval_s": 10.000000475,
       "modeled_final_soc_pct": 45.525039823,
-      "measured_voltage_at_or_below_2_5_v": false,
-      "predicted_voltage_at_or_below_2_5_v": false,
-      "measured_temperature_at_or_above_70_c": false,
-      "measured_current_above_30_a": false
+      "limit_flags": {
+        "measured_voltage_at_or_below_2_5_v": false,
+        "predicted_voltage_at_or_below_2_5_v": false,
+        "measured_temperature_at_or_above_70_c": false,
+        "measured_current_above_30_a": false,
+        "predicted_current_above_30_a": false
+      },
+      "sampled_limit_breached": false
     },
     {
       "tester_cycle": "2",
@@ -318,6 +332,7 @@
           ],
           "min_measured_voltage_v": 3.6706057,
           "min_predicted_voltage_v": 3.736080556,
+          "max_predicted_current_a": 14.453649807,
           "voltage_residual_v": {
             "mae": 0.064829688,
             "rmse": 0.066007265,
@@ -352,6 +367,7 @@
           ],
           "min_measured_voltage_v": 3.6611147,
           "min_predicted_voltage_v": 3.718031096,
+          "max_predicted_current_a": 4.303352927,
           "voltage_residual_v": {
             "mae": 0.049070209,
             "rmse": 0.05405863,
@@ -386,6 +402,7 @@
           ],
           "min_measured_voltage_v": 3.1413589,
           "min_predicted_voltage_v": 3.305565515,
+          "max_predicted_current_a": 16.336085235,
           "voltage_residual_v": {
             "mae": 0.127611252,
             "rmse": 0.134612907,
@@ -402,10 +419,14 @@
       },
       "max_sample_interval_s": 10.000000475,
       "modeled_final_soc_pct": 45.525039823,
-      "measured_voltage_at_or_below_2_5_v": false,
-      "predicted_voltage_at_or_below_2_5_v": false,
-      "measured_temperature_at_or_above_70_c": false,
-      "measured_current_above_30_a": false
+      "limit_flags": {
+        "measured_voltage_at_or_below_2_5_v": false,
+        "predicted_voltage_at_or_below_2_5_v": false,
+        "measured_temperature_at_or_above_70_c": false,
+        "measured_current_above_30_a": false,
+        "predicted_current_above_30_a": false
+      },
+      "sampled_limit_breached": false
     },
     {
       "tester_cycle": "3",
@@ -431,6 +452,7 @@
           ],
           "min_measured_voltage_v": 3.6708026,
           "min_predicted_voltage_v": 3.736081693,
+          "max_predicted_current_a": 14.453645408,
           "voltage_residual_v": {
             "mae": 0.064409747,
             "rmse": 0.065590302,
@@ -465,6 +487,7 @@
           ],
           "min_measured_voltage_v": 3.6601303,
           "min_predicted_voltage_v": 3.718033151,
+          "max_predicted_current_a": 4.303350548,
           "voltage_residual_v": {
             "mae": 0.0497036,
             "rmse": 0.054614781,
@@ -499,6 +522,7 @@
           ],
           "min_measured_voltage_v": 3.135097,
           "min_predicted_voltage_v": 3.305568653,
+          "max_predicted_current_a": 16.336069726,
           "voltage_residual_v": {
             "mae": 0.131735687,
             "rmse": 0.139064011,
@@ -515,10 +539,14 @@
       },
       "max_sample_interval_s": 10.000000475,
       "modeled_final_soc_pct": 45.525330041,
-      "measured_voltage_at_or_below_2_5_v": false,
-      "predicted_voltage_at_or_below_2_5_v": false,
-      "measured_temperature_at_or_above_70_c": false,
-      "measured_current_above_30_a": false
+      "limit_flags": {
+        "measured_voltage_at_or_below_2_5_v": false,
+        "predicted_voltage_at_or_below_2_5_v": false,
+        "measured_temperature_at_or_above_70_c": false,
+        "measured_current_above_30_a": false,
+        "predicted_current_above_30_a": false
+      },
+      "sampled_limit_breached": false
     },
     {
       "tester_cycle": "4",
@@ -544,6 +572,7 @@
           ],
           "min_measured_voltage_v": 3.6718266,
           "min_predicted_voltage_v": 3.736083966,
+          "max_predicted_current_a": 14.453636612,
           "voltage_residual_v": {
             "mae": 0.063814855,
             "rmse": 0.06522831,
@@ -578,6 +607,7 @@
           ],
           "min_measured_voltage_v": 3.6608391,
           "min_predicted_voltage_v": 3.718037262,
+          "max_predicted_current_a": 4.30334579,
           "voltage_residual_v": {
             "mae": 0.048942483,
             "rmse": 0.053907391,
@@ -612,6 +642,7 @@
           ],
           "min_measured_voltage_v": 3.1313953,
           "min_predicted_voltage_v": 3.305574929,
+          "max_predicted_current_a": 16.336038709,
           "voltage_residual_v": {
             "mae": 0.133729406,
             "rmse": 0.141393737,
@@ -628,10 +659,14 @@
       },
       "max_sample_interval_s": 10.000000475,
       "modeled_final_soc_pct": 45.525910477,
-      "measured_voltage_at_or_below_2_5_v": false,
-      "predicted_voltage_at_or_below_2_5_v": false,
-      "measured_temperature_at_or_above_70_c": false,
-      "measured_current_above_30_a": false
+      "limit_flags": {
+        "measured_voltage_at_or_below_2_5_v": false,
+        "predicted_voltage_at_or_below_2_5_v": false,
+        "measured_temperature_at_or_above_70_c": false,
+        "measured_current_above_30_a": false,
+        "predicted_current_above_30_a": false
+      },
+      "sampled_limit_breached": false
     }
   ]
 }

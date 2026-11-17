@@ -193,12 +193,15 @@ def replay_mission(
     max_interval_s = 0.0
     residuals = {}
     phase_results = {}
+    predicted_cutoff = False
+    predicted_overcurrent = False
     for segment, (phase, watts, duration) in zip(mission, PHASES, strict=True):
         first, last = segment.samples[0], segment.samples[-1]
         if abs(last.time_s - first.time_s - duration) > MAX_GAP_S:
             raise ValueError(f"cycle {cycle} {phase} does not span the published duration")
 
-        voltage_errors, current_errors, watts_measured, predictions = [], [], [], []
+        voltage_errors, current_errors, watts_measured = [], [], []
+        predicted_volts, predicted_amps = [], []
         measured_wh = 0.0
         previous_power = None
         for sample in segment.samples:
@@ -221,10 +224,15 @@ def replay_mission(
             if previous_power is not None:
                 measured_wh += (power + previous_power) * elapsed / 7200
             previous_power = power
-            predictions.append(volts)
+            predicted_volts.append(volts)
+            predicted_amps.append(amps)
             previous_time, previous_amps = sample.time_s, amps
 
         residuals[phase] = (voltage_errors, current_errors)
+        min_predicted_voltage = min(predicted_volts)
+        max_predicted_current = max(predicted_amps)
+        predicted_cutoff |= min_predicted_voltage <= 2.5
+        predicted_overcurrent |= max_predicted_current > 30
         phase_results[phase] = {
             "source_csv_lines_inclusive": [first.row, last.row],
             "samples": len(segment.samples),
@@ -236,24 +244,27 @@ def replay_mission(
             "current_a": [min(s.amps for s in segment.samples), max(s.amps for s in segment.samples)],
             "temperature_c": [min(s.temperature_c for s in segment.samples), max(s.temperature_c for s in segment.samples)],
             "min_measured_voltage_v": min(s.volts for s in segment.samples),
-            "min_predicted_voltage_v": round(min(predictions), 9),
+            "min_predicted_voltage_v": round(min_predicted_voltage, 9),
+            "max_predicted_current_a": round(max_predicted_current, 9),
             "voltage_residual_v": summarize_error(voltage_errors),
             "current_residual_a": summarize_error(current_errors),
         }
     end_soc = round(soc, 9)
-    measured_cutoff = min(p["min_measured_voltage_v"] for p in phase_results.values()) <= 2.5
-    predicted_cutoff = min(p["min_predicted_voltage_v"] for p in phase_results.values()) <= 2.5
-    measured_temperature_stop = max(p["temperature_c"][1] for p in phase_results.values()) >= 70
-    measured_current_limit = max(p["current_a"][1] for p in phase_results.values()) > 30
+    phases = phase_results.values()
+    limit_flags = {
+        "measured_voltage_at_or_below_2_5_v": min(p["min_measured_voltage_v"] for p in phases) <= 2.5,
+        "predicted_voltage_at_or_below_2_5_v": predicted_cutoff,
+        "measured_temperature_at_or_above_70_c": max(p["temperature_c"][1] for p in phases) >= 70,
+        "measured_current_above_30_a": max(p["current_a"][1] for p in phases) > 30,
+        "predicted_current_above_30_a": predicted_overcurrent,
+    }
     return {
         "tester_cycle": cycle,
         "phase_results": phase_results,
         "max_sample_interval_s": round(max_interval_s, 9),
         "modeled_final_soc_pct": end_soc,
-        "measured_voltage_at_or_below_2_5_v": measured_cutoff,
-        "predicted_voltage_at_or_below_2_5_v": predicted_cutoff,
-        "measured_temperature_at_or_above_70_c": measured_temperature_stop,
-        "measured_current_above_30_a": measured_current_limit,
+        "limit_flags": limit_flags,
+        "sampled_limit_breached": any(limit_flags.values()),
     }, residuals
 
 
@@ -282,7 +293,10 @@ def evaluate(
         "freeze_sha256": file_sha256(freeze_path),
         "holdout": {"cell": source.stem, "source_sha256": holdout_sha256},
         "gap_ceiling_s": max_gap_s,
-        "verdict": "INCONCLUSIVE_FOR_PACK_ACCEPTANCE",
+        "verdict": (
+            "FAILED_SAMPLED_OPERATING_LIMIT" if any(run["sampled_limit_breached"] for run in runs)
+            else "INCONCLUSIVE_FOR_PACK_ACCEPTANCE"
+        ),
         "samples": len(all_voltage),
         "pooled_voltage_residual_v": summarize_error(all_voltage),
         "pooled_current_residual_a": summarize_error(all_current),
