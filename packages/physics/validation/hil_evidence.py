@@ -159,8 +159,19 @@ def audit_hil_campaign(body: HILCampaignRequest) -> dict:
             if shared:
                 collisions.append({"calibration": a.dataset_id, "holdout": b.dataset_id,
                                    "shared_identifiers": shared})
+    # Entire holdouts must not reuse the exact same original recording bytes
+    # under different source IDs, even if all claimed group IDs differ.
+    for i, a in enumerate(holdouts):
+        for b in holdouts[i+1:]:
+            shared = [name for name in ("experiment_id", "recording_id", "source_sha256")
+                      if getattr(a, name) == getattr(b, name)]
+            if shared:
+                collisions.append({
+                    "calibration": a.dataset_id, "holdout": b.dataset_id,
+                    "shared_identifiers": shared,
+                })
     if collisions:
-        blockers.append("Controller calibration and holdout hardware/source groups overlap")
+        blockers.append("Controller calibration and holdout sources, or two holdouts, reuse evidence")
     results = []
     all_declared_holdouts_compatible = bool(frozen and len(holdouts) >= 2 and not collisions and
                                             metric is not None and hard_bound is not None)
