@@ -26,6 +26,7 @@ def fixture():
             "offset_hard_error":.01,
             "calibration_residual_hard_error":.02,
             "quantization_code_half_width":.5,
+            "output_unit":"V",
             "minimum_valid_code":1,
             "maximum_valid_code":4094,
         },
