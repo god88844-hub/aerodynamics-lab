@@ -92,9 +92,12 @@ def test_sparse_sample_gaps_preclude_time_integration():
 ])
 def test_corruption_and_unsupported_time_rejected(mutate, error):
     good = fake_csv()
-    manifest = fake_manifest(good)
+    changed = mutate(good)
+    # Rehash malformed-but-genuine inputs so syntax validation is reached.
+    # Only the explicit tampering case must fail at the integrity check.
+    manifest = fake_manifest(good if error == "SHA-256" else changed)
     with pytest.raises(ValueError, match=error):
-        audit_telemetry_csv(manifest, mutate(good))
+        audit_telemetry_csv(manifest, changed)
 
 
 @pytest.mark.parametrize("mutation", [
