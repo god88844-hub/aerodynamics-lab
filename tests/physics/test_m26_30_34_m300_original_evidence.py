@@ -16,8 +16,8 @@ from physics.validation.zenodo_flight_candidate import inspect_zenodo_m300_recor
 from physics.validation.zenodo_original_download import plan_original_zenodo_download
 
 def fixture(tmp_path,monkeypatch):
-    raw=("clock_ms,voltage_mV,current_mA,note\n"+
-         "".join(f"{1000+100*i},{24000+i},{5000+i},SYNTHETIC\n" for i in range(6))).encode()
+    raw=("clock_ms;voltage_mV;current_mA;note\n"+
+         "".join(f"{1000+100*i};{24000+i};{5000+i};SYNTHETIC\n" for i in range(6))).encode()
     file=tmp_path/"synthetic_original.csv"
     file.write_bytes(raw)
     monkeypatch.setattr(quality,"EXPECTED_MD5",md5(raw).hexdigest())
@@ -67,7 +67,7 @@ def test_m2631_hash_mismatch_and_missingness(tmp_path,monkeypatch):
     file,receipt,mapping=fixture(tmp_path,monkeypatch)
     with pytest.raises(ValueError,match="checksum"):
         quality.audit_original_m300_field_quality(file,{**receipt,"computed_original_sha256":"a"*64})
-    raw=file.read_bytes().replace(b",SYNTHETIC\n",b",\n")
+    raw=file.read_bytes().replace(b";SYNTHETIC\n",b";\n")
     file.write_bytes(raw)
     monkeypatch.setattr(quality,"EXPECTED_MD5",md5(raw).hexdigest())
     receipt.update(actual_source_bytes=len(raw),computed_original_sha256=sha256(raw).hexdigest())
@@ -86,7 +86,7 @@ def test_m2632_time_segments_keep_contiguous_blocks_not_flights(tmp_path,monkeyp
 
 def test_m2632_backward_clock_rejected(tmp_path,monkeypatch):
     file,receipt,mapping=fixture(tmp_path,monkeypatch)
-    raw=file.read_bytes().replace(b"1200,24002",b"1100,24002")
+    raw=file.read_bytes().replace(b"1200;24002",b"1100;24002")
     file.write_bytes(raw)
     monkeypatch.setattr(quality,"EXPECTED_MD5",md5(raw).hexdigest())
     receipt.update(actual_source_bytes=len(raw),computed_original_sha256=sha256(raw).hexdigest())

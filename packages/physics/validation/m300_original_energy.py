@@ -22,7 +22,7 @@ import re
 from collections.abc import Mapping
 
 from physics.validation.zenodo_original_csv_schema import inspect_downloaded_m300_csv
-from physics.validation.zenodo_flight_candidate import DOI, MAX_ORIGINAL_SIZE
+from physics.validation.zenodo_flight_candidate import DOI, MAX_ORIGINAL_SIZE, ORIGINAL_CSV_DELIMITER
 
 _MAPPING_KEYS = {
     "uid_column", "timestamp_column", "timestamp_unit", "voltage_column",
@@ -119,7 +119,7 @@ def analyse_m300_original_energy(path: str | Path, acquisition_receipt: Mapping,
     if sha256(original_bytes).hexdigest() != inspection["computed_original_sha256"]:
         raise ValueError("original source changed following provider checksum scan")
     text = original_bytes.decode("utf-8", "strict")
-    reader = csv.reader(io.StringIO(text, newline=""), strict=True)
+    reader = csv.reader(io.StringIO(text, newline=""), delimiter=ORIGINAL_CSV_DELIMITER, strict=True)
     header = next(reader)
     config = validate_explicit_m300_mapping(mapping, header)
     col = {name: header.index(mapping[name]) for name in (

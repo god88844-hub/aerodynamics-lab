@@ -13,7 +13,7 @@ from hashlib import md5, sha256
 from pathlib import Path
 from collections.abc import Mapping
 
-from physics.validation.zenodo_flight_candidate import EXPECTED_MD5, MAX_ORIGINAL_SIZE
+from physics.validation.zenodo_flight_candidate import EXPECTED_MD5, MAX_ORIGINAL_SIZE, ORIGINAL_CSV_DELIMITER
 
 
 def inspect_downloaded_m300_csv(path: Path | str, acquisition: Mapping) -> dict:
@@ -37,7 +37,7 @@ def inspect_downloaded_m300_csv(path: Path | str, acquisition: Mapping) -> dict:
     if decoded.startswith("\ufeff") or "\x00" in decoded:
         raise ValueError("original CSV contains BOM/NUL; refuse implicit conversion")
     try:
-        rows = csv.reader(io.StringIO(decoded, newline=""), strict=True)
+        rows = csv.reader(io.StringIO(decoded, newline=""), delimiter=ORIGINAL_CSV_DELIMITER, strict=True)
         header = next(rows, None)
         if (not isinstance(header, list) or not 2 <= len(header) <= 128
                 or any(not field.strip() or len(field) > 256 for field in header)

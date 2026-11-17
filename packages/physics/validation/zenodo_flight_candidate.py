@@ -15,6 +15,7 @@ import re
 RECORD_ID = 7643456
 DOI = "10.5281/zenodo.7643456"
 EXPECTED_MD5 = "e2f188e8f5cbf498c7009f422d401207"
+ORIGINAL_CSV_DELIMITER = ";"
 METADATA_API_URL = f"https://zenodo.org/api/records/{RECORD_ID}"
 MAX_ORIGINAL_SIZE = 25_000_000
 _HEX = re.compile(r"^[0-9a-f]{32}$")

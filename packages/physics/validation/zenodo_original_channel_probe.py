@@ -11,6 +11,7 @@ from collections.abc import Mapping
 from decimal import Decimal, InvalidOperation
 from pathlib import Path
 
+from physics.validation.zenodo_flight_candidate import ORIGINAL_CSV_DELIMITER
 from physics.validation.zenodo_original_quality import audit_original_m300_field_quality
 
 _CHANNEL_UNITS = {
@@ -42,7 +43,11 @@ def inspect_declared_original_m300_channel(
             not 8 <= len(instrument_unit_document_reference.strip()) <= 400):
         raise ValueError("traceable original instrument unit document reference required")
     index = columns.index(original_column)
-    reader = csv.reader(io.StringIO(Path(path).read_bytes().decode("utf-8"), newline=""), strict=True)
+    reader = csv.reader(
+        io.StringIO(Path(path).read_bytes().decode("utf-8"), newline=""),
+        delimiter=ORIGINAL_CSV_DELIMITER,
+        strict=True,
+    )
     next(reader)
     n = 0
     lo = hi = None

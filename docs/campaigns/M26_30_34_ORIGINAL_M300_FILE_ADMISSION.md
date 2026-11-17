@@ -1,5 +1,11 @@
 # M26.35–M26.39 — Original M300 source access, inspection and admission boundary
 
+**18 November 2026 original-source result.** The official [Zenodo release](https://zenodo.org/records/7643456) supplied the CC BY 4.0 original. It matches the published 15,644,028 bytes and MD5 `e2f188e8f5cbf498c7009f422d401207`. SHA-256 is `422e6c7634b899115d038cd82fdf3813e5a783d1c18aba52718ac2a8cd05b8c6`. The original uses semicolons, now handled by each source-specific reader. The original-byte inspector processed all 54,726 records and 32 columns. [Native header, counts and clock profile](../../data/benchmarks/flight/zenodo_kios_m300_2023_native_profile.json)
+
+Two native UID values encompass 4,384 and 50,342 rows. Within those UIDs, 3,944 and 45,303 adjacent pairs repeat the original integer timestamp, with up to ten rows at the same timestamp. The strict clock audit returned a duplicate-timestamp error on the original data. The publisher's description identifies battery voltage and current but omits explicit numeric units and sign for the exported fields. Energy scoring is unavailable pending a documented sub-second timebase, session mapping and electrical units. No row was modified, averaged, assigned a fabricated timestamp or used as an independent holdout.
+
+The following description records the initial implementation and its original evidence state.
+
 These five distinct development subphases extend the merged M26.25–M26.29 candidate acquisition and complement the separate flight-energy M26.30–M26.34 work in PR #64. Phase numbering has been reconciled to avoid counting that batch twice; the existing source/test filenames remain for compatibility. They provide a bounded, fully reproducible path **only for a locally acquired, authenticated-by-provider-checksum original DJI M300 CSV**. The source file could not be downloaded in this environment; all regression files are **synthetic** and test software behavior, never observed physical flights.
 
 ## M26.35: official-provider alternate download
