@@ -103,10 +103,14 @@ def evaluate_propulsion_evidence(
             continue
         thrust_error = 100.0 * (thrust.value - row.thrust_gf) / row.thrust_gf
         current_error = 100.0 * (current.value - row.current_a) / row.current_a
-        if not (math.isfinite(thrust_error) and math.isfinite(current_error)):
+        # The declared acceptance limits are <= 100%. Values above 1e6%
+        # are already certainly ineligible, and excluding them also prevents
+        # overflowing sums of squares in the diagnostic RMSE computation.
+        if not all(math.isfinite(e) and abs(e) <= 1e6
+                   for e in (thrust_error, current_error)):
             unsupported.append({
                 "id": row.id,
-                "reason": "nonfinite relative error; check measurement resolution or units",
+                "reason": "nonfinite or numerically unstable relative error; check measurement resolution or units",
                 "rpm": row.rpm, "voltage_v": row.voltage_v,
             })
             continue
