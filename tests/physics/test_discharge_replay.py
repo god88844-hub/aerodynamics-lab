@@ -148,22 +148,13 @@ def test_no_capacity_or_ocv_extrapolation():
     lambda d: d.update({"predeclared_max_sample_gap_s": -1}),
     lambda d: d.update({"data_source": " "}),
     lambda d: d.update({"battery_id": "../../outside"}),
-    lambda d: d["samples"].pop(),
-    lambda d: d["samples"].pop(),
-    lambda d: d["samples"].pop(),
-    lambda d: d["samples"].pop(),
-    lambda d: d["samples"].pop(),
-    lambda d: d["samples"].pop(),
+    lambda d: d.update({"samples": d["samples"][:5]}),
+    lambda d: d.update({"samples": [
+        {**s, "current_a": 0} for s in d["samples"]
+    ]}),
 ])
 def test_bad_trace_declaration_rejected(mutation):
     data = payload()
     mutation(data)
-    # The 6-row minimum is checked when enough rows are removed.
-    if len(data["samples"]) >= 6 and all(
-        p["t_s"] < data["samples"][-1]["t_s"]
-        for p in data["samples"][:-1]
-    ):
-        # Singular pops from 11 rows can still leave a valid trace.
-        return
     with pytest.raises(ValidationError):
         DischargeReplayRequest.model_validate(data)
