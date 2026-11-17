@@ -27,9 +27,12 @@ SOURCE_SHA256 = {
     "VAH01_impedance.csv": "f92a2e6b141d732863fbf5ba09e8867c073f15df2d35c80c83887051a1d31b25",
     "VAH17.csv": "a20cf42e2a58eed8dff3a1d54816012c043664dbf4cfdcee61bf86bd5048b4d8",
 }
+VAH27_SHA256 = "c9a2fcdb18a6265cd5b2e0ccba8afc7d5a4051e6bf56590340834df2304a137f"
 PLAN_VERSION = "M21-vtc6-baseline-v1"
+SAMPLED_PLAN_VERSION = "M21-vtc6-sampled-v2"
 RUN_COUNT = 5
 MAX_GAP_S = 2.0
+SAMPLED_MAX_GAP_S = 11.0
 PHASES = (("takeoff", 54, 75), ("cruise", 16, 800), ("landing", 54, 105))
 DISCHARGE_STEPS = (4, 5, 6)
 
@@ -56,9 +59,9 @@ def file_sha256(path: Path) -> str:
         return hashlib.file_digest(stream, "sha256").hexdigest()
 
 
-def original(directory: Path, filename: str) -> Path:
+def original(directory: Path, filename: str, expected_sha256: str) -> Path:
     path = directory / filename
-    if file_sha256(path) != SOURCE_SHA256[filename]:
+    if file_sha256(path) != expected_sha256:
         raise ValueError(f"{filename} does not match the frozen original SHA-256")
     return path
 
@@ -81,14 +84,14 @@ def segments(path: Path) -> Iterator[Segment]:
 
 
 def calibrate(directory: Path) -> dict:
-    resistance_path = original(directory, "VAH01_impedance.csv")
+    resistance_path = original(directory, "VAH01_impedance.csv", SOURCE_SHA256["VAH01_impedance.csv"])
     with resistance_path.open(newline="", encoding="utf-8-sig") as stream:
         resistance_row = next(csv.DictReader(stream))
     if int(resistance_row["cycle numbers"]) != 1:
         raise ValueError("first VAH01 impedance row is not the initial test")
     resistance = mean(float(resistance_row[key]) for key in ("20%_1_second", "60%_1_second"))
 
-    source = original(directory, "VAH01.csv")
+    source = original(directory, "VAH01.csv", SOURCE_SHA256["VAH01.csv"])
     rpt = list(itertools.islice(segments(source), 9))
     if [segment.step for segment in rpt] != list(range(9)) or len({s.cycle for s in rpt}) != 1:
         raise ValueError("unexpected initial VAH01 characterization sequence")
@@ -182,11 +185,12 @@ def summarize_error(residuals: list[float]) -> dict:
 
 
 def replay_mission(
-    pack: BatteryPack, cycle: str, mission: list[Segment]
+    pack: BatteryPack, cycle: str, mission: list[Segment], max_gap_s: float
 ) -> tuple[dict, dict[str, tuple[list[float], list[float]]]]:
     soc = 100.0  # Initial condition defined by the publisher's full-charge protocol.
     previous_time = None
     previous_amps = 0.0
+    max_interval_s = 0.0
     residuals = {}
     phase_results = {}
     for segment, (phase, watts, duration) in zip(mission, PHASES, strict=True):
@@ -203,8 +207,9 @@ def replay_mission(
             elapsed = 0.0
             if previous_time is not None:
                 elapsed = sample.time_s - previous_time
-                if not 0 < elapsed <= MAX_GAP_S:
+                if not 0 < elapsed <= max_gap_s:
                     raise ValueError(f"cycle {cycle} has a missing or nonmonotonic sample at line {sample.row}")
+                max_interval_s = max(max_interval_s, elapsed)
                 soc = pack.soc_after(soc, previous_amps, elapsed)
             if soc <= 0:
                 raise ValueError(f"frozen model runs out of charge in cycle {cycle}")
@@ -243,6 +248,7 @@ def replay_mission(
     return {
         "tester_cycle": cycle,
         "phase_results": phase_results,
+        "max_sample_interval_s": round(max_interval_s, 9),
         "modeled_final_soc_pct": end_soc,
         "measured_voltage_at_or_below_2_5_v": measured_cutoff,
         "predicted_voltage_at_or_below_2_5_v": predicted_cutoff,
@@ -251,17 +257,20 @@ def replay_mission(
     }, residuals
 
 
-def evaluate(directory: Path, freeze_path: Path) -> dict:
+def evaluate(
+    directory: Path, freeze_path: Path, holdout: str, holdout_sha256: str,
+    plan: str, max_gap_s: float,
+) -> dict:
     with freeze_path.open(encoding="utf-8") as stream:
         freeze = json.load(stream)
     if freeze != calibrate(directory):
         raise ValueError("freeze does not reproduce from the original characterization")
     pack = BatteryPack(BatterySpec.model_validate(freeze["battery"]))
-    source = original(directory, "VAH17.csv")
+    source = original(directory, holdout, holdout_sha256)
     runs = []
     pooled = {phase: ([], []) for phase, _, _ in PHASES}
     for cycle, mission in early_missions(source):
-        run, errors = replay_mission(pack, cycle, mission)
+        run, errors = replay_mission(pack, cycle, mission, max_gap_s)
         runs.append(run)
         for phase, (voltage, current) in errors.items():
             pooled[phase][0].extend(voltage)
@@ -269,9 +278,10 @@ def evaluate(directory: Path, freeze_path: Path) -> dict:
     all_voltage = [value for voltage, _ in pooled.values() for value in voltage]
     all_current = [value for _, current in pooled.values() for value in current]
     return {
-        "plan": PLAN_VERSION,
+        "plan": plan,
         "freeze_sha256": file_sha256(freeze_path),
-        "holdout": {"cell": "VAH17", "source_sha256": SOURCE_SHA256[source.name]},
+        "holdout": {"cell": source.stem, "source_sha256": holdout_sha256},
+        "gap_ceiling_s": max_gap_s,
         "verdict": "INCONCLUSIVE_FOR_PACK_ACCEPTANCE",
         "samples": len(all_voltage),
         "pooled_voltage_residual_v": summarize_error(all_voltage),
@@ -290,17 +300,26 @@ def evaluate(directory: Path, freeze_path: Path) -> dict:
 
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("action", choices=("calibrate", "evaluate"))
+    parser.add_argument("action", choices=("calibrate", "evaluate", "evaluate-sampled"))
     parser.add_argument("originals", type=Path)
     parser.add_argument("output", type=Path)
     parser.add_argument("--freeze", type=Path)
     args = parser.parse_args()
-    if args.action == "evaluate":
-        if args.freeze is None:
-            parser.error("evaluate requires --freeze")
-        result = evaluate(args.originals, args.freeze)
-    else:
+    if args.action == "calibrate":
         result = calibrate(args.originals)
+    else:
+        if args.freeze is None:
+            parser.error("evaluation requires --freeze")
+        if args.action == "evaluate":
+            result = evaluate(
+                args.originals, args.freeze, "VAH17.csv", SOURCE_SHA256["VAH17.csv"],
+                PLAN_VERSION, MAX_GAP_S,
+            )
+        else:
+            result = evaluate(
+                args.originals, args.freeze, "VAH27.csv", VAH27_SHA256,
+                SAMPLED_PLAN_VERSION, SAMPLED_MAX_GAP_S,
+            )
     args.output.write_bytes((json.dumps(result, indent=2, allow_nan=False) + "\n").encode("utf-8"))
 
 
