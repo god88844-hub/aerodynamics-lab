@@ -13,6 +13,7 @@ import { ScenarioPanel } from './panels/ScenarioPanel'
 import { StructuralLabPanel } from './panels/StructuralLabPanel'
 import { CombinedMetalPanel } from './panels/CombinedMetalPanel'
 import { RotorClearancePanel } from './panels/RotorClearancePanel'
+import { RotorTolerancePanel } from './panels/RotorTolerancePanel'
 import { BatteryEvidencePanel } from './panels/BatteryEvidencePanel'
 import { DischargeReplayPanel } from './panels/DischargeReplayPanel'
 import { BatteryCampaignPanel } from './panels/BatteryCampaignPanel'
@@ -84,6 +85,7 @@ export default function App() {
             <StructuralLabPanel design={design} />
             <CombinedMetalPanel design={design} />
             <RotorClearancePanel design={design} />
+            <RotorTolerancePanel key={JSON.stringify(design.rotors)} design={design} />
           </div>
           <div className="border-t border-slate-800">
             <BatteryEvidencePanel design={design} />
