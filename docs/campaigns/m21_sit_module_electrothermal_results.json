@@ -1,0 +1,284 @@
+{
+  "plan": "m21-sit-electrothermal-v1",
+  "frozen_calibration_canonical_sha256": "f959786b7d37ad82dc84780331fbd1363b63f2f109cd0bf0c4fb6cd7adbb4764",
+  "cohorts": {
+    "mid_life": {
+      "status": "FAILED_SAMPLED_STUDY_LIMIT",
+      "cycles_scored": 49,
+      "samples_scored": 10103,
+      "source_rejections": {
+        "168": "unexpected_cycle_or_sample_clock"
+      },
+      "outside_charge_support": 0,
+      "observed_limits_all_admitted_cycles": {
+        "module_low_v": 32,
+        "any_pack_low_v": 0,
+        "any_pack_high_temp": 0,
+        "capacity_exceeded": 0,
+        "nameplate_current_exceeded": 0
+      },
+      "temperature_initial_persistence_c": {
+        "mae": 10.78663689,
+        "rmse": 11.32763465,
+        "bias": -10.78663689,
+        "maximum_absolute_error": 27.705
+      },
+      "models": {
+        "fixed_r": {
+          "module_voltage_v": {
+            "mae": 0.55594658,
+            "rmse": 1.00181102,
+            "bias": 0.38415416,
+            "maximum_absolute_error": 7.66572184
+          },
+          "pack_voltage_v": {
+            "mae": 0.16436934,
+            "rmse": 0.30750562,
+            "bias": 0.09237687,
+            "maximum_absolute_error": 2.73781861
+          },
+          "pack_temperature_c": {
+            "mae": 0.9345314,
+            "rmse": 1.19907588,
+            "bias": 0.03681213,
+            "maximum_absolute_error": 5.18819996
+          },
+          "net_delivered_energy_wh": {
+            "mae": 2.88720644,
+            "rmse": 3.04138912,
+            "bias": 2.88720644,
+            "maximum_absolute_error": 5.77368998
+          },
+          "limit_screen": {
+            "module_low_v": {
+              "observed_cycles": 32,
+              "predicted_cycles": 0,
+              "missed_cycles": 32,
+              "false_alarm_cycles": 0
+            },
+            "any_pack_low_v": {
+              "observed_cycles": 0,
+              "predicted_cycles": 0,
+              "missed_cycles": 0,
+              "false_alarm_cycles": 0
+            },
+            "any_pack_high_temp": {
+              "observed_cycles": 0,
+              "predicted_cycles": 0,
+              "missed_cycles": 0,
+              "false_alarm_cycles": 0
+            },
+            "capacity_exceeded": {
+              "observed_cycles": 0,
+              "predicted_cycles": 0,
+              "missed_cycles": 0,
+              "false_alarm_cycles": 0
+            },
+            "nameplate_current_exceeded": {
+              "observed_cycles": 0,
+              "predicted_cycles": 0,
+              "missed_cycles": 0,
+              "false_alarm_cycles": 0
+            }
+          }
+        },
+        "one_rc": {
+          "module_voltage_v": {
+            "mae": 0.52704079,
+            "rmse": 0.92791117,
+            "bias": 0.38929323,
+            "maximum_absolute_error": 7.31047934
+          },
+          "pack_voltage_v": {
+            "mae": 0.13723049,
+            "rmse": 0.24779166,
+            "bias": 0.08982803,
+            "maximum_absolute_error": 2.76542245
+          },
+          "pack_temperature_c": {
+            "mae": 0.7273145,
+            "rmse": 0.95062307,
+            "bias": 0.00592667,
+            "maximum_absolute_error": 4.63923672
+          },
+          "net_delivered_energy_wh": {
+            "mae": 2.93360333,
+            "rmse": 3.0861123,
+            "bias": 2.93360333,
+            "maximum_absolute_error": 5.82618084
+          },
+          "limit_screen": {
+            "module_low_v": {
+              "observed_cycles": 32,
+              "predicted_cycles": 0,
+              "missed_cycles": 32,
+              "false_alarm_cycles": 0
+            },
+            "any_pack_low_v": {
+              "observed_cycles": 0,
+              "predicted_cycles": 0,
+              "missed_cycles": 0,
+              "false_alarm_cycles": 0
+            },
+            "any_pack_high_temp": {
+              "observed_cycles": 0,
+              "predicted_cycles": 0,
+              "missed_cycles": 0,
+              "false_alarm_cycles": 0
+            },
+            "capacity_exceeded": {
+              "observed_cycles": 0,
+              "predicted_cycles": 0,
+              "missed_cycles": 0,
+              "false_alarm_cycles": 0
+            },
+            "nameplate_current_exceeded": {
+              "observed_cycles": 0,
+              "predicted_cycles": 0,
+              "missed_cycles": 0,
+              "false_alarm_cycles": 0
+            }
+          }
+        }
+      }
+    },
+    "late_life": {
+      "status": "FAILED_SAMPLED_STUDY_LIMIT",
+      "cycles_scored": 50,
+      "samples_scored": 9769,
+      "source_rejections": {},
+      "outside_charge_support": 0,
+      "observed_limits_all_admitted_cycles": {
+        "module_low_v": 31,
+        "any_pack_low_v": 0,
+        "any_pack_high_temp": 0,
+        "capacity_exceeded": 0,
+        "nameplate_current_exceeded": 0
+      },
+      "temperature_initial_persistence_c": {
+        "mae": 10.24552692,
+        "rmse": 10.78839302,
+        "bias": -10.24526026,
+        "maximum_absolute_error": 23.065
+      },
+      "models": {
+        "fixed_r": {
+          "module_voltage_v": {
+            "mae": 0.84092575,
+            "rmse": 1.31741575,
+            "bias": 0.73325938,
+            "maximum_absolute_error": 9.49587923
+          },
+          "pack_voltage_v": {
+            "mae": 0.23045704,
+            "rmse": 0.37068615,
+            "bias": 0.17232833,
+            "maximum_absolute_error": 2.71819477
+          },
+          "pack_temperature_c": {
+            "mae": 1.52073468,
+            "rmse": 1.96810426,
+            "bias": 0.30357904,
+            "maximum_absolute_error": 7.20556727
+          },
+          "net_delivered_energy_wh": {
+            "mae": 5.06624611,
+            "rmse": 5.22898413,
+            "bias": 5.06624611,
+            "maximum_absolute_error": 8.65818567
+          },
+          "limit_screen": {
+            "module_low_v": {
+              "observed_cycles": 31,
+              "predicted_cycles": 0,
+              "missed_cycles": 31,
+              "false_alarm_cycles": 0
+            },
+            "any_pack_low_v": {
+              "observed_cycles": 0,
+              "predicted_cycles": 0,
+              "missed_cycles": 0,
+              "false_alarm_cycles": 0
+            },
+            "any_pack_high_temp": {
+              "observed_cycles": 0,
+              "predicted_cycles": 0,
+              "missed_cycles": 0,
+              "false_alarm_cycles": 0
+            },
+            "capacity_exceeded": {
+              "observed_cycles": 0,
+              "predicted_cycles": 0,
+              "missed_cycles": 0,
+              "false_alarm_cycles": 0
+            },
+            "nameplate_current_exceeded": {
+              "observed_cycles": 0,
+              "predicted_cycles": 0,
+              "missed_cycles": 0,
+              "false_alarm_cycles": 0
+            }
+          }
+        },
+        "one_rc": {
+          "module_voltage_v": {
+            "mae": 0.8309215,
+            "rmse": 1.25855254,
+            "bias": 0.73985373,
+            "maximum_absolute_error": 9.15740899
+          },
+          "pack_voltage_v": {
+            "mae": 0.21173687,
+            "rmse": 0.32240469,
+            "bias": 0.17063138,
+            "maximum_absolute_error": 3.93642245
+          },
+          "pack_temperature_c": {
+            "mae": 1.45976754,
+            "rmse": 1.90618842,
+            "bias": 0.29550018,
+            "maximum_absolute_error": 6.21637937
+          },
+          "net_delivered_energy_wh": {
+            "mae": 5.11830969,
+            "rmse": 5.27958211,
+            "bias": 5.11830969,
+            "maximum_absolute_error": 8.72734503
+          },
+          "limit_screen": {
+            "module_low_v": {
+              "observed_cycles": 31,
+              "predicted_cycles": 0,
+              "missed_cycles": 31,
+              "false_alarm_cycles": 0
+            },
+            "any_pack_low_v": {
+              "observed_cycles": 0,
+              "predicted_cycles": 0,
+              "missed_cycles": 0,
+              "false_alarm_cycles": 0
+            },
+            "any_pack_high_temp": {
+              "observed_cycles": 0,
+              "predicted_cycles": 0,
+              "missed_cycles": 0,
+              "false_alarm_cycles": 0
+            },
+            "capacity_exceeded": {
+              "observed_cycles": 0,
+              "predicted_cycles": 0,
+              "missed_cycles": 0,
+              "false_alarm_cycles": 0
+            },
+            "nameplate_current_exceeded": {
+              "observed_cycles": 0,
+              "predicted_cycles": 0,
+              "missed_cycles": 0,
+              "false_alarm_cycles": 0
+            }
+          }
+        }
+      }
+    }
+  }
+}

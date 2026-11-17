@@ -18,7 +18,20 @@ Fit a first-order surface temperature model initialized at each measured startin
 
 Use the study's strict sampled termination comparisons from Table 5. A module reading below 80.0 V, a pack reading below 19.8 V, a pack above 70 °C, or discharged capacity above 5 Ah produces a failure. The 400 A continuous nameplate current also serves as a measurement check. Report observed and modeled crossing counts, misses and false alarms. Current is a shared replay input. Compare net module energy by integrating measured current times voltage; the predicted energy uses predicted voltage over the same source timestamps. The sample times bound what can be inferred about crossings and do not reconstruct equipment reaction time. The models receive measured current and ambient temperature. The resulting test cannot establish prospective current demand, usable mission endurance or acceptance across new hardware.
 
-## M21.10 Reproduction
+## M21.10 Results and reproduction
+
+The [frozen protocol and scorer](https://github.com/god88844-hub/aeroforge/commit/2755a96d11697073e75ba489cab96a7e167cc4a3) scored 49 mid-life cycles and 50 late-life cycles. Cycle 168 failed the original sample-clock gate. The remaining 99 cycles supplied 19,872 module voltage samples and observations for all four packs. No admitted holdout exceeded the trained charge range. [Aggregate results](m21_sit_module_electrothermal_results.json)
+
+| Error | Mid-life, fixed / dynamic MAE | Late-life, fixed / dynamic MAE |
+| --- | ---: | ---: |
+| Module voltage | 0.556 / 0.527 V | 0.841 / 0.831 V |
+| Individual pack voltage | 0.164 / 0.137 V | 0.230 / 0.212 V |
+| Individual pack temperature | 0.935 / 0.727 °C | 1.521 / 1.460 °C |
+| Module energy | 2.887 / 2.934 Wh | 5.066 / 5.118 Wh |
+
+The initial-temperature persistence baseline had MAE of 10.79 °C at mid life and 10.25 °C at late life. Both electrical models overestimated mean voltage and net delivered energy. The dynamic model improved voltage and surface-temperature MAE and had slightly higher energy MAE.
+
+**Both cohorts fail the sampled study-limit screen.** The module dropped below 80 V in 32 mid-life and 31 late-life cycles. Both electrical models missed all 63 events. The other sampled study limits had zero observed breaches in these cohorts, so detection at those limits remains untested. The low average errors provide inadequate evidence for cutoff prediction, and the late-life voltage and energy bias makes this calibration unsuitable for aged-pack acceptance.
 
 Download file 37983774 from the publisher using `https://api.figshare.com/v2/file/download/37983774`. Keep it outside the repository. The offline benchmark uses the normal backend Python dependencies plus `openpyxl` for read-only import. The recorded reproduction used Python 3.11.9, NumPy 2.4.6, SciPy 1.15.3 and openpyxl 3.1.5.
 
