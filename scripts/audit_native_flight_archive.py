@@ -45,7 +45,7 @@ def cli(argv: list[str] | None = None) -> int:
             result = audit_native_flight_archive(args.root, obj)
         out = json.dumps(result, indent=2, sort_keys=True, allow_nan=False) + "\n"
         if args.output is not None:
-            if args.output.resolve() == args.manifest.resolve() if args.manifest is not None else False:
+            if args.manifest is not None and args.output.resolve() == args.manifest.resolve():
                 raise ValueError("audit output may not overwrite the source manifest")
             if args.output.resolve().is_relative_to(args.root.resolve()):
                 raise ValueError("audit output must remain outside original evidence root")
