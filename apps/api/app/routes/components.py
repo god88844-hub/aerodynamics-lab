@@ -4,6 +4,7 @@ from fastapi import APIRouter, HTTPException
 
 from app.services import component_service
 from physics.propulsion.loader import ComponentLibrary
+from physics.validation.validation_protocol import ProtocolAuditRequest, audit_protocol
 from physics.validation.telemetry_ingestion import (
     TelemetryAuditRequest, audit_telemetry_bundle,
 )
@@ -104,3 +105,9 @@ def telemetry_audit(body: TelemetryAuditRequest) -> dict:
         return audit_telemetry_bundle(bundles)
     except ValueError as exc:
         raise HTTPException(status_code=422, detail=str(exc)) from exc
+
+
+@router.post("/validation-protocol-audit")
+def validation_protocol_audit(body: ProtocolAuditRequest) -> dict:
+    """Read-only preregistration readiness audit, NEVER physical test approval."""
+    return audit_protocol(body)
