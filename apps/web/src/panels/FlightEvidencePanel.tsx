@@ -30,6 +30,7 @@ interface FlightEvidenceReport {
   }
   channels: Partial<Record<FlightChannel, ChannelComparison>>
   simulation_modified: boolean
+  uncertainty_assessment?: { status: string }
 }
 
 /** Flight-log scoring only; it does not write a physics component or a design. */
@@ -45,6 +46,11 @@ export function FlightEvidencePanel({ result }: { result: SimulationResult | nul
   const [unused, setUnused] = useState(false)
   const [csv, setCsv] = useState('')
   const [limits, setLimits] = useState<Record<FlightChannel, string>>({
+    altitude_m: '', vertical_speed_m_s: '', bus_voltage_v: '', battery_current_a: '',
+  })
+  const [uncertaintyEnabled, setUncertaintyEnabled] = useState(false)
+  const [clockBound, setClockBound] = useState('0')
+  const [bounds, setBounds] = useState<Record<FlightChannel, string>>({
     altitude_m: '', vertical_speed_m_s: '', bus_voltage_v: '', battery_current_a: '',
   })
   const [report, setReport] = useState<FlightEvidenceReport | null>(null)
@@ -92,6 +98,22 @@ export function FlightEvidencePanel({ result }: { result: SimulationResult | nul
           tolerances[channel] = value
         }
       }
+      const measurement_error_bounds: Partial<Record<FlightChannel, number>> = {}
+      if (uncertaintyEnabled) {
+        const clock = Number(clockBound)
+        if (!clockBound.trim() || !Number.isFinite(clock) || clock < 0 || clock > 2) {
+          throw new Error('Clock error bound must be between 0 and 2 seconds')
+        }
+        for (const channel of flightChannels) {
+          if (channel in tolerances) {
+            const value = Number(bounds[channel])
+            if (!bounds[channel].trim() || !Number.isFinite(value) || value < 0) {
+              throw new Error('Declare a nonnegative absolute measurement error bound for ' + channel)
+            }
+            measurement_error_bounds[channel] = value
+          }
+        }
+      }
       setRunning(true)
       const response = await api.post<FlightEvidenceReport>(`/simulations/${id}/flight-evidence`, {
         dataset_kind: kind,
@@ -103,6 +125,10 @@ export function FlightEvidencePanel({ result }: { result: SimulationResult | nul
         measurement_to_sim_time_offset_s: timeOffset,
         tolerances,
         observations,
+        ...(uncertaintyEnabled ? {
+          measurement_error_bounds,
+          clock_error_bound_s: Number(clockBound),
+        } : {}),
       })
       if (version.current === currentVersion) setReport(response)
     } catch (e) {
@@ -185,6 +211,41 @@ export function FlightEvidencePanel({ result }: { result: SimulationResult | nul
               </label>
             ))}
           </div>
+          <label className="flex gap-2 text-xs text-slate-300">
+            <input aria-label="Enable conservative uncertainty bounds" type="checkbox"
+              checked={uncertaintyEnabled}
+              onChange={(e) => { invalidate(); setUncertaintyEnabled(e.target.checked) }} />
+            Evaluate worst-case residuals under declared instrument and clock error bounds
+          </label>
+          {uncertaintyEnabled && (
+            <div className="space-y-2 rounded border border-slate-700 p-2">
+              <p className="text-[10px] text-amber-400">
+                These must be hard absolute error bounds from actual instrumentation.
+                They are not statistical standard deviations or automatically authenticated.
+              </p>
+              <label className="block text-xs text-slate-300">
+                Clock synchronization error bound (s)
+                <input aria-label="Clock synchronization error bound (s)"
+                  type="number" min="0" max="2" step="any" value={clockBound}
+                  onChange={(e) => { invalidate(); setClockBound(e.target.value) }}
+                  className="mt-1 w-full rounded border border-slate-700 bg-slate-950 p-1" />
+              </label>
+              <div className="grid grid-cols-2 gap-2">
+                {flightChannels.map((channel) => (
+                  <label key={channel} className="text-[10px] text-slate-300">
+                    {flightChannelLabels[channel]} absolute error bound
+                    <input aria-label={channel + ' measurement error bound'}
+                      type="number" min="0" step="any" value={bounds[channel]}
+                      onChange={(e) => {
+                        invalidate()
+                        setBounds((old) => ({ ...old, [channel]: e.target.value }))
+                      }}
+                      className="mt-1 w-full rounded border border-slate-700 bg-slate-950 p-1" />
+                  </label>
+                ))}
+              </div>
+            </div>
+          )}
           <button type="button" disabled={running} onClick={() => void evaluate()}
             className="w-full rounded bg-cyan-800 px-2 py-2 text-xs text-white disabled:opacity-40">
             {running ? 'Comparing…' : 'Compare held-out flight telemetry'}
@@ -195,6 +256,8 @@ export function FlightEvidencePanel({ result }: { result: SimulationResult | nul
               <p className="font-semibold text-cyan-300">{report.verdict.replaceAll('_', ' ')}</p>
               <p>Mission coverage: {(report.coverage.mission_fraction * 100).toFixed(1)}%</p>
               <p>Prediction sampling supported: {report.coverage.interpolation_supported ? 'yes' : 'no'}</p>
+              {report.uncertainty_assessment &&
+                <p>Uncertainty assessment: {report.uncertainty_assessment.status.replaceAll('_', ' ')}</p>}
               <table className="w-full text-[10px]">
                 <thead><tr><th className="text-left">Channel</th><th>RMSE</th><th>Max error</th><th>Limit</th></tr></thead>
                 <tbody>
