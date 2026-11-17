@@ -12,7 +12,7 @@ from physics.validation.convergence import (
     closed_loop_convergence,
     solver_tolerance_study,
 )
-from physics.validation.report import generate_vv_report
+from physics.validation.report import generate_vv_report, render_markdown
 from physics.validation.uq import EnduranceSampler, monte_carlo_endurance
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
@@ -84,8 +84,17 @@ def test_sampler_thrust_equivalence(design, library):
 def test_vv_report_flags_and_sections(design, library):
     report = generate_vv_report(design, library, uq_samples=40)
     assert "benchmarks" in report and "convergence" in report and "uncertainty" in report
-    assert report["needs_further_analysis"] is False  # all gates pass on this design
+    assert report["needs_further_analysis"] is False  # software-only gates pass
+    assert report["needs_independent_physical_validation"] is True
+    assert report["independent_physical_accuracy_demonstrated"] is False
+    assert report["decision_equivalent_to_physical_testing"] is False
+    assert report["validated_vs_assumed"]["validated"] == []
+    assert len(report["validated_vs_assumed"]["verified_in_software"]) >= 3
     assert len(report["validated_vs_assumed"]["assumed_or_estimated"]) >= 5
+    markdown = render_markdown(report)
+    assert "Independent physical validation**: NOT ESTABLISHED" in markdown
+    assert "software/numerical gates within tolerance" in markdown
+    assert "independently physically validated**: none" in markdown
 
 
 def test_vv_report_flags_when_gate_fails(design, library):
