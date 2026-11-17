@@ -50,7 +50,7 @@ def test_reference_composite_cannot_be_promoted_to_ductile_metal():
 def test_unsourced_or_malformed_loads_rejected():
     with TestClient(app) as client:
         data = payload()
-        data["cases"][0]["axial_torques_n_m"] = [float("nan")] * 4
+        data["cases"][0]["axial_torques_n_m"] = ["NaN"] * 4
         assert client.post("/api/components/combined-metal-screen", json=data).status_code == 422
         data = payload()
         data["cases"][0]["axial_torques_n_m"] = [.1, .1]
