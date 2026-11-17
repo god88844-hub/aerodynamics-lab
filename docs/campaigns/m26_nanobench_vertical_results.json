@@ -1,0 +1,5245 @@
+{
+  "plan": "m26-nanobench-vertical-v1",
+  "frozen_calibration_canonical_json_sha256": "fb947a8cf3ecd9ef716e34c0f17a9a16e0a71ac74cf737770f29d87ff1a51e1f",
+  "verdict": "INCONCLUSIVE_FOR_FLIGHT_ACCEPTANCE",
+  "horizons_s": {
+    "0.5": {
+      "calibration_band_altitude_m_and_velocity_m_s": [
+        0.043053589,
+        0.163709603
+      ],
+      "summary": {
+        "windows": 179,
+        "visits_below_0_4_m": 2,
+        "model": {
+          "altitude_m": {
+            "mae": 0.015466831,
+            "rmse": 0.020160097,
+            "bias": -0.000504448,
+            "max_abs": 0.064788674,
+            "calibration_band_coverage": 0.966480447
+          },
+          "vertical_velocity_m_s": {
+            "mae": 0.05940164,
+            "rmse": 0.078676425,
+            "bias": -0.002329861,
+            "max_abs": 0.241460428,
+            "calibration_band_coverage": 0.960893855
+          }
+        },
+        "baseline": {
+          "altitude_m": {
+            "mae": 0.018146729,
+            "rmse": 0.032200291,
+            "bias": 0.0037467,
+            "max_abs": 0.17537423
+          },
+          "vertical_velocity_m_s": {
+            "mae": 0.069330875,
+            "rmse": 0.129210622,
+            "bias": 0.016150737,
+            "max_abs": 0.701895017
+          }
+        }
+      },
+      "holdout_flights": {
+        "B12_staircase_climb_rep1": {
+          "summary": {
+            "windows": 74,
+            "visits_below_0_4_m": 0,
+            "model": {
+              "altitude_m": {
+                "mae": 0.011994224,
+                "rmse": 0.016566528,
+                "bias": -0.009471939,
+                "max_abs": 0.039752719,
+                "calibration_band_coverage": 1.0
+              },
+              "vertical_velocity_m_s": {
+                "mae": 0.047133586,
+                "rmse": 0.065836723,
+                "bias": -0.037243425,
+                "max_abs": 0.169792997,
+                "calibration_band_coverage": 0.986486486
+              }
+            },
+            "baseline": {
+              "altitude_m": {
+                "mae": 0.017669177,
+                "rmse": 0.028104702,
+                "bias": 0.001781902,
+                "max_abs": 0.076088611
+              },
+              "vertical_velocity_m_s": {
+                "mae": 0.066792888,
+                "rmse": 0.10761964,
+                "bias": 0.006655803,
+                "max_abs": 0.296096961
+              }
+            }
+          },
+          "source_channel_counts_before_resampling": {
+            "motor": 3883,
+            "power": 414,
+            "vicon": 7225
+          },
+          "published_rows": 7225,
+          "excluded_windows_by_reason": {
+            "below_initial_or_calibration_height": 25,
+            "invalid_input": 45
+          },
+          "window_residuals": [
+            {
+              "csv_lines": [
+                502,
+                552
+              ],
+              "model_error": [
+                -0.037585405,
+                -0.133266802
+              ],
+              "baseline_error": [
+                0.019975492,
+                0.090933479
+              ],
+              "visits_below_0_4_m": false
+            },
+            {
+              "csv_lines": [
+                552,
+                602
+              ],
+              "model_error": [
+                -0.030258901,
+                -0.133202605
+              ],
+              "baseline_error": [
+                0.008978471,
+                0.01600491
+              ],
+              "visits_below_0_4_m": false
+            },
+            {
+              "csv_lines": [
+                602,
+                652
+              ],
+              "model_error": [
+                -0.030613625,
+                -0.12136425
+              ],
+              "baseline_error": [
+                -0.001098484,
+                0.002930966
+              ],
+              "visits_below_0_4_m": false
+            },
+            {
+              "csv_lines": [
+                652,
+                702
+              ],
+              "model_error": [
+                -0.02962508,
+                -0.115790337
+              ],
+              "baseline_error": [
+                0.0052782,
+                0.023679704
+              ],
+              "visits_below_0_4_m": false
+            },
+            {
+              "csv_lines": [
+                702,
+                752
+              ],
+              "model_error": [
+                -0.03383908,
+                -0.13022529
+              ],
+              "baseline_error": [
+                -0.002636234,
+                0.005844372
+              ],
+              "visits_below_0_4_m": false
+            },
+            {
+              "csv_lines": [
+                752,
+                802
+              ],
+              "model_error": [
+                -0.032933311,
+                -0.134497273
+              ],
+              "baseline_error": [
+                0.000878376,
+                0.00304878
+              ],
+              "visits_below_0_4_m": false
+            },
+            {
+              "csv_lines": [
+                802,
+                852
+              ],
+              "model_error": [
+                -0.038341073,
+                -0.155991287
+              ],
+              "baseline_error": [
+                -0.002694005,
+                -0.005770694
+              ],
+              "visits_below_0_4_m": false
+            },
+            {
+              "csv_lines": [
+                852,
+                902
+              ],
+              "model_error": [
+                -0.03406857,
+                -0.129998207
+              ],
+              "baseline_error": [
+                0.008470329,
+                0.018207108
+              ],
+              "visits_below_0_4_m": false
+            },
+            {
+              "csv_lines": [
+                902,
+                952
+              ],
+              "model_error": [
+                -0.037582471,
+                -0.14497224
+              ],
+              "baseline_error": [
+                0.001089854,
+                0.013951703
+              ],
+              "visits_below_0_4_m": false
+            },
+            {
+              "csv_lines": [
+                952,
+                1002
+              ],
+              "model_error": [
+                -0.030924284,
+                -0.131744215
+              ],
+              "baseline_error": [
+                -0.005786136,
+                -0.018846871
+              ],
+              "visits_below_0_4_m": false
+            },
+            {
+              "csv_lines": [
+                1002,
+                1052
+              ],
+              "model_error": [
+                -0.028570765,
+                -0.116046757
+              ],
+              "baseline_error": [
+                0.010190362,
+                0.02608095
+              ],
+              "visits_below_0_4_m": false
+            },
+            {
+              "csv_lines": [
+                1052,
+                1102
+              ],
+              "model_error": [
+                -0.031939216,
+                -0.117783833
+              ],
+              "baseline_error": [
+                -0.009882204,
+                -0.038728922
+              ],
+              "visits_below_0_4_m": false
+            },
+            {
+              "csv_lines": [
+                1102,
+                1152
+              ],
+              "model_error": [
+                -0.018721832,
+                -0.059618019
+              ],
+              "baseline_error": [
+                0.006412511,
+                -0.004454414
+              ],
+              "visits_below_0_4_m": false
+            },
+            {
+              "csv_lines": [
+                1152,
+                1202
+              ],
+              "model_error": [
+                -0.016645792,
+                -0.067981665
+              ],
+              "baseline_error": [
+                -0.075782338,
+                -0.296096961
+              ],
+              "visits_below_0_4_m": false
+            },
+            {
+              "csv_lines": [
+                1202,
+                1252
+              ],
+              "model_error": [
+                -0.008230558,
+                -0.031779215
+              ],
+              "baseline_error": [
+                -0.0100919,
+                0.024863233
+              ],
+              "visits_below_0_4_m": false
+            },
+            {
+              "csv_lines": [
+                1252,
+                1302
+              ],
+              "model_error": [
+                -0.002771144,
+                -0.005387866
+              ],
+              "baseline_error": [
+                0.0671048,
+                0.266434753
+              ],
+              "visits_below_0_4_m": false
+            },
+            {
+              "csv_lines": [
+                1302,
+                1352
+              ],
+              "model_error": [
+                -0.005472037,
+                -0.032927814
+              ],
+              "baseline_error": [
+                0.024641191,
+                0.059251649
+              ],
+              "visits_below_0_4_m": false
+            },
+            {
+              "csv_lines": [
+                1352,
+                1402
+              ],
+              "model_error": [
+                -0.016696985,
+                -0.070958308
+              ],
+              "baseline_error": [
+                -0.010930109,
+                -0.044963388
+              ],
+              "visits_below_0_4_m": false
+            },
+            {
+              "csv_lines": [
+                1402,
+                1452
+              ],
+              "model_error": [
+                -0.01504152,
+                -0.059906358
+              ],
+              "baseline_error": [
+                -0.002503064,
+                0.00265247
+              ],
+              "visits_below_0_4_m": false
+            },
+            {
+              "csv_lines": [
+                1452,
+                1502
+              ],
+              "model_error": [
+                -0.018955319,
+                -0.085420606
+              ],
+              "baseline_error": [
+                0.009657693,
+                0.014810329
+              ],
+              "visits_below_0_4_m": false
+            },
+            {
+              "csv_lines": [
+                1502,
+                1552
+              ],
+              "model_error": [
+                -0.021249885,
+                -0.086469137
+              ],
+              "baseline_error": [
+                -0.007986528,
+                -0.021298175
+              ],
+              "visits_below_0_4_m": false
+            },
+            {
+              "csv_lines": [
+                1552,
+                1602
+              ],
+              "model_error": [
+                -0.020296502,
+                -0.07116664
+              ],
+              "baseline_error": [
+                0.002979608,
+                0.026092565
+              ],
+              "visits_below_0_4_m": false
+            },
+            {
+              "csv_lines": [
+                1602,
+                1652
+              ],
+              "model_error": [
+                -0.00531495,
+                -0.019268773
+              ],
+              "baseline_error": [
+                0.014008325,
+                0.035490069
+              ],
+              "visits_below_0_4_m": false
+            },
+            {
+              "csv_lines": [
+                1652,
+                1702
+              ],
+              "model_error": [
+                -0.011200589,
+                -0.055463519
+              ],
+              "baseline_error": [
+                -0.015027617,
+                -0.06063174
+              ],
+              "visits_below_0_4_m": false
+            },
+            {
+              "csv_lines": [
+                1702,
+                1752
+              ],
+              "model_error": [
+                -0.017122266,
+                -0.065033938
+              ],
+              "baseline_error": [
+                -0.007619833,
+                -0.027931359
+              ],
+              "visits_below_0_4_m": false
+            },
+            {
+              "csv_lines": [
+                1752,
+                1802
+              ],
+              "model_error": [
+                -0.008218489,
+                -0.020254586
+              ],
+              "baseline_error": [
+                0.018513187,
+                0.056689584
+              ],
+              "visits_below_0_4_m": false
+            },
+            {
+              "csv_lines": [
+                1802,
+                1852
+              ],
+              "model_error": [
+                -0.01489262,
+                -0.058567283
+              ],
+              "baseline_error": [
+                -0.053260051,
+                -0.24263238
+              ],
+              "visits_below_0_4_m": false
+            },
+            {
+              "csv_lines": [
+                1852,
+                1902
+              ],
+              "model_error": [
+                -0.001085478,
+                0.00021874
+              ],
+              "baseline_error": [
+                -0.044740662,
+                -0.124988056
+              ],
+              "visits_below_0_4_m": false
+            },
+            {
+              "csv_lines": [
+                1902,
+                1952
+              ],
+              "model_error": [
+                0.008223494,
+                0.035715102
+              ],
+              "baseline_error": [
+                0.047532048,
+                0.22924917
+              ],
+              "visits_below_0_4_m": false
+            },
+            {
+              "csv_lines": [
+                1952,
+                2002
+              ],
+              "model_error": [
+                0.008014261,
+                0.02722908
+              ],
+              "baseline_error": [
+                0.051923673,
+                0.16515109
+              ],
+              "visits_below_0_4_m": false
+            },
+            {
+              "csv_lines": [
+                2002,
+                2052
+              ],
+              "model_error": [
+                0.004045024,
+                0.004327326
+              ],
+              "baseline_error": [
+                -0.000158906,
+                -0.030494416
+              ],
+              "visits_below_0_4_m": false
+            },
+            {
+              "csv_lines": [
+                2052,
+                2102
+              ],
+              "model_error": [
+                -0.002100705,
+                -0.003861413
+              ],
+              "baseline_error": [
+                -0.007761752,
+                -0.016221519
+              ],
+              "visits_below_0_4_m": false
+            },
+            {
+              "csv_lines": [
+                2102,
+                2152
+              ],
+              "model_error": [
+                -0.002232213,
+                -0.010535906
+              ],
+              "baseline_error": [
+                -0.00092792,
+                -0.006001346
+              ],
+              "visits_below_0_4_m": false
+            },
+            {
+              "csv_lines": [
+                2152,
+                2202
+              ],
+              "model_error": [
+                0.001216219,
+                0.007541416
+              ],
+              "baseline_error": [
+                0.001335807,
+                0.004206084
+              ],
+              "visits_below_0_4_m": false
+            },
+            {
+              "csv_lines": [
+                2202,
+                2252
+              ],
+              "model_error": [
+                0.003284167,
+                0.006220791
+              ],
+              "baseline_error": [
+                0.002094728,
+                -0.007061001
+              ],
+              "visits_below_0_4_m": false
+            },
+            {
+              "csv_lines": [
+                2252,
+                2302
+              ],
+              "model_error": [
+                -0.004792116,
+                -0.014227233
+              ],
+              "baseline_error": [
+                -0.000628728,
+                0.000643862
+              ],
+              "visits_below_0_4_m": false
+            },
+            {
+              "csv_lines": [
+                2302,
+                2352
+              ],
+              "model_error": [
+                -0.002493024,
+                -0.008232163
+              ],
+              "baseline_error": [
+                0.00927538,
+                0.030283401
+              ],
+              "visits_below_0_4_m": false
+            },
+            {
+              "csv_lines": [
+                2352,
+                2402
+              ],
+              "model_error": [
+                -0.00385911,
+                -0.014662514
+              ],
+              "baseline_error": [
+                -0.006803466,
+                -0.026464652
+              ],
+              "visits_below_0_4_m": false
+            },
+            {
+              "csv_lines": [
+                2402,
+                2452
+              ],
+              "model_error": [
+                -0.003665166,
+                -0.009400465
+              ],
+              "baseline_error": [
+                0.000458928,
+                0.015854988
+              ],
+              "visits_below_0_4_m": false
+            },
+            {
+              "csv_lines": [
+                2452,
+                2502
+              ],
+              "model_error": [
+                0.001837452,
+                0.003692769
+              ],
+              "baseline_error": [
+                -0.016667719,
+                -0.138612894
+              ],
+              "visits_below_0_4_m": false
+            },
+            {
+              "csv_lines": [
+                2502,
+                2552
+              ],
+              "model_error": [
+                -0.001001867,
+                0.005197407
+              ],
+              "baseline_error": [
+                -0.067950345,
+                -0.219814934
+              ],
+              "visits_below_0_4_m": false
+            },
+            {
+              "csv_lines": [
+                2552,
+                2602
+              ],
+              "model_error": [
+                0.004730147,
+                0.019242856
+              ],
+              "baseline_error": [
+                0.020519814,
+                0.145953247
+              ],
+              "visits_below_0_4_m": false
+            },
+            {
+              "csv_lines": [
+                2602,
+                2652
+              ],
+              "model_error": [
+                0.008324981,
+                0.03203376
+              ],
+              "baseline_error": [
+                0.062533527,
+                0.215312968
+              ],
+              "visits_below_0_4_m": false
+            },
+            {
+              "csv_lines": [
+                2652,
+                2702
+              ],
+              "model_error": [
+                0.000215226,
+                0.003482022
+              ],
+              "baseline_error": [
+                0.004957152,
+                -0.001661502
+              ],
+              "visits_below_0_4_m": false
+            },
+            {
+              "csv_lines": [
+                2702,
+                2752
+              ],
+              "model_error": [
+                -0.000976647,
+                0.000377845
+              ],
+              "baseline_error": [
+                -0.002759065,
+                0.005056085
+              ],
+              "visits_below_0_4_m": false
+            },
+            {
+              "csv_lines": [
+                2752,
+                2802
+              ],
+              "model_error": [
+                -0.005616851,
+                -0.029749032
+              ],
+              "baseline_error": [
+                0.020284911,
+                0.122977351
+              ],
+              "visits_below_0_4_m": false
+            },
+            {
+              "csv_lines": [
+                2802,
+                2852
+              ],
+              "model_error": [
+                -0.000768918,
+                -0.000656895
+              ],
+              "baseline_error": [
+                0.058079996,
+                0.206992486
+              ],
+              "visits_below_0_4_m": false
+            },
+            {
+              "csv_lines": [
+                2852,
+                2902
+              ],
+              "model_error": [
+                0.00850787,
+                0.018915512
+              ],
+              "baseline_error": [
+                -0.01011231,
+                -0.123543746
+              ],
+              "visits_below_0_4_m": false
+            },
+            {
+              "csv_lines": [
+                2902,
+                2952
+              ],
+              "model_error": [
+                -0.012581567,
+                -0.045631237
+              ],
+              "baseline_error": [
+                -0.071750393,
+                -0.251812148
+              ],
+              "visits_below_0_4_m": false
+            },
+            {
+              "csv_lines": [
+                2952,
+                3002
+              ],
+              "model_error": [
+                -0.002083756,
+                -0.00520326
+              ],
+              "baseline_error": [
+                -0.007713853,
+                -0.007504494
+              ],
+              "visits_below_0_4_m": false
+            },
+            {
+              "csv_lines": [
+                3002,
+                3052
+              ],
+              "model_error": [
+                0.001835704,
+                0.006515932
+              ],
+              "baseline_error": [
+                0.01139359,
+                0.037052696
+              ],
+              "visits_below_0_4_m": false
+            },
+            {
+              "csv_lines": [
+                3052,
+                3102
+              ],
+              "model_error": [
+                0.001685693,
+                0.002376534
+              ],
+              "baseline_error": [
+                0.001526854,
+                0.000913599
+              ],
+              "visits_below_0_4_m": false
+            },
+            {
+              "csv_lines": [
+                3102,
+                3152
+              ],
+              "model_error": [
+                -0.000824063,
+                -0.00443311
+              ],
+              "baseline_error": [
+                -0.001996972,
+                -0.006923842
+              ],
+              "visits_below_0_4_m": false
+            },
+            {
+              "csv_lines": [
+                3152,
+                3202
+              ],
+              "model_error": [
+                -0.001518665,
+                -0.008972942
+              ],
+              "baseline_error": [
+                0.000121023,
+                -0.009573086
+              ],
+              "visits_below_0_4_m": false
+            },
+            {
+              "csv_lines": [
+                3202,
+                3252
+              ],
+              "model_error": [
+                -0.002779573,
+                -0.015914402
+              ],
+              "baseline_error": [
+                0.001746594,
+                0.006249773
+              ],
+              "visits_below_0_4_m": false
+            },
+            {
+              "csv_lines": [
+                3252,
+                3302
+              ],
+              "model_error": [
+                -0.011346541,
+                -0.044358161
+              ],
+              "baseline_error": [
+                -0.00222228,
+                0.003000586
+              ],
+              "visits_below_0_4_m": false
+            },
+            {
+              "csv_lines": [
+                3302,
+                3352
+              ],
+              "model_error": [
+                -0.009668899,
+                -0.04120627
+              ],
+              "baseline_error": [
+                0.00286534,
+                0.003373643
+              ],
+              "visits_below_0_4_m": false
+            },
+            {
+              "csv_lines": [
+                3352,
+                3402
+              ],
+              "model_error": [
+                -0.013616795,
+                -0.043686987
+              ],
+              "baseline_error": [
+                -0.002800468,
+                -0.002596544
+              ],
+              "visits_below_0_4_m": false
+            },
+            {
+              "csv_lines": [
+                3402,
+                3452
+              ],
+              "model_error": [
+                -0.009235128,
+                -0.047202366
+              ],
+              "baseline_error": [
+                0.006621821,
+                0.064391261
+              ],
+              "visits_below_0_4_m": false
+            },
+            {
+              "csv_lines": [
+                3452,
+                3502
+              ],
+              "model_error": [
+                -0.004270663,
+                -0.005770008
+              ],
+              "baseline_error": [
+                0.067584421,
+                0.267368845
+              ],
+              "visits_below_0_4_m": false
+            },
+            {
+              "csv_lines": [
+                3502,
+                3552
+              ],
+              "model_error": [
+                -0.001189628,
+                -0.01163513
+              ],
+              "baseline_error": [
+                0.015079119,
+                -0.025463214
+              ],
+              "visits_below_0_4_m": false
+            },
+            {
+              "csv_lines": [
+                3552,
+                3602
+              ],
+              "model_error": [
+                -0.01786753,
+                -0.072331499
+              ],
+              "baseline_error": [
+                -0.076088611,
+                -0.274195269
+              ],
+              "visits_below_0_4_m": false
+            },
+            {
+              "csv_lines": [
+                3602,
+                3652
+              ],
+              "model_error": [
+                -0.013540239,
+                -0.054429027
+              ],
+              "baseline_error": [
+                -0.033511636,
+                -0.102204895
+              ],
+              "visits_below_0_4_m": false
+            },
+            {
+              "csv_lines": [
+                3652,
+                3702
+              ],
+              "model_error": [
+                -0.009448059,
+                -0.035620758
+              ],
+              "baseline_error": [
+                0.012452908,
+                0.057022024
+              ],
+              "visits_below_0_4_m": false
+            },
+            {
+              "csv_lines": [
+                3702,
+                3752
+              ],
+              "model_error": [
+                -0.007469805,
+                -0.033814078
+              ],
+              "baseline_error": [
+                0.003419455,
+                0.022509831
+              ],
+              "visits_below_0_4_m": false
+            },
+            {
+              "csv_lines": [
+                3752,
+                3802
+              ],
+              "model_error": [
+                0.001521837,
+                0.003785711
+              ],
+              "baseline_error": [
+                0.012419455,
+                0.029211547
+              ],
+              "visits_below_0_4_m": false
+            },
+            {
+              "csv_lines": [
+                3802,
+                3852
+              ],
+              "model_error": [
+                -0.005507773,
+                -0.023825399
+              ],
+              "baseline_error": [
+                -0.018879484,
+                -0.065450102
+              ],
+              "visits_below_0_4_m": false
+            },
+            {
+              "csv_lines": [
+                3852,
+                3902
+              ],
+              "model_error": [
+                -0.003053235,
+                -0.012714194
+              ],
+              "baseline_error": [
+                0.006956743,
+                0.030830974
+              ],
+              "visits_below_0_4_m": false
+            },
+            {
+              "csv_lines": [
+                3902,
+                3952
+              ],
+              "model_error": [
+                0.000129753,
+                -0.012806719
+              ],
+              "baseline_error": [
+                0.004363299,
+                -0.000200816
+              ],
+              "visits_below_0_4_m": false
+            },
+            {
+              "csv_lines": [
+                3952,
+                4002
+              ],
+              "model_error": [
+                -0.013932488,
+                -0.054337803
+              ],
+              "baseline_error": [
+                -0.008608301,
+                -0.022928771
+              ],
+              "visits_below_0_4_m": false
+            },
+            {
+              "csv_lines": [
+                4002,
+                4052
+              ],
+              "model_error": [
+                -0.012162853,
+                -0.050705618
+              ],
+              "baseline_error": [
+                0.003469472,
+                0.011699856
+              ],
+              "visits_below_0_4_m": false
+            },
+            {
+              "csv_lines": [
+                4052,
+                4102
+              ],
+              "model_error": [
+                -0.012353739,
+                -0.050938002
+              ],
+              "baseline_error": [
+                -0.000447825,
+                0.018940849
+              ],
+              "visits_below_0_4_m": false
+            },
+            {
+              "csv_lines": [
+                4102,
+                4152
+              ],
+              "model_error": [
+                -0.004092692,
+                0.019270181
+              ],
+              "baseline_error": [
+                0.054630713,
+                0.236636473
+              ],
+              "visits_below_0_4_m": false
+            },
+            {
+              "csv_lines": [
+                4152,
+                4202
+              ],
+              "model_error": [
+                0.039752719,
+                0.169792997
+              ],
+              "baseline_error": [
+                0.037864751,
+                0.099752271
+              ],
+              "visits_below_0_4_m": false
+            }
+          ]
+        },
+        "B2_circle_medium_rep1": {
+          "summary": {
+            "windows": 37,
+            "visits_below_0_4_m": 1,
+            "model": {
+              "altitude_m": {
+                "mae": 0.014105125,
+                "rmse": 0.01901972,
+                "bias": 0.007506919,
+                "max_abs": 0.055795212,
+                "calibration_band_coverage": 0.945945946
+              },
+              "vertical_velocity_m_s": {
+                "mae": 0.055922875,
+                "rmse": 0.074328934,
+                "bias": 0.029445296,
+                "max_abs": 0.207324055,
+                "calibration_band_coverage": 0.945945946
+              }
+            },
+            "baseline": {
+              "altitude_m": {
+                "mae": 0.023150021,
+                "rmse": 0.039074344,
+                "bias": 0.003973252,
+                "max_abs": 0.115866592
+              },
+              "vertical_velocity_m_s": {
+                "mae": 0.091090859,
+                "rmse": 0.171922384,
+                "bias": 0.024417684,
+                "max_abs": 0.566664449
+              }
+            }
+          },
+          "source_channel_counts_before_resampling": {
+            "motor": 1824,
+            "power": 194,
+            "vicon": 2725
+          },
+          "published_rows": 2725,
+          "excluded_windows_by_reason": {
+            "below_initial_or_calibration_height": 16,
+            "sampling_gap_or_duration": 1
+          },
+          "window_residuals": [
+            {
+              "csv_lines": [
+                402,
+                452
+              ],
+              "model_error": [
+                0.030164831,
+                0.123909901
+              ],
+              "baseline_error": [
+                -0.051264182,
+                -0.169559272
+              ],
+              "visits_below_0_4_m": false
+            },
+            {
+              "csv_lines": [
+                452,
+                502
+              ],
+              "model_error": [
+                -0.006708867,
+                -0.007818832
+              ],
+              "baseline_error": [
+                0.069175076,
+                0.384010176
+              ],
+              "visits_below_0_4_m": false
+            },
+            {
+              "csv_lines": [
+                502,
+                552
+              ],
+              "model_error": [
+                0.000809889,
+                0.00400084
+              ],
+              "baseline_error": [
+                0.115866592,
+                0.392092779
+              ],
+              "visits_below_0_4_m": false
+            },
+            {
+              "csv_lines": [
+                552,
+                602
+              ],
+              "model_error": [
+                -0.007716691,
+                -0.0577095
+              ],
+              "baseline_error": [
+                0.034967769,
+                0.075202014
+              ],
+              "visits_below_0_4_m": false
+            },
+            {
+              "csv_lines": [
+                602,
+                652
+              ],
+              "model_error": [
+                -0.036857921,
+                -0.126456519
+              ],
+              "baseline_error": [
+                -0.064554168,
+                -0.186069311
+              ],
+              "visits_below_0_4_m": false
+            },
+            {
+              "csv_lines": [
+                652,
+                702
+              ],
+              "model_error": [
+                -0.002008782,
+                0.008221326
+              ],
+              "baseline_error": [
+                0.03117207,
+                0.110809838
+              ],
+              "visits_below_0_4_m": false
+            },
+            {
+              "csv_lines": [
+                752,
+                802
+              ],
+              "model_error": [
+                -0.009078467,
+                -0.03146427
+              ],
+              "baseline_error": [
+                -0.007860449,
+                -0.018960837
+              ],
+              "visits_below_0_4_m": false
+            },
+            {
+              "csv_lines": [
+                802,
+                852
+              ],
+              "model_error": [
+                -0.008403594,
+                -0.016001646
+              ],
+              "baseline_error": [
+                0.010280029,
+                0.056762194
+              ],
+              "visits_below_0_4_m": false
+            },
+            {
+              "csv_lines": [
+                852,
+                902
+              ],
+              "model_error": [
+                0.006575326,
+                0.017968858
+              ],
+              "baseline_error": [
+                0.003239855,
+                0.002738853
+              ],
+              "visits_below_0_4_m": false
+            },
+            {
+              "csv_lines": [
+                902,
+                952
+              ],
+              "model_error": [
+                0.008975294,
+                0.028296593
+              ],
+              "baseline_error": [
+                -0.003286573,
+                -0.024898334
+              ],
+              "visits_below_0_4_m": false
+            },
+            {
+              "csv_lines": [
+                952,
+                1002
+              ],
+              "model_error": [
+                0.002326034,
+                0.006839824
+              ],
+              "baseline_error": [
+                -0.003460502,
+                0.003188018
+              ],
+              "visits_below_0_4_m": false
+            },
+            {
+              "csv_lines": [
+                1002,
+                1052
+              ],
+              "model_error": [
+                0.022776479,
+                0.078617738
+              ],
+              "baseline_error": [
+                0.006210618,
+                0.001496738
+              ],
+              "visits_below_0_4_m": false
+            },
+            {
+              "csv_lines": [
+                1052,
+                1102
+              ],
+              "model_error": [
+                0.0076709,
+                0.027964849
+              ],
+              "baseline_error": [
+                -0.006978837,
+                -0.034913398
+              ],
+              "visits_below_0_4_m": false
+            },
+            {
+              "csv_lines": [
+                1102,
+                1152
+              ],
+              "model_error": [
+                0.000638212,
+                0.01387396
+              ],
+              "baseline_error": [
+                -0.00344486,
+                0.003361484
+              ],
+              "visits_below_0_4_m": false
+            },
+            {
+              "csv_lines": [
+                1152,
+                1202
+              ],
+              "model_error": [
+                -0.001833193,
+                -0.005794458
+              ],
+              "baseline_error": [
+                0.007001246,
+                0.022642174
+              ],
+              "visits_below_0_4_m": false
+            },
+            {
+              "csv_lines": [
+                1202,
+                1252
+              ],
+              "model_error": [
+                -0.003706122,
+                -0.022699156
+              ],
+              "baseline_error": [
+                0.005256032,
+                0.011147835
+              ],
+              "visits_below_0_4_m": false
+            },
+            {
+              "csv_lines": [
+                1252,
+                1302
+              ],
+              "model_error": [
+                -0.00081228,
+                -0.014566774
+              ],
+              "baseline_error": [
+                0.00368407,
+                -0.004754803
+              ],
+              "visits_below_0_4_m": false
+            },
+            {
+              "csv_lines": [
+                1302,
+                1352
+              ],
+              "model_error": [
+                -0.00082268,
+                0.013354893
+              ],
+              "baseline_error": [
+                -0.000935487,
+                0.007642082
+              ],
+              "visits_below_0_4_m": false
+            },
+            {
+              "csv_lines": [
+                1352,
+                1402
+              ],
+              "model_error": [
+                0.007328317,
+                0.028362888
+              ],
+              "baseline_error": [
+                -0.00309684,
+                -0.016631815
+              ],
+              "visits_below_0_4_m": false
+            },
+            {
+              "csv_lines": [
+                1402,
+                1452
+              ],
+              "model_error": [
+                0.002977007,
+                0.032290753
+              ],
+              "baseline_error": [
+                -0.001018517,
+                -0.001078905
+              ],
+              "visits_below_0_4_m": false
+            },
+            {
+              "csv_lines": [
+                1452,
+                1502
+              ],
+              "model_error": [
+                0.013157936,
+                0.053504038
+              ],
+              "baseline_error": [
+                0.001437897,
+                0.012099293
+              ],
+              "visits_below_0_4_m": false
+            },
+            {
+              "csv_lines": [
+                1502,
+                1552
+              ],
+              "model_error": [
+                0.014390526,
+                0.053550783
+              ],
+              "baseline_error": [
+                -0.002458842,
+                -0.016520296
+              ],
+              "visits_below_0_4_m": false
+            },
+            {
+              "csv_lines": [
+                1552,
+                1602
+              ],
+              "model_error": [
+                0.013883307,
+                0.035921134
+              ],
+              "baseline_error": [
+                -0.003261607,
+                -0.024526325
+              ],
+              "visits_below_0_4_m": false
+            },
+            {
+              "csv_lines": [
+                1602,
+                1652
+              ],
+              "model_error": [
+                0.003138521,
+                0.019327386
+              ],
+              "baseline_error": [
+                0.00098277,
+                0.022037104
+              ],
+              "visits_below_0_4_m": false
+            },
+            {
+              "csv_lines": [
+                1652,
+                1702
+              ],
+              "model_error": [
+                0.01545842,
+                0.069411215
+              ],
+              "baseline_error": [
+                0.012297021,
+                0.037690343
+              ],
+              "visits_below_0_4_m": false
+            },
+            {
+              "csv_lines": [
+                1702,
+                1752
+              ],
+              "model_error": [
+                0.017417379,
+                0.07224252
+              ],
+              "baseline_error": [
+                -0.010854197,
+                -0.034974393
+              ],
+              "visits_below_0_4_m": false
+            },
+            {
+              "csv_lines": [
+                1752,
+                1802
+              ],
+              "model_error": [
+                0.019450887,
+                0.077868518
+              ],
+              "baseline_error": [
+                -0.003746973,
+                -0.011387734
+              ],
+              "visits_below_0_4_m": false
+            },
+            {
+              "csv_lines": [
+                1802,
+                1852
+              ],
+              "model_error": [
+                0.02595736,
+                0.099186472
+              ],
+              "baseline_error": [
+                0.001889967,
+                0.014901355
+              ],
+              "visits_below_0_4_m": false
+            },
+            {
+              "csv_lines": [
+                1852,
+                1902
+              ],
+              "model_error": [
+                0.013256471,
+                0.058476268
+              ],
+              "baseline_error": [
+                -0.00623479,
+                -0.005250821
+              ],
+              "visits_below_0_4_m": false
+            },
+            {
+              "csv_lines": [
+                1902,
+                1952
+              ],
+              "model_error": [
+                0.015561421,
+                0.060305672
+              ],
+              "baseline_error": [
+                -0.004847358,
+                -0.015109086
+              ],
+              "visits_below_0_4_m": false
+            },
+            {
+              "csv_lines": [
+                1952,
+                2002
+              ],
+              "model_error": [
+                0.015560484,
+                0.058937467
+              ],
+              "baseline_error": [
+                0.003840097,
+                -0.000976128
+              ],
+              "visits_below_0_4_m": false
+            },
+            {
+              "csv_lines": [
+                2002,
+                2052
+              ],
+              "model_error": [
+                0.006976529,
+                0.030716351
+              ],
+              "baseline_error": [
+                0.001752365,
+                0.013597546
+              ],
+              "visits_below_0_4_m": false
+            },
+            {
+              "csv_lines": [
+                2052,
+                2102
+              ],
+              "model_error": [
+                -0.044118219,
+                -0.207324055
+              ],
+              "baseline_error": [
+                0.06870749,
+                0.566664449
+              ],
+              "visits_below_0_4_m": false
+            },
+            {
+              "csv_lines": [
+                2102,
+                2152
+              ],
+              "model_error": [
+                0.055795212,
+                0.170806264
+              ],
+              "baseline_error": [
+                0.048903255,
+                -0.007323395
+              ],
+              "visits_below_0_4_m": false
+            },
+            {
+              "csv_lines": [
+                2152,
+                2202
+              ],
+              "model_error": [
+                0.02444766,
+                0.096458583
+              ],
+              "baseline_error": [
+                -0.089693574,
+                -0.356310071
+              ],
+              "visits_below_0_4_m": false
+            },
+            {
+              "csv_lines": [
+                2202,
+                2252
+              ],
+              "model_error": [
+                0.026324684,
+                0.154341263
+              ],
+              "baseline_error": [
+                -0.087772473,
+                -0.304208818
+              ],
+              "visits_below_0_4_m": false
+            },
+            {
+              "csv_lines": [
+                2252,
+                2302
+              ],
+              "model_error": [
+                0.028803729,
+                0.084554797
+              ],
+              "baseline_error": [
+                0.07511634,
+                0.398823768
+              ],
+              "visits_below_0_4_m": true
+            }
+          ]
+        },
+        "B2_circle_medium_rep2": {
+          "summary": {
+            "windows": 68,
+            "visits_below_0_4_m": 1,
+            "model": {
+              "altitude_m": {
+                "mae": 0.019986772,
+                "rmse": 0.023965923,
+                "bias": 0.004895167,
+                "max_abs": 0.064788674,
+                "calibration_band_coverage": 0.941176471
+              },
+              "vertical_velocity_m_s": {
+                "mae": 0.074645026,
+                "rmse": 0.092580494,
+                "bias": 0.018374888,
+                "max_abs": 0.241460428,
+                "calibration_band_coverage": 0.941176471
+              }
+            },
+            "baseline": {
+              "altitude_m": {
+                "mae": 0.015944038,
+                "rmse": 0.032234266,
+                "bias": 0.005761593,
+                "max_abs": 0.17537423
+              },
+              "vertical_velocity_m_s": {
+                "mae": 0.060252811,
+                "rmse": 0.123537713,
+                "bias": 0.021985267,
+                "max_abs": 0.701895017
+              }
+            }
+          },
+          "source_channel_counts_before_resampling": {
+            "motor": 4086,
+            "power": 413,
+            "vicon": 4229
+          },
+          "published_rows": 4229,
+          "excluded_windows_by_reason": {
+            "below_initial_or_calibration_height": 15,
+            "sampling_gap_or_duration": 1
+          },
+          "window_residuals": [
+            {
+              "csv_lines": [
+                402,
+                452
+              ],
+              "model_error": [
+                -0.049177404,
+                -0.226976973
+              ],
+              "baseline_error": [
+                -0.002067159,
+                0.095291875
+              ],
+              "visits_below_0_4_m": false
+            },
+            {
+              "csv_lines": [
+                452,
+                502
+              ],
+              "model_error": [
+                -0.033047171,
+                -0.089600111
+              ],
+              "baseline_error": [
+                0.155181603,
+                0.583194562
+              ],
+              "visits_below_0_4_m": false
+            },
+            {
+              "csv_lines": [
+                502,
+                552
+              ],
+              "model_error": [
+                -0.034573678,
+                -0.157368407
+              ],
+              "baseline_error": [
+                0.039208789,
+                0.095275229
+              ],
+              "visits_below_0_4_m": false
+            },
+            {
+              "csv_lines": [
+                552,
+                602
+              ],
+              "model_error": [
+                -0.053173044,
+                -0.233170295
+              ],
+              "baseline_error": [
+                0.008544372,
+                0.040329157
+              ],
+              "visits_below_0_4_m": false
+            },
+            {
+              "csv_lines": [
+                602,
+                652
+              ],
+              "model_error": [
+                -0.064788674,
+                -0.241460428
+              ],
+              "baseline_error": [
+                -0.049551351,
+                -0.169712427
+              ],
+              "visits_below_0_4_m": false
+            },
+            {
+              "csv_lines": [
+                652,
+                702
+              ],
+              "model_error": [
+                -0.031255795,
+                -0.106725154
+              ],
+              "baseline_error": [
+                0.046338663,
+                0.165724909
+              ],
+              "visits_below_0_4_m": false
+            },
+            {
+              "csv_lines": [
+                702,
+                752
+              ],
+              "model_error": [
+                -0.032941237,
+                -0.138825709
+              ],
+              "baseline_error": [
+                -0.016056826,
+                -0.064190318
+              ],
+              "visits_below_0_4_m": false
+            },
+            {
+              "csv_lines": [
+                752,
+                802
+              ],
+              "model_error": [
+                -0.035489836,
+                -0.136805305
+              ],
+              "baseline_error": [
+                -0.00042458,
+                0.012609609
+              ],
+              "visits_below_0_4_m": false
+            },
+            {
+              "csv_lines": [
+                802,
+                852
+              ],
+              "model_error": [
+                -0.031896549,
+                -0.111503541
+              ],
+              "baseline_error": [
+                0.007059256,
+                0.032284952
+              ],
+              "visits_below_0_4_m": false
+            },
+            {
+              "csv_lines": [
+                852,
+                902
+              ],
+              "model_error": [
+                -0.014590795,
+                -0.037629039
+              ],
+              "baseline_error": [
+                0.00547458,
+                0.02806349
+              ],
+              "visits_below_0_4_m": false
+            },
+            {
+              "csv_lines": [
+                902,
+                952
+              ],
+              "model_error": [
+                0.010980472,
+                0.018401965
+              ],
+              "baseline_error": [
+                -0.00114781,
+                -0.044028828
+              ],
+              "visits_below_0_4_m": false
+            },
+            {
+              "csv_lines": [
+                952,
+                1002
+              ],
+              "model_error": [
+                -0.00719595,
+                -0.014525416
+              ],
+              "baseline_error": [
+                -0.022295157,
+                -0.05439301
+              ],
+              "visits_below_0_4_m": false
+            },
+            {
+              "csv_lines": [
+                1002,
+                1052
+              ],
+              "model_error": [
+                0.001578474,
+                0.016565125
+              ],
+              "baseline_error": [
+                0.010771979,
+                0.050989517
+              ],
+              "visits_below_0_4_m": false
+            },
+            {
+              "csv_lines": [
+                1052,
+                1102
+              ],
+              "model_error": [
+                0.004787193,
+                0.003757105
+              ],
+              "baseline_error": [
+                0.006365553,
+                -0.003042865
+              ],
+              "visits_below_0_4_m": false
+            },
+            {
+              "csv_lines": [
+                1102,
+                1152
+              ],
+              "model_error": [
+                0.00854416,
+                0.027925404
+              ],
+              "baseline_error": [
+                0.00011439,
+                -0.009996347
+              ],
+              "visits_below_0_4_m": false
+            },
+            {
+              "csv_lines": [
+                1152,
+                1202
+              ],
+              "model_error": [
+                -0.013504604,
+                -0.044139265
+              ],
+              "baseline_error": [
+                -0.009245187,
+                -0.020507258
+              ],
+              "visits_below_0_4_m": false
+            },
+            {
+              "csv_lines": [
+                1202,
+                1252
+              ],
+              "model_error": [
+                -0.013434619,
+                -0.022196755
+              ],
+              "baseline_error": [
+                0.00609004,
+                0.044740275
+              ],
+              "visits_below_0_4_m": false
+            },
+            {
+              "csv_lines": [
+                1252,
+                1302
+              ],
+              "model_error": [
+                0.004263897,
+                0.026758111
+              ],
+              "baseline_error": [
+                0.008013618,
+                0.02508995
+              ],
+              "visits_below_0_4_m": false
+            },
+            {
+              "csv_lines": [
+                1302,
+                1352
+              ],
+              "model_error": [
+                0.003528467,
+                0.007856549
+              ],
+              "baseline_error": [
+                -0.015456318,
+                -0.047979226
+              ],
+              "visits_below_0_4_m": false
+            },
+            {
+              "csv_lines": [
+                1352,
+                1402
+              ],
+              "model_error": [
+                0.006419636,
+                0.01978212
+              ],
+              "baseline_error": [
+                0.000528971,
+                0.000724869
+              ],
+              "visits_below_0_4_m": false
+            },
+            {
+              "csv_lines": [
+                1402,
+                1452
+              ],
+              "model_error": [
+                0.008326326,
+                0.050988033
+              ],
+              "baseline_error": [
+                0.003597467,
+                0.024130613
+              ],
+              "visits_below_0_4_m": false
+            },
+            {
+              "csv_lines": [
+                1452,
+                1502
+              ],
+              "model_error": [
+                0.013062962,
+                0.044186149
+              ],
+              "baseline_error": [
+                -0.007133456,
+                -0.038235762
+              ],
+              "visits_below_0_4_m": false
+            },
+            {
+              "csv_lines": [
+                1502,
+                1552
+              ],
+              "model_error": [
+                0.010256795,
+                0.054872294
+              ],
+              "baseline_error": [
+                0.001556428,
+                0.016430293
+              ],
+              "visits_below_0_4_m": false
+            },
+            {
+              "csv_lines": [
+                1552,
+                1602
+              ],
+              "model_error": [
+                0.026948622,
+                0.086310783
+              ],
+              "baseline_error": [
+                0.006284797,
+                -5.886e-06
+              ],
+              "visits_below_0_4_m": false
+            },
+            {
+              "csv_lines": [
+                1602,
+                1652
+              ],
+              "model_error": [
+                0.008536136,
+                0.024405699
+              ],
+              "baseline_error": [
+                -0.006121186,
+                -0.031523061
+              ],
+              "visits_below_0_4_m": false
+            },
+            {
+              "csv_lines": [
+                1652,
+                1702
+              ],
+              "model_error": [
+                0.026118411,
+                0.105382103
+              ],
+              "baseline_error": [
+                0.019575259,
+                0.060427849
+              ],
+              "visits_below_0_4_m": false
+            },
+            {
+              "csv_lines": [
+                1702,
+                1752
+              ],
+              "model_error": [
+                0.011382993,
+                0.034656245
+              ],
+              "baseline_error": [
+                -0.014104702,
+                -0.062732014
+              ],
+              "visits_below_0_4_m": false
+            },
+            {
+              "csv_lines": [
+                1752,
+                1802
+              ],
+              "model_error": [
+                0.003232568,
+                0.033232613
+              ],
+              "baseline_error": [
+                -0.001089646,
+                0.025875947
+              ],
+              "visits_below_0_4_m": false
+            },
+            {
+              "csv_lines": [
+                1802,
+                1852
+              ],
+              "model_error": [
+                0.017794346,
+                0.07106109
+              ],
+              "baseline_error": [
+                0.008428631,
+                0.02170658
+              ],
+              "visits_below_0_4_m": false
+            },
+            {
+              "csv_lines": [
+                1852,
+                1902
+              ],
+              "model_error": [
+                0.029220796,
+                0.113456024
+              ],
+              "baseline_error": [
+                0.006665735,
+                0.00606415
+              ],
+              "visits_below_0_4_m": false
+            },
+            {
+              "csv_lines": [
+                1902,
+                1952
+              ],
+              "model_error": [
+                0.021643285,
+                0.061267961
+              ],
+              "baseline_error": [
+                -0.016021827,
+                -0.073366638
+              ],
+              "visits_below_0_4_m": false
+            },
+            {
+              "csv_lines": [
+                1952,
+                2002
+              ],
+              "model_error": [
+                0.008491532,
+                0.075997285
+              ],
+              "baseline_error": [
+                0.007183738,
+                0.069011441
+              ],
+              "visits_below_0_4_m": false
+            },
+            {
+              "csv_lines": [
+                2002,
+                2052
+              ],
+              "model_error": [
+                0.027372652,
+                0.100538398
+              ],
+              "baseline_error": [
+                0.005737348,
+                0.00119435
+              ],
+              "visits_below_0_4_m": false
+            },
+            {
+              "csv_lines": [
+                2052,
+                2102
+              ],
+              "model_error": [
+                0.018565805,
+                0.05099101
+              ],
+              "baseline_error": [
+                -0.018803035,
+                -0.072037523
+              ],
+              "visits_below_0_4_m": false
+            },
+            {
+              "csv_lines": [
+                2102,
+                2152
+              ],
+              "model_error": [
+                0.004837152,
+                0.026309071
+              ],
+              "baseline_error": [
+                0.010244945,
+                0.06004834
+              ],
+              "visits_below_0_4_m": false
+            },
+            {
+              "csv_lines": [
+                2152,
+                2202
+              ],
+              "model_error": [
+                0.015469381,
+                0.054211479
+              ],
+              "baseline_error": [
+                0.00552687,
+                -0.00037273
+              ],
+              "visits_below_0_4_m": false
+            },
+            {
+              "csv_lines": [
+                2202,
+                2252
+              ],
+              "model_error": [
+                7.8478e-05,
+                0.006836561
+              ],
+              "baseline_error": [
+                -0.005568774,
+                -0.010556694
+              ],
+              "visits_below_0_4_m": false
+            },
+            {
+              "csv_lines": [
+                2252,
+                2302
+              ],
+              "model_error": [
+                0.022447334,
+                0.098954443
+              ],
+              "baseline_error": [
+                0.011600943,
+                0.044809678
+              ],
+              "visits_below_0_4_m": false
+            },
+            {
+              "csv_lines": [
+                2302,
+                2352
+              ],
+              "model_error": [
+                0.030006676,
+                0.110249175
+              ],
+              "baseline_error": [
+                -0.006898403,
+                -0.044725222
+              ],
+              "visits_below_0_4_m": false
+            },
+            {
+              "csv_lines": [
+                2352,
+                2402
+              ],
+              "model_error": [
+                0.019339638,
+                0.078968866
+              ],
+              "baseline_error": [
+                -0.011078291,
+                -0.015701131
+              ],
+              "visits_below_0_4_m": false
+            },
+            {
+              "csv_lines": [
+                2402,
+                2452
+              ],
+              "model_error": [
+                0.008492448,
+                0.013839297
+              ],
+              "baseline_error": [
+                -0.001357256,
+                -0.014524981
+              ],
+              "visits_below_0_4_m": false
+            },
+            {
+              "csv_lines": [
+                2452,
+                2502
+              ],
+              "model_error": [
+                0.005774561,
+                0.017895396
+              ],
+              "baseline_error": [
+                0.008036631,
+                0.034888599
+              ],
+              "visits_below_0_4_m": false
+            },
+            {
+              "csv_lines": [
+                2502,
+                2552
+              ],
+              "model_error": [
+                0.012499152,
+                0.044603234
+              ],
+              "baseline_error": [
+                0.01410834,
+                0.052932918
+              ],
+              "visits_below_0_4_m": false
+            },
+            {
+              "csv_lines": [
+                2552,
+                2602
+              ],
+              "model_error": [
+                0.017717905,
+                0.058218459
+              ],
+              "baseline_error": [
+                -0.003481722,
+                -0.016664217
+              ],
+              "visits_below_0_4_m": false
+            },
+            {
+              "csv_lines": [
+                2602,
+                2652
+              ],
+              "model_error": [
+                0.020480633,
+                0.082408749
+              ],
+              "baseline_error": [
+                -0.016196687,
+                -0.075800246
+              ],
+              "visits_below_0_4_m": false
+            },
+            {
+              "csv_lines": [
+                2652,
+                2702
+              ],
+              "model_error": [
+                0.043910074,
+                0.175786879
+              ],
+              "baseline_error": [
+                0.012757681,
+                0.023625819
+              ],
+              "visits_below_0_4_m": false
+            },
+            {
+              "csv_lines": [
+                2702,
+                2752
+              ],
+              "model_error": [
+                0.005447058,
+                0.043157497
+              ],
+              "baseline_error": [
+                -0.017728332,
+                -0.059452
+              ],
+              "visits_below_0_4_m": false
+            },
+            {
+              "csv_lines": [
+                2752,
+                2802
+              ],
+              "model_error": [
+                0.029564358,
+                0.093997577
+              ],
+              "baseline_error": [
+                0.008260657,
+                0.025442731
+              ],
+              "visits_below_0_4_m": false
+            },
+            {
+              "csv_lines": [
+                2802,
+                2852
+              ],
+              "model_error": [
+                0.011095912,
+                0.004499215
+              ],
+              "baseline_error": [
+                0.005458443,
+                -0.001750113
+              ],
+              "visits_below_0_4_m": false
+            },
+            {
+              "csv_lines": [
+                2852,
+                2902
+              ],
+              "model_error": [
+                -0.027486384,
+                -0.107651241
+              ],
+              "baseline_error": [
+                0.001475715,
+                0.045659871
+              ],
+              "visits_below_0_4_m": false
+            },
+            {
+              "csv_lines": [
+                2902,
+                2952
+              ],
+              "model_error": [
+                -0.013033041,
+                -0.051909117
+              ],
+              "baseline_error": [
+                0.023270148,
+                0.068177584
+              ],
+              "visits_below_0_4_m": false
+            },
+            {
+              "csv_lines": [
+                2952,
+                3002
+              ],
+              "model_error": [
+                -0.022711636,
+                -0.093943086
+              ],
+              "baseline_error": [
+                -0.009972159,
+                -0.043581161
+              ],
+              "visits_below_0_4_m": false
+            },
+            {
+              "csv_lines": [
+                3002,
+                3052
+              ],
+              "model_error": [
+                -0.025159303,
+                -0.085110501
+              ],
+              "baseline_error": [
+                -0.003694907,
+                -0.005479018
+              ],
+              "visits_below_0_4_m": false
+            },
+            {
+              "csv_lines": [
+                3052,
+                3102
+              ],
+              "model_error": [
+                0.000934932,
+                0.023814782
+              ],
+              "baseline_error": [
+                0.008711832,
+                0.032578626
+              ],
+              "visits_below_0_4_m": false
+            },
+            {
+              "csv_lines": [
+                3102,
+                3152
+              ],
+              "model_error": [
+                0.009974379,
+                0.078414262
+              ],
+              "baseline_error": [
+                -0.006652063,
+                -0.003081577
+              ],
+              "visits_below_0_4_m": false
+            },
+            {
+              "csv_lines": [
+                3152,
+                3202
+              ],
+              "model_error": [
+                0.039573605,
+                0.144989676
+              ],
+              "baseline_error": [
+                0.001133382,
+                -0.008454073
+              ],
+              "visits_below_0_4_m": false
+            },
+            {
+              "csv_lines": [
+                3202,
+                3252
+              ],
+              "model_error": [
+                0.026730448,
+                0.102061462
+              ],
+              "baseline_error": [
+                -0.015257427,
+                -0.06914978
+              ],
+              "visits_below_0_4_m": false
+            },
+            {
+              "csv_lines": [
+                3252,
+                3302
+              ],
+              "model_error": [
+                -0.009654849,
+                -0.013644328
+              ],
+              "baseline_error": [
+                -0.024362749,
+                -0.056107906
+              ],
+              "visits_below_0_4_m": false
+            },
+            {
+              "csv_lines": [
+                3302,
+                3352
+              ],
+              "model_error": [
+                0.028057403,
+                0.130725436
+              ],
+              "baseline_error": [
+                0.019771376,
+                0.083410205
+              ],
+              "visits_below_0_4_m": false
+            },
+            {
+              "csv_lines": [
+                3352,
+                3402
+              ],
+              "model_error": [
+                0.022951122,
+                0.071396964
+              ],
+              "baseline_error": [
+                0.009478713,
+                0.027452194
+              ],
+              "visits_below_0_4_m": false
+            },
+            {
+              "csv_lines": [
+                3402,
+                3452
+              ],
+              "model_error": [
+                0.015596333,
+                0.059800057
+              ],
+              "baseline_error": [
+                0.015168334,
+                0.050881636
+              ],
+              "visits_below_0_4_m": false
+            },
+            {
+              "csv_lines": [
+                3452,
+                3502
+              ],
+              "model_error": [
+                0.029346735,
+                0.041289248
+              ],
+              "baseline_error": [
+                0.006644066,
+                0.011050008
+              ],
+              "visits_below_0_4_m": false
+            },
+            {
+              "csv_lines": [
+                3502,
+                3552
+              ],
+              "model_error": [
+                0.030066958,
+                0.129901529
+              ],
+              "baseline_error": [
+                0.004735251,
+                -0.000490673
+              ],
+              "visits_below_0_4_m": false
+            },
+            {
+              "csv_lines": [
+                3552,
+                3602
+              ],
+              "model_error": [
+                0.022204968,
+                0.069720982
+              ],
+              "baseline_error": [
+                -0.019491445,
+                -0.052152205
+              ],
+              "visits_below_0_4_m": false
+            },
+            {
+              "csv_lines": [
+                3602,
+                3652
+              ],
+              "model_error": [
+                0.016424319,
+                0.034954526
+              ],
+              "baseline_error": [
+                -0.019266642,
+                -0.131301596
+              ],
+              "visits_below_0_4_m": false
+            },
+            {
+              "csv_lines": [
+                3652,
+                3702
+              ],
+              "model_error": [
+                0.018198076,
+                0.057553603
+              ],
+              "baseline_error": [
+                -0.005678025,
+                0.10175523
+              ],
+              "visits_below_0_4_m": false
+            },
+            {
+              "csv_lines": [
+                3702,
+                3752
+              ],
+              "model_error": [
+                0.028900303,
+                0.155757452
+              ],
+              "baseline_error": [
+                0.17537423,
+                0.701895017
+              ],
+              "visits_below_0_4_m": false
+            },
+            {
+              "csv_lines": [
+                3752,
+                3802
+              ],
+              "model_error": [
+                0.038810065,
+                0.123969121
+              ],
+              "baseline_error": [
+                0.043512677,
+                0.032326558
+              ],
+              "visits_below_0_4_m": true
+            }
+          ]
+        }
+      }
+    },
+    "1.0": {
+      "calibration_band_altitude_m_and_velocity_m_s": [
+        0.158097944,
+        0.300275903
+      ],
+      "summary": {
+        "windows": 89,
+        "visits_below_0_4_m": 2,
+        "model": {
+          "altitude_m": {
+            "mae": 0.058022278,
+            "rmse": 0.075561222,
+            "bias": -0.002349521,
+            "max_abs": 0.213482607,
+            "calibration_band_coverage": 0.95505618
+          },
+          "vertical_velocity_m_s": {
+            "mae": 0.112332271,
+            "rmse": 0.143493532,
+            "bias": -0.004850913,
+            "max_abs": 0.385160462,
+            "calibration_band_coverage": 0.966292135
+          }
+        },
+        "baseline": {
+          "altitude_m": {
+            "mae": 0.056583771,
+            "rmse": 0.10132276,
+            "bias": 0.010837319,
+            "max_abs": 0.569849476
+          },
+          "vertical_velocity_m_s": {
+            "mae": 0.099455807,
+            "rmse": 0.178282812,
+            "bias": 0.032695986,
+            "max_abs": 0.734221575
+          }
+        }
+      },
+      "holdout_flights": {
+        "B12_staircase_climb_rep1": {
+          "summary": {
+            "windows": 37,
+            "visits_below_0_4_m": 0,
+            "model": {
+              "altitude_m": {
+                "mae": 0.045765674,
+                "rmse": 0.062759854,
+                "bias": -0.038747418,
+                "max_abs": 0.149417884,
+                "calibration_band_coverage": 1.0
+              },
+              "vertical_velocity_m_s": {
+                "mae": 0.092125295,
+                "rmse": 0.125557692,
+                "bias": -0.073828589,
+                "max_abs": 0.281795109,
+                "calibration_band_coverage": 1.0
+              }
+            },
+            "baseline": {
+              "altitude_m": {
+                "mae": 0.057130448,
+                "rmse": 0.090683581,
+                "bias": 0.008011739,
+                "max_abs": 0.219318118
+              },
+              "vertical_velocity_m_s": {
+                "mae": 0.102003941,
+                "rmse": 0.161216291,
+                "bias": 0.013311606,
+                "max_abs": 0.39440026
+              }
+            }
+          },
+          "source_channel_counts_before_resampling": {
+            "motor": 3883,
+            "power": 414,
+            "vicon": 7225
+          },
+          "published_rows": 7225,
+          "excluded_windows_by_reason": {
+            "below_initial_or_calibration_height": 13,
+            "invalid_input": 22
+          },
+          "window_residuals": [
+            {
+              "csv_lines": [
+                502,
+                602
+              ],
+              "model_error": [
+                -0.134173587,
+                -0.264871582
+              ],
+              "baseline_error": [
+                0.074420897,
+                0.106938389
+              ],
+              "visits_below_0_4_m": false
+            },
+            {
+              "csv_lines": [
+                602,
+                702
+              ],
+              "model_error": [
+                -0.120638936,
+                -0.235660279
+              ],
+              "baseline_error": [
+                0.005645262,
+                0.02661067
+              ],
+              "visits_below_0_4_m": false
+            },
+            {
+              "csv_lines": [
+                702,
+                802
+              ],
+              "model_error": [
+                -0.131449623,
+                -0.26259705
+              ],
+              "baseline_error": [
+                0.001164329,
+                0.008893152
+              ],
+              "visits_below_0_4_m": false
+            },
+            {
+              "csv_lines": [
+                802,
+                902
+              ],
+              "model_error": [
+                -0.149417884,
+                -0.281795109
+              ],
+              "baseline_error": [
+                0.002890979,
+                0.012436414
+              ],
+              "visits_below_0_4_m": false
+            },
+            {
+              "csv_lines": [
+                902,
+                1002
+              ],
+              "model_error": [
+                -0.14024096,
+                -0.273604008
+              ],
+              "baseline_error": [
+                0.002279609,
+                -0.004895168
+              ],
+              "visits_below_0_4_m": false
+            },
+            {
+              "csv_lines": [
+                1002,
+                1102
+              ],
+              "model_error": [
+                -0.118085407,
+                -0.231850405
+              ],
+              "baseline_error": [
+                0.013348714,
+                -0.012647972
+              ],
+              "visits_below_0_4_m": false
+            },
+            {
+              "csv_lines": [
+                1102,
+                1202
+              ],
+              "model_error": [
+                -0.06504502,
+                -0.126776322
+              ],
+              "baseline_error": [
+                -0.071597068,
+                -0.300551375
+              ],
+              "visits_below_0_4_m": false
+            },
+            {
+              "csv_lines": [
+                1202,
+                1302
+              ],
+              "model_error": [
+                -0.026707522,
+                -0.036626043
+              ],
+              "baseline_error": [
+                0.069444724,
+                0.291297986
+              ],
+              "visits_below_0_4_m": false
+            },
+            {
+              "csv_lines": [
+                1302,
+                1402
+              ],
+              "model_error": [
+                -0.038563859,
+                -0.103591504
+              ],
+              "baseline_error": [
+                0.043337386,
+                0.014288261
+              ],
+              "visits_below_0_4_m": false
+            },
+            {
+              "csv_lines": [
+                1402,
+                1502
+              ],
+              "model_error": [
+                -0.063782656,
+                -0.144472842
+              ],
+              "baseline_error": [
+                0.008480886,
+                0.017462799
+              ],
+              "visits_below_0_4_m": false
+            },
+            {
+              "csv_lines": [
+                1502,
+                1602
+              ],
+              "model_error": [
+                -0.084329799,
+                -0.155745473
+              ],
+              "baseline_error": [
+                -0.015656028,
+                0.00479439
+              ],
+              "visits_below_0_4_m": false
+            },
+            {
+              "csv_lines": [
+                1602,
+                1702
+              ],
+              "model_error": [
+                -0.026110183,
+                -0.074583194
+              ],
+              "baseline_error": [
+                0.016726344,
+                -0.025141671
+              ],
+              "visits_below_0_4_m": false
+            },
+            {
+              "csv_lines": [
+                1702,
+                1802
+              ],
+              "model_error": [
+                -0.057773246,
+                -0.084838432
+              ],
+              "baseline_error": [
+                -0.003072605,
+                0.028758225
+              ],
+              "visits_below_0_4_m": false
+            },
+            {
+              "csv_lines": [
+                1802,
+                1902
+              ],
+              "model_error": [
+                -0.0447701,
+                -0.056229915
+              ],
+              "baseline_error": [
+                -0.219318118,
+                -0.367620436
+              ],
+              "visits_below_0_4_m": false
+            },
+            {
+              "csv_lines": [
+                1902,
+                2002
+              ],
+              "model_error": [
+                0.034012024,
+                0.062710872
+              ],
+              "baseline_error": [
+                0.214080306,
+                0.39440026
+              ],
+              "visits_below_0_4_m": false
+            },
+            {
+              "csv_lines": [
+                2002,
+                2102
+              ],
+              "model_error": [
+                0.004106796,
+                0.000461629
+              ],
+              "baseline_error": [
+                -0.023168019,
+                -0.046715935
+              ],
+              "visits_below_0_4_m": false
+            },
+            {
+              "csv_lines": [
+                2102,
+                2202
+              ],
+              "model_error": [
+                -0.006240706,
+                -0.002811175
+              ],
+              "baseline_error": [
+                -0.002592835,
+                -0.001795262
+              ],
+              "visits_below_0_4_m": false
+            },
+            {
+              "csv_lines": [
+                2202,
+                2302
+              ],
+              "model_error": [
+                0.001572704,
+                -0.00811808
+              ],
+              "baseline_error": [
+                -0.002064543,
+                -0.006417139
+              ],
+              "visits_below_0_4_m": false
+            },
+            {
+              "csv_lines": [
+                2302,
+                2402
+              ],
+              "model_error": [
+                -0.010461501,
+                -0.022870544
+              ],
+              "baseline_error": [
+                0.017613694,
+                0.003818749
+              ],
+              "visits_below_0_4_m": false
+            },
+            {
+              "csv_lines": [
+                2402,
+                2502
+              ],
+              "model_error": [
+                -0.006520761,
+                -0.0056606
+              ],
+              "baseline_error": [
+                -0.008281115,
+                -0.122757906
+              ],
+              "visits_below_0_4_m": false
+            },
+            {
+              "csv_lines": [
+                2502,
+                2602
+              ],
+              "model_error": [
+                0.006269911,
+                0.024228097
+              ],
+              "baseline_error": [
+                -0.157339571,
+                -0.073861687
+              ],
+              "visits_below_0_4_m": false
+            },
+            {
+              "csv_lines": [
+                2602,
+                2702
+              ],
+              "model_error": [
+                0.024541198,
+                0.035451999
+              ],
+              "baseline_error": [
+                0.175148293,
+                0.213651466
+              ],
+              "visits_below_0_4_m": false
+            },
+            {
+              "csv_lines": [
+                2702,
+                2802
+              ],
+              "model_error": [
+                -0.006405126,
+                -0.029374685
+              ],
+              "baseline_error": [
+                0.020053897,
+                0.128033436
+              ],
+              "visits_below_0_4_m": false
+            },
+            {
+              "csv_lines": [
+                2802,
+                2902
+              ],
+              "model_error": [
+                0.007417714,
+                0.018285053
+              ],
+              "baseline_error": [
+                0.151463534,
+                0.08344874
+              ],
+              "visits_below_0_4_m": false
+            },
+            {
+              "csv_lines": [
+                2902,
+                3002
+              ],
+              "model_error": [
+                -0.037454218,
+                -0.050721573
+              ],
+              "baseline_error": [
+                -0.205372001,
+                -0.259316642
+              ],
+              "visits_below_0_4_m": false
+            },
+            {
+              "csv_lines": [
+                3002,
+                3102
+              ],
+              "model_error": [
+                0.00677517,
+                0.008869108
+              ],
+              "baseline_error": [
+                0.031446977,
+                0.037966295
+              ],
+              "visits_below_0_4_m": false
+            },
+            {
+              "csv_lines": [
+                3102,
+                3202
+              ],
+              "model_error": [
+                -0.004538789,
+                -0.013323272
+              ],
+              "baseline_error": [
+                -0.005337947,
+                -0.016496928
+              ],
+              "visits_below_0_4_m": false
+            },
+            {
+              "csv_lines": [
+                3202,
+                3302
+              ],
+              "model_error": [
+                -0.022028587,
+                -0.060087975
+              ],
+              "baseline_error": [
+                0.002649273,
+                0.009250359
+              ],
+              "visits_below_0_4_m": false
+            },
+            {
+              "csv_lines": [
+                3302,
+                3402
+              ],
+              "model_error": [
+                -0.043841422,
+                -0.084663484
+              ],
+              "baseline_error": [
+                0.001751716,
+                0.000777099
+              ],
+              "visits_below_0_4_m": false
+            },
+            {
+              "csv_lines": [
+                3402,
+                3502
+              ],
+              "model_error": [
+                -0.036827087,
+                -0.051570583
+              ],
+              "baseline_error": [
+                0.106402656,
+                0.331760106
+              ],
+              "visits_below_0_4_m": false
+            },
+            {
+              "csv_lines": [
+                3502,
+                3602
+              ],
+              "model_error": [
+                -0.024788593,
+                -0.083674469
+              ],
+              "baseline_error": [
+                -0.073741348,
+                -0.299658483
+              ],
+              "visits_below_0_4_m": false
+            },
+            {
+              "csv_lines": [
+                3602,
+                3702
+              ],
+              "model_error": [
+                -0.050152353,
+                -0.089849584
+              ],
+              "baseline_error": [
+                -0.072161834,
+                -0.045182871
+              ],
+              "visits_below_0_4_m": false
+            },
+            {
+              "csv_lines": [
+                3702,
+                3802
+              ],
+              "model_error": [
+                -0.022781882,
+                -0.029658866
+              ],
+              "baseline_error": [
+                0.027094014,
+                0.051721378
+              ],
+              "visits_below_0_4_m": false
+            },
+            {
+              "csv_lines": [
+                3802,
+                3902
+              ],
+              "model_error": [
+                -0.020353253,
+                -0.03605776
+              ],
+              "baseline_error": [
+                -0.044647683,
+                -0.034619128
+              ],
+              "visits_below_0_4_m": false
+            },
+            {
+              "csv_lines": [
+                3902,
+                4002
+              ],
+              "model_error": [
+                -0.020190486,
+                -0.067086944
+              ],
+              "baseline_error": [
+                -0.004345411,
+                -0.023129587
+              ],
+              "visits_below_0_4_m": false
+            },
+            {
+              "csv_lines": [
+                4002,
+                4102
+              ],
+              "model_error": [
+                -0.049818658,
+                -0.101375099
+              ],
+              "baseline_error": [
+                0.00887158,
+                0.030640705
+              ],
+              "visits_below_0_4_m": false
+            },
+            {
+              "csv_lines": [
+                4102,
+                4202
+              ],
+              "model_error": [
+                0.045142228,
+                0.188482315
+              ],
+              "baseline_error": [
+                0.210815393,
+                0.336388744
+              ],
+              "visits_below_0_4_m": false
+            }
+          ]
+        },
+        "B2_circle_medium_rep1": {
+          "summary": {
+            "windows": 18,
+            "visits_below_0_4_m": 1,
+            "model": {
+              "altitude_m": {
+                "mae": 0.054320519,
+                "rmse": 0.070223914,
+                "bias": 0.037334479,
+                "max_abs": 0.163823942,
+                "calibration_band_coverage": 0.944444444
+              },
+              "vertical_velocity_m_s": {
+                "mae": 0.102590951,
+                "rmse": 0.124312748,
+                "bias": 0.060278298,
+                "max_abs": 0.26147146,
+                "calibration_band_coverage": 1.0
+              }
+            },
+            "baseline": {
+              "altitude_m": {
+                "mae": 0.054993315,
+                "rmse": 0.100036852,
+                "bias": 0.002028479,
+                "max_abs": 0.346880844
+              },
+              "vertical_velocity_m_s": {
+                "mae": 0.118634575,
+                "rmse": 0.205710704,
+                "bias": 0.051245285,
+                "max_abs": 0.580261995
+              }
+            }
+          },
+          "source_channel_counts_before_resampling": {
+            "motor": 1824,
+            "power": 194,
+            "vicon": 2725
+          },
+          "published_rows": 2725,
+          "excluded_windows_by_reason": {
+            "below_initial_or_calibration_height": 8,
+            "sampling_gap_or_duration": 1
+          },
+          "window_residuals": [
+            {
+              "csv_lines": [
+                402,
+                502
+              ],
+              "model_error": [
+                0.082565139,
+                0.105971059
+              ],
+              "baseline_error": [
+                -0.066870764,
+                0.214450904
+              ],
+              "visits_below_0_4_m": false
+            },
+            {
+              "csv_lines": [
+                502,
+                602
+              ],
+              "model_error": [
+                -0.004925194,
+                -0.053828433
+              ],
+              "baseline_error": [
+                0.346880844,
+                0.467294793
+              ],
+              "visits_below_0_4_m": false
+            },
+            {
+              "csv_lines": [
+                602,
+                702
+              ],
+              "model_error": [
+                -0.100551964,
+                -0.112468653
+              ],
+              "baseline_error": [
+                -0.126415866,
+                -0.075259473
+              ],
+              "visits_below_0_4_m": false
+            },
+            {
+              "csv_lines": [
+                802,
+                902
+              ],
+              "model_error": [
+                -0.009626758,
+                0.00277936
+              ],
+              "baseline_error": [
+                0.041901008,
+                0.059501047
+              ],
+              "visits_below_0_4_m": false
+            },
+            {
+              "csv_lines": [
+                902,
+                1002
+              ],
+              "model_error": [
+                0.025100359,
+                0.033740933
+              ],
+              "baseline_error": [
+                -0.019196426,
+                -0.021710316
+              ],
+              "visits_below_0_4_m": false
+            },
+            {
+              "csv_lines": [
+                1002,
+                1102
+              ],
+              "model_error": [
+                0.068854625,
+                0.102991261
+              ],
+              "baseline_error": [
+                -1.9845e-05,
+                -0.03341666
+              ],
+              "visits_below_0_4_m": false
+            },
+            {
+              "csv_lines": [
+                1102,
+                1202
+              ],
+              "model_error": [
+                0.005557031,
+                0.007329043
+              ],
+              "baseline_error": [
+                0.005237144,
+                0.026003658
+              ],
+              "visits_below_0_4_m": false
+            },
+            {
+              "csv_lines": [
+                1202,
+                1302
+              ],
+              "model_error": [
+                -0.01560015,
+                -0.036143965
+              ],
+              "baseline_error": [
+                0.014514077,
+                0.006393032
+              ],
+              "visits_below_0_4_m": false
+            },
+            {
+              "csv_lines": [
+                1302,
+                1402
+              ],
+              "model_error": [
+                0.013023406,
+                0.041078003
+              ],
+              "baseline_error": [
+                -0.000211169,
+                -0.008989733
+              ],
+              "visits_below_0_4_m": false
+            },
+            {
+              "csv_lines": [
+                1402,
+                1502
+              ],
+              "model_error": [
+                0.031888381,
+                0.084199954
+              ],
+              "baseline_error": [
+                -0.000120073,
+                0.011020388
+              ],
+              "visits_below_0_4_m": false
+            },
+            {
+              "csv_lines": [
+                1502,
+                1602
+              ],
+              "model_error": [
+                0.054382423,
+                0.086839145
+              ],
+              "baseline_error": [
+                -0.013980684,
+                -0.041046621
+              ],
+              "visits_below_0_4_m": false
+            },
+            {
+              "csv_lines": [
+                1602,
+                1702
+              ],
+              "model_error": [
+                0.028034968,
+                0.087813057
+              ],
+              "baseline_error": [
+                0.024298322,
+                0.059727447
+              ],
+              "visits_below_0_4_m": false
+            },
+            {
+              "csv_lines": [
+                1702,
+                1802
+              ],
+              "model_error": [
+                0.072089463,
+                0.146474851
+              ],
+              "baseline_error": [
+                -0.03208855,
+                -0.046362127
+              ],
+              "visits_below_0_4_m": false
+            },
+            {
+              "csv_lines": [
+                1802,
+                1902
+              ],
+              "model_error": [
+                0.087592692,
+                0.152727946
+              ],
+              "baseline_error": [
+                0.003105907,
+                0.009650534
+              ],
+              "visits_below_0_4_m": false
+            },
+            {
+              "csv_lines": [
+                1902,
+                2002
+              ],
+              "model_error": [
+                0.06051179,
+                0.116260599
+              ],
+              "baseline_error": [
+                -0.008561699,
+                -0.016085214
+              ],
+              "visits_below_0_4_m": false
+            },
+            {
+              "csv_lines": [
+                2002,
+                2102
+              ],
+              "model_error": [
+                -0.022170297,
+                -0.178372825
+              ],
+              "baseline_error": [
+                0.077258845,
+                0.580261995
+              ],
+              "visits_below_0_4_m": false
+            },
+            {
+              "csv_lines": [
+                2102,
+                2202
+              ],
+              "model_error": [
+                0.163823942,
+                0.26147146
+              ],
+              "baseline_error": [
+                -0.044452102,
+                -0.363633466
+              ],
+              "visits_below_0_4_m": false
+            },
+            {
+              "csv_lines": [
+                2202,
+                2302
+              ],
+              "model_error": [
+                0.131470766,
+                0.236146568
+              ],
+              "baseline_error": [
+                -0.164766344,
+                0.09461495
+              ],
+              "visits_below_0_4_m": true
+            }
+          ]
+        },
+        "B2_circle_medium_rep2": {
+          "summary": {
+            "windows": 34,
+            "visits_below_0_4_m": 1,
+            "model": {
+              "altitude_m": {
+                "mae": 0.073320103,
+                "rmse": 0.089712713,
+                "bias": 0.016250777,
+                "max_abs": 0.213482607,
+                "calibration_band_coverage": 0.911764706
+              },
+              "vertical_velocity_m_s": {
+                "mae": 0.139479384,
+                "rmse": 0.169000871,
+                "bias": 0.035732858,
+                "max_abs": 0.385160462,
+                "calibration_band_coverage": 0.911764706
+              }
+            },
+            "baseline": {
+              "altitude_m": {
+                "mae": 0.056830863,
+                "rmse": 0.112367337,
+                "bias": 0.01857572,
+                "max_abs": 0.569849476
+              },
+              "vertical_velocity_m_s": {
+                "mae": 0.086529371,
+                "rmse": 0.180317043,
+                "bias": 0.043970534,
+                "max_abs": 0.734221575
+              }
+            }
+          },
+          "source_channel_counts_before_resampling": {
+            "motor": 4086,
+            "power": 413,
+            "vicon": 4229
+          },
+          "published_rows": 4229,
+          "excluded_windows_by_reason": {
+            "below_initial_or_calibration_height": 7,
+            "sampling_gap_or_duration": 1
+          },
+          "window_residuals": [
+            {
+              "csv_lines": [
+                402,
+                502
+              ],
+              "model_error": [
+                -0.193490863,
+                -0.31011705
+              ],
+              "baseline_error": [
+                0.20076354,
+                0.678486437
+              ],
+              "visits_below_0_4_m": false
+            },
+            {
+              "csv_lines": [
+                502,
+                602
+              ],
+              "model_error": [
+                -0.165491024,
+                -0.385160462
+              ],
+              "baseline_error": [
+                0.095393092,
+                0.135604386
+              ],
+              "visits_below_0_4_m": false
+            },
+            {
+              "csv_lines": [
+                602,
+                702
+              ],
+              "model_error": [
+                -0.213482607,
+                -0.33565879
+              ],
+              "baseline_error": [
+                -0.088073798,
+                -0.003987518
+              ],
+              "visits_below_0_4_m": false
+            },
+            {
+              "csv_lines": [
+                702,
+                802
+              ],
+              "model_error": [
+                -0.136154558,
+                -0.268769761
+              ],
+              "baseline_error": [
+                -0.04857831,
+                -0.051580709
+              ],
+              "visits_below_0_4_m": false
+            },
+            {
+              "csv_lines": [
+                802,
+                902
+              ],
+              "model_error": [
+                -0.100591905,
+                -0.142630163
+              ],
+              "baseline_error": [
+                0.028677513,
+                0.060348442
+              ],
+              "visits_below_0_4_m": false
+            },
+            {
+              "csv_lines": [
+                902,
+                1002
+              ],
+              "model_error": [
+                0.012740012,
+                0.002902501
+              ],
+              "baseline_error": [
+                -0.045459019,
+                -0.098421838
+              ],
+              "visits_below_0_4_m": false
+            },
+            {
+              "csv_lines": [
+                1002,
+                1102
+              ],
+              "model_error": [
+                0.014433423,
+                0.019478672
+              ],
+              "baseline_error": [
+                0.042634759,
+                0.047946652
+              ],
+              "visits_below_0_4_m": false
+            },
+            {
+              "csv_lines": [
+                1102,
+                1202
+              ],
+              "model_error": [
+                0.008648516,
+                -0.017661108
+              ],
+              "baseline_error": [
+                -0.014129299,
+                -0.030503605
+              ],
+              "visits_below_0_4_m": false
+            },
+            {
+              "csv_lines": [
+                1202,
+                1302
+              ],
+              "model_error": [
+                -0.020016775,
+                0.005569543
+              ],
+              "baseline_error": [
+                0.036475075,
+                0.069830225
+              ],
+              "visits_below_0_4_m": false
+            },
+            {
+              "csv_lines": [
+                1302,
+                1402
+              ],
+              "model_error": [
+                0.013779577,
+                0.02725392
+              ],
+              "baseline_error": [
+                -0.038917315,
+                -0.047254357
+              ],
+              "visits_below_0_4_m": false
+            },
+            {
+              "csv_lines": [
+                1402,
+                1502
+              ],
+              "model_error": [
+                0.04619947,
+                0.092505417
+              ],
+              "baseline_error": [
+                0.008529933,
+                -0.014105149
+              ],
+              "visits_below_0_4_m": false
+            },
+            {
+              "csv_lines": [
+                1502,
+                1602
+              ],
+              "model_error": [
+                0.063934283,
+                0.138416084
+              ],
+              "baseline_error": [
+                0.016056897,
+                0.016424407
+              ],
+              "visits_below_0_4_m": false
+            },
+            {
+              "csv_lines": [
+                1602,
+                1702
+              ],
+              "model_error": [
+                0.046522685,
+                0.128436756
+              ],
+              "baseline_error": [
+                -0.002308441,
+                0.028904788
+              ],
+              "visits_below_0_4_m": false
+            },
+            {
+              "csv_lines": [
+                1702,
+                1802
+              ],
+              "model_error": [
+                0.031492889,
+                0.066147784
+              ],
+              "baseline_error": [
+                -0.046562179,
+                -0.036856067
+              ],
+              "visits_below_0_4_m": false
+            },
+            {
+              "csv_lines": [
+                1802,
+                1902
+              ],
+              "model_error": [
+                0.081543789,
+                0.180604653
+              ],
+              "baseline_error": [
+                0.025948256,
+                0.02777073
+              ],
+              "visits_below_0_4_m": false
+            },
+            {
+              "csv_lines": [
+                1902,
+                2002
+              ],
+              "model_error": [
+                0.059994736,
+                0.134257381
+              ],
+              "baseline_error": [
+                -0.04552328,
+                -0.004355197
+              ],
+              "visits_below_0_4_m": false
+            },
+            {
+              "csv_lines": [
+                2002,
+                2102
+              ],
+              "model_error": [
+                0.094917568,
+                0.146556981
+              ],
+              "baseline_error": [
+                -0.012468477,
+                -0.070843173
+              ],
+              "visits_below_0_4_m": false
+            },
+            {
+              "csv_lines": [
+                2102,
+                2202
+              ],
+              "model_error": [
+                0.033117602,
+                0.079158572
+              ],
+              "baseline_error": [
+                0.045797962,
+                0.05967561
+              ],
+              "visits_below_0_4_m": false
+            },
+            {
+              "csv_lines": [
+                2202,
+                2302
+              ],
+              "model_error": [
+                0.025849136,
+                0.105414028
+              ],
+              "baseline_error": [
+                0.000753461,
+                0.034252984
+              ],
+              "visits_below_0_4_m": false
+            },
+            {
+              "csv_lines": [
+                2302,
+                2402
+              ],
+              "model_error": [
+                0.103098718,
+                0.183629772
+              ],
+              "baseline_error": [
+                -0.040340457,
+                -0.060426353
+              ],
+              "visits_below_0_4_m": false
+            },
+            {
+              "csv_lines": [
+                2402,
+                2502
+              ],
+              "model_error": [
+                0.021014319,
+                0.031072936
+              ],
+              "baseline_error": [
+                -0.000583531,
+                0.020363618
+              ],
+              "visits_below_0_4_m": false
+            },
+            {
+              "csv_lines": [
+                2502,
+                2602
+              ],
+              "model_error": [
+                0.051973807,
+                0.100679525
+              ],
+              "baseline_error": [
+                0.037094667,
+                0.036268701
+              ],
+              "visits_below_0_4_m": false
+            },
+            {
+              "csv_lines": [
+                2602,
+                2702
+              ],
+              "model_error": [
+                0.104439613,
+                0.253561296
+              ],
+              "baseline_error": [
+                -0.041342255,
+                -0.052174427
+              ],
+              "visits_below_0_4_m": false
+            },
+            {
+              "csv_lines": [
+                2702,
+                2802
+              ],
+              "model_error": [
+                0.056028552,
+                0.134858343
+              ],
+              "baseline_error": [
+                -0.039195632,
+                -0.034009269
+              ],
+              "visits_below_0_4_m": false
+            },
+            {
+              "csv_lines": [
+                2802,
+                2902
+              ],
+              "model_error": [
+                -0.014194793,
+                -0.103370165
+              ],
+              "baseline_error": [
+                0.006059039,
+                0.043909758
+              ],
+              "visits_below_0_4_m": false
+            },
+            {
+              "csv_lines": [
+                2902,
+                3002
+              ],
+              "model_error": [
+                -0.061045709,
+                -0.143202708
+              ],
+              "baseline_error": [
+                0.047389285,
+                0.024596423
+              ],
+              "visits_below_0_4_m": false
+            },
+            {
+              "csv_lines": [
+                3002,
+                3102
+              ],
+              "model_error": [
+                -0.065710294,
+                -0.057120734
+              ],
+              "baseline_error": [
+                0.002277247,
+                0.027099608
+              ],
+              "visits_below_0_4_m": false
+            },
+            {
+              "csv_lines": [
+                3102,
+                3202
+              ],
+              "model_error": [
+                0.087771932,
+                0.219460632
+              ],
+              "baseline_error": [
+                -0.007059566,
+                -0.01153565
+              ],
+              "visits_below_0_4_m": false
+            },
+            {
+              "csv_lines": [
+                3202,
+                3302
+              ],
+              "model_error": [
+                0.066758869,
+                0.083136736
+              ],
+              "baseline_error": [
+                -0.074196138,
+                -0.125257686
+              ],
+              "visits_below_0_4_m": false
+            },
+            {
+              "csv_lines": [
+                3302,
+                3402
+              ],
+              "model_error": [
+                0.114735334,
+                0.195566034
+              ],
+              "baseline_error": [
+                0.070957359,
+                0.110862399
+              ],
+              "visits_below_0_4_m": false
+            },
+            {
+              "csv_lines": [
+                3402,
+                3502
+              ],
+              "model_error": [
+                0.074045548,
+                0.097936816
+              ],
+              "baseline_error": [
+                0.047254334,
+                0.061931644
+              ],
+              "visits_below_0_4_m": false
+            },
+            {
+              "csv_lines": [
+                3502,
+                3602
+              ],
+              "model_error": [
+                0.115449333,
+                0.193176171
+              ],
+              "baseline_error": [
+                -0.015001545,
+                -0.052642878
+              ],
+              "visits_below_0_4_m": false
+            },
+            {
+              "csv_lines": [
+                3602,
+                3702
+              ],
+              "model_error": [
+                0.051891908,
+                0.09169603
+              ],
+              "baseline_error": [
+                -0.090598189,
+                -0.029546366
+              ],
+              "visits_below_0_4_m": false
+            },
+            {
+              "csv_lines": [
+                3702,
+                3802
+              ],
+              "model_error": [
+                0.14232334,
+                0.267131517
+              ],
+              "baseline_error": [
+                0.569849476,
+                0.734221575
+              ],
+              "visits_below_0_4_m": true
+            }
+          ]
+        }
+      }
+    },
+    "2.0": {
+      "calibration_band_altitude_m_and_velocity_m_s": [
+        0.554133472,
+        0.476162852
+      ],
+      "summary": {
+        "windows": 44,
+        "visits_below_0_4_m": 2,
+        "model": {
+          "altitude_m": {
+            "mae": 0.18843767,
+            "rmse": 0.252457759,
+            "bias": -0.016062521,
+            "max_abs": 0.667114112,
+            "calibration_band_coverage": 0.931818182
+          },
+          "vertical_velocity_m_s": {
+            "mae": 0.233525896,
+            "rmse": 0.425058096,
+            "bias": -0.058990272,
+            "max_abs": 2.314691809,
+            "calibration_band_coverage": 0.886363636
+          }
+        },
+        "baseline": {
+          "altitude_m": {
+            "mae": 0.143021852,
+            "rmse": 0.245651458,
+            "bias": 0.073942113,
+            "max_abs": 0.974680275
+          },
+          "vertical_velocity_m_s": {
+            "mae": 0.116992448,
+            "rmse": 0.226628462,
+            "bias": 0.058651981,
+            "max_abs": 0.814090823
+          }
+        }
+      },
+      "holdout_flights": {
+        "B12_staircase_climb_rep1": {
+          "summary": {
+            "windows": 18,
+            "visits_below_0_4_m": 0,
+            "model": {
+              "altitude_m": {
+                "mae": 0.152620613,
+                "rmse": 0.225312646,
+                "bias": -0.145455724,
+                "max_abs": 0.561554005,
+                "calibration_band_coverage": 0.944444444
+              },
+              "vertical_velocity_m_s": {
+                "mae": 0.147255559,
+                "rmse": 0.216778678,
+                "bias": -0.133231035,
+                "max_abs": 0.53360713,
+                "calibration_band_coverage": 0.888888889
+              }
+            },
+            "baseline": {
+              "altitude_m": {
+                "mae": 0.144187937,
+                "rmse": 0.208225096,
+                "bias": 0.034191276,
+                "max_abs": 0.408854776
+              },
+              "vertical_velocity_m_s": {
+                "mae": 0.109704518,
+                "rmse": 0.170358694,
+                "bias": 0.021421725,
+                "max_abs": 0.367029449
+              }
+            }
+          },
+          "source_channel_counts_before_resampling": {
+            "motor": 3883,
+            "power": 414,
+            "vicon": 7225
+          },
+          "published_rows": 7225,
+          "excluded_windows_by_reason": {
+            "below_initial_or_calibration_height": 6,
+            "invalid_input": 12
+          },
+          "window_residuals": [
+            {
+              "csv_lines": [
+                602,
+                802
+              ],
+              "model_error": [
+                -0.482004866,
+                -0.484168585
+              ],
+              "baseline_error": [
+                0.033420674,
+                0.035503822
+              ],
+              "visits_below_0_4_m": false
+            },
+            {
+              "csv_lines": [
+                802,
+                1002
+              ],
+              "model_error": [
+                -0.561554005,
+                -0.53360713
+              ],
+              "baseline_error": [
+                0.017606916,
+                0.007541246
+              ],
+              "visits_below_0_4_m": false
+            },
+            {
+              "csv_lines": [
+                1002,
+                1202
+              ],
+              "model_error": [
+                -0.410808049,
+                -0.351394902
+              ],
+              "baseline_error": [
+                -0.070896636,
+                -0.313199347
+              ],
+              "visits_below_0_4_m": false
+            },
+            {
+              "csv_lines": [
+                1202,
+                1402
+              ],
+              "model_error": [
+                -0.101579721,
+                -0.139440106
+              ],
+              "baseline_error": [
+                0.404084749,
+                0.305586247
+              ],
+              "visits_below_0_4_m": false
+            },
+            {
+              "csv_lines": [
+                1402,
+                1602
+              ],
+              "model_error": [
+                -0.289099234,
+                -0.292620919
+              ],
+              "baseline_error": [
+                0.010287728,
+                0.022257189
+              ],
+              "visits_below_0_4_m": false
+            },
+            {
+              "csv_lines": [
+                1602,
+                1802
+              ],
+              "model_error": [
+                -0.157859269,
+                -0.15777822
+              ],
+              "baseline_error": [
+                -0.011488232,
+                0.003616554
+              ],
+              "visits_below_0_4_m": false
+            },
+            {
+              "csv_lines": [
+                1802,
+                2002
+              ],
+              "model_error": [
+                -0.065499134,
+                0.008553978
+              ],
+              "baseline_error": [
+                -0.372863331,
+                0.026779824
+              ],
+              "visits_below_0_4_m": false
+            },
+            {
+              "csv_lines": [
+                2002,
+                2202
+              ],
+              "model_error": [
+                -0.001675957,
+                -0.002360259
+              ],
+              "baseline_error": [
+                -0.072477725,
+                -0.048511197
+              ],
+              "visits_below_0_4_m": false
+            },
+            {
+              "csv_lines": [
+                2202,
+                2402
+              ],
+              "model_error": [
+                -0.01695311,
+                -0.030900143
+              ],
+              "baseline_error": [
+                0.009131917,
+                -0.00259839
+              ],
+              "visits_below_0_4_m": false
+            },
+            {
+              "csv_lines": [
+                2402,
+                2602
+              ],
+              "model_error": [
+                -0.005717178,
+                0.01897905
+              ],
+              "baseline_error": [
+                -0.288380231,
+                -0.196619593
+              ],
+              "visits_below_0_4_m": false
+            },
+            {
+              "csv_lines": [
+                2602,
+                2802
+              ],
+              "model_error": [
+                0.053511306,
+                0.005768385
+              ],
+              "baseline_error": [
+                0.408854776,
+                0.341684902
+              ],
+              "visits_below_0_4_m": false
+            },
+            {
+              "csv_lines": [
+                2802,
+                3002
+              ],
+              "model_error": [
+                -0.011952999,
+                -0.032693768
+              ],
+              "baseline_error": [
+                0.029541308,
+                -0.175867902
+              ],
+              "visits_below_0_4_m": false
+            },
+            {
+              "csv_lines": [
+                3002,
+                3202
+              ],
+              "model_error": [
+                0.010972688,
+                -0.004745373
+              ],
+              "baseline_error": [
+                0.064076149,
+                0.021469367
+              ],
+              "visits_below_0_4_m": false
+            },
+            {
+              "csv_lines": [
+                3202,
+                3402
+              ],
+              "model_error": [
+                -0.125488618,
+                -0.143608365
+              ],
+              "baseline_error": [
+                0.013651366,
+                0.010027458
+              ],
+              "visits_below_0_4_m": false
+            },
+            {
+              "csv_lines": [
+                3402,
+                3602
+              ],
+              "model_error": [
+                -0.110849786,
+                -0.131265615
+              ],
+              "baseline_error": [
+                0.364429324,
+                0.032101623
+              ],
+              "visits_below_0_4_m": false
+            },
+            {
+              "csv_lines": [
+                3602,
+                3802
+              ],
+              "model_error": [
+                -0.162017391,
+                -0.117435906
+              ],
+              "baseline_error": [
+                -0.090251143,
+                0.006538507
+              ],
+              "visits_below_0_4_m": false
+            },
+            {
+              "csv_lines": [
+                3802,
+                4002
+              ],
+              "model_error": [
+                -0.076112431,
+                -0.102360055
+              ],
+              "baseline_error": [
+                -0.083612652,
+                -0.057748715
+              ],
+              "visits_below_0_4_m": false
+            },
+            {
+              "csv_lines": [
+                4002,
+                4202
+              ],
+              "model_error": [
+                -0.103515287,
+                0.092919312
+              ],
+              "baseline_error": [
+                0.250328007,
+                0.367029449
+              ],
+              "visits_below_0_4_m": false
+            }
+          ]
+        },
+        "B2_circle_medium_rep1": {
+          "summary": {
+            "windows": 9,
+            "visits_below_0_4_m": 1,
+            "model": {
+              "altitude_m": {
+                "mae": 0.134693216,
+                "rmse": 0.159961607,
+                "bias": 0.121183329,
+                "max_abs": 0.291717347,
+                "calibration_band_coverage": 1.0
+              },
+              "vertical_velocity_m_s": {
+                "mae": 0.360960959,
+                "rmse": 0.783332094,
+                "bias": -0.153414999,
+                "max_abs": 2.314691809,
+                "calibration_band_coverage": 0.888888889
+              }
+            },
+            "baseline": {
+              "altitude_m": {
+                "mae": 0.147964707,
+                "rmse": 0.265037543,
+                "bias": 0.133495574,
+                "max_abs": 0.613075517
+              },
+              "vertical_velocity_m_s": {
+                "mae": 0.133218065,
+                "rmse": 0.248441813,
+                "bias": 0.077788663,
+                "max_abs": 0.681745697
+              }
+            }
+          },
+          "source_channel_counts_before_resampling": {
+            "motor": 1824,
+            "power": 194,
+            "vicon": 2725
+          },
+          "published_rows": 2725,
+          "excluded_windows_by_reason": {
+            "below_initial_or_calibration_height": 3,
+            "sampling_gap_or_duration": 1
+          },
+          "window_residuals": [
+            {
+              "csv_lines": [
+                402,
+                602
+              ],
+              "model_error": [
+                0.181121821,
+                0.046830546
+              ],
+              "baseline_error": [
+                0.494461291,
+                0.681745697
+              ],
+              "visits_below_0_4_m": false
+            },
+            {
+              "csv_lines": [
+                802,
+                1002
+              ],
+              "model_error": [
+                0.018105566,
+                0.036237678
+              ],
+              "baseline_error": [
+                0.082206097,
+                0.037790731
+              ],
+              "visits_below_0_4_m": false
+            },
+            {
+              "csv_lines": [
+                1002,
+                1202
+              ],
+              "model_error": [
+                0.172347214,
+                0.100017741
+              ],
+              "baseline_error": [
+                -0.028199991,
+                -0.007413002
+              ],
+              "visits_below_0_4_m": false
+            },
+            {
+              "csv_lines": [
+                1202,
+                1402
+              ],
+              "model_error": [
+                -0.036875449,
+                0.008462059
+              ],
+              "baseline_error": [
+                0.020696065,
+                -0.002596701
+              ],
+              "visits_below_0_4_m": false
+            },
+            {
+              "csv_lines": [
+                1402,
+                1602
+              ],
+              "model_error": [
+                0.166065577,
+                0.162519063
+              ],
+              "baseline_error": [
+                -0.003080254,
+                -0.030026233
+              ],
+              "visits_below_0_4_m": false
+            },
+            {
+              "csv_lines": [
+                1602,
+                1802
+              ],
+              "model_error": [
+                0.183114422,
+                0.224985842
+              ],
+              "baseline_error": [
+                0.051937603,
+                0.01336532
+              ],
+              "visits_below_0_4_m": false
+            },
+            {
+              "csv_lines": [
+                1802,
+                2002
+              ],
+              "model_error": [
+                0.291717347,
+                0.251928334
+              ],
+              "baseline_error": [
+                0.004194691,
+                -0.00643468
+              ],
+              "visits_below_0_4_m": false
+            },
+            {
+              "csv_lines": [
+                2002,
+                2202
+              ],
+              "model_error": [
+                -0.023919043,
+                0.10297556
+              ],
+              "baseline_error": [
+                0.613075517,
+                0.216628529
+              ],
+              "visits_below_0_4_m": false
+            },
+            {
+              "csv_lines": [
+                2202,
+                2402
+              ],
+              "model_error": [
+                0.138972504,
+                -2.314691809
+              ],
+              "baseline_error": [
+                -0.033830851,
+                -0.202961694
+              ],
+              "visits_below_0_4_m": true
+            }
+          ]
+        },
+        "B2_circle_medium_rep2": {
+          "summary": {
+            "windows": 17,
+            "visits_below_0_4_m": 1,
+            "model": {
+              "altitude_m": {
+                "mae": 0.254814558,
+                "rmse": 0.312510032,
+                "bias": 0.04828248,
+                "max_abs": 0.667114112,
+                "calibration_band_coverage": 0.882352941
+              },
+              "vertical_velocity_m_s": {
+                "mae": 0.257405337,
+                "rmse": 0.304989537,
+                "bias": 0.069607155,
+                "max_abs": 0.66837665,
+                "calibration_band_coverage": 0.882352941
+              }
+            },
+            "baseline": {
+              "altitude_m": {
+                "mae": 0.139170368,
+                "rmse": 0.270350707,
+                "bias": 0.084502933,
+                "max_abs": 0.974680275
+              },
+              "vertical_velocity_m_s": {
+                "mae": 0.116119046,
+                "rmse": 0.263679027,
+                "bias": 0.087941067,
+                "max_abs": 0.814090823
+              }
+            }
+          },
+          "source_channel_counts_before_resampling": {
+            "motor": 4086,
+            "power": 413,
+            "vicon": 4229
+          },
+          "published_rows": 4229,
+          "excluded_windows_by_reason": {
+            "below_initial_or_calibration_height": 3,
+            "sampling_gap_or_duration": 1
+          },
+          "window_residuals": [
+            {
+              "csv_lines": [
+                402,
+                602
+              ],
+              "model_error": [
+                -0.658835552,
+                -0.66837665
+              ],
+              "baseline_error": [
+                0.974680275,
+                0.814090823
+              ],
+              "visits_below_0_4_m": false
+            },
+            {
+              "csv_lines": [
+                602,
+                802
+              ],
+              "model_error": [
+                -0.667114112,
+                -0.566804059
+              ],
+              "baseline_error": [
+                -0.140639868,
+                -0.055568227
+              ],
+              "visits_below_0_4_m": false
+            },
+            {
+              "csv_lines": [
+                802,
+                1002
+              ],
+              "model_error": [
+                -0.222994583,
+                -0.124996403
+              ],
+              "baseline_error": [
+                0.043571036,
+                -0.038073396
+              ],
+              "visits_below_0_4_m": false
+            },
+            {
+              "csv_lines": [
+                1002,
+                1202
+              ],
+              "model_error": [
+                0.041633439,
+                -6.1671e-05
+              ],
+              "baseline_error": [
+                0.076454935,
+                0.017443047
+              ],
+              "visits_below_0_4_m": false
+            },
+            {
+              "csv_lines": [
+                1202,
+                1402
+              ],
+              "model_error": [
+                -0.000939867,
+                0.03228898
+              ],
+              "baseline_error": [
+                0.067390832,
+                0.022575868
+              ],
+              "visits_below_0_4_m": false
+            },
+            {
+              "csv_lines": [
+                1402,
+                1602
+              ],
+              "model_error": [
+                0.198050092,
+                0.221755711
+              ],
+              "baseline_error": [
+                0.010480833,
+                0.002319258
+              ],
+              "visits_below_0_4_m": false
+            },
+            {
+              "csv_lines": [
+                1602,
+                1802
+              ],
+              "model_error": [
+                0.199811804,
+                0.181588121
+              ],
+              "baseline_error": [
+                -0.019963965,
+                -0.007951279
+              ],
+              "visits_below_0_4_m": false
+            },
+            {
+              "csv_lines": [
+                1802,
+                2002
+              ],
+              "model_error": [
+                0.312573898,
+                0.296129378
+              ],
+              "baseline_error": [
+                0.008197527,
+                0.023415533
+              ],
+              "visits_below_0_4_m": false
+            },
+            {
+              "csv_lines": [
+                2002,
+                2202
+              ],
+              "model_error": [
+                0.267610241,
+                0.211439977
+              ],
+              "baseline_error": [
+                -0.037518249,
+                -0.011167563
+              ],
+              "visits_below_0_4_m": false
+            },
+            {
+              "csv_lines": [
+                2202,
+                2402
+              ],
+              "model_error": [
+                0.229151859,
+                0.278436942
+              ],
+              "baseline_error": [
+                -0.005331978,
+                -0.026173369
+              ],
+              "visits_below_0_4_m": false
+            },
+            {
+              "csv_lines": [
+                2402,
+                2602
+              ],
+              "model_error": [
+                0.102554051,
+                0.128789719
+              ],
+              "baseline_error": [
+                0.056875914,
+                0.056632319
+              ],
+              "visits_below_0_4_m": false
+            },
+            {
+              "csv_lines": [
+                2602,
+                2802
+              ],
+              "model_error": [
+                0.399776847,
+                0.359934699
+              ],
+              "baseline_error": [
+                -0.132715598,
+                -0.086183696
+              ],
+              "visits_below_0_4_m": false
+            },
+            {
+              "csv_lines": [
+                2802,
+                3002
+              ],
+              "model_error": [
+                -0.173358428,
+                -0.236045766
+              ],
+              "baseline_error": [
+                0.097361609,
+                0.068506181
+              ],
+              "visits_below_0_4_m": false
+            },
+            {
+              "csv_lines": [
+                3002,
+                3202
+              ],
+              "model_error": [
+                -0.032280125,
+                0.167873074
+              ],
+              "baseline_error": [
+                0.022319286,
+                0.015563958
+              ],
+              "visits_below_0_4_m": false
+            },
+            {
+              "csv_lines": [
+                3202,
+                3402
+              ],
+              "model_error": [
+                0.260420768,
+                0.270267353
+              ],
+              "baseline_error": [
+                -0.128503543,
+                -0.014395287
+              ],
+              "visits_below_0_4_m": false
+            },
+            {
+              "csv_lines": [
+                3402,
+                3602
+              ],
+              "model_error": [
+                0.282419222,
+                0.281265724
+              ],
+              "baseline_error": [
+                0.094187283,
+                0.009288766
+              ],
+              "visits_below_0_4_m": false
+            },
+            {
+              "csv_lines": [
+                3602,
+                3802
+              ],
+              "model_error": [
+                0.282322602,
+                0.349836506
+              ],
+              "baseline_error": [
+                0.449703527,
+                0.704675209
+              ],
+              "visits_below_0_4_m": true
+            }
+          ]
+        }
+      }
+    }
+  }
+}
