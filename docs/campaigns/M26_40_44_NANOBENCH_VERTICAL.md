@@ -26,7 +26,21 @@ Forecast vertical position and velocity with AeroForge's RK4 and quadratic drag 
 
 For each of the three whole held-out flights and each duration, score endpoint altitude and vertical velocity against the Vicon export. Report MAE, RMSE, signed bias, maximum absolute error, source CSV lines and rejected-window counts. Report coverage of symmetric bands whose half widths were fixed at the 90th percentile absolute residual from each calibration flight forecast in turn with the other flight's fitted model. These empirical bands reflect two calibration flights and correlated windows. They carry no probabilistic safety or population-level guarantee. The comparator, model and eligibility rules are committed before numerical evaluation of the held-out CSVs.
 
-## M26.44 Reproduction
+## M26.44 Held-out results and reproduction
+
+The [fit and scoring commit](https://github.com/god88844-hub/aeroforge/commit/ae135d7eff7f2a4217c1361e18044f287bbdfd48) predates numerical evaluation of the three held-out recordings. Scores below pool windows across those flights. Per-flight summaries, calibration band widths, rejected-window counts, and endpoint errors keyed to CSV lines are available in the [results](m26_nanobench_vertical_results.json).
+
+| Horizon | Windows | Altitude RMSE, model / baseline | Vertical velocity RMSE, model / baseline | Empirical band coverage, altitude / velocity |
+| --- | ---: | ---: | ---: | ---: |
+| 0.5 s | 179 | 2.02 / 3.22 cm | 0.079 / 0.129 m/s | 96.6% / 96.1% |
+| 1.0 s | 89 | 7.56 / 10.13 cm | 0.143 / 0.178 m/s | 95.5% / 96.6% |
+| 2.0 s | 44 | 25.25 / 24.57 cm | 0.425 / 0.227 m/s | 93.2% / 88.6% |
+
+The model reduced both RMSEs at 0.5 s and 1.0 s. At 1.0 s both model MAEs were higher than the baseline. At 2.0 s the baseline had lower RMSE and MAE for both endpoints. The worst 2.0 s vertical velocity residual was −2.315 m/s on CSV lines 2202–2402 of the first circle flight. That window crossed below 0.4 m and stayed in the scored set.
+
+The staircase export reports PWM values outside the documented range of 0–65,535. Across the published rows, at least one motor had negative PWM in 2,755 rows and PWM above 65,535 in 3,023 rows. These counts can overlap. The frozen input gate rejected 45 half-second staircase windows for invalid input after applying the initial-height gate. The comparison kept those exclusions and did not clamp the values. This limits climb-regime coverage and establishes an export-quality gap, with no inference about the aircraft's physical PWM signals.
+
+The measured advantage at shorter horizons is specific to windows with eligible inputs on this aircraft. The 2.0 s result and the climb exclusions limit use of this model for longer trajectory prediction. The empirical bands are descriptive and do not supply an independently reviewed uncertainty budget.
 
 Download the pinned CSVs and paired YAML files listed in the source manifest into one directory, leaving their bytes intact. Run the following from the AeroForge repository root in the backend Python environment, substituting that directory for DATA_DIR.
 
