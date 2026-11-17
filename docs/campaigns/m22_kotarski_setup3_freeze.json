@@ -1,0 +1,344 @@
+{
+  "plan": "M22-kotarski-setup3-static-v1",
+  "sources": {
+    "3.8": {
+      "dataverse_file_id": 6940261,
+      "byte_count": 15940,
+      "sha256": "31ae880d06637e8780b64a6b34e6fbc0828d5618f2a9a65bf4c1c6c5fab515bd"
+    },
+    "4.0": {
+      "dataverse_file_id": 6940259,
+      "byte_count": 15839,
+      "sha256": "9d90497f5e13d5e0e449b04fc0850a167027caebcf0db9eb0f2f25448dd53feb"
+    },
+    "4.2": {
+      "dataverse_file_id": 6940266,
+      "byte_count": 15872,
+      "sha256": "a59b8bb83226aa6f0108bd6fe5c6c40399e687b9f1d6fde349a2276694ec3ef8"
+    }
+  },
+  "calibration_start_cell_v": [
+    "3.8",
+    "4.2"
+  ],
+  "holdout_start_cell_v": "4.0",
+  "motor": {
+    "id": "kotarski_setup3_p80_100kv",
+    "name": "Published Kotarski Setup 3 P80 100 Kv bench unit",
+    "kv_rpm_per_v": 100,
+    "source": {
+      "source": "Kotarski et al., UAV Multirotor Propulsion\u2014Experimental Data, Setup 3",
+      "url": "https://doi.org/10.7910/DVN/J5L2P4",
+      "report_id": "10.7910/DVN/J5L2P4",
+      "notes": "Measured static test on an Alpha 80 A ESC, G30 \u00d7 10.5, optical RPM."
+    },
+    "test_data": [
+      {
+        "prop": "G30 \u00d7 10.5",
+        "rpm": 629.5,
+        "throttle_pct": 20.0,
+        "voltage_v": 45.6,
+        "voltage_measured_v": 45.39118097456652,
+        "thrust_gf": 309.90375478827053,
+        "current_a": 0.40712057533959967,
+        "torque_nm": 0.12465476184720833,
+        "power_w": 18.47968371370941,
+        "source": {
+          "source": "Kotarski et al., UAV Multirotor Propulsion\u2014Experimental Data, Setup 3",
+          "url": "https://doi.org/10.7910/DVN/J5L2P4",
+          "report_id": "10.7910/DVN/J5L2P4",
+          "notes": "Measured static test on an Alpha 80 A ESC, G30 \u00d7 10.5, optical RPM."
+        }
+      },
+      {
+        "prop": "G30 \u00d7 10.5",
+        "rpm": 1073.5,
+        "throttle_pct": 30.0,
+        "voltage_v": 45.6,
+        "voltage_measured_v": 45.353832988158445,
+        "thrust_gf": 984.1349387125221,
+        "current_a": 1.3890984760603344,
+        "torque_nm": 0.36925060923985176,
+        "power_w": 63.00094028734582,
+        "source": {
+          "source": "Kotarski et al., UAV Multirotor Propulsion\u2014Experimental Data, Setup 3",
+          "url": "https://doi.org/10.7910/DVN/J5L2P4",
+          "report_id": "10.7910/DVN/J5L2P4",
+          "notes": "Measured static test on an Alpha 80 A ESC, G30 \u00d7 10.5, optical RPM."
+        }
+      },
+      {
+        "prop": "G30 \u00d7 10.5",
+        "rpm": 1528.5,
+        "throttle_pct": 40.0,
+        "voltage_v": 45.6,
+        "voltage_measured_v": 45.284711336367735,
+        "thrust_gf": 2038.5758238235408,
+        "current_a": 3.4241093927330413,
+        "torque_nm": 0.7446923895025988,
+        "power_w": 155.0598054340612,
+        "source": {
+          "source": "Kotarski et al., UAV Multirotor Propulsion\u2014Experimental Data, Setup 3",
+          "url": "https://doi.org/10.7910/DVN/J5L2P4",
+          "report_id": "10.7910/DVN/J5L2P4",
+          "notes": "Measured static test on an Alpha 80 A ESC, G30 \u00d7 10.5, optical RPM."
+        }
+      },
+      {
+        "prop": "G30 \u00d7 10.5",
+        "rpm": 1975.0,
+        "throttle_pct": 50.0,
+        "voltage_v": 45.6,
+        "voltage_measured_v": 45.176325553249114,
+        "thrust_gf": 3436.613532236054,
+        "current_a": 6.861794794290725,
+        "torque_nm": 1.2277064881133186,
+        "power_w": 309.9906755064678,
+        "source": {
+          "source": "Kotarski et al., UAV Multirotor Propulsion\u2014Experimental Data, Setup 3",
+          "url": "https://doi.org/10.7910/DVN/J5L2P4",
+          "report_id": "10.7910/DVN/J5L2P4",
+          "notes": "Measured static test on an Alpha 80 A ESC, G30 \u00d7 10.5, optical RPM."
+        }
+      },
+      {
+        "prop": "G30 \u00d7 10.5",
+        "rpm": 2404.0,
+        "throttle_pct": 60.0,
+        "voltage_v": 45.6,
+        "voltage_measured_v": 45.01634660921732,
+        "thrust_gf": 5196.784075644315,
+        "current_a": 12.18875600304776,
+        "torque_nm": 1.8468021544813302,
+        "power_w": 548.6932649683763,
+        "source": {
+          "source": "Kotarski et al., UAV Multirotor Propulsion\u2014Experimental Data, Setup 3",
+          "url": "https://doi.org/10.7910/DVN/J5L2P4",
+          "report_id": "10.7910/DVN/J5L2P4",
+          "notes": "Measured static test on an Alpha 80 A ESC, G30 \u00d7 10.5, optical RPM."
+        }
+      },
+      {
+        "prop": "G30 \u00d7 10.5",
+        "rpm": 2813.5,
+        "throttle_pct": 70.0,
+        "voltage_v": 45.6,
+        "voltage_measured_v": 44.798782228975334,
+        "thrust_gf": 7214.91938979067,
+        "current_a": 19.77653654957858,
+        "torque_nm": 2.5749694293372216,
+        "power_w": 885.9647541279421,
+        "source": {
+          "source": "Kotarski et al., UAV Multirotor Propulsion\u2014Experimental Data, Setup 3",
+          "url": "https://doi.org/10.7910/DVN/J5L2P4",
+          "report_id": "10.7910/DVN/J5L2P4",
+          "notes": "Measured static test on an Alpha 80 A ESC, G30 \u00d7 10.5, optical RPM."
+        }
+      },
+      {
+        "prop": "G30 \u00d7 10.5",
+        "rpm": 3203.5,
+        "throttle_pct": 80.0,
+        "voltage_v": 45.6,
+        "voltage_measured_v": 44.53353989653459,
+        "thrust_gf": 9453.284535330655,
+        "current_a": 29.221740219732887,
+        "torque_nm": 3.3545630253724203,
+        "power_w": 1301.347533921644,
+        "source": {
+          "source": "Kotarski et al., UAV Multirotor Propulsion\u2014Experimental Data, Setup 3",
+          "url": "https://doi.org/10.7910/DVN/J5L2P4",
+          "report_id": "10.7910/DVN/J5L2P4",
+          "notes": "Measured static test on an Alpha 80 A ESC, G30 \u00d7 10.5, optical RPM."
+        }
+      },
+      {
+        "prop": "G30 \u00d7 10.5",
+        "rpm": 3557.0,
+        "throttle_pct": 90.0,
+        "voltage_v": 45.6,
+        "voltage_measured_v": 44.213948626325006,
+        "thrust_gf": 11927.524849462017,
+        "current_a": 41.57669690672337,
+        "torque_nm": 4.24432712596895,
+        "power_w": 1838.2699410861528,
+        "source": {
+          "source": "Kotarski et al., UAV Multirotor Propulsion\u2014Experimental Data, Setup 3",
+          "url": "https://doi.org/10.7910/DVN/J5L2P4",
+          "report_id": "10.7910/DVN/J5L2P4",
+          "notes": "Measured static test on an Alpha 80 A ESC, G30 \u00d7 10.5, optical RPM."
+        }
+      },
+      {
+        "prop": "G30 \u00d7 10.5",
+        "rpm": 3636.0,
+        "throttle_pct": 100.0,
+        "voltage_v": 45.6,
+        "voltage_measured_v": 44.13879412522655,
+        "thrust_gf": 12359.747514668448,
+        "current_a": 44.269183063998,
+        "torque_nm": 4.3994076114763985,
+        "power_w": 1953.9883573537738,
+        "source": {
+          "source": "Kotarski et al., UAV Multirotor Propulsion\u2014Experimental Data, Setup 3",
+          "url": "https://doi.org/10.7910/DVN/J5L2P4",
+          "report_id": "10.7910/DVN/J5L2P4",
+          "notes": "Measured static test on an Alpha 80 A ESC, G30 \u00d7 10.5, optical RPM."
+        }
+      },
+      {
+        "prop": "G30 \u00d7 10.5",
+        "rpm": 673.5,
+        "throttle_pct": 20.0,
+        "voltage_v": 50.4,
+        "voltage_measured_v": 49.96171714447998,
+        "thrust_gf": 398.56211107542305,
+        "current_a": 0.4299205914534717,
+        "torque_nm": 0.14335973504352728,
+        "power_w": 21.47957098478589,
+        "source": {
+          "source": "Kotarski et al., UAV Multirotor Propulsion\u2014Experimental Data, Setup 3",
+          "url": "https://doi.org/10.7910/DVN/J5L2P4",
+          "report_id": "10.7910/DVN/J5L2P4",
+          "notes": "Measured static test on an Alpha 80 A ESC, G30 \u00d7 10.5, optical RPM."
+        }
+      },
+      {
+        "prop": "G30 \u00d7 10.5",
+        "rpm": 1164.5,
+        "throttle_pct": 30.0,
+        "voltage_v": 50.4,
+        "voltage_measured_v": 49.91731080384841,
+        "thrust_gf": 1216.3349778886652,
+        "current_a": 1.5705330089701373,
+        "torque_nm": 0.43827275457063336,
+        "power_w": 78.39678433646559,
+        "source": {
+          "source": "Kotarski et al., UAV Multirotor Propulsion\u2014Experimental Data, Setup 3",
+          "url": "https://doi.org/10.7910/DVN/J5L2P4",
+          "report_id": "10.7910/DVN/J5L2P4",
+          "notes": "Measured static test on an Alpha 80 A ESC, G30 \u00d7 10.5, optical RPM."
+        }
+      },
+      {
+        "prop": "G30 \u00d7 10.5",
+        "rpm": 1664.5,
+        "throttle_pct": 40.0,
+        "voltage_v": 50.4,
+        "voltage_measured_v": 49.83567161726636,
+        "thrust_gf": 2476.235511825472,
+        "current_a": 3.975114040876446,
+        "torque_nm": 0.8900402794820068,
+        "power_w": 198.10247798230327,
+        "source": {
+          "source": "Kotarski et al., UAV Multirotor Propulsion\u2014Experimental Data, Setup 3",
+          "url": "https://doi.org/10.7910/DVN/J5L2P4",
+          "report_id": "10.7910/DVN/J5L2P4",
+          "notes": "Measured static test on an Alpha 80 A ESC, G30 \u00d7 10.5, optical RPM."
+        }
+      },
+      {
+        "prop": "G30 \u00d7 10.5",
+        "rpm": 2152.5,
+        "throttle_pct": 50.0,
+        "voltage_v": 50.4,
+        "voltage_measured_v": 49.70680911682959,
+        "thrust_gf": 4185.6361211355,
+        "current_a": 8.090603172468779,
+        "torque_nm": 1.4812324426956491,
+        "power_w": 402.1580675339215,
+        "source": {
+          "source": "Kotarski et al., UAV Multirotor Propulsion\u2014Experimental Data, Setup 3",
+          "url": "https://doi.org/10.7910/DVN/J5L2P4",
+          "report_id": "10.7910/DVN/J5L2P4",
+          "notes": "Measured static test on an Alpha 80 A ESC, G30 \u00d7 10.5, optical RPM."
+        }
+      },
+      {
+        "prop": "G30 \u00d7 10.5",
+        "rpm": 2618.5,
+        "throttle_pct": 60.0,
+        "voltage_v": 50.4,
+        "voltage_measured_v": 49.51921343963919,
+        "thrust_gf": 6236.39487728044,
+        "current_a": 14.41016810531209,
+        "torque_nm": 2.210694826112012,
+        "power_w": 713.5801901080305,
+        "source": {
+          "source": "Kotarski et al., UAV Multirotor Propulsion\u2014Experimental Data, Setup 3",
+          "url": "https://doi.org/10.7910/DVN/J5L2P4",
+          "report_id": "10.7910/DVN/J5L2P4",
+          "notes": "Measured static test on an Alpha 80 A ESC, G30 \u00d7 10.5, optical RPM."
+        }
+      },
+      {
+        "prop": "G30 \u00d7 10.5",
+        "rpm": 3057.0,
+        "throttle_pct": 70.0,
+        "voltage_v": 50.4,
+        "voltage_measured_v": 49.2665662269073,
+        "thrust_gf": 8678.042931756718,
+        "current_a": 23.28692086991626,
+        "torque_nm": 3.068916753746773,
+        "power_w": 1147.266629258479,
+        "source": {
+          "source": "Kotarski et al., UAV Multirotor Propulsion\u2014Experimental Data, Setup 3",
+          "url": "https://doi.org/10.7910/DVN/J5L2P4",
+          "report_id": "10.7910/DVN/J5L2P4",
+          "notes": "Measured static test on an Alpha 80 A ESC, G30 \u00d7 10.5, optical RPM."
+        }
+      },
+      {
+        "prop": "G30 \u00d7 10.5",
+        "rpm": 3461.0,
+        "throttle_pct": 80.0,
+        "voltage_v": 50.4,
+        "voltage_measured_v": 48.95746503602344,
+        "thrust_gf": 11274.17663616935,
+        "current_a": 34.762402257112484,
+        "torque_nm": 4.010758200220745,
+        "power_w": 1701.8790930707669,
+        "source": {
+          "source": "Kotarski et al., UAV Multirotor Propulsion\u2014Experimental Data, Setup 3",
+          "url": "https://doi.org/10.7910/DVN/J5L2P4",
+          "report_id": "10.7910/DVN/J5L2P4",
+          "notes": "Measured static test on an Alpha 80 A ESC, G30 \u00d7 10.5, optical RPM."
+        }
+      },
+      {
+        "prop": "G30 \u00d7 10.5",
+        "rpm": 3834.0,
+        "throttle_pct": 90.0,
+        "voltage_v": 50.4,
+        "voltage_measured_v": 48.617752876993606,
+        "thrust_gf": 13824.67084473818,
+        "current_a": 48.17165354311412,
+        "torque_nm": 4.938323460061464,
+        "power_w": 2341.9975476352756,
+        "source": {
+          "source": "Kotarski et al., UAV Multirotor Propulsion\u2014Experimental Data, Setup 3",
+          "url": "https://doi.org/10.7910/DVN/J5L2P4",
+          "report_id": "10.7910/DVN/J5L2P4",
+          "notes": "Measured static test on an Alpha 80 A ESC, G30 \u00d7 10.5, optical RPM."
+        }
+      },
+      {
+        "prop": "G30 \u00d7 10.5",
+        "rpm": 3939.0,
+        "throttle_pct": 100.0,
+        "voltage_v": 50.4,
+        "voltage_measured_v": 48.50249624268015,
+        "thrust_gf": 14673.352429701474,
+        "current_a": 52.46443388769992,
+        "torque_nm": 5.212744304952029,
+        "power_w": 2544.6560075125067,
+        "source": {
+          "source": "Kotarski et al., UAV Multirotor Propulsion\u2014Experimental Data, Setup 3",
+          "url": "https://doi.org/10.7910/DVN/J5L2P4",
+          "report_id": "10.7910/DVN/J5L2P4",
+          "notes": "Measured static test on an Alpha 80 A ESC, G30 \u00d7 10.5, optical RPM."
+        }
+      }
+    ]
+  }
+}
