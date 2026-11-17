@@ -1,0 +1,92 @@
+{
+  "schema_version": "1.0",
+  "primary_goal": "Independent measured prediction error under predeclared operating envelopes, not assumed simulation/physical equivalence",
+  "last_researched_utc": "2026-11-17",
+  "datasets": [
+    {
+      "id": "uiuc_propeller_database",
+      "name": "University of Illinois Urbana-Champaign Propeller Database",
+      "url": "https://m-selig.ae.illinois.edu/props/propDB.html",
+      "type": "independent_wind_tunnel_propeller_thrust_torque_power",
+      "source_status": "AVAILABLE",
+      "license_status": "REVIEW_BEFORE_REDISTRIBUTING",
+      "ingestion_status": "existing_UIUC_APC_10x5_static_benchmark_in_repository",
+      "aircraft_model_match": false,
+      "can_validate": "propulsion estimation on matching tested prop/operating envelope",
+      "cannot_validate": "actual AeroForge assembled multirotor endurance, control or structural safety"
+    },
+    {
+      "id": "cmu_matrice100_209_flights",
+      "name": "CMU AirLab DJI Matrice 100 Package Delivery Flight Dataset",
+      "url": "https://doi.org/10.1184/R1/12683453",
+      "paper": "https://www.nature.com/articles/s41597-021-00930-x",
+      "type": "measured_multirotor_flight_telemetry_current_voltage_wind_position",
+      "source_status": "PUBLIC_PUBLISHED",
+      "license_status": "CC BY 4.0",
+      "ingestion_status": "EXTERNAL_DOWNLOAD_NOT_BYTE_VERIFIED_IN_THIS_REPO",
+      "aircraft_model_match": false,
+      "can_validate": "method-level independent telemetry analytics after actual data acquisition",
+      "cannot_validate": "AeroForge MN3508/P80 or generic battery pack without matching hardware and tests"
+    },
+    {
+      "id": "quadplane_px4_2022",
+      "name": "Quadplane VTOL PX4 Flight-Test Telemetry",
+      "url": "https://github.com/AdamDony/quadplane-px4-flight-data",
+      "type": "reported_real_flight_battery_current_voltage_discharge_counter",
+      "source_status": "CHECKSUM_VERIFIED_COPY_INCLUDED",
+      "license_status": "CC BY 4.0",
+      "ingestion_status": "BATT_CSV_AUDIT_IMPLEMENTED",
+      "aircraft_model_match": false,
+      "can_validate": "existence, provenance, observed ranges, sample integrity and logger-counter consistency",
+      "cannot_validate": "time-synchronised electrical integration or AeroForge-specific physical model accuracy without timestamps and hardware match"
+    },
+    {
+      "id": "amovfly",
+      "name": "AMOVFLY Real-World UAV Flight Dataset",
+      "url": "https://github.com/YujiaoHu/AMOVFLY-Dataset",
+      "type": "reported_real_multirotor_flight_wind_power_telemetry",
+      "source_status": "PUBLIC_PUBLISHED",
+      "license_status": "NO_LICENSE_FOUND_IN_REPOSITORY_VERIFY_PERMISSIONS",
+      "ingestion_status": "METADATA_ONLY_NOT_REDISTRIBUTED",
+      "aircraft_model_match": false,
+      "can_validate": "method-level power and wind comparison following independent verification",
+      "cannot_validate": "AeroForge vehicle-specific prediction accuracy on unmatched hardware"
+    },
+    {
+      "id": "dronelog",
+      "name": "DroneLog PX4 Real Flight Dataset",
+      "url": "https://azamatjon11.github.io/DroneLog/",
+      "type": "PX4_ulog_multiplatform_payload_telemetry",
+      "source_status": "PUBLIC_PUBLISHED",
+      "license_status": "CC BY 4.0_DECLARED_BY_PUBLISHER",
+      "ingestion_status": "METADATA_ONLY",
+      "aircraft_model_match": false,
+      "can_validate": "external multirotor telemetry parser/measurement-method research",
+      "cannot_validate": "AeroForge flight model accuracy without hardware, controls and environment match"
+    },
+    {
+      "id": "nasa_battery_pcoe",
+      "name": "NASA Ames Prognostics Battery and Accelerated Life Datasets",
+      "url": "https://www.nasa.gov/intelligent-systems-division/discovery-and-systems-health/pcoe/pcoe-data-set-repository/",
+      "type": "li_ion_cell_cycling_aging_load_characterization",
+      "source_status": "NASA_PAGE_STATES_DIRECT_DOWNLOAD_TEMPORARILY_UNAVAILABLE_FOR_SOME_DATASETS",
+      "license_status": "CHECK_INDIVIDUAL_DATASET_TERMS",
+      "ingestion_status": "NOT_IMPORTED",
+      "aircraft_model_match": false,
+      "can_validate": "battery degradation method on matching Li-ion cell datasets",
+      "cannot_validate": "specific 6S/12S high-C LiPo pack physical endurance without pack-specific experiments"
+    },
+    {
+      "id": "idf_ds_fixedwing",
+      "name": "IDF-DS fixed-wing UAS 240 flight telemetry benchmark",
+      "url": "https://zenodo.org/records/16992976",
+      "type": "measured_fixed_wing_flight_telemetry",
+      "source_status": "PUBLIC_PUBLISHED",
+      "license_status": "REVIEW_ORIGINAL_ZENODO_TERMS_BEFORE_REDISTRIBUTION",
+      "ingestion_status": "METADATA_ONLY",
+      "aircraft_model_match": false,
+      "can_validate": "future fixed-wing methods once that model is implemented",
+      "cannot_validate": "current AeroForge multirotor hardware-accuracy claims"
+    }
+  ]
+}
