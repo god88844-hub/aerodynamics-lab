@@ -171,7 +171,8 @@ def test_m2634_failure_dominates_missing_holdout(tmp_path, monkeypatch):
     prediction.write_text(json.dumps(pred))
     result = score(path, receipt, mapping, protocol, prediction)
     assert result["status"] == "FAIL_FROZEN_M300_SOURCE_SPECIFIC_ENERGY_GATE"
-    assert result["failed_holdout_uids"] == ["held_a"]
+    assert "held_a" in result["failed_holdout_uids"]
+    assert "ROBUST_INTERVAL_COVERAGE_BELOW_PREDECLARED_FRACTION" in result["failed_holdout_uids"]
     assert any("held_b" in missing for missing in result["missing_or_gapped_holdout_uids"])
 
 
