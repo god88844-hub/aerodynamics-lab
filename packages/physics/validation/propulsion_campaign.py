@@ -171,7 +171,7 @@ def audit_propulsion_campaign(
         blockers.append("Calibration/holdout bench hardware or source recording overlaps")
 
     runs = []
-    all_samplewise = True
+    all_samplewise = len(holdout) >= 2 and not collisions
     for run in body.runs:
         observations = read_static_bench(run)
         reasons = []
