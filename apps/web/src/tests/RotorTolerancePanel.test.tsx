@@ -7,6 +7,7 @@ afterEach(() => { cleanup(); vi.unstubAllGlobals() })
 
 const design = {
   schema_version: '0.1', name: 'synthetic_quad', parts: [],
+  rotor_torque_per_thrust_n_m_per_n: 0,
   rotors: [
     { position_m: [.25, .25, 0], spin_direction: 1 },
     { position_m: [-.25, .25, 0], spin_direction: -1 },
