@@ -1,6 +1,6 @@
 /** Frontend unit tests: design store edit operations and the results panel. */
 
-import { describe, expect, it } from 'vitest'
+import { describe, expect, it } from '@rstest/core'
 import { applyArmLength, computeCog } from '../state/designStore'
 import type { DroneDesign } from '../types/api'
 

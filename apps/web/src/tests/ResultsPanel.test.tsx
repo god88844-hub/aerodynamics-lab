@@ -1,7 +1,7 @@
 /** ResultsPanel rendering tests with a mock simulation result. */
 
 import { render, screen } from '@testing-library/react'
-import { describe, expect, it } from 'vitest'
+import { describe, expect, it } from '@rstest/core'
 import { ResultsPanel } from '../panels/ResultsPanel'
 import type { SimulationResult } from '../types/api'
 

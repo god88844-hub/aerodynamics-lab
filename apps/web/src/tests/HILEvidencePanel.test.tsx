@@ -1,8 +1,8 @@
-import { afterEach, describe, expect, it, vi } from 'vitest'
+import { afterEach, describe, expect, it, rs } from '@rstest/core'
 import { cleanup, fireEvent, render, screen } from '@testing-library/react'
 import { HILEvidencePanel } from '../panels/HILEvidencePanel'
 
-afterEach(() => { cleanup(); vi.unstubAllGlobals() })
+afterEach(() => { cleanup(); rs.unstubAllGlobals() })
 
 describe('M23 HIL panel', () => {
   it('displays no physical validation even when numerical screen is compatible', async () => {
@@ -24,8 +24,8 @@ describe('M23 HIL panel', () => {
         }, blockers: [],
       }],
     }
-    const send = vi.fn().mockResolvedValue({ ok: true, json: async () => result })
-    vi.stubGlobal('fetch', send)
+    const send = rs.fn().mockResolvedValue({ ok: true, json: async () => result })
+    rs.stubGlobal('fetch', send)
     render(<HILEvidencePanel />)
     fireEvent.change(screen.getByLabelText('Controller HIL campaign JSON'), {
       target: { value: '{"frozen_protocol":{},"runs":[]}' },
@@ -41,8 +41,8 @@ describe('M23 HIL panel', () => {
   })
 
   it('fails closed on empty JSON before any request', async () => {
-    const send = vi.fn()
-    vi.stubGlobal('fetch', send)
+    const send = rs.fn()
+    rs.stubGlobal('fetch', send)
     render(<HILEvidencePanel />)
     fireEvent.click(screen.getByRole('button', { name: 'Audit controller HIL evidence' }))
     expect(await screen.findByRole('alert')).toBeDefined()

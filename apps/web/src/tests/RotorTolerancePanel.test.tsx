@@ -1,9 +1,9 @@
-import { afterEach, describe, expect, it, vi } from 'vitest'
+import { afterEach, describe, expect, it, rs } from '@rstest/core'
 import { cleanup, fireEvent, render, screen } from '@testing-library/react'
 import { RotorTolerancePanel } from '../panels/RotorTolerancePanel'
 import type { DroneDesign } from '../types/api'
 
-afterEach(() => { cleanup(); vi.unstubAllGlobals() })
+afterEach(() => { cleanup(); rs.unstubAllGlobals() })
 
 const design = {
   schema_version: '0.1', name: 'synthetic_quad', parts: [],
@@ -27,8 +27,8 @@ const response = {
 
 describe('M28.4 rotor hard-bound geometry panel', () => {
   it('requires sources, reports only analytic results, and invalidates stale evidence', async () => {
-    const send = vi.fn().mockResolvedValue({ok: true, json: async () => response})
-    vi.stubGlobal('fetch', send)
+    const send = rs.fn().mockResolvedValue({ok: true, json: async () => response})
+    rs.stubGlobal('fetch', send)
     render(<RotorTolerancePanel design={design} />)
     for (const [name, value] of [
       ['Installed rotor diameters (m)', '.38,.38'],
@@ -50,8 +50,8 @@ describe('M28.4 rotor hard-bound geometry panel', () => {
   })
 
   it('refuses missing bounds before posting', async () => {
-    const send = vi.fn()
-    vi.stubGlobal('fetch', send)
+    const send = rs.fn()
+    rs.stubGlobal('fetch', send)
     render(<RotorTolerancePanel design={design} />)
     fireEvent.click(screen.getByRole('button', {name: 'Evaluate bounded rotor clearances'}))
     expect(await screen.findByRole('alert')).toBeDefined()

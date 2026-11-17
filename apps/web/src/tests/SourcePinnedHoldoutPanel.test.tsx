@@ -1,8 +1,8 @@
-import { afterEach, describe, expect, it, vi } from 'vitest'
+import { afterEach, describe, expect, it, rs } from '@rstest/core'
 import { cleanup, fireEvent, render, screen } from '@testing-library/react'
 import { SourcePinnedHoldoutPanel } from '../panels/SourcePinnedHoldoutPanel'
 
-afterEach(() => { cleanup(); vi.unstubAllGlobals() })
+afterEach(() => { cleanup(); rs.unstubAllGlobals() })
 
 const campaign = {
   frozen_protocol_sha256: 'a'.repeat(64), runs: [{run_id: 'a'}, {run_id: 'b'}],
@@ -20,8 +20,8 @@ const response = {
 
 describe('M27.3 paired original holdout source audit', () => {
   it('shows numerical consistency without independent physical certification', async () => {
-    const send = vi.fn().mockResolvedValue({ok: true, json: async () => response})
-    vi.stubGlobal('fetch', send)
+    const send = rs.fn().mockResolvedValue({ok: true, json: async () => response})
+    rs.stubGlobal('fetch', send)
     render(<SourcePinnedHoldoutPanel />)
     fireEvent.change(screen.getByLabelText('Original source holdout JSON'), {
       target: {value: JSON.stringify(campaign)},
@@ -38,8 +38,8 @@ describe('M27.3 paired original holdout source audit', () => {
   })
 
   it('rejects absent frozen protocol and source inputs before server call', async () => {
-    const send = vi.fn()
-    vi.stubGlobal('fetch', send)
+    const send = rs.fn()
+    rs.stubGlobal('fetch', send)
     render(<SourcePinnedHoldoutPanel />)
     fireEvent.click(screen.getByRole('button', {name: 'Audit original source holdouts'}))
     expect(await screen.findByRole('alert')).toBeDefined()

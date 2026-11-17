@@ -1,8 +1,8 @@
-import { afterEach, describe, expect, it, vi } from 'vitest'
+import { afterEach, describe, expect, it, rs } from '@rstest/core'
 import { cleanup, fireEvent, render, screen } from '@testing-library/react'
 import { PropulsionCampaignPanel } from '../panels/PropulsionCampaignPanel'
 
-afterEach(() => { cleanup(); vi.unstubAllGlobals() })
+afterEach(() => { cleanup(); rs.unstubAllGlobals() })
 
 const body = {
   motor_id: 'tmotor_p80iii_kv100', propeller_id: 'tmotor_g30x105_cf',
@@ -30,8 +30,8 @@ const result = {
 
 describe('M22 static propulsion physical evidence panel', () => {
   it('submits predeclared sources and refuses unsupported flight claims', async () => {
-    const send = vi.fn().mockResolvedValue({ ok: true, json: async () => result })
-    vi.stubGlobal('fetch', send)
+    const send = rs.fn().mockResolvedValue({ ok: true, json: async () => result })
+    rs.stubGlobal('fetch', send)
     render(<PropulsionCampaignPanel />)
     fireEvent.change(screen.getByLabelText('Static propulsion campaign JSON'), {
       target: { value: JSON.stringify(body) },
@@ -50,8 +50,8 @@ describe('M22 static propulsion physical evidence panel', () => {
   })
 
   it('rejects malformed source JSON without sending', async () => {
-    const send = vi.fn()
-    vi.stubGlobal('fetch', send)
+    const send = rs.fn()
+    rs.stubGlobal('fetch', send)
     render(<PropulsionCampaignPanel />)
     fireEvent.click(screen.getByRole('button', { name: /Audit static propulsion campaign/i }))
     expect(await screen.findByRole('alert')).toBeDefined()

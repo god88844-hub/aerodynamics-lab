@@ -1,9 +1,9 @@
-import { afterEach, describe, expect, it, vi } from 'vitest'
+import { afterEach, describe, expect, it, rs } from '@rstest/core'
 import { cleanup, fireEvent, render, screen } from '@testing-library/react'
 import { CombinedMetalPanel } from '../panels/CombinedMetalPanel'
 import type { DroneDesign } from '../types/api'
 
-afterEach(() => { cleanup(); vi.unstubAllGlobals() })
+afterEach(() => { cleanup(); rs.unstubAllGlobals() })
 
 const design = {
   schema_version: '0.1',
@@ -31,8 +31,8 @@ describe('M25 analytical metal stress panel', () => {
         static_margin_over_required_allowable: 3.5,
       }] }],
     }
-    const send = vi.fn().mockResolvedValue({ ok: true, json: async () => result })
-    vi.stubGlobal('fetch', send)
+    const send = rs.fn().mockResolvedValue({ ok: true, json: async () => result })
+    rs.stubGlobal('fetch', send)
     render(<CombinedMetalPanel design={design} />)
     fireEvent.change(screen.getByLabelText('Combined stress load cases'), {
       target: { value: caseText },
@@ -56,8 +56,8 @@ describe('M25 analytical metal stress panel', () => {
   })
 
   it('blocks unsourced or missing load inputs before sending requests', async () => {
-    const send = vi.fn()
-    vi.stubGlobal('fetch', send)
+    const send = rs.fn()
+    rs.stubGlobal('fetch', send)
     render(<CombinedMetalPanel design={design} />)
     fireEvent.click(screen.getByRole('button', {
       name: 'Screen metal arm combined stresses',

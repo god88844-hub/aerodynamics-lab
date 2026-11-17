@@ -1,4 +1,4 @@
-import { afterEach, describe, expect, it, vi } from 'vitest'
+import { afterEach, describe, expect, it, rs } from '@rstest/core'
 import { cleanup, fireEvent, render, screen } from '@testing-library/react'
 import { FlightEvidencePanel } from '../panels/FlightEvidencePanel'
 import type { SimulationResult } from '../types/api'
@@ -9,7 +9,7 @@ const result: SimulationResult = {
 }
 const csv = ['0,0,,24,5', '2,4,,23.8,5', '4,8,,23.6,5',
   '6,12,,23.4,5', '8,16,,23.2,5', '10,20,,23.0,5'].join('\n')
-afterEach(() => { cleanup(); vi.unstubAllGlobals() })
+afterEach(() => { cleanup(); rs.unstubAllGlobals() })
 
 function completeForm() {
   fireEvent.change(screen.getByLabelText('Flight evidence type'), {
@@ -40,8 +40,8 @@ describe('M13 Flight Evidence Lab UI', () => {
           meets_predeclared_tolerance: true } },
       },
     }
-    const send = vi.fn().mockResolvedValue({ ok: true, json: async () => response })
-    vi.stubGlobal('fetch', send)
+    const send = rs.fn().mockResolvedValue({ ok: true, json: async () => response })
+    rs.stubGlobal('fetch', send)
     render(<FlightEvidencePanel result={result} />)
     completeForm()
     fireEvent.click(screen.getByRole('button', { name: /Compare held-out flight telemetry/ }))
@@ -59,8 +59,8 @@ describe('M13 Flight Evidence Lab UI', () => {
   })
 
   it('rejects missing predeclared limits without a network call', async () => {
-    const send = vi.fn()
-    vi.stubGlobal('fetch', send)
+    const send = rs.fn()
+    rs.stubGlobal('fetch', send)
     render(<FlightEvidencePanel result={result} />)
     completeForm()
     fireEvent.change(screen.getByLabelText('Altitude error limit (m)'), { target: { value: '' } })
@@ -87,8 +87,8 @@ describe('M14 flight measurement uncertainty input', () => {
         interpolation_supported: true, max_interpolation_spacing_s: .05 },
       channels: {},
     }
-    const send = vi.fn().mockResolvedValue({ ok: true, json: async () => response })
-    vi.stubGlobal('fetch', send)
+    const send = rs.fn().mockResolvedValue({ ok: true, json: async () => response })
+    rs.stubGlobal('fetch', send)
     render(<FlightEvidencePanel result={result} />)
     completeForm()
     fireEvent.click(screen.getByLabelText('Enable conservative uncertainty bounds'))
@@ -112,8 +112,8 @@ describe('M14 flight measurement uncertainty input', () => {
   })
 
   it('rejects missing uncertainty bounds before sending a request', async () => {
-    const send = vi.fn()
-    vi.stubGlobal('fetch', send)
+    const send = rs.fn()
+    rs.stubGlobal('fetch', send)
     render(<FlightEvidencePanel result={result} />)
     completeForm()
     fireEvent.click(screen.getByLabelText('Enable conservative uncertainty bounds'))

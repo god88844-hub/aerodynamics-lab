@@ -1,8 +1,8 @@
-import { afterEach, describe, expect, it, vi } from 'vitest'
+import { afterEach, describe, expect, it, rs } from '@rstest/core'
 import { cleanup, fireEvent, render, screen } from '@testing-library/react'
 import { ValidationProtocolPanel } from '../panels/ValidationProtocolPanel'
 
-afterEach(() => { cleanup(); vi.unstubAllGlobals() })
+afterEach(() => { cleanup(); rs.unstubAllGlobals() })
 
 const minimal = { schema_version: '1.0', protocol_id: 'synthetic_protocol' }
 const report = {
@@ -18,8 +18,8 @@ const report = {
 
 describe('M20 physical validation preregistration panel', () => {
   it('submits JSON and reports evidence blockers, not aircraft validation', async () => {
-    const send = vi.fn().mockResolvedValue({ ok: true, json: async () => report })
-    vi.stubGlobal('fetch', send)
+    const send = rs.fn().mockResolvedValue({ ok: true, json: async () => report })
+    rs.stubGlobal('fetch', send)
     render(<ValidationProtocolPanel />)
     fireEvent.change(screen.getByLabelText('Validation protocol JSON'), {
       target: { value: JSON.stringify(minimal) },
@@ -40,8 +40,8 @@ describe('M20 physical validation preregistration panel', () => {
   })
 
   it('refuses missing protocol or invalid hash without sending anything', async () => {
-    const send = vi.fn()
-    vi.stubGlobal('fetch', send)
+    const send = rs.fn()
+    rs.stubGlobal('fetch', send)
     render(<ValidationProtocolPanel />)
     fireEvent.click(screen.getByRole('button', { name: 'Audit physical validation protocol' }))
     expect(await screen.findByRole('alert')).toBeDefined()
