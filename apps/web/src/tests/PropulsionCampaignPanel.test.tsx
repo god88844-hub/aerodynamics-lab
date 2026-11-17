@@ -40,7 +40,7 @@ describe('M22 static propulsion physical evidence panel', () => {
     expect(await screen.findByText('PHYSICAL PROPULSION VALIDATION NOT ESTABLISHED')).toBeDefined()
     expect(screen.getByText('Static physical validation independently established: no')).toBeDefined()
     expect(screen.getByText('Aircraft flight readiness: no')).toBeDefined()
-    expect(screen.getByText('Manufacturer calibration points and a different motor are not independent validation.')).toBeDefined()
+    expect(screen.getByText(/Manufacturer calibration\s+points and a different motor are not independent validation/)).toBeDefined()
     expect(send.mock.calls[0][0]).toBe('/api/components/propulsion-campaign-audit')
     expect(JSON.parse((send.mock.calls[0][1] as RequestInit).body as string)).toEqual(body)
     fireEvent.change(screen.getByLabelText('Static propulsion campaign JSON'), {
