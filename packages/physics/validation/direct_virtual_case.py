@@ -21,7 +21,7 @@ _ID = re.compile(r"^[A-Za-z0-9_.-]{1,100}$")
 _SHA1 = re.compile(r"^[0-9a-f]{40}$")
 _SHA256 = re.compile(r"^[0-9a-f]{64}$")
 _DECISION_FIELDS = {
-    "decision_id", "failure_direction", "predicted_value", "failure_limit",
+    "decision_id", "channel", "metric_unit", "failure_direction", "predicted_value", "failure_limit",
     "additional_model_form_hard_bound", "numerical_hard_bound",
     "input_hard_bound", "geometry_hard_bound", "threshold_source",
 }
@@ -104,6 +104,8 @@ def audit_direct_virtual_case(
         if not isinstance(did,str) or not _ID.fullmatch(did) or did in seen:
             raise ValueError("invalid or duplicated decision ID")
         seen.add(did)
+        if entry["channel"] != sensor["channel"] or entry["metric_unit"] != sensor["calibration_output_unit_operator_declared"]:
+            raise ValueError("decision channel/unit differs from calibrated observation channel and unit")
         direction=entry["failure_direction"]
         if direction not in ("exceed_max","fall_below_min"):
             raise ValueError("failure_direction must be exceed_max or fall_below_min")
@@ -122,7 +124,9 @@ def audit_direct_virtual_case(
             raise ValueError("decision residual margin arithmetic overflow")
         passed=remaining>0
         decisions.append({
-            "decision_id":did, "failure_direction":direction,
+            "decision_id":did, "channel":sensor["channel"],
+            "metric_unit":sensor["calibration_output_unit_operator_declared"],
+            "failure_direction":direction,
             "predicted_value":predicted, "failure_limit":limit,
             "maximum_declared_calibration_inclusive_holdout_residual":worst_sensor,
             "additional_hard_bounds":additional,
