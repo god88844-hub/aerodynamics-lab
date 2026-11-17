@@ -128,8 +128,8 @@ def test_original_trace_tampering_blocked_before_any_report():
 
 @pytest.mark.parametrize("replace,reason", [
     (("command_roll_deg", "wrong_roll"), "exact SI"),
-    (("0.010", "0.000"), "strictly increase"),
-    (("10.100", "nan"), "nonfinite"),
+    (("\n0.010,", "\n0.000,"), "strictly increase"),
+    (("10.110", "nan"), "nonfinite"),
     (("0.000", "1.000"), "start at zero"),
     ((",0\n", ",2\n"), "saturation flag"),
 ])
@@ -155,7 +155,7 @@ def test_controller_saturation_blocks_declared_holdout_tracking_compatibility():
 def test_large_tracking_error_fails_frozen_maximum():
     body = request(physical=True)
     r = body["recordings"][1]
-    r["csv_text"] = r["csv_text"].replace("10.100", "15.100", 1)
+    r["csv_text"] = r["csv_text"].replace("10.110", "15.110", 1)
     r["source_sha256"] = sha256(r["csv_text"].encode()).hexdigest()
     result = run(body)
     assert result["runs"][1]["max_roll_or_pitch_tracking_error_deg"] > 2
