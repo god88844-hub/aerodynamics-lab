@@ -237,3 +237,18 @@ def test_offline_m300_energy_cli_and_inconclusive_exit(tmp_path, monkeypatch, ca
     holdout = json.loads(capsys.readouterr().out)
     assert holdout["status"].startswith("CONDITIONAL")
     assert not holdout["aeroforge_full_vehicle_accuracy_validated"]
+
+
+def test_m2634_robust_interval_coverage_respects_frozen_fraction(tmp_path, monkeypatch):
+    path, receipt, mapping, protocol, prediction = sample(tmp_path, monkeypatch)
+    payload = json.loads(prediction.read_text())
+    payload["predictions"][0]["lower_wh"] = payload["predictions"][0]["predicted_wh"]
+    payload["predictions"][0]["upper_wh"] = payload["predictions"][0]["predicted_wh"]
+    prediction.write_text(json.dumps(payload))
+    strict = score(path, receipt, mapping, protocol, prediction)
+    assert strict["status"] == "FAIL_FROZEN_M300_SOURCE_SPECIFIC_ENERGY_GATE"
+    assert strict["robust_interval_coverage_fraction"] == .5
+    protocol["minimum_robust_interval_coverage_fraction"] = .5
+    permissive = score(path, receipt, mapping, protocol, prediction)
+    assert permissive["status"] == "CONDITIONAL_M300_DATASET_ENERGY_AGREEMENT_UNAUTHENTICATED"
+    assert permissive["robust_interval_coverage_fraction"] == .5
