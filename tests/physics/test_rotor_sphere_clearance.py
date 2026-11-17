@@ -54,7 +54,7 @@ def test_vertical_separation_can_allow_3d_sphere_nonintersection():
     d.rotors[1].position_m = [.25, .25, 1.0]
     result = run(d)
     pair = next(p for p in result["pairs"] if p["rotor_a"] == 0 and p["rotor_b"] == 1)
-    assert pair["orientation_independent_3d_separation_lower_m"] > .6
+    assert pair["orientation_independent_3d_separation_lower_m"] == pytest.approx(1.0 - 2 * ((.381**2 + .02**2) ** .5 / 2))
     assert result["analytical_screen_passed"]
 
 
