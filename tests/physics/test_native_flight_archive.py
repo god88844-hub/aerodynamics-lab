@@ -86,7 +86,7 @@ def test_original_file_hash_is_computed_from_on_disk_bytes(tmp_path):
 
 @pytest.mark.parametrize("path", [
     "../private.csv", "/etc/passwd", "flight01/../flight02/arm_strain.mat",
-    "flight01/pressure.exe", "flight01/weird file.tdms",
+    "flight01/pressure.exe", "flight01/bad:arg.tdms",
 ])
 def test_path_traversal_unsupported_format_and_unknown_names_refused(tmp_path,path):
     specimen(tmp_path)
@@ -187,3 +187,20 @@ def test_cli_checks_entire_original_bundle_not_a_favorable_single_file(tmp_path,
     (tmp_path / "flight02" / "arm_strain.mat").unlink()
     assert mod.cli(["--root", str(tmp_path), "--manifest", str(manifest)]) == 2
     assert "FAILED" in capsys.readouterr().err
+
+
+def test_legitimate_publisher_source_filename_with_spaces_is_not_renamed(tmp_path):
+    specimen(tmp_path)
+    p = tmp_path / "flight01" / "Flight 01 original TDMS.tdms"
+    original = b"synthetic original-file bytes"
+    p.write_bytes(original)
+    result = hash_original_archive_file(tmp_path, "flight01/Flight 01 original TDMS.tdms")
+    assert result["computed_original_sha256"] == sha256(original).hexdigest()
+    assert result["relative_path"] == "flight01/Flight 01 original TDMS.tdms"
+
+
+def test_malformed_channel_lists_fail_with_validation_error(tmp_path):
+    doc = specimen(tmp_path)
+    doc["files"][0]["declared_channels"] = [["pressure_pa"]]
+    with pytest.raises(ValueError, match="declared_channels"):
+        audit_native_flight_archive(tmp_path,doc)
