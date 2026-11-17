@@ -142,6 +142,7 @@ def score_frozen_m300_energy(
             raise ValueError("frozen prediction interval must enclose predicted energy")
         predicted[uid] = (value, lower, upper)
     reports, missing, failures = [], [], []
+    robust_interval_covered_count = 0
     for uid in sorted(u for u in by_uid if by_uid[u]["partition"] == "holdout"):
         observed = source[uid]
         if not observed["complete_covered_recording_for_numeric_holdout"]:
@@ -154,7 +155,11 @@ def score_frozen_m300_energy(
         value, low, high = predicted[uid]
         upper_error = abs(actual - value) + m_error
         within_interval = low <= actual - m_error and actual + m_error <= high
-        passed = upper_error <= allowed and within_interval
+        # Point-error and interval calibration are distinct requirements:
+        # individual Wh errors are capped, while robust interval coverage is
+        # judged across all heldout UIDs against the frozen fraction.
+        passed = upper_error <= allowed
+        robust_interval_covered_count += int(within_interval)
         if not passed:
             failures.append(uid)
         reports.append({
@@ -166,6 +171,11 @@ def score_frozen_m300_energy(
             "robust_interval_contains_observed_measurement_bound": bool(within_interval),
             "declared_numeric_gates_passed": bool(passed),
         })
+    robust_coverage_fraction = (
+        robust_interval_covered_count / len(reports) if reports else 0.
+    )
+    if reports and robust_coverage_fraction < float(cmin):
+        failures.append("ROBUST_INTERVAL_COVERAGE_BELOW_PREDECLARED_FRACTION")
     tested_groups = {r["reported_experimental_group_id"] for r in reports}
     passing_groups = {r["reported_experimental_group_id"] for r in reports if r["declared_numeric_gates_passed"]}
     if failures:
@@ -183,6 +193,7 @@ def score_frozen_m300_energy(
         "measurements": evidence["recordings"],
         "results": reports,
         "missing": missing,
+        "robust_coverage_fraction": robust_coverage_fraction,
         "status": status,
     }
     return {
@@ -198,6 +209,8 @@ def score_frozen_m300_energy(
         "measured_holdout_groups_evaluated": len(tested_groups),
         "missing_or_gapped_holdout_uids": missing,
         "failed_holdout_uids": failures,
+        "robust_interval_coverage_fraction": robust_coverage_fraction,
+        "minimum_predeclared_robust_interval_coverage_fraction": float(cmin),
         "per_flight_evaluations": reports,
         "source_specific_numeric_gates_passed": status.startswith("CONDITIONAL_"),
         "actual_historical_blind_freeze_authenticated": False,
