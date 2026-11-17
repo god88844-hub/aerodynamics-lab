@@ -4,6 +4,7 @@ from fastapi import APIRouter, HTTPException
 
 from app.services import component_service
 from physics.propulsion.loader import ComponentLibrary
+from physics.validation.g30_installation import compare_g30_public_bench
 from physics.validation.public_evidence import (
     audit_quadplane_battery, get_public_source_inventory,
 )
@@ -70,4 +71,20 @@ def public_evidence() -> dict:
         raise HTTPException(
             status_code=503,
             detail=f"public evidence audit unavailable or source integrity failed: {exc}",
+        ) from exc
+
+
+@router.get("/public-g30-benchmark")
+def public_g30_benchmark() -> dict:
+    """Observed third-party installed-thrust data; P80 model NOT validated.
+
+    Fails closed on changed Table 5 source data. No model is calibrated,
+    mutated, or validated by a different motor/mounting setup.
+    """
+    try:
+        return compare_g30_public_bench()
+    except (ValueError, OSError) as exc:
+        raise HTTPException(
+            status_code=503,
+            detail=f"public G30 source audit unavailable: {exc}",
         ) from exc
