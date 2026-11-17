@@ -118,6 +118,13 @@ def test_nonfinite_overflow_rejected():
         audit_heldout_intervals(**c)
 
 
+def test_unbounded_integer_rejected_cleanly():
+    c = campaign()
+    c['holdout_runs'][0]['samples'][0]['observed'] = 10 ** 500
+    with pytest.raises(ValueError, match='finite'):
+        audit_heldout_intervals(**c)
+
+
 def test_invalid_prediction_band_rejected():
     c = campaign()
     c["holdout_runs"][0]["samples"][0]["lower"] = 11.0
