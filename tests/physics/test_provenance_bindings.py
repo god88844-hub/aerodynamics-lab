@@ -114,3 +114,14 @@ def test_synthetic_measurement_label_keeps_error_verdict_negative():
     result = audit_provenance_bindings(**payload)
     assert result["status"] == "OPERATOR_PROVENANCE_BINDINGS_REJECTED"
     assert not result["release_authorized"]
+
+
+def test_ledger_calibration_and_holdout_group_sets_must_match_original_split():
+    payload = fixture()
+    payload["evidence_sources"][0]["group_id"] = "other_calibration_group"
+    with pytest.raises(ValueError, match="calibration group inventory"):
+        audit_provenance_bindings(**payload)
+    payload = fixture()
+    payload["evidence_sources"][1]["group_id"] = "irrelevant_holdout_group"
+    with pytest.raises(ValueError, match="identity mismatch"):
+        audit_provenance_bindings(**payload)
