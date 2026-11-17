@@ -68,6 +68,7 @@ def fixture():
         "decision_thresholds":[
             {
                 "decision_id":"maximum_voltage",
+                "channel":"battery_voltage_v", "metric_unit":"V",
                 "failure_direction":"exceed_max",
                 "predicted_value":10.05,"failure_limit":11.,
                 "additional_model_form_hard_bound":.05,
@@ -78,6 +79,7 @@ def fixture():
             },
             {
                 "decision_id":"minimum_voltage",
+                "channel":"battery_voltage_v", "metric_unit":"V",
                 "failure_direction":"fall_below_min",
                 "predicted_value":10.05,"failure_limit":9.,
                 "additional_model_form_hard_bound":.05,
@@ -166,4 +168,15 @@ def test_fabricated_release_approval_as_extra_field_fails_closed():
     req=fixture()
     req["decision_thresholds"][0]["physically_certified"]=True
     with pytest.raises(ValueError,match="exact failure threshold"):
+        audit(req)
+
+
+def test_cross_channel_or_mismatched_units_rejected():
+    req=fixture()
+    req["decision_thresholds"][0]["metric_unit"]="A"
+    with pytest.raises(ValueError,match="channel/unit"):
+        audit(req)
+    req=fixture()
+    req["decision_thresholds"][0]["channel"]="battery_current_a"
+    with pytest.raises(ValueError,match="channel/unit"):
         audit(req)
