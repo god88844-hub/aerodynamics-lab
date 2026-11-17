@@ -124,6 +124,26 @@ def screen_continuous_motion_clearance(
             raise ValueError("every timeline sample requires exactly one center per declared obstacle")
         samples.append((t, [_xyz(v, "rotor center") for v in rc],
                         [_xyz(v, "obstacle center") for v in oc]))
+    # The declared speed hard bound must at least make adjacent reported
+    # endpoint centers feasible after allowing both hard position errors.
+    for k in range(len(samples) - 1):
+        t0, r0, o0 = samples[k]
+        t1, r1, o1 = samples[k+1]
+        dt = t1-t0
+        for i in range(n):
+            displacement = math.dist(r0[i], r1[i])
+            feasible = rv[i]*dt + 2*rcu[i]
+            if not math.isfinite(displacement) or not math.isfinite(feasible):
+                raise ValueError("rotor displacement/speed accumulation overflow")
+            if displacement > feasible + 1e-12:
+                raise ValueError("rotor declared center speed bound contradicts sampled endpoints")
+        for j, (_, _, center_u, velocity) in enumerate(obstacle_data):
+            displacement = math.dist(o0[j], o1[j])
+            feasible = velocity*dt + 2*center_u
+            if not math.isfinite(displacement) or not math.isfinite(feasible):
+                raise ValueError("obstacle displacement/speed accumulation overflow")
+            if displacement > feasible + 1e-12:
+                raise ValueError("obstacle declared center speed bound contradicts sampled endpoints")
     pair_summaries = []
     worst = math.inf
     for i in range(n):
