@@ -14,7 +14,7 @@ def fixture():
         for j in range(5):
             t = j / 10
             obs.append(f"s{j},{t:.1f},{1000+k},0")
-            pred.append(f"s{j},{t:.1f},10.05,9.7,10.3")
+            pred.append(f"s{j},{t:.1f},{10.05 + k*.01:.2f},9.7,10.3")
         o, p = "\n".join(obs) + "\n", "\n".join(pred) + "\n"
         runs.append({
             "run_id": f"run{k}", "group_id": f"synthetic_group{k}",
