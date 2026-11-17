@@ -1,6 +1,7 @@
 """API tests use SYNTHETIC discharge data only, never physical evidence."""
 from pathlib import Path
 
+import pytest
 from fastapi.testclient import TestClient
 
 from aeroforge_schemas.component import BatterySpec
@@ -45,7 +46,7 @@ def test_discharge_replay_endpoint_is_read_only_and_reports_accounting():
         assert r.status_code == 200, r.text
         out = r.json()
         assert out["verdict"] == "SYNTHETIC_VERIFICATION_ONLY"
-        assert out["accounting"]["charge_consumed_ah"] == 5 * 300 / 3600
+        assert out["accounting"]["charge_consumed_ah"] == pytest.approx(5 * 300 / 3600)
         assert out["existing_component_modified"] is False
         assert out["existing_flight_predictions_modified"] is False
 
