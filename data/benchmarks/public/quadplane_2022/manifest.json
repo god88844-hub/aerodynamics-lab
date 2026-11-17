@@ -1,0 +1,39 @@
+{
+  "schema_version": "1.0",
+  "id": "quadplane_px4_batt_2022",
+  "source_type": "reported_physical_flight_telemetry",
+  "title": "Quadplane VTOL Flight-Test Telemetry, PX4 BATT log (4 Sep 2022)",
+  "authors": "Md Azizul Islam, Md Nur-A-Adam Dony, Mehedi Hasan, S. G. M. Hossain",
+  "original_source": "https://github.com/AdamDony/quadplane-px4-flight-data",
+  "upstream_commit": "122ceb2cf3913725eef5cd9171a9779220c63335",
+  "upstream_file": "data/telemetry/BATT.csv",
+  "upstream_git_blob_sha1": "1e434d8edcc26d5dfc016a557e24d5c44cffff3c",
+  "source_data_dictionary": "https://github.com/AdamDony/quadplane-px4-flight-data/blob/122ceb2cf3913725eef5cd9171a9779220c63335/docs/DATA_DICTIONARY.md",
+  "license": "CC BY 4.0",
+  "license_url": "https://creativecommons.org/licenses/by/4.0/",
+  "original_license": "https://github.com/AdamDony/quadplane-px4-flight-data/blob/122ceb2cf3913725eef5cd9171a9779220c63335/LICENSE",
+  "derived_copy": "Copied CSV verbatim; this manifest and summary auditing code are new AeroForge additions",
+  "sample_count": 1442,
+  "columns": {
+    "BATT_VFilt": "filtered battery pack voltage V",
+    "BATT_CFilt": "filtered pack current A",
+    "BATT_Discharged": "flight-controller cumulative discharged charge mAh",
+    "BATT_Remaining": "flight-controller remaining battery capacity fraction",
+    "BATT_RemainingV": "flight-controller voltage-based remaining capacity fraction",
+    "BATT_Warning": "flight-controller battery warning flag"
+  },
+  "sensor_provenance": "Original PX4 v1.7 legacy sdlog2 flight log; instrument calibration not independently authenticated by AeroForge",
+  "timestamp_column_available": false,
+  "duration_source": "Original author documentation reports ~24.02 minutes log session and ~6 minutes flight; durations cannot be derived independently from this CSV",
+  "vehicle_type": "hybrid quadplane VTOL (not an AeroForge multirotor reference design)",
+  "battery_model_match_verified": false,
+  "actual_pack_serial_unknown": true,
+  "calibration_data_used_by_aeroforge": false,
+  "model_equivalence_grant": false,
+  "remarks": [
+    "No per-row timestamps: no time-based current integral or reliable transient synchronisation",
+    "Cumulative discharged mAh and remaining capacity are estimates of the same PX4 controller, not independent calibrated instruments",
+    "One externally recorded real-world flight is not a pack-specific independent M15 replay against the AeroForge battery model",
+    "Reported sensor units come from the source's data dictionary; AeroForge has not authenticated instrument calibration"
+  ]
+}
