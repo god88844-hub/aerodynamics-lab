@@ -1,5 +1,6 @@
 import { execFile } from 'node:child_process'
-import { randomUUID } from 'node:crypto'
+import { createHash, randomUUID } from 'node:crypto'
+import { readFile } from 'node:fs/promises'
 import { fileURLToPath } from 'node:url'
 import { promisify } from 'node:util'
 import { expect, test } from '@playwright/test'
@@ -83,6 +84,23 @@ test('packaged UI edits a design, runs the solver, and reloads saved data after 
   expect(result.simulation_id).toBeGreaterThan(0)
   await expect(page.getByRole('heading', { name: 'Trustworthiness' })).toBeVisible()
   await expect(page.getByText(result.trustworthiness.verdict, { exact: true })).toBeVisible()
+  const download = page.waitForEvent('download')
+  await page.getByRole('link', { name: 'Download simulation inputs' }).click()
+  const frozenBytes = await readFile(await (await download).path())
+  expect(createHash('sha256').update(frozenBytes).digest('hex')).toBe(result.input_sha256)
+  expect(JSON.parse(frozenBytes.toString('utf8'))).toMatchObject({
+    design: { name: revised },
+    scenario: 'hover-ideal',
+    effective_parameters: { duration_s: 2, dt_s: 0.002, solver: 'rk4' },
+  })
+
+  const editedAfterRun = `${revised} after run`
+  await name.fill(editedAfterRun)
+  const editedResponse = page.waitForResponse((response) =>
+    new URL(response.url()).pathname === `/api/designs/${saved.id}` && response.request().method() === 'PUT',
+  )
+  await saveDesign.click()
+  expect(await (await editedResponse).json()).toMatchObject({ id: saved.id, name: editedAfterRun })
 
   const apiBefore = (await compose('ps', '-q', 'api')).stdout.trim()
   const webBefore = (await compose('ps', '-q', 'web')).stdout.trim()
@@ -97,12 +115,15 @@ test('packaged UI edits a design, runs the solver, and reloads saved data after 
 
   await page.reload()
   const savedDesigns = page.getByLabel('Saved designs')
-  await expect(savedDesigns.getByRole('option', { name: `#${saved.id} ${revised}` })).toHaveCount(1)
+  await expect(savedDesigns.getByRole('option', { name: `#${saved.id} ${editedAfterRun}` })).toHaveCount(1)
   await savedDesigns.selectOption(String(saved.id))
-  await expect(name).toHaveValue(revised)
+  await expect(name).toHaveValue(editedAfterRun)
 
   const storedRun = await request.get(`/api/simulations/${result.simulation_id}`)
   expect(storedRun.ok()).toBeTruthy()
   expect(await storedRun.json()).toMatchObject(result)
+  const storedInputs = await request.get(`/api/simulations/${result.simulation_id}/inputs`)
+  expect(storedInputs.status()).toBe(200)
+  expect(await storedInputs.body()).toEqual(frozenBytes)
   expect(errors).toEqual([])
 })

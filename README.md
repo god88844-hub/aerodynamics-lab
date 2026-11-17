@@ -77,6 +77,9 @@ python scripts/run_simulation.py            # reports physics version
 python scripts/run_simulation.py design.json  # scenario runner (Milestones 1-4)
 ```
 
+In the web app, each new run includes a download of its design and solver
+settings. See [saved simulation inputs](docs/M29_15_19_SIMULATION_RUN_INPUTS.md).
+
 ## Repository layout
 
 ```

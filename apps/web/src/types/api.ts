@@ -147,6 +147,7 @@ export interface TrustEntry {
 
 export interface SimulationResult {
   simulation_id?: number
+  input_sha256?: string | null
   design_id?: number
   scenario: string
   status: 'completed' | 'failed'
