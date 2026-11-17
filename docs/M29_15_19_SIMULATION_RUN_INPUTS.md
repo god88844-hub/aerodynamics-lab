@@ -38,5 +38,6 @@ configured API environment. Revision 0002 only adds the input table. It can
 adopt the table if normal API startup already created it.
 
 To roll back the application, retain the table so previously recorded inputs
-remain available on re-upgrade. Downgrading the database revision to 0001 drops
-the input table and its data.
+remain available on re-upgrade. The database removes an input record when its
+run is deleted, including deletes by the older application. Downgrading the
+database revision to 0001 drops the input table and its data.

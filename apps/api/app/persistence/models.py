@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from datetime import datetime, timezone
 
-from sqlalchemy import DateTime, ForeignKey, Integer, String, Text
+from sqlalchemy import DDL, DateTime, ForeignKey, Integer, String, Text, event
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.persistence.database import Base
@@ -48,6 +48,23 @@ class SimulationRun(Base):
 class SimulationRunInput(Base):
     __tablename__ = "simulation_run_inputs"
 
-    run_id: Mapped[int] = mapped_column(ForeignKey("simulation_runs.id"), primary_key=True)
+    run_id: Mapped[int] = mapped_column(
+        ForeignKey("simulation_runs.id", ondelete="CASCADE"), primary_key=True,
+    )
     input_json: Mapped[str] = mapped_column(Text)
     input_sha256: Mapped[str] = mapped_column(String(64))
+
+
+# Older SQLite app versions can delete a run with foreign keys disabled.
+# Remove its inputs before SQLite can reuse the integer run ID.
+event.listen(
+    SimulationRunInput.__table__,
+    "after_create",
+    DDL("""
+        CREATE TRIGGER IF NOT EXISTS delete_simulation_run_inputs
+        AFTER DELETE ON simulation_runs
+        BEGIN
+            DELETE FROM simulation_run_inputs WHERE run_id = OLD.id;
+        END
+    """).execute_if(dialect="sqlite"),
+)

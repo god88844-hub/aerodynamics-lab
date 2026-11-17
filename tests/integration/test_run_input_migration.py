@@ -38,6 +38,11 @@ def test_upgrade_preserves_legacy_run_without_inventing_inputs(tmp_path, monkeyp
         ), {"report": json.dumps({"legacy": "original result"})})
     if already_created_at_startup:
         database.init_db()
+        with engine.connect() as connection:
+            assert connection.execute(text(
+                "SELECT name FROM sqlite_master WHERE type = 'trigger' "
+                "AND name = 'delete_simulation_run_inputs'"
+            )).scalar_one() == "delete_simulation_run_inputs"
     command.upgrade(config, "head")
     assert inspect(engine).has_table("simulation_run_inputs")
 
@@ -70,4 +75,19 @@ def test_upgrade_preserves_legacy_run_without_inventing_inputs(tmp_path, monkeyp
             ), {"id": run_id})
         assert client.get(f"/api/simulations/{run_id}/inputs").status_code == 409
         assert client.get(f"/api/simulations/{run_id}").json()["status"] == "failed"
+
+        # An old application version can delete and reuse this ID without
+        # knowing about the input table. SQLite foreign keys are off by default.
+        with engine.begin() as connection:
+            assert connection.execute(text("PRAGMA foreign_keys")).scalar_one() == 0
+            connection.execute(text("DELETE FROM simulation_runs WHERE id = :id"), {"id": run_id})
+            assert connection.execute(text(
+                "SELECT COUNT(*) FROM simulation_run_inputs WHERE run_id = :id"
+            ), {"id": run_id}).scalar_one() == 0
+        replacement = client.post(f"/api/designs/{saved_design.json()['id']}/simulate", json={
+            "scenario": "hover-ideal", "params": {"dt_s": "different bad input"},
+        })
+        assert replacement.status_code == 200, replacement.text
+        assert replacement.json()["simulation_id"] == run_id
+        assert replacement.json()["input_sha256"] != run.json()["input_sha256"]
     engine.dispose()
