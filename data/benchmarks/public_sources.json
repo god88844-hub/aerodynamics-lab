@@ -87,6 +87,19 @@
       "aircraft_model_match": false,
       "can_validate": "future fixed-wing methods once that model is implemented",
       "cannot_validate": "current AeroForge multirotor hardware-accuracy claims"
+    },
+    {
+      "id": "mdpi_g30_2025",
+      "name": "2025 experimental ground-installation thrust of T-MOTOR G30x10.5 propeller",
+      "url": "https://doi.org/10.3390/technologies13120542",
+      "type": "independent_published_static_thrust_voltage_current_experiment",
+      "source_status": "PUBLIC_PEER_REVIEWED_TABLE_5",
+      "license_status": "CC BY 4.0_MDPi",
+      "ingestion_status": "NINE_POINTS_TRANSCRIBED_WITH_INTEGRITY_AND_PUBLISHED_POWER_ANOMALY",
+      "aircraft_model_match": false,
+      "can_validate": "physical phenomena of mounting-plate installation interference for a G30 propeller and a different MN1010 motor",
+      "cannot_validate": "AeroForge P80 III motor power, installed thrust, ground effect, full-aircraft flight or hardware-safe capability",
+      "note": "Nine points include Table 5 row 2 reported 3234 W inconsistent with 46.2 V times 0.7 A (32.34 W); do not correct source silently"
     }
   ]
 }

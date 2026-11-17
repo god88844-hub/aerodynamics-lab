@@ -1,0 +1,110 @@
+{
+  "schema_version": "1.0",
+  "id": "dombrovschi_2025_g30_mn1010_plate",
+  "title": "Ground Effect Influence on UAV Propeller Thrust: Experimental and CFD Validation (Technologies 2025 13 542)",
+  "authors": [
+    "Mădălin Dombrovschi",
+    "Gabriel-Petre Badea",
+    "Tiberius-Florian Frigioescu",
+    "Maria Căldărar",
+    "Daniel-Eugeniu Crunțeanu"
+  ],
+  "publisher": "MDPI Technologies",
+  "doi": "10.3390/technologies13120542",
+  "url": "https://www.mdpi.com/2227-7080/13/12/542",
+  "license": "CC BY 4.0 (MDPI open access)",
+  "license_url": "https://creativecommons.org/licenses/by/4.0/",
+  "transcription": "Nine numerical operating points transcribed faithfully from published Table 5; all nine record source-reported power, including apparent row-2 typo; not original raw sensor files",
+  "source_data_available": "Underlying detailed data available on request from corresponding author, per paper",
+  "physical_data_origin": "Published authors' static experiment using calibrated force load cells, supplied 2.1 kg calibration mass; reported <3% deviations in calibration tests; not independently instrument-audited by AeroForge",
+  "propeller_model": "T-MOTOR G30x10.5 carbon-fiber, 30-inch diameter, 10.5-inch pitch",
+  "test_motor": "T-MOTOR MN1010 KV135",
+  "test_esc": "Flame 100A 14S",
+  "test_mount": "350mm x 250mm plate behind propeller, around 50mm spacing; ground/installation interference measured",
+  "reference_aeroforge_motor": "T-Motor P80 III KV100",
+  "motor_match": false,
+  "propeller_geometry_match": true,
+  "bench_installation_match_verified": false,
+  "predeclared_acceptance_tolerance": null,
+  "source_issues": [
+    "Published Table 5 row 2 reports 3234 W, while V*I=46.2 V*0.7 A=32.34 W (approximately x100 discrepancy); do not silently replace original value",
+    "Only nine published points, full original high-frequency logs available on request, not obtained",
+    "Measured installed thrust is substantially affected by mounting plate and ground-like effect",
+    "Published report's manufacturer comparison uses a separately sourced manufacturer thrust reference; it is not a direct validation of the P80 III motor configuration",
+    "Reported load cell calibration <3% does not constitute a full independent propulsion measurement uncertainty budget"
+  ],
+  "measurements": [
+    {
+      "case": 1,
+      "rpm": 368,
+      "voltage_v": 46.23,
+      "current_a": 0.4,
+      "force_n": 1.38,
+      "reported_power_w": 18.49
+    },
+    {
+      "case": 2,
+      "rpm": 650,
+      "voltage_v": 46.2,
+      "current_a": 0.7,
+      "force_n": 4.3,
+      "reported_power_w": 3234
+    },
+    {
+      "case": 3,
+      "rpm": 935,
+      "voltage_v": 46.1,
+      "current_a": 1.3,
+      "force_n": 8.76,
+      "reported_power_w": 59.93
+    },
+    {
+      "case": 4,
+      "rpm": 1200,
+      "voltage_v": 46,
+      "current_a": 2.2,
+      "force_n": 15.18,
+      "reported_power_w": 101.2
+    },
+    {
+      "case": 5,
+      "rpm": 1440,
+      "voltage_v": 46,
+      "current_a": 3.2,
+      "force_n": 21.63,
+      "reported_power_w": 147.2
+    },
+    {
+      "case": 6,
+      "rpm": 1686,
+      "voltage_v": 45.85,
+      "current_a": 4.6,
+      "force_n": 29.31,
+      "reported_power_w": 210.91
+    },
+    {
+      "case": 7,
+      "rpm": 1900,
+      "voltage_v": 45.7,
+      "current_a": 6.4,
+      "force_n": 37.96,
+      "reported_power_w": 292.48
+    },
+    {
+      "case": 8,
+      "rpm": 2171,
+      "voltage_v": 45.55,
+      "current_a": 9.2,
+      "force_n": 49.44,
+      "reported_power_w": 419.06
+    },
+    {
+      "case": 9,
+      "rpm": 2305,
+      "voltage_v": 45.35,
+      "current_a": 11,
+      "force_n": 55.68,
+      "reported_power_w": 498.85
+    }
+  ]
+}
