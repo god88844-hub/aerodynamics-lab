@@ -1,0 +1,36 @@
+{
+  "plan": "m26-nanobench-vertical-v1",
+  "source_receipt_canonical_json_sha256": "2b2743320de96f4b9f550ee305c78ce85701df50145d00ec41ecc366284d8873",
+  "vehicle_id": "CF_01",
+  "firmware": "2025.12.1",
+  "flight_mass_kg": 0.04085,
+  "thrust_n_per_v_squared": 0.011558855209,
+  "effective_drag_area_m2": 0.008778932592,
+  "fit_windows_0_5_s": {
+    "A1b_multisine_sysid_rep1": 127,
+    "A1b_multisine_sysid_rep2": 126
+  },
+  "cross_flight_90th_percentile_bands": {
+    "0.5": {
+      "absolute_half_width_altitude_m_and_velocity_m_s": [
+        0.043053589,
+        0.163709603
+      ],
+      "calibration_windows": 253
+    },
+    "1.0": {
+      "absolute_half_width_altitude_m_and_velocity_m_s": [
+        0.158097944,
+        0.300275903
+      ],
+      "calibration_windows": 125
+    },
+    "2.0": {
+      "absolute_half_width_altitude_m_and_velocity_m_s": [
+        0.554133472,
+        0.476162852
+      ],
+      "calibration_windows": 61
+    }
+  }
+}
