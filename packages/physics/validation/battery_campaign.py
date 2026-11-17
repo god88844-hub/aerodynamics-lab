@@ -171,6 +171,15 @@ def audit_battery_campaign(spec: BatterySpec, body: BatteryCampaignRequest) -> d
         replay = None
         if manifest.expected_samples <= 10000 and voltage_metric is not None:
             try:
+                original_samples = _trace_to_samples(run.evidence)
+                # Reject numerically finite but physically unsupported voltage
+                # values BEFORE squared-residual RMSE can overflow to infinity.
+                max_reference_ocv = spec.cells_series * max(
+                    point.cell_voltage_v for point in spec.ocv_curve
+                )
+                if any(p["terminal_voltage_v"] > 1.2 * max_reference_ocv
+                       for p in original_samples):
+                    raise ValueError("Observed voltage exceeds reference OCV support by over 20%")
                 request = DischargeReplayRequest.model_validate({
                     "battery_id": spec.id,
                     "dataset_kind": (
@@ -189,10 +198,19 @@ def audit_battery_campaign(spec: BatterySpec, body: BatteryCampaignRequest) -> d
                         run.illustrative_endpoint_error_limit_pct,
                     "predeclared_max_sample_gap_s":
                         voltage_metric.maximum_sampling_gap_s,
-                    "samples": _trace_to_samples(run.evidence),
+                    "samples": original_samples,
                 })
                 replay = replay_discharge(spec, request)
-            except (ValueError, PowertrainError) as exc:
+                summary = replay["prediction"]
+                if not all(math.isfinite(summary[k]) for k in (
+                    "voltage_mae_v", "voltage_rmse_v",
+                    "voltage_max_abs_error_v", "voltage_bias_v"
+                )):
+                    raise ValueError("Nonfinite voltage prediction error metrics")
+                if (summary["endpoint_time_error_pct"] is not None
+                        and not math.isfinite(summary["endpoint_time_error_pct"])):
+                    raise ValueError("Nonfinite observed warning endpoint discrepancy")
+            except (ValueError, PowertrainError, OverflowError) as exc:
                 reasons.append(f"Unscorable battery replay: {exc}")
         else:
             reasons.append("Missing voltage acceptance metric or unsupported replay length")
@@ -241,9 +259,18 @@ def audit_battery_campaign(spec: BatterySpec, body: BatteryCampaignRequest) -> d
                 "samplewise_abs_residual_lower_bound_v": lower,
                 "samplewise_abs_residual_upper_bound_v": upper,
                 "model_conditioned_on_measured_current": True,
-                "measured_charge_ah": replay["accounting"]["charge_consumed_ah"],
-                "measured_delivered_energy_wh":
-                    replay["accounting"]["measured_energy_delivered_wh"],
+                "measured_charge_ah": (
+                    replay["accounting"]["charge_consumed_ah"]
+                    if source["quality"]["sampling_interval_within_predeclared_bound"]
+                    and replay["accounting"]["within_predeclared_sampling_gap"]
+                    else None
+                ),
+                "measured_delivered_energy_wh": (
+                    replay["accounting"]["measured_energy_delivered_wh"]
+                    if source["quality"]["sampling_interval_within_predeclared_bound"]
+                    and replay["accounting"]["within_predeclared_sampling_gap"]
+                    else None
+                ),
                 "highest_c_rate": replay["accounting"]["maximum_c_rate"],
                 "measured_warning_crossing_s":
                     prediction["measured_warning_crossing_s"],
@@ -290,7 +317,13 @@ def audit_battery_campaign(spec: BatterySpec, body: BatteryCampaignRequest) -> d
         "pack_model_form": "fixed_ocv_soc_plus_single_internal_resistance",
         "generic_or_estimated_pack_reference": estimated_reference,
         "claimed_voltage_compatibility_only_samplewise": bool(
-            all_samplewise_compatible and all_reported_holdouts and not estimated_reference
+            all_samplewise_compatible
+            and all_reported_holdouts
+            and observed_holdout_count >= 2
+            and not estimated_reference
+            and partition["status"] == "DECLARED_DISJOINT_SPLIT_NOT_INDEPENDENTLY_AUTHENTICATED"
+            and protocol_audit["readiness_status"] == "OPERATOR_DECLARED_PROTOCOL_COMPLETE_EXTERNAL_REVIEW_REQUIRED"
+            and clock_bound == 0
         ),
         "runs": run_results,
         "blockers": list(dict.fromkeys(blockers)),

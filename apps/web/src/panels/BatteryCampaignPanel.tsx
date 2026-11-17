@@ -9,7 +9,7 @@ type RunResult = {
     status: string
     voltage_mae_v: number
     voltage_max_abs_error_v: number
-    measured_delivered_energy_wh: number
+    measured_delivered_energy_wh: number | null
     highest_c_rate: number
   }
   blockers: string[]
@@ -113,7 +113,10 @@ export function BatteryCampaignPanel({ design }: { design: DroneDesign }) {
               <p>Voltage comparison: {run.conditional_voltage_replay.status.replaceAll('_', ' ')}</p>
               <p>Mean voltage absolute error: {run.conditional_voltage_replay.voltage_mae_v.toFixed(3)} V</p>
               <p>Worst observed voltage error: {run.conditional_voltage_replay.voltage_max_abs_error_v.toFixed(3)} V</p>
-              <p>Measured delivered energy: {run.conditional_voltage_replay.measured_delivered_energy_wh.toFixed(2)} Wh</p>
+              <p>Measured delivered energy: {run.conditional_voltage_replay.measured_delivered_energy_wh == null
+                ? 'unavailable: sparse or unsupported sampling'
+                : run.conditional_voltage_replay.measured_delivered_energy_wh.toFixed(2) + ' Wh'
+              }</p>
             </>}
             {run.blockers.map((reason, i) =>
               <p key={i} className="text-[10px] text-amber-400">{reason}</p>)}
