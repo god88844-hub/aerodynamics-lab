@@ -20,7 +20,10 @@ _MODEL = re.compile(r"^[0-9a-f]{40}$")
 def _number(value: object, name: str, *, nonnegative: bool = False) -> float:
     if isinstance(value, bool) or not isinstance(value, (int, float)):
         raise ValueError(f"{name} must be a finite number")
-    result = float(value)
+    try:
+        result = float(value)
+    except (OverflowError, ValueError) as exc:
+        raise ValueError(f"{name} must be a finite number") from exc
     if not math.isfinite(result) or (nonnegative and result < 0):
         raise ValueError(f"{name} must be finite" + (" and nonnegative" if nonnegative else ""))
     return result
