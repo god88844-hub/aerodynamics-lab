@@ -198,8 +198,9 @@ def test_m267_unfrozen_holdout_or_missing_flight_refused(tmp_path):
     p[1]["first_revealed_utc"]="2026-11-11T00:00:00Z"
     with pytest.raises(ValueError,match="after the frozen model"):
         holdout(tmp_path,m,p)
-    p=splits(m)[:2]
-    with pytest.raises(ValueError,match="all declared original flight"):
+    p=splits(m)
+    p[2]["flight_id"]="flight1"
+    with pytest.raises(ValueError,match="exactly once"):
         holdout(tmp_path,m,p)
 
 
