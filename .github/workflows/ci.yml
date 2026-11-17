@@ -50,3 +50,30 @@ jobs:
         run: npm run build
       - name: Unit tests
         run: npm test
+
+  packaged-app:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: apps/web/package-lock.json
+      - name: Install browser test dependencies
+        working-directory: apps/web
+        run: |
+          npm ci
+          npx --no-install playwright install --with-deps --only-shell chromium
+      - name: Start packaged app
+        run: docker compose --project-name aeroforge-e2e up --build --wait --wait-timeout 90
+      - name: Verify browser, proxy, solver, and stored data
+        working-directory: apps/web
+        run: npm run test:e2e
+      - name: Print container logs on failure
+        if: failure()
+        run: docker compose --project-name aeroforge-e2e logs --no-color
+      - name: Clean up the test stack
+        if: always()
+        run: docker compose --project-name aeroforge-e2e down --volumes

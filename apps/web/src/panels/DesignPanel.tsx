@@ -43,7 +43,7 @@ export function DesignPanel() {
   const constraints = analyzeGeometry(design, selectedProp?.diameter_in)
 
   const onSave = async () => {
-    const saved = await save.mutateAsync(design)
+    const saved = await save.mutateAsync(designId == null ? design : { ...design, id: designId })
     setSnapshot(saved.snapshot, saved.id)
   }
 
@@ -57,6 +57,7 @@ export function DesignPanel() {
       <section>
         <SectionTitle>Saved designs</SectionTitle>
         <select
+          aria-label="Saved designs"
           className="w-full rounded border border-slate-700 bg-slate-900 px-2 py-1 text-xs text-slate-200"
           value={designId ?? ''}
           onChange={(e) => {
