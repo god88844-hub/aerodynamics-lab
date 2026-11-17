@@ -286,7 +286,7 @@ def audit_propulsion_campaign(
         "calibration_holdout_collisions": collisions,
         "run_count": len(runs),
         "holdout_count": len(holdout),
-        "all_holdout_samples_compatible_declared_bounds_only": all_samplewise,
+        "all_holdout_samples_compatible_declared_bounds_only": bool(all_samplewise and frozen),
         "runs": runs, "blockers": list(dict.fromkeys(blockers)),
         "manufacturer_reference_is_calibration_not_validation": True,
         "independent_static_propulsion_validation_established": False,
