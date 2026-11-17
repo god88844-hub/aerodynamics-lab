@@ -54,6 +54,12 @@ class FlightEvidenceRequest(BaseModel):
         "altitude_m", "vertical_speed_m_s", "bus_voltage_v", "battery_current_a"
     ], float] = Field(min_length=1, max_length=4)
     observations: list[FlightObservation] = Field(min_length=5, max_length=1000)
+    # Optional, operator-supplied HARD absolute error bounds (not 1-sigma
+    # estimates). Their provenance is not authenticated by AeroForge.
+    measurement_error_bounds: dict[Literal[
+        "altitude_m", "vertical_speed_m_s", "bus_voltage_v", "battery_current_a"
+    ], float] | None = None
+    clock_error_bound_s: float = Field(default=0.0, ge=0.0, le=2.0)
 
     @model_validator(mode="after")
     def validate_metadata_and_time(self) -> "FlightEvidenceRequest":
@@ -70,7 +76,102 @@ class FlightEvidenceRequest(BaseModel):
                 raise ValueError(f"{key}: tolerance must be finite and positive")
         if any(sum(getattr(p, key) is not None for p in self.observations) < 5 for key in present):
             raise ValueError("each measured channel needs at least five observations")
+        if self.measurement_error_bounds is None:
+            if self.clock_error_bound_s != 0:
+                raise ValueError("clock bound requires measurement error bounds")
+        else:
+            if set(self.measurement_error_bounds) != present:
+                raise ValueError("absolute measurement error bounds must cover exactly the measured channels")
+            for key, value in self.measurement_error_bounds.items():
+                if not math.isfinite(value) or value < 0:
+                    raise ValueError(f"{key}: measurement bound must be finite and nonnegative")
         return self
+
+
+def _uncertainty_assessment(
+    comparison: dict[str, dict],
+    times: list[float],
+    predictions: dict[str, list[float]],
+    body: FlightEvidenceRequest,
+) -> dict:
+    """Conservative error enclosure without a Gaussian assumption.
+
+    Bound on true prediction residual is [max(0, abs(pred-measured)-U),
+    abs(pred-measured)+U]. Here U adds the declared sensor absolute error
+    and a local Lipschitz slope bound for timestamp error. If the entire
+    clock interval is not covered by stored predictions, no robust pass.
+    """
+    from bisect import bisect_left
+
+    if body.measurement_error_bounds is None:
+        return {"status": "NOT_REQUESTED", "channels": {},
+                "independently_authenticated": False}
+    channel_summaries = {}
+    all_pass = True
+    any_definite_fail = False
+    for name, info in comparison.items():
+        values = predictions[name]
+        bound = body.measurement_error_bounds[name]
+        tolerance = body.tolerances[name]
+        row_results = []
+        for row in info["rows"]:
+            t = row["time_s"]
+            delta = body.clock_error_bound_s
+            # The whole declared time-error interval must be in the
+            # prediction record; clipping makes a false positive possible.
+            supported = (t - delta >= times[0] and t + delta <= times[-1])
+            if supported:
+                lo, hi = t - delta, t + delta
+                left = max(0, bisect_left(times, lo) - 1)
+                right = min(len(times) - 2, bisect_left(times, hi))
+                max_slope = max(
+                    abs((values[k + 1] - values[k]) / (times[k + 1] - times[k]))
+                    for k in range(left, right + 1)
+                )
+                total_bound = bound + max_slope * delta
+                lower = max(0.0, abs(row["residual"]) - total_bound)
+                upper = abs(row["residual"]) + total_bound
+                disposition = ("ROBUST_PASS" if upper <= tolerance
+                               else "ROBUST_FAIL" if lower > tolerance
+                               else "INDETERMINATE")
+            else:
+                total_bound = None
+                lower = None
+                upper = None
+                disposition = "CLOCK_ENVELOPE_UNSUPPORTED"
+            row_results.append({
+                "time_s": t,
+                "measured": row["measured"],
+                "predicted": row["predicted"],
+                "absolute_measured_residual": abs(row["residual"]),
+                "conservative_error_bound": total_bound,
+                "minimum_possible_absolute_error": lower,
+                "maximum_possible_absolute_error": upper,
+                "disposition": disposition,
+            })
+        dispositions = [row["disposition"] for row in row_results]
+        channel_pass = all(d == "ROBUST_PASS" for d in dispositions)
+        definite_fail = any(d == "ROBUST_FAIL" for d in dispositions)
+        all_pass = all_pass and channel_pass
+        any_definite_fail = any_definite_fail or definite_fail
+        channel_summaries[name] = {
+            "unit": info["unit"],
+            "declared_absolute_measurement_bound": bound,
+            "tolerance": tolerance,
+            "all_samples_robust_pass": channel_pass,
+            "any_robust_failure": definite_fail,
+            "rows": row_results,
+        }
+    status = ("ROBUST_FAIL_UNDER_DECLARED_BOUNDS" if any_definite_fail
+              else "ROBUST_PASS_UNDER_DECLARED_BOUNDS" if all_pass
+              else "INDETERMINATE_UNDER_DECLARED_BOUNDS")
+    return {
+        "status": status,
+        "channels": channel_summaries,
+        "clock_error_bound_s": body.clock_error_bound_s,
+        "independently_authenticated": False,
+        "meaning": "bounded consistency of sampled predictions, not physical validation or certification",
+    }
 
 
 def _prediction_series(telemetry: dict, name: str, size: int) -> list[float]:
@@ -170,9 +271,11 @@ def evaluate_flight_evidence(
         raise ValueError("flight log times fall outside stored simulation (no extrapolation)")
 
     comparison: dict[str, dict] = {}
+    predictions: dict[str, list[float]] = {}
     max_spacing = max(b - a for a, b in zip(times, times[1:]))
     for name, tolerance in body.tolerances.items():
         prediction = _prediction_series(tel, name, len(times))
+        predictions[name] = prediction
         rows = []
         for sample, t in zip(body.observations, shifted_times):
             measurement = getattr(sample, name)
@@ -191,6 +294,7 @@ def evaluate_flight_evidence(
             "rows": rows,
         }
 
+    uncertainty_assessment = _uncertainty_assessment(comparison, times, predictions, body)
     coverage = (shifted_times[-1] - shifted_times[0]) / total_duration
     # Report cadence and coverage as explicit applicability checks. Sparse
     # points can look perfect while omitting takeoff or landing completely.
@@ -216,6 +320,8 @@ def evaluate_flight_evidence(
         verdict = "UNSUPPORTED_PREDICTION_SAMPLING_GAP"
     elif not threshold_met:
         verdict = "REPORTED_FLIGHT_ERROR_TOLERANCE_NOT_MET"
+    elif body.measurement_error_bounds is not None and uncertainty_assessment["status"] != "ROBUST_PASS_UNDER_DECLARED_BOUNDS":
+        verdict = "UNCERTAINTY_AWARE_TOLERANCE_NOT_DEMONSTRATED"
     else:
         verdict = "REPORTED_FLIGHT_TOLERANCES_MET_NOT_INDEPENDENTLY_AUTHENTICATED"
 
@@ -244,6 +350,7 @@ def evaluate_flight_evidence(
             "interpolation_supported": interpolation_supported,
         },
         "channels": comparison,
+        "uncertainty_assessment": uncertainty_assessment,
         "all_predeclared_tolerances_met": threshold_met,
         "simulated_mission_succeeded": mission_succeeded,
         "verdict": verdict,
@@ -257,7 +364,9 @@ def evaluate_flight_evidence(
             "Linear interpolation between recorded simulator samples is not a higher-fidelity solution",
             "Reported prediction match does not override failed or aborted simulated mission criteria",
             "Only reported sampled channels and conditions are scored, not full flight safety or unseen failures",
-            "No measurement uncertainty, sensor calibration or independent replicated test coverage is established",
+            "Uncertainty bounds (if provided) are operator-declared and not independently established or calibrated",
+            "Uncertainty-aware envelopes bound sampled residuals only, assuming declared hard absolute sensor and timing error bounds",
+            "No independent replicated test coverage or sensor calibration is established",
             "Comparison cannot certify an aircraft or quantify the probability of real-world mission success",
             "No model calibration or mutation of saved results is performed",
         ],
