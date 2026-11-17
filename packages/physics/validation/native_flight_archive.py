@@ -49,8 +49,12 @@ def _file(root: Path, relative_path: object) -> Path:
     rel = Path(relative_path)
     if rel.is_absolute() or len(rel.parts) > 8 or any(p in ("..", ".", "") for p in rel.parts):
         raise ValueError("source relative_path must be a safe, shallow relative path")
-    if any(not _ID.fullmatch(p) for p in rel.parts):
-        raise ValueError("source relative_path contains unapproved characters")
+    # Preserve legitimate *original* publisher filenames (spaces and Unicode
+    # included), rather than forcing a rename of immutable source bytes.
+    # Disallow cross-platform path ambiguity and control characters.
+    if any(("\\\\" in p or ":" in p or any(ord(ch) < 32 or ord(ch) == 127 for ch in p))
+           for p in rel.parts):
+        raise ValueError("source relative_path contains unsafe path characters")
     if rel.suffix.lower().lstrip(".") not in _ALLOWED_FORMATS:
         raise ValueError("source file format not admitted for native archive inventory")
     base = root.resolve(strict=True)
@@ -123,8 +127,8 @@ def audit_native_flight_archive(root: Path | str, manifest: Mapping) -> dict:
         if (isinstance(declared_channels, (str, bytes))
                 or not isinstance(declared_channels, Sequence)
                 or len(declared_channels) > 64
-                or len(set(declared_channels)) != len(declared_channels)
-                or any(not isinstance(ch, str) or not _ID.fullmatch(ch) for ch in declared_channels)):
+                or any(not isinstance(ch, str) or not _ID.fullmatch(ch) for ch in declared_channels)
+                or len(set(declared_channels)) != len(declared_channels)):
             raise ValueError("declared_channels must be unique ASCII channel IDs, or an empty unknown list")
         expected_sha = item["original_sha256"]
         expected_bytes = item["original_byte_count"]
