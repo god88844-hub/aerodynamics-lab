@@ -17,6 +17,7 @@ import { FlightEvidencePanel } from './panels/FlightEvidencePanel'
 import { PropulsionEvidencePanel } from './panels/PropulsionEvidencePanel'
 import { PublicEvidencePanel } from './panels/PublicEvidencePanel'
 import { G30PublicBenchPanel } from './panels/G30PublicBenchPanel'
+import { TelemetryAuditPanel } from './panels/TelemetryAuditPanel'
 import { ResultsPanel } from './panels/ResultsPanel'
 import { TelemetryCharts } from './charts/TelemetryCharts'
 import { PlaybackWorkspace } from './playback/PlaybackWorkspace'
@@ -93,6 +94,7 @@ export default function App() {
           <div className="border-t border-slate-800"><FlightEvidencePanel result={result} /></div>
           <div className="border-t border-slate-800"><PublicEvidencePanel /></div>
           <div className="border-t border-slate-800"><G30PublicBenchPanel /></div>
+          <div className="border-t border-slate-800"><TelemetryAuditPanel /></div>
           <div className="border-t border-slate-800">
             <TelemetryCharts result={result} />
           </div>
