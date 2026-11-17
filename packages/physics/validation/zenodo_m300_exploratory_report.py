@@ -1,4 +1,4 @@
-"""M26.34: reproducible source-bound M300 preliminary evidence report.
+"""M26.39: reproducible source-bound M300 preliminary evidence report.
 
 All underlying numerical work is recomputed against the original pinned file.
 Never counts data gaps as completed flights or treats nonmatching DJI hardware

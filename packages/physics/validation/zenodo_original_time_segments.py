@@ -1,4 +1,4 @@
-"""M26.32: explicit timestamp-column integrity and contiguous-segment preflight.
+"""M26.37: explicit timestamp-column integrity and contiguous-segment preflight.
 
 A human must identify the original timestamp header and its actual unit.
 Large gaps break segments; duplicate/backward timestamps invalidate the claim.

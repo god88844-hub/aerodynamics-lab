@@ -1,4 +1,4 @@
-"""M26.33: source-linked explicit numeric channel probe; no invented units.
+"""M26.38: source-linked explicit numeric channel probe; no invented units.
 
 Only examines an observed original column under an operator-declared unit.
 Does not change source files, discard blank samples or certify a sensor.

@@ -1,4 +1,4 @@
-"""M26.30: constrained alternate official Zenodo transport for one pinned M300 CSV.
+"""M26.35: constrained alternate official Zenodo transport for one pinned M300 CSV.
 
 The file must be verified by original provider MD5 and byte count. The
 alternate landing download route is not evidence that retrieval succeeded.

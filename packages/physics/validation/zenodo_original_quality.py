@@ -1,4 +1,4 @@
-"""M26.31: byte-pinned original M300 column completeness and type profile.
+"""M26.36: byte-pinned original M300 column completeness and type profile.
 
 This examines *actual* original CSV bytes only after provider-MD5/SHA256
 verification; does not invent channel names, units or missing values.

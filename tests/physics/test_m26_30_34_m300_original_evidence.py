@@ -1,4 +1,4 @@
-"""M26.30–34 original M300 pipeline: all source fixtures are SYNTHETIC."""
+"""M26.35–M26.39 original M300 pipeline: all source fixtures are SYNTHETIC."""
 from __future__ import annotations
 from copy import deepcopy
 from hashlib import md5,sha256
