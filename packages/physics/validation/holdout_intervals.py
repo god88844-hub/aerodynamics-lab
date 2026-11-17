@@ -69,7 +69,7 @@ def audit_heldout_intervals(
     if not 2 <= len(holdout_runs) <= 60:
         raise ValueError("at least two and at most sixty complete holdout runs required")
 
-    seen_runs, seen_groups, seen_samples = set(), set(), set()
+    seen_runs, seen_groups, seen_digests, seen_samples = set(), set(), set(), set()
     out = []
     blockers = []
     for index, run in enumerate(holdout_runs):
@@ -82,6 +82,9 @@ def audit_heldout_intervals(
             raise ValueError(f"{run_id}: original source_sha256 required")
         if run_id in seen_runs or group in seen_groups:
             raise ValueError("duplicate holdout run or experimental group")
+        if digest in seen_digests:
+            raise ValueError("duplicate original source digest across holdout runs")
+        seen_digests.add(digest)
         seen_runs.add(run_id)
         seen_groups.add(group)
         if group in calibration:
