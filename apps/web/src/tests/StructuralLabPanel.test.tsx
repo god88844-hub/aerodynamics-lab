@@ -1,4 +1,4 @@
-import { afterEach, describe, expect, it, vi } from 'vitest'
+import { afterEach, describe, expect, it, rs } from '@rstest/core'
 import { cleanup, fireEvent, render, screen } from '@testing-library/react'
 import { StructuralLabPanel } from '../panels/StructuralLabPanel'
 import type { DroneDesign } from '../types/api'
@@ -19,7 +19,7 @@ const sample: DroneDesign = {
 }
 afterEach(() => {
   cleanup()
-  vi.unstubAllGlobals()
+  rs.unstubAllGlobals()
 })
 
 describe('M10.8 user-defined load-case form', () => {
@@ -43,8 +43,8 @@ describe('M10.8 user-defined load-case form', () => {
         limitations: [],
       },
     }
-    const send = vi.fn().mockResolvedValue({ ok: true, json: async () => result })
-    vi.stubGlobal('fetch', send)
+    const send = rs.fn().mockResolvedValue({ ok: true, json: async () => result })
+    rs.stubGlobal('fetch', send)
     render(<StructuralLabPanel design={sample} />)
 
     fireEvent.change(screen.getByLabelText('Named structural load cases'), {
@@ -84,8 +84,8 @@ describe('M10.8 user-defined load-case form', () => {
   })
 
   it('rejects a half-entered shear allowable without submitting', async () => {
-    const send = vi.fn()
-    vi.stubGlobal('fetch', send)
+    const send = rs.fn()
+    rs.stubGlobal('fetch', send)
     render(<StructuralLabPanel design={sample} />)
     fireEvent.change(screen.getByLabelText('Named structural load cases'), {
       target: { value: 'case: 2,3' },

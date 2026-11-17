@@ -1,9 +1,9 @@
-import { afterEach, describe, expect, it, vi } from 'vitest'
+import { afterEach, describe, expect, it, rs } from '@rstest/core'
 import { cleanup, fireEvent, render, screen } from '@testing-library/react'
 import { RotorClearancePanel } from '../panels/RotorClearancePanel'
 import type { DroneDesign } from '../types/api'
 
-afterEach(() => { cleanup(); vi.unstubAllGlobals() })
+afterEach(() => { cleanup(); rs.unstubAllGlobals() })
 
 const design = {
   schema_version: '0.1', name: 'synthetic_quad',
@@ -30,8 +30,8 @@ describe('M28.2 projected rotor clearance panel', () => {
       }],
       limitations: [],
     }
-    const send = vi.fn().mockResolvedValue({ ok: true, json: async () => response })
-    vi.stubGlobal('fetch', send)
+    const send = rs.fn().mockResolvedValue({ ok: true, json: async () => response })
+    rs.stubGlobal('fetch', send)
     render(<RotorClearancePanel design={design} />)
     fireEvent.change(screen.getByLabelText('Installed rotor diameters'), {
       target: { value: '.38, .38' },
@@ -57,8 +57,8 @@ describe('M28.2 projected rotor clearance panel', () => {
   })
 
   it('fails closed for missing geometry and nonexistent measured dimensions', async () => {
-    const send = vi.fn()
-    vi.stubGlobal('fetch', send)
+    const send = rs.fn()
+    rs.stubGlobal('fetch', send)
     render(<RotorClearancePanel design={design} />)
     fireEvent.click(screen.getByRole('button', { name: 'Screen rotor tip clearances' }))
     expect(await screen.findByRole('alert')).toBeDefined()

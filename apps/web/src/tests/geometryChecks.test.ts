@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, it } from 'vitest'
+import { beforeEach, describe, expect, it } from '@rstest/core'
 import { analyzeGeometry, bodyPointToScene, scenePointToBody, snapBodyPoint } from '../editor/geometryChecks'
 import { useDesignStore } from '../state/designStore'
 import type { DroneDesign } from '../types/api'

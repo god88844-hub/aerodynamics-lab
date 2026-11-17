@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, it } from 'vitest'
+import { beforeEach, describe, expect, it } from '@rstest/core'
 import { useDesignStore } from '../state/designStore'
 import { analyzeGeometry } from '../editor/geometryChecks'
 import type { DroneDesign } from '../types/api'

@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'vitest'
+import { describe, expect, it } from '@rstest/core'
 import { applyArmLength, quadXRadius } from '../state/designStore'
 import { analyzeGeometry } from '../editor/geometryChecks'
 import type { DroneDesign } from '../types/api'
