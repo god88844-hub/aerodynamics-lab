@@ -87,6 +87,14 @@ def audit_provenance_bindings(
     # alongside the calibration metadata but cannot be *authenticated* here.
     if ledger["calibration_group_count"] < 1 or ledger["holdout_group_count"] < 2:
         raise ValueError("ledger lacks calibration or two holdout groups")
+    declared_calibration = {entry["group_id"] for entry in inventory.values()
+                            if entry["role"] == "calibration"}
+    declared_holdouts = {entry["group_id"] for entry in inventory.values()
+                         if entry["role"] == "holdout"}
+    if declared_calibration != set(calibration_group_ids):
+        raise ValueError("calibration group inventory differs from source holdout split")
+    if declared_holdouts != {run["group_id"] for run in runs}:
+        raise ValueError("holdout group inventory differs from original source runs")
     return {
         "status": (
             "OPERATOR_PROVENANCE_BINDINGS_REJECTED"
