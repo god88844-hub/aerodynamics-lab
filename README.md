@@ -34,6 +34,16 @@ multi-rotor UAVs with verification & validation (V&V) built into every result.
 
 ## Quickstart
 
+### Packaged app (Docker Compose)
+
+```bash
+docker compose up --build --wait
+# http://127.0.0.1:5173
+```
+
+See [packaged app acceptance](docs/M29_10_14_PACKAGED_APP_ACCEPTANCE.md) for the
+browser test and how to preserve the database when upgrading an older stack.
+
 ### Backend (Python 3.11+, FastAPI)
 
 ```bash

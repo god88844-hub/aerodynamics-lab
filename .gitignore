@@ -11,6 +11,7 @@ venv/
 # Node
 node_modules/
 apps/web/dist/
+apps/web/test-results/
 
 # Local state / outputs
 *.sqlite3

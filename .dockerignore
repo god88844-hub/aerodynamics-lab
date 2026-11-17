@@ -1,0 +1,13 @@
+.git
+**/node_modules
+**/dist
+**/.venv
+**/__pycache__
+**/.pytest_cache
+**/*.db
+**/*.sqlite3
+**/.env
+**/.env.local
+**/test-results
+outputs
+reports

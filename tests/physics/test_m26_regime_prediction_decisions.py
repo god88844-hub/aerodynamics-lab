@@ -249,8 +249,9 @@ def test_m2610_failure_overrides_missing_coverage(tmp_path):
     root, manifest, holdout, _, cases, requirement = fixtures(tmp_path)
     p = Path(cases[0]["frozen_prediction_csv_path"])
     pred = p.read_text().replace("2510,2509,2511", "2600,2599,2601")
-    p.write_text(pred)
-    cases[0]["frozen_prediction_sha256"] = sha256(pred.encode()).hexdigest()
+    replacement = pred.encode()
+    p.write_bytes(replacement)
+    cases[0]["frozen_prediction_sha256"] = sha256(replacement).hexdigest()
     r = assess_original_flight_decisions(
         root, manifest, holdout_case=holdout,
         required_metrics=[requirement], comparison_cases=cases[:1],
