@@ -1,0 +1,78 @@
+{
+  "schema_version": "1.0",
+  "candidate_id": "tu_braunschweig_mes_sbar_2023_p80iii_quadcopter",
+  "classification": "INDEPENDENT_PUBLISHED_EXPERIMENT_SOURCE_NOT_INGESTED",
+  "journal_article": {
+    "title": "Flight Experiments and Numerical Simulations for Investigating Multicopter Flow Field and Structure Deformation",
+    "journal": "Atmosphere",
+    "year": 2023,
+    "volume": 14,
+    "issue": 9,
+    "article_number": 1336,
+    "doi": "10.3390/atmos14091336",
+    "url": "https://www.mdpi.com/2073-4433/14/9/1336"
+  },
+  "original_data_reference": {
+    "title": "Multicopter In-Flight Measurement Data of Flow Field and Structure States",
+    "authors": [
+      "Falk Pätzold",
+      "Andreas Schlerf",
+      "Lutz Bretschneider",
+      "André Bauknecht"
+    ],
+    "repository": "Technische Universität Braunschweig",
+    "record_url": "https://leopard.tu-braunschweig.de/receive/dbbs_mods_00070168",
+    "published_data_claim": "Article section Data Availability cites the original repository high-resolution dataset",
+    "last_access_result": "SECURITY_CHALLENGE_RAW_DATA_NOT_RETRIEVED",
+    "original_provider_file_inventory": [],
+    "original_files_downloaded": false,
+    "source_license_verified": false,
+    "source_sha256": null,
+    "source_instrument_clock_uncertainty_verified": false,
+    "original_channel_schema_verified": false
+  },
+  "reported_vehicle": {
+    "vehicle_type": "quadcopter",
+    "takeoff_mass_kg_approx": 25,
+    "motor_model_string": "P80III-KV100",
+    "propeller_model_string": "CF-PROP 30 x 10.5",
+    "propeller_radius_m": 0.381,
+    "nominal_hover_rotor_speed_rpm_approx": 2600,
+    "reported_max_rotor_speed_rpm": 3747,
+    "battery_configuration": "2 x 22 Ah, 6S1P",
+    "flight_autopilot": "Pixhawk 2",
+    "installed_esc_model": null,
+    "motor_serials": null,
+    "geometry_mass_inertia_verified_against_aeroforge_reference": false
+  },
+  "reported_measurands": {
+    "categories": [
+      "pressure",
+      "temperature",
+      "rotor_phase_and_speed",
+      "accelerometers",
+      "strain_gauge_arm_force",
+      "vibration",
+      "flow_field"
+    ],
+    "full_flight_position_velocity_attitude_commands_confirmed_in_original_data": false,
+    "full_battery_current_voltage_soc_confirmed_in_original_data": false,
+    "clock_alignment_and_independent_sensor_calibration_confirmed": false,
+    "notes": "Specific channels, units, frame definitions and missing values must be determined from actual released original files and instrumentation metadata; article figures are not original time-series source."
+  },
+  "potential_scientific_uses": [
+    "Validate conditional P80III/30x10.5 rotor RPM ranges for a 25kg quadrotor, if original source and hardware provenance can be reconciled",
+    "Benchmark rotor-induced flow / temperature / pressure disturbances in the tested hover regime",
+    "Benchmark rotor-arm vibration/strain/force as measured on this aircraft, preserving instrument limitations",
+    "Use only actual available synchronized motion and power channels for full-flight predictions if confirmed in raw archive"
+  ],
+  "ineligible_claims": [
+    "Not a bench validation of AeroForge's complete P80III/G30/ESC installed propulsion unless ESC/source conditions match",
+    "Not validation of AeroForge's 60kg hexacopter, battery model or motor-out behavior",
+    "Not a demonstration of full six-DOF flight prediction equivalence unless appropriate raw channels and frozen model protocol are shown",
+    "Not a physical success probability or flightworthiness certificate"
+  ],
+  "status": "PHYSICAL_FLIGHT_FIDELITY_NOT_ESTABLISHED_EXTERNAL_SOURCE_CUSTODY_PENDING",
+  "ready_for_m26_acceptance": false,
+  "operator_reported_source_hash_only": false
+}
