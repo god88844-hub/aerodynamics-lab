@@ -13,6 +13,7 @@ import { ScenarioPanel } from './panels/ScenarioPanel'
 import { StructuralLabPanel } from './panels/StructuralLabPanel'
 import { BatteryEvidencePanel } from './panels/BatteryEvidencePanel'
 import { DischargeReplayPanel } from './panels/DischargeReplayPanel'
+import { BatteryCampaignPanel } from './panels/BatteryCampaignPanel'
 import { FlightEvidencePanel } from './panels/FlightEvidencePanel'
 import { PropulsionEvidencePanel } from './panels/PropulsionEvidencePanel'
 import { PublicEvidencePanel } from './panels/PublicEvidencePanel'
@@ -82,6 +83,9 @@ export default function App() {
           </div>
           <div className="border-t border-slate-800">
             <DischargeReplayPanel design={design} />
+          </div>
+          <div className="border-t border-slate-800">
+            <BatteryCampaignPanel design={design} />
           </div>
           <div className="border-t border-slate-800">
             <PropulsionEvidencePanel design={design} />
