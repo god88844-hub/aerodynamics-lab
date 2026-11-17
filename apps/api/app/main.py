@@ -9,7 +9,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.persistence.database import init_db
-from app.routes import combined_metal, hil_tracking_quality, components, designs, flight_evidence, health, hil_evidence, propulsion_evidence, simulations
+from app.routes import rotor_clearance, combined_metal, hil_tracking_quality, components, designs, flight_evidence, health, hil_evidence, propulsion_evidence, simulations
 
 
 @asynccontextmanager
@@ -49,3 +49,5 @@ app.include_router(hil_evidence.router, prefix="/api")
 
 app.include_router(combined_metal.router, prefix="/api")
 app.include_router(hil_tracking_quality.router, prefix="/api")
+
+app.include_router(rotor_clearance.router, prefix="/api")
