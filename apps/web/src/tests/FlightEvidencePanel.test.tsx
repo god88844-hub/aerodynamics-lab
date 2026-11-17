@@ -75,3 +75,50 @@ describe('M13 Flight Evidence Lab UI', () => {
     expect(screen.getByText(/Complete a Flight simulation first/)).toBeDefined()
   })
 })
+
+
+describe('M14 flight measurement uncertainty input', () => {
+  it('submits explicitly declared hard bounds without changing M13 default payload', async () => {
+    const response = {
+      simulation_id: 42, verdict: 'SYNTHETIC_VERIFICATION_ONLY',
+      stored_prediction_sha256: 'abc', simulation_modified: false,
+      uncertainty_assessment: { status: 'ROBUST_PASS_UNDER_DECLARED_BOUNDS' },
+      coverage: { mission_fraction: 1, adequate: true,
+        interpolation_supported: true, max_interpolation_spacing_s: .05 },
+      channels: {},
+    }
+    const send = vi.fn().mockResolvedValue({ ok: true, json: async () => response })
+    vi.stubGlobal('fetch', send)
+    render(<FlightEvidencePanel result={result} />)
+    completeForm()
+    fireEvent.click(screen.getByLabelText('Enable conservative uncertainty bounds'))
+    for (const [name, value] of [
+      ['Clock synchronization error bound (s)', '0.05'],
+      ['altitude_m measurement error bound', '0.1'],
+      ['bus_voltage_v measurement error bound', '0.05'],
+      ['battery_current_a measurement error bound', '0.2'],
+    ]) {
+      fireEvent.change(screen.getByLabelText(name), { target: { value } })
+    }
+    fireEvent.click(screen.getByRole('button', { name: /Compare held-out flight telemetry/ }))
+    expect(await screen.findByText('Uncertainty assessment: ROBUST PASS UNDER DECLARED BOUNDS')).toBeDefined()
+    expect(send).toHaveBeenCalledTimes(1)
+    const payload = JSON.parse((send.mock.calls[0][1] as RequestInit).body as string)
+    expect(payload.clock_error_bound_s).toBe(.05)
+    expect(payload.measurement_error_bounds).toEqual({
+      altitude_m: .1, bus_voltage_v: .05, battery_current_a: .2,
+    })
+    expect(payload.measurement_error_bounds.vertical_speed_m_s).toBeUndefined()
+  })
+
+  it('rejects missing uncertainty bounds before sending a request', async () => {
+    const send = vi.fn()
+    vi.stubGlobal('fetch', send)
+    render(<FlightEvidencePanel result={result} />)
+    completeForm()
+    fireEvent.click(screen.getByLabelText('Enable conservative uncertainty bounds'))
+    fireEvent.click(screen.getByRole('button', { name: /Compare held-out flight telemetry/ }))
+    expect(await screen.findByRole('alert')).toBeDefined()
+    expect(send).not.toHaveBeenCalled()
+  })
+})
