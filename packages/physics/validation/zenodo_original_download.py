@@ -84,8 +84,10 @@ def audit_zenodo_original_stream(plan: Mapping, *,
             or not output.parent.is_dir() or output.suffix.lower() != ".csv"):
         raise ValueError("original output must be a new .csv file in an existing directory")
     m, s, size = md5(), sha256(), 0
+    created = False
     try:
         with output.open("xb") as handle:
+            created = True
             while True:
                 chunk = stream.read(min(256 * 1024, expected - size + 1))
                 if not chunk:
@@ -104,7 +106,7 @@ def audit_zenodo_original_stream(plan: Mapping, *,
                 raise ValueError("original source bytes failed official provider MD5 check")
     except BaseException:
         # Never leave a partially downloaded or bad-hash source posing as original.
-        if output.exists():
+        if created and output.exists():
             output.unlink()
         raise
     return {
