@@ -65,10 +65,11 @@ def audit_affine_sensor_holdouts(
     keys = {
         "scale_per_count", "offset", "scale_hard_error_per_count",
         "offset_hard_error", "calibration_residual_hard_error",
-        "quantization_code_half_width", "minimum_valid_code", "maximum_valid_code",
+        "quantization_code_half_width", "minimum_valid_code", "maximum_valid_code", "output_unit",
     }
     if not isinstance(calibration, Mapping) or set(calibration) != keys:
         raise ValueError("exact declared affine calibration fields required")
+    output_unit = _identifier(calibration["output_unit"], "output_unit")
     scale = _finite(calibration["scale_per_count"], "scale_per_count")
     offset = _finite(calibration["offset"], "offset")
     scale_u = _finite(calibration["scale_hard_error_per_count"], "scale_hard_error_per_count", nonnegative=True)
@@ -162,6 +163,7 @@ def audit_affine_sensor_holdouts(
         "frozen_model_git_sha": frozen_model_git_sha,
         "frozen_protocol_sha256": frozen_protocol_sha256,
         "channel": channel,
+        "calibration_output_unit_operator_declared": output_unit,
         "calibration_source_operator_declared": calibration_source.strip(),
         "operator_report_digest_sha256": digest,
         "runs": results,
