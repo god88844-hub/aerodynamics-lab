@@ -4,6 +4,9 @@ from fastapi import APIRouter, HTTPException
 
 from app.services import component_service
 from physics.propulsion.loader import ComponentLibrary
+from physics.validation.public_evidence import (
+    audit_quadplane_battery, get_public_source_inventory,
+)
 from physics.validation.discharge_replay import DischargeReplayRequest, replay_discharge
 from physics.validation.battery_evidence import (
     BatteryEvidenceRequest, evaluate_battery_evidence,
@@ -49,3 +52,22 @@ def discharge_replay(body: DischargeReplayRequest) -> dict:
         return replay_discharge(spec, body)
     except (ValueError, RuntimeError) as exc:
         raise HTTPException(status_code=422, detail=str(exc)) from exc
+
+
+@router.get("/public-evidence")
+def public_evidence() -> dict:
+    """Read-only physical source registry and audited third-party battery log.
+
+    The observations are not validation of an AeroForge hardware model.
+    """
+    try:
+        return {
+            "registry": get_public_source_inventory(),
+            "quadplane_battery_audit": audit_quadplane_battery(),
+            "model_physically_validated_by_these_public_sources": False,
+        }
+    except (ValueError, OSError) as exc:
+        raise HTTPException(
+            status_code=503,
+            detail=f"public evidence audit unavailable or source integrity failed: {exc}",
+        ) from exc
