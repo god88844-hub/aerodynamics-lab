@@ -15,7 +15,12 @@ from __future__ import annotations
 import argparse
 import json
 from pathlib import Path
+import sys
 from urllib.request import Request, urlopen
+
+# Permit direct execution from the repository root without a developer shell
+# setting PYTHONPATH, matching the monorepo's packages/ source layout.
+sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "packages"))
 
 from physics.validation.dataverse_candidate import (
     METADATA_URL, inspect_dataverse_candidate, inspect_original_local_file,
