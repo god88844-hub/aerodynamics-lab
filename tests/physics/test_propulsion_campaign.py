@@ -197,6 +197,7 @@ def test_frozen_registration_mutation_cannot_be_silent():
     body["frozen_protocol"]["acceptance_metrics"][0]["maximum_absolute_prediction_error"] = 10
     report = score(body)
     assert not report["matches_supplied_frozen_protocol_digest"]
+    assert not report["all_holdout_samples_compatible_declared_bounds_only"]
     assert not report["independent_static_propulsion_validation_established"]
 
 
