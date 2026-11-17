@@ -9,6 +9,7 @@ from __future__ import annotations
 import csv
 import io
 import math
+from hashlib import sha256
 from collections.abc import Mapping
 from pathlib import Path
 
@@ -59,6 +60,13 @@ def audit_original_flight_channel_csv(
     if path.stat().st_size > _MAX_CSV_BYTES:
         raise ValueError("original CSV exceeds 8MB reader size cap")
     raw = path.read_bytes()
+    # The file could have changed after the complete-archive preflight.
+    # Never parse or summarize data from a second read without verifying
+    # *those same* bytes against the frozen original source manifest.
+    if len(raw) > _MAX_CSV_BYTES or len(raw) != original["original_byte_count"]:
+        raise ValueError("original CSV bytes changed or exceeded reader cap")
+    if sha256(raw).hexdigest() != original["original_sha256"]:
+        raise ValueError("original CSV SHA-256 changed after archive verification")
     try:
         content = raw.decode("utf-8", "strict")
     except UnicodeError as exc:
