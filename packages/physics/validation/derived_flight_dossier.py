@@ -46,6 +46,8 @@ def build_derived_flight_dossier(root, manifest, *, holdout_case: Mapping,
     canonical = {
         "regime": required_regime,
         "channel": required_channel,
+        "reference_hardware_operator_declared": dict(reference_hardware),
+        "measured_hardware_operator_declared": dict(measured_hardware),
         "hardware_mismatch": hardware["operator_declared_hardware_fields_mismatched"],
         "relative_mass_error": hardware["relative_takeoff_mass_difference"],
         "declared_mass_tolerance": hardware["declared_mass_tolerance_fraction"],
