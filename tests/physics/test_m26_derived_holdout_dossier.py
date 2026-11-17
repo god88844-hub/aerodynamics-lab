@@ -257,3 +257,23 @@ def test_m2624_hardware_mismatch_blocks_conditional_green(tmp_path):
     r=dossier(root,manifest,split,cases,ref,measured)
     assert r["status"]=="INCONCLUSIVE_INCOMPATIBLE_DECLARED_HARDWARE"
     assert not r["decision_equivalent_physical_evidence_established"]
+
+
+def test_m2623_critical_limits_identical_for_each_holdout(tmp_path):
+    root,manifest,split,cases,ref,measured=scenario(tmp_path)
+    cases[1]["predeclared_max_conservative_error"]=100000
+    with pytest.raises(ValueError,match="cherry-pick"):
+        audit_derived_holdout_group_coverage(
+            root,manifest,holdout_case=split,comparison_cases=cases,
+            required_regime="hover",required_channel="rotor_rpm",
+        )
+
+
+def test_m2624_dossier_fingerprint_binds_hardware_not_only_mismatch_list(tmp_path):
+    root,manifest,split,cases,ref,measured=scenario(tmp_path)
+    original=dossier(root,manifest,split,cases,ref,measured)
+    ref["esc_model"]="different-shared-model"
+    measured["esc_model"]="different-shared-model"
+    altered=dossier(root,manifest,split,cases,ref,measured)
+    assert original["status"]==altered["status"]
+    assert original["recomputed_dossier_sha256"]!=altered["recomputed_dossier_sha256"]
