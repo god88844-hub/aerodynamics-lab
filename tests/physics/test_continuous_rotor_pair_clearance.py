@@ -111,6 +111,7 @@ def test_missing_rotor_cannot_be_skipped_in_snapshots():
 def test_outer_envelope_hard_bounds_overflow_rejected():
     body=fixture()
     body["diameter_hard_bounds_m"]=[1e308]*4
+    body["center_position_hard_bounds_m"]=[1e308]*4
     with pytest.raises(ValueError,match="overflow"):
         audit(body)
 
