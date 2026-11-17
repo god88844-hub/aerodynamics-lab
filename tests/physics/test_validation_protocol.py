@@ -184,3 +184,18 @@ def test_read_only_fixture_not_mutated():
     original = copy.deepcopy(p)
     score(p)
     assert p == original
+
+
+def test_extreme_finite_uncertainty_terms_cannot_overflow_api_json():
+    p = plan()
+    p["uncertainties"][0]["absolute_value"] = 1e308
+    p["uncertainties"].append({
+        "channel": "current_a", "name": "second_huge_term",
+        "absolute_value": 1e308, "type": "hard_absolute_bound",
+        "source_reference": "synthetic://extreme-numeric-test",
+    })
+    result = score(p)
+    assert result["readiness_status"] == "PREREGISTRATION_GAPS"
+    assert any("Nonfinite accumulated measurement bound" in b for b in result["blockers"])
+    assert result["uncertainty_budget"]["current_a"]["worst_case_hard_absolute_measurement_bound"] is None
+    assert result["independent_physical_accuracy_demonstrated"] is False
