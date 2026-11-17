@@ -54,6 +54,16 @@ class MultirotorPlant:
     rotors: list[Rotor] = field(default_factory=list)
     drag: AirframeDrag | None = None
     rotor_torque_per_thrust: float = 0.0  # N·m per N, uniform M1 approximation
+    wind_world: np.ndarray | None = None  # optional uniform wind; never rotor inflow
+
+    def __post_init__(self) -> None:
+        if self.wind_world is not None:
+            wind = np.asarray(self.wind_world, dtype=float)
+            if wind.shape != (3,) or not np.all(np.isfinite(wind)):
+                raise ValueError("wind_world must be a finite 3-vector in world coordinates")
+            self.wind_world = wind
+        if not np.isfinite(self.rotor_torque_per_thrust) or self.rotor_torque_per_thrust < 0:
+            raise ValueError("rotor torque coefficient must be finite and nonnegative")
 
     def net_force_torque(
         self, state: np.ndarray, thrusts: np.ndarray
@@ -62,6 +72,8 @@ class MultirotorPlant:
         thrusts = np.asarray(thrusts, dtype=float)
         if thrusts.shape != (len(self.rotors),):
             raise ValueError(f"expected {len(self.rotors)} thrust values, got {thrusts.shape}")
+        if not np.all(np.isfinite(thrusts)):
+            raise ValueError("multirotor thrust must contain finite values")
         if np.any(thrusts < 0.0):
             raise ValueError("multirotor thrust must be >= 0 (props cannot reverse)")
         _, v, q, _ = unpack_state(state)
@@ -75,7 +87,7 @@ class MultirotorPlant:
             t_body += np.cross(rotor.position_m, f_i)
             t_body += -rotor.spin_direction * self.rotor_torque_per_thrust * t * e3
         if self.drag is not None:
-            f_body += rotate(conjugate(q), self.drag.force_world(v))
+            f_body += rotate(conjugate(q), self.drag.force_world(v, wind_world=self.wind_world))
         return f_body, t_body
 
     def derivs(
