@@ -196,3 +196,16 @@ def test_directory_refuses_symlink_and_file_escape(tmp_path: Path):
 
 def test_no_imported_physical_sources_is_explicit():
     assert audit_partition([])["status"] == "NO_EVIDENCE_IMPORTED"
+
+
+
+def test_original_real_px4_batt_log_without_timestamps_cannot_enter_timed_pipeline():
+    """No fabrication of M16's missing time axis to manufacture energy evidence."""
+    from physics.validation.public_evidence import DATA_DIR
+    raw = (DATA_DIR / "BATT.csv").read_bytes()
+    declared = fake_manifest(
+        raw, id="original_px4_without_time",
+        kind="reported_physical_measurements", expected_samples=1442,
+    )
+    with pytest.raises(ValueError, match="actual columns differ"):
+        audit_telemetry_csv(declared, raw)
