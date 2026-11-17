@@ -1,5 +1,7 @@
 # M26.30–M26.34 — DJI M300 original flight telemetry energy analysis
 
+**18 November 2026 source update.** The [checksum-matched original](M26_30_34_ORIGINAL_M300_FILE_ADMISSION.md) is now available. Its repeated integer timestamps prevent the strict energy holdout, and the electrical unit and sign mapping still need source documentation. The initial merge implemented and verified software behavior using fixtures.
+
 **Scientific classification:** source-specific analysis capability, **not** validation of the AeroForge 60 kg hexacopter. No original Zenodo CSV bytes were available to this implementation session. Synthetic fixtures validate software behavior only.
 
 The published source candidate is [Zenodo record 7643456](https://zenodo.org/records/7643456), `10.5281/zenodo.7643456` (DJI Matrice 300 multi-modal sensors). The original file must be legitimately acquired first using the M26.25–29 CLI, with independently reviewed rights and official Zenodo MD5 `e2f188e8f5cbf498c7009f422d401207`. Do **not** change the source-specific expected MD5 in production.

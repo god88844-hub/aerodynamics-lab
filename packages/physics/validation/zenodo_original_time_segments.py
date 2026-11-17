@@ -14,7 +14,7 @@ from decimal import Decimal, InvalidOperation
 from pathlib import Path
 
 from physics.validation.zenodo_original_quality import audit_original_m300_field_quality
-from physics.validation.zenodo_flight_candidate import MAX_ORIGINAL_SIZE
+from physics.validation.zenodo_flight_candidate import MAX_ORIGINAL_SIZE, ORIGINAL_CSV_DELIMITER
 
 _UNITS = {"s": Decimal("1"), "ms": Decimal(".001"),
           "us": Decimal(".000001"), "ns": Decimal(".000000001")}
@@ -39,7 +39,9 @@ def audit_original_m300_time_segments(
     data = Path(path).read_bytes()
     if len(data) > MAX_ORIGINAL_SIZE:
         raise ValueError("source size changed")
-    rows = csv.reader(io.StringIO(data.decode("utf-8"), newline=""), strict=True)
+    rows = csv.reader(
+        io.StringIO(data.decode("utf-8"), newline=""), delimiter=ORIGINAL_CSV_DELIMITER, strict=True
+    )
     headers = next(rows)
     ti = headers.index(original_time_column)
     previous = None

@@ -10,7 +10,7 @@ import io
 from collections.abc import Mapping
 from hashlib import md5, sha256
 from pathlib import Path
-from physics.validation.zenodo_flight_candidate import EXPECTED_MD5, MAX_ORIGINAL_SIZE, DOI
+from physics.validation.zenodo_flight_candidate import DOI, EXPECTED_MD5, MAX_ORIGINAL_SIZE, ORIGINAL_CSV_DELIMITER
 
 def audit_original_m300_field_quality(path: Path | str, receipt: Mapping) -> dict:
     src = Path(path)
@@ -31,7 +31,7 @@ def audit_original_m300_field_quality(path: Path | str, receipt: Mapping) -> dic
     if text.startswith("\ufeff") or "\x00" in text:
         raise ValueError("BOM/NUL requires separately audited source adapter")
     try:
-        reader = csv.reader(io.StringIO(text, newline=""), strict=True)
+        reader = csv.reader(io.StringIO(text, newline=""), delimiter=ORIGINAL_CSV_DELIMITER, strict=True)
         columns = next(reader, None)
         if (not isinstance(columns, list) or not 2 <= len(columns) <= 128
                 or len(set(columns)) != len(columns)

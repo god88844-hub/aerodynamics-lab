@@ -20,8 +20,8 @@ def sample(tmp_path, monkeypatch):
     records = []
     for j in range(6):
         for uid in ("training", "held_a", "held_b"):
-            records.append(f"{uid},{1000+j*1000},24,2,HOVER\n")
-    original = ("uid,elapsed_ms,voltage_v,battery_current_a,state\n"
+            records.append(f"{uid};{1000+j*1000};24;2;HOVER\n")
+    original = ("uid;elapsed_ms;voltage_v;battery_current_a;state\n"
                 + "".join(records)).encode()
     path = tmp_path / "provider_original.csv"
     path.write_bytes(original)
@@ -113,7 +113,7 @@ def test_m2631_exact_columns_units_sign_reference_required(tmp_path, monkeypatch
 
 def test_m2632_no_time_reversal_per_original_flight_uid(tmp_path, monkeypatch):
     path, receipt, mapping, protocol, prediction = sample(tmp_path, monkeypatch)
-    changed = path.read_bytes().replace(b"held_a,3000", b"held_a,1000")
+    changed = path.read_bytes().replace(b"held_a;3000", b"held_a;1000")
     path.write_bytes(changed)
     monkeypatch.setattr(schema_mod, "EXPECTED_MD5", md5(changed).hexdigest())
     receipt["actual_source_bytes"] = len(changed)

@@ -43,8 +43,8 @@ def fake_metadata(size=100):
 
 def fake_csv():
     return (
-        "uid,time_unix,position_x,battery_voltage,mode\n"
-        + "".join(f"uid{i},{i},1.{i},24.{i},IDLE_HOVER\n" for i in range(6))
+        "uid;time_unix;position_x;battery_voltage;mode\n"
+        + "".join(f"uid{i};{i};1.{i};24.{i};IDLE_HOVER\n" for i in range(6))
     ).encode("utf-8")
 
 
@@ -185,7 +185,7 @@ def test_m2628_refuse_bad_source_sha_and_missing_fields(tmp_path, monkeypatch):
     receipt["computed_original_sha256"] = "a"*64
     with pytest.raises(ValueError, match="changed|MD5"):
         schema_mod.inspect_downloaded_m300_csv(p, receipt)
-    raw2 = raw.replace(b"uid1,1,1.1", b"uid1,1")
+    raw2 = raw.replace(b"uid1;1;1.1", b"uid1;1")
     p.write_bytes(raw2)
     monkeypatch.setattr(schema_mod, "EXPECTED_MD5", md5(raw2).hexdigest())
     with pytest.raises(ValueError, match="inconsistent column count"):
