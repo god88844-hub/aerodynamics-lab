@@ -125,7 +125,6 @@ def test_duplicate_original_paths_and_malformed_hash_rejected(tmp_path):
     doc["files"].append(deepcopy(doc["files"][0]))
     with pytest.raises(ValueError, match="duplicate"):
         audit_native_flight_archive(tmp_path,doc)
-    doc = specimen(tmp_path) if False else doc  # do not create duplicate test files
     doc["files"].pop()
     doc["files"][0]["original_sha256"] = "a"*63
     with pytest.raises(ValueError, match="64-hex"):
@@ -153,3 +152,38 @@ def test_source_claims_do_not_authenticate_flight(tmp_path):
     assert not report["physical_instrument_calibrations_authenticated"]
     assert not report["measurement_clock_alignment_authenticated"]
     assert not report["whole_flight_independence_or_blinding_authenticated"]
+
+
+def test_cli_hashes_real_bytes_without_reinterpreting_binary(tmp_path, capsys):
+    from importlib import util
+    from pathlib import Path
+    script = Path(__file__).resolve().parents[2] / "scripts" / "audit_native_flight_archive.py"
+    spec = util.spec_from_file_location("aeroforge_native_archive_cli", script)
+    mod = util.module_from_spec(spec)
+    spec.loader.exec_module(mod)
+    doc = specimen(tmp_path)
+    assert mod.cli(["--root", str(tmp_path), "--hash-file", "flight01/pressure.tdms"]) == 0
+    import json
+    result = json.loads(capsys.readouterr().out)
+    assert result["computed_original_sha256"] == doc["files"][0]["original_sha256"]
+    assert result["physical_flight_measurement_origin_authenticated"] is False
+
+
+def test_cli_checks_entire_original_bundle_not_a_favorable_single_file(tmp_path, capsys):
+    from importlib import util
+    from pathlib import Path
+    import json
+    script = Path(__file__).resolve().parents[2] / "scripts" / "audit_native_flight_archive.py"
+    spec = util.spec_from_file_location("aeroforge_native_archive_cli_full", script)
+    mod = util.module_from_spec(spec)
+    spec.loader.exec_module(mod)
+    doc = specimen(tmp_path)
+    manifest = tmp_path.parent / "native_source_manifest.json"
+    manifest.write_text(json.dumps(doc), encoding="utf-8")
+    assert mod.cli(["--root", str(tmp_path), "--manifest", str(manifest)]) == 0
+    result = json.loads(capsys.readouterr().out)
+    assert result["original_file_count"] == 2
+    assert result["full_aircraft_prediction_validated"] is False
+    (tmp_path / "flight02" / "arm_strain.mat").unlink()
+    assert mod.cli(["--root", str(tmp_path), "--manifest", str(manifest)]) == 2
+    assert "FAILED" in capsys.readouterr().err
