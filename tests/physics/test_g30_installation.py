@@ -68,9 +68,8 @@ def test_unverified_changes_cannot_silently_promote_validation(tmp_path: Path, c
 def test_published_power_typo_cannot_be_edited_into_a_clean_measurement(tmp_path: Path):
     original = json.loads(SOURCE.read_text(encoding="utf-8"))
     original["measurements"][1]["reported_power_w"] = 32.34
-    # A user-modified source must no longer claim it is the original table.
+    # A user-modified source must never claim it is the original table.
     altered = tmp_path / "corrected.json"
     altered.write_text(json.dumps(original))
-    report = compare_g30_public_bench(source=altered)
-    assert report["data_quality"]["reported_power_inconsistency_count"] == 0
-    assert report["independent_physical_validation_of_aeroforge_reference"] is False
+    with pytest.raises(ValueError, match="transcription altered"):
+        compare_g30_public_bench(source=altered)
