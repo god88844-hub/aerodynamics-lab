@@ -96,12 +96,27 @@ aeroforge/
 
 ## Milestone status
 
-All milestones complete — see [docs/milestone_reports.md](docs/milestone_reports.md)
-for the full per-milestone changelog, [docs/audit/M9_AUDIT.md](docs/audit/M9_AUDIT.md)
-for the independent scientific validation audit (which capabilities are
-independently validated, with what measured error, and which evidence gaps
-remain), and [outputs/](outputs) for the generated capstone, V&V and Pareto
-reports.
+**Software milestones and scientific acceptance are different.** The
+original M0–M17 foundation and subsequent M18–M29 evidence-engineering subscopes
+were implemented in successive merged PRs; this does **not** mean the intended
+drone or its exact components have achieved independent physical validation.
+
+See [the reconciled M0–M31 roadmap](docs/ROADMAP_STATUS_2026_11_17.md),
+[docs/milestone_reports.md](docs/milestone_reports.md) for development history,
+[docs/audit/M9_AUDIT.md](docs/audit/M9_AUDIT.md) for the independent scientific
+audit, and [physical evidence blocker #16](https://github.com/god88844-hub/aeroforge/issues/16).
+
+Through the original M30 drone-v1 scientific/product release goal, **10
+top-level acceptance families (M21–M30)** still require completion; **11
+(M21–M31)** including expansion to additional aircraft. This includes real
+exact-pack battery, exact motor–ESC–propeller, and independently instrumented
+full-aircraft evidence, plus controls/thermal/structures, supported editing
+and product engineering acceptance. Existing software code and synthetic tests
+cannot replace those measurements.
+
+Qualified laboratory and test-campaign handoffs: [battery](docs/campaigns/M21_BATTERY_PHYSICAL_ACQUISITION.md),
+[propulsion](docs/campaigns/M22_PROPULSION_BENCH_ACQUISITION.md), and
+[full-aircraft](docs/campaigns/M26_INDEPENDENT_FLIGHT_ACQUISITION.md).
 
 ## Deviations from the original build specification
 
