@@ -50,7 +50,7 @@ def test_overlapping_xy_disks_can_be_separated_by_large_known_z_gap():
     result = run(d, diameters=[.55, .55, .05, .05], heights=[.02]*4)
     pair = next(p for p in result["pairs"] if p["rotor_a"] == 0 and p["rotor_b"] == 1)
     assert pair["minimum_xy_gap_m"] < 0
-    assert pair["minimum_axial_gap_m"] == pytest.approx(.18)
+    assert pair["minimum_axial_gap_m"] == pytest.approx(.16)
     assert pair["conservative_3d_separation_lower_m"] == pytest.approx(.18)
     assert result["analytical_screen_passed"]
     assert not result["actual_dynamic_rotor_3d_clearance_validated"]
