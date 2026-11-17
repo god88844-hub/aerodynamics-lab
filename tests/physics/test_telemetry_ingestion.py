@@ -87,7 +87,7 @@ def test_sparse_sample_gaps_preclude_time_integration():
     (lambda d: fake_csv(times=(0, 1, 1, 3, 4, 5)), "strictly increasing"),
     (lambda d: fake_csv(times=(1, 2, 3, 4, 5, 6)), "exactly zero"),
     (lambda d: b"bad_time,terminal_voltage_v,current_a\n"+d.split(b"\n", 1)[1], "columns"),
-    (lambda d: b"t_s,terminal_voltage_v,current_a\n"+b"0,1,2\n"*5, "expected"),
+    (lambda d: b"t_s,terminal_voltage_v,current_a\n"+b"".join(f"{i},12,2\n".encode("utf-8") for i in range(5)), "expected"),
     (lambda d: d.replace(b"12,2", b"12,3", 1), "SHA-256"),
 ])
 def test_corruption_and_unsupported_time_rejected(mutate, error):
