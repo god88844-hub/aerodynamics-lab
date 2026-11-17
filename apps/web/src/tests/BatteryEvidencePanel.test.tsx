@@ -1,4 +1,4 @@
-import { afterEach, describe, expect, it, vi } from 'vitest'
+import { afterEach, describe, expect, it, rs } from '@rstest/core'
 import { cleanup, fireEvent, render, screen } from '@testing-library/react'
 import { BatteryEvidencePanel } from '../panels/BatteryEvidencePanel'
 import type { DroneDesign } from '../types/api'
@@ -23,7 +23,7 @@ const csv = [
 ].join('\n')
 afterEach(() => {
   cleanup()
-  vi.unstubAllGlobals()
+  rs.unstubAllGlobals()
 })
 
 function enterCompleteEvidence() {
@@ -76,8 +76,8 @@ describe('M12 Battery Evidence Lab UI', () => {
       temperature: { recorded_count: 3, missing_count: 2, modeled: false },
       limitations: [],
     }
-    const send = vi.fn().mockResolvedValue({ ok: true, json: async () => response })
-    vi.stubGlobal('fetch', send)
+    const send = rs.fn().mockResolvedValue({ ok: true, json: async () => response })
+    rs.stubGlobal('fetch', send)
     render(<BatteryEvidencePanel design={design} />)
     enterCompleteEvidence()
     fireEvent.click(screen.getByRole('button', {
@@ -102,8 +102,8 @@ describe('M12 Battery Evidence Lab UI', () => {
   })
 
   it('requires distinct run identifiers and fails closed before network request', async () => {
-    const send = vi.fn()
-    vi.stubGlobal('fetch', send)
+    const send = rs.fn()
+    rs.stubGlobal('fetch', send)
     render(<BatteryEvidencePanel design={design} />)
     enterCompleteEvidence()
     fireEvent.change(screen.getByLabelText('Held-out run ID'), {

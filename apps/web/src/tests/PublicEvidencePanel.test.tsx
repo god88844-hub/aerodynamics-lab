@@ -1,9 +1,9 @@
-import { afterEach, describe, expect, it, vi } from 'vitest'
+import { afterEach, describe, expect, it, rs } from '@rstest/core'
 import { cleanup, render, screen } from '@testing-library/react'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { PublicEvidencePanel } from '../panels/PublicEvidencePanel'
 
-afterEach(() => { cleanup(); vi.unstubAllGlobals() })
+afterEach(() => { cleanup(); rs.unstubAllGlobals() })
 
 const response = {
   registry: {
@@ -53,8 +53,8 @@ function renderWithClient() {
 
 describe('M16 public physical evidence panel', () => {
   it('reports physical measurement statistics but no aircraft validation', async () => {
-    const send = vi.fn().mockResolvedValue({ ok: true, json: async () => response })
-    vi.stubGlobal('fetch', send)
+    const send = rs.fn().mockResolvedValue({ ok: true, json: async () => response })
+    rs.stubGlobal('fetch', send)
     renderWithClient()
     expect(await screen.findByText('Recorded third-party battery samples: 1442')).toBeDefined()
     expect(screen.getByText('Physical model equivalence established: no')).toBeDefined()
@@ -65,10 +65,10 @@ describe('M16 public physical evidence panel', () => {
   })
 
   it('fails closed when the original physical dataset audit cannot be loaded', async () => {
-    const send = vi.fn().mockResolvedValue({
+    const send = rs.fn().mockResolvedValue({
       ok: false, status: 503, json: async () => ({ detail: 'integrity mismatch' }),
     })
-    vi.stubGlobal('fetch', send)
+    rs.stubGlobal('fetch', send)
     renderWithClient()
     expect(await screen.findByRole('alert')).toBeDefined()
     expect(screen.queryByText('Physical model equivalence established: yes')).toBeNull()

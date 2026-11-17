@@ -26,7 +26,7 @@ python scripts/run_simulation.py [design_snapshot.json]
 ```bash
 pytest                    # all python tests (pythonpath set in pyproject.toml)
 pytest tests/physics -q   # physics only
-cd apps/web && npm test   # vitest
+cd apps/web && npm test   # Rstest
 ```
 
 CI (`.github/workflows/ci.yml`) runs pytest and the web build+tests on every

@@ -1,8 +1,8 @@
-import { afterEach, describe, expect, it, vi } from 'vitest'
+import { afterEach, describe, expect, it, rs } from '@rstest/core'
 import { cleanup, fireEvent, render, screen } from '@testing-library/react'
 import { TelemetryAuditPanel } from '../panels/TelemetryAuditPanel'
 
-afterEach(() => { cleanup(); vi.unstubAllGlobals() })
+afterEach(() => { cleanup(); rs.unstubAllGlobals() })
 
 const manifest = {
   schema_version: '1.0',
@@ -41,8 +41,8 @@ describe('M19 telemetry provenance audit panel', () => {
       },
       near_real_world_simulation_accuracy_established: false,
     }
-    const send = vi.fn().mockResolvedValue({ ok: true, json: async () => report })
-    vi.stubGlobal('fetch', send)
+    const send = rs.fn().mockResolvedValue({ ok: true, json: async () => report })
+    rs.stubGlobal('fetch', send)
     render(<TelemetryAuditPanel />)
     fireEvent.change(screen.getByLabelText('Telemetry manifest JSON'), {
       target: { value: JSON.stringify(manifest) },
@@ -67,8 +67,8 @@ describe('M19 telemetry provenance audit panel', () => {
   })
 
   it('requires source material and does not send a request for missing manifest', async () => {
-    const send = vi.fn()
-    vi.stubGlobal('fetch', send)
+    const send = rs.fn()
+    rs.stubGlobal('fetch', send)
     render(<TelemetryAuditPanel />)
     fireEvent.click(screen.getByRole('button', {
       name: /Audit telemetry without changing models/,
