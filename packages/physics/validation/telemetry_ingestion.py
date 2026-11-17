@@ -12,11 +12,9 @@ from __future__ import annotations
 import csv
 from hashlib import sha256
 import io
-import json
 import math
 from pathlib import Path
 import re
-from statistics import mean
 from typing import Literal
 
 from pydantic import BaseModel, ConfigDict, Field, model_validator
@@ -103,9 +101,11 @@ def audit_telemetry_csv(manifest: TelemetryManifest, raw: bytes) -> dict:
         raise ValueError("telemetry must be valid UTF-8") from exc
     if decoded.startswith("\ufeff"):
         raise ValueError("UTF-8 BOM is not accepted; keep canonical raw bytes")
-    rows = csv.reader(io.StringIO(decoded, newline=""), strict=True)
     try:
+        rows = iter(list(csv.reader(io.StringIO(decoded, newline=""), strict=True)))
         header = next(rows)
+    except csv.Error as exc:
+        raise ValueError("malformed telemetry CSV quotation or delimiters") from exc
     except StopIteration as exc:
         raise ValueError("telemetry CSV is empty") from exc
     if header != manifest.columns:
