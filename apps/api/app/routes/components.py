@@ -4,6 +4,9 @@ from fastapi import APIRouter, HTTPException
 
 from app.services import component_service
 from physics.propulsion.loader import ComponentLibrary
+from physics.validation.telemetry_ingestion import (
+    TelemetryAuditRequest, audit_telemetry_bundle,
+)
 from physics.validation.g30_installation import compare_g30_public_bench
 from physics.validation.public_evidence import (
     audit_quadplane_battery, get_public_source_inventory,
@@ -88,3 +91,16 @@ def public_g30_benchmark() -> dict:
             status_code=503,
             detail=f"public G30 source audit unavailable: {exc}",
         ) from exc
+
+
+@router.post("/telemetry-audit")
+def telemetry_audit(body: TelemetryAuditRequest) -> dict:
+    """Audit source-pinned user telemetry, never persist raw data or fit models."""
+    try:
+        bundles = [
+            (entry.manifest, entry.csv_text.encode("utf-8"))
+            for entry in body.datasets
+        ]
+        return audit_telemetry_bundle(bundles)
+    except ValueError as exc:
+        raise HTTPException(status_code=422, detail=str(exc)) from exc
