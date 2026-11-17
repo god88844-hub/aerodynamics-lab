@@ -237,3 +237,20 @@ def test_model_and_request_are_unchanged():
     score(data, d)
     assert data == snapshot
     assert d.motor.model_dump_json() == before
+
+
+def test_preregistered_minimum_holdout_points_cannot_be_bypassed():
+    body = request(physical=True)
+    # Six supplied physical-labelled operating points are fewer than
+    # the frozen requirement of seven, even if all six match the model.
+    body["frozen_protocol"]["acceptance_metrics"][0]["minimum_holdout_samples"] = 7
+    body["expected_frozen_sha256"] = protocol_sha256(
+        ValidationProtocol.model_validate(body["frozen_protocol"])
+    )
+    report = score(body)
+    assert not report["all_holdout_samples_compatible_declared_bounds_only"]
+    for run in report["runs"]:
+        if run["role"] == "holdout":
+            assert any("Insufficient holdout operating points for thrust_n" in b
+                       for b in run["blockers"])
+    assert not report["independent_static_propulsion_validation_established"]
