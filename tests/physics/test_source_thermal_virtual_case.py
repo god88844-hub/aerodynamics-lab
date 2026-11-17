@@ -24,7 +24,7 @@ def fixture():
         pred = ["sample_id,t_s,prediction,lower,upper"]
         for j in range(5):
             obs.append(f"s{j},{j/10:.1f},{1000+k},0")
-            pred.append(f"s{j},{j/10:.1f},10.05,9.7,10.3")
+            pred.append(f"s{j},{j/10:.1f},{10.05 + k*.01:.2f},9.7,10.3")
         raw = "\n".join(obs) + "\n"
         frozen = "\n".join(pred) + "\n"
         records.append({
