@@ -9,6 +9,7 @@ The source's reported 3234 W for row #2 is preserved and flagged, not fixed.
 from __future__ import annotations
 
 import json
+from hashlib import sha256
 import math
 from pathlib import Path
 from statistics import mean
@@ -19,6 +20,9 @@ from physics.propulsion.loader import ComponentLibrary
 ROOT = Path(__file__).resolve().parents[3]
 SOURCE = ROOT / "data" / "benchmarks" / "public" / "g30_2025" / "bench_table_5.json"
 DATA = ROOT / "data" / "components"
+# Hash of the exact nine transcribed Table 5 rows (canonical JSON).
+# This is an anti-edit check, not a publisher-authenticated raw-data digest.
+PUBLISHED_TABLE_SHA256 = "fc91d1de62ebb1beaca80772b34a3620dce91a3f2f822a87cc00a8665c8b294b"
 
 
 def _finite(x: object) -> bool:
@@ -98,6 +102,9 @@ def compare_g30_public_bench(*, source: Path | None = None,
             row["relative_difference_pct_vs_reference"] = 100 * difference / predicted
             overlap.append(row)
         source_rows.append(row)
+    canonical = json.dumps(measurements, sort_keys=True, separators=(",", ":")).encode("utf-8")
+    if sha256(canonical).hexdigest() != PUBLISHED_TABLE_SHA256:
+        raise ValueError("source Table 5 transcription altered: published measurements must not be silently corrected")
     return {
         "dataset_id": spec["id"],
         "source": {
