@@ -69,16 +69,12 @@ def test_unknown_or_duplicate_assignments_rejected(tmp_path):
     req["assignments"][1]["relative_path"] = req["assignments"][0]["relative_path"]
     with pytest.raises(ValueError, match="duplicate"):
         draft_native_flight_manifest(tmp_path, **req)
-    req, _, _ = source_fixture_new(tmp_path)
-    req["assignments"][0]["relative_path"] = "unlisted.tdms"
+    other = tmp_path / "second"
+    other.mkdir()
+    req2, _, _ = source_fixture(other)
+    req2["assignments"][0]["relative_path"] = "unlisted.tdms"
     with pytest.raises(ValueError, match="missing"):
-        draft_native_flight_manifest(tmp_path, **req)
-
-
-def source_fixture_new(tmp_path):
-    # Files already exist when another branch of the test reuses tmp_path.
-    req, a, b = source_fixture(tmp_path/"fresh") if False else (None, None, None)
-    return req, a, b
+        draft_native_flight_manifest(other, **req2)
 
 
 def test_rogue_file_and_missing_permission_never_silently_ignored(tmp_path):
@@ -101,7 +97,7 @@ def test_unsafe_or_incomplete_source_assignments_fail_closed(tmp_path):
     req["assignments"][0]["flight_id"] = ""
     with pytest.raises(ValueError, match="flight_id"):
         draft_native_flight_manifest(tmp_path, **req)
-    req, _, _ = source_fixture(tmp_path) if False else (req, None, None)
+    req["assignments"][0]["flight_id"] = "flight01"
     req["assignments"][0]["claimed_physical_provenance"] = True
     with pytest.raises(ValueError, match="exact"):
         draft_native_flight_manifest(tmp_path, **req)
