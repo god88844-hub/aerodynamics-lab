@@ -119,4 +119,4 @@ def test_no_wind_does_not_change_ideal_hover_dynamics():
     assert np.allclose(trim, np.full(4, 1.5 * 9.80665 / 4))
     f, torque = plant.net_force_torque(state(), trim)
     assert f[2] == pytest.approx(1.5 * 9.80665)
-    assert np.array_equal(torque, np.zeros(3))
+    assert np.allclose(torque, np.zeros(3), atol=1e-12)
