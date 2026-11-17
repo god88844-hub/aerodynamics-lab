@@ -31,7 +31,20 @@ The initial [frozen VAH17 plan](https://github.com/god88844-hub/aeroforge/commit
 
 The separately frozen sampled-point plan reserves VAH27 and permits positive intervals up to 11 s to accommodate 10 s logging. The VAH01 model, phase signature, nominal-duration check (within 2 s), sample inclusion and scoring rules carry over. Evaluation uses measured time and phase only to schedule the published power input. Its scope is pointwise agreement at the recorded cadence. Errors within unsampled intervals, short limit excursions and transient timing remain unresolved.
 
-## M21.5 Reproduction
+## M21.5 Results and reproduction
+
+The [second protocol](https://github.com/god88844-hub/aeroforge/commit/60bcab7f6cba788bb985d148bc8ccfc3625576ac) scored tester cycles 0–4 from VAH27. The largest interval was 10.000000475 s. [Machine-readable results and source lines](m21_vtc6_holdout.json)
+
+| Phase | Samples | Voltage MAE (mV) | Voltage RMSE (mV) | Current MAE (A) |
+| --- | ---: | ---: | ---: | ---: |
+| Takeoff | 45 | 65.8 | 66.9 | 0.356 |
+| Cruise | 405 | 49.6 | 54.6 | 0.124 |
+| Landing | 60 | 127.5 | 134.5 | 1.047 |
+| Pooled | 510 | 60.2 | 69.9 | 0.254 |
+
+Pooled voltage bias was +55.6 mV, and the worst absolute voltage and current errors were 250.1 mV and 5.525 A. These maxima were the first samples in the cruise and landing steps, respectively. The measured load at those samples was about 33.95 W and 36.32 W, compared with the scheduled 16 W and 54 W. The errors therefore include both schedule-tracking and battery-model discrepancy. Cruise accounts for most samples. Landing had the largest phase-average errors.
+
+Across the five discharges the lowest recorded voltage was 3.131 V, the highest recorded temperature was 44.39 °C, and measured delivered energy ranged from 6.2607 to 6.2623 Wh over the sampled phase spans. Both voltage series stayed above the study's 2.5 V threshold at recorded sample times. The data provide no observed cutoff endpoint for assessing runtime error.
 
 From the repository root in the backend Python environment, place the publisher files together in a local directory. Replace DATA_DIR with that directory.
 

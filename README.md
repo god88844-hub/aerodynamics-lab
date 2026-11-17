@@ -130,6 +130,8 @@ cannot replace those measurements.
 Qualified laboratory and test-campaign handoffs: [battery](docs/campaigns/M21_BATTERY_PHYSICAL_ACQUISITION.md),
 [propulsion](docs/campaigns/M22_PROPULSION_BENCH_ACQUISITION.md), and
 [full-aircraft](docs/campaigns/M26_INDEPENDENT_FLIGHT_ACQUISITION.md).
+The [VTC6 battery benchmark](docs/campaigns/M21_VTC6_CELL_BENCHMARK.md)
+reports voltage and current errors against held-out single-cell measurements.
 
 ## Deviations from the original build specification
 

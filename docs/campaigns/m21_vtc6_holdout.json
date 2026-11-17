@@ -1,0 +1,637 @@
+{
+  "plan": "M21-vtc6-sampled-v2",
+  "freeze_sha256": "f635ffec07c8746e2a19fb688ed7857fee0d3f558049a95c207520042df49d3e",
+  "holdout": {
+    "cell": "VAH27",
+    "source_sha256": "c9a2fcdb18a6265cd5b2e0ccba8afc7d5a4051e6bf56590340834df2304a137f"
+  },
+  "gap_ceiling_s": 11.0,
+  "verdict": "INCONCLUSIVE_FOR_PACK_ACCEPTANCE",
+  "samples": 510,
+  "pooled_voltage_residual_v": {
+    "mae": 0.060187068,
+    "rmse": 0.069906449,
+    "bias": 0.05558791,
+    "max_abs_error": 0.250064235
+  },
+  "pooled_current_residual_a": {
+    "mae": 0.253523526,
+    "rmse": 0.789291444,
+    "bias": -0.121837525,
+    "max_abs_error": 5.525447724
+  },
+  "pooled_by_phase": {
+    "takeoff": {
+      "samples": 45,
+      "voltage_residual_v": {
+        "mae": 0.065842421,
+        "rmse": 0.06692164,
+        "bias": 0.045002073,
+        "max_abs_error": 0.097341686
+      },
+      "current_residual_a": {
+        "mae": 0.356342572,
+        "rmse": 0.464286608,
+        "bias": -0.090733049,
+        "max_abs_error": 1.199419256
+      }
+    },
+    "cruise": {
+      "samples": 405,
+      "voltage_residual_v": {
+        "mae": 0.049579061,
+        "rmse": 0.054550077,
+        "bias": 0.049579061,
+        "max_abs_error": 0.250064235
+      },
+      "current_residual_a": {
+        "mae": 0.124496808,
+        "rmse": 0.56653851,
+        "bias": -0.124496808,
+        "max_abs_error": 5.086033577
+      }
+    },
+    "landing": {
+      "samples": 60,
+      "voltage_residual_v": {
+        "mae": 0.127549598,
+        "rmse": 0.134513274,
+        "bias": 0.104087013,
+        "max_abs_error": 0.174179629
+      },
+      "current_residual_a": {
+        "mae": 1.047339586,
+        "rmse": 1.722540888,
+        "bias": -0.127215723,
+        "max_abs_error": 5.525447724
+      }
+    }
+  },
+  "missions": [
+    {
+      "tester_cycle": "0",
+      "phase_results": {
+        "takeoff": {
+          "source_csv_lines_inclusive": [
+            18918,
+            18926
+          ],
+          "samples": 9,
+          "commanded_power_w": 54,
+          "mean_measured_power_w": 53.646906,
+          "measured_energy_wh": 1.120032643,
+          "commanded_energy_over_sample_span_wh": 1.124130053,
+          "duration_s": 74.942004,
+          "current_a": [
+            12.767311,
+            14.745359
+          ],
+          "temperature_c": [
+            22.934158,
+            31.189175
+          ],
+          "min_measured_voltage_v": 3.6656437,
+          "min_predicted_voltage_v": 3.736085103,
+          "voltage_residual_v": {
+            "mae": 0.069814104,
+            "rmse": 0.070357414,
+            "bias": 0.050142952,
+            "max_abs_error": 0.088520186
+          },
+          "current_residual_a": {
+            "mae": 0.374307656,
+            "rmse": 0.473986145,
+            "bias": -0.10882071,
+            "max_abs_error": 1.194691256
+          }
+        },
+        "cruise": {
+          "source_csv_lines_inclusive": [
+            18927,
+            19007
+          ],
+          "samples": 81,
+          "commanded_power_w": 16,
+          "mean_measured_power_w": 16.262169,
+          "measured_energy_wh": 3.589538688,
+          "commanded_energy_over_sample_span_wh": 3.555537947,
+          "duration_s": 799.996038,
+          "current_a": [
+            4.0847825,
+            9.109300800000002
+          ],
+          "temperature_c": [
+            30.011019,
+            32.327801
+          ],
+          "min_measured_voltage_v": 3.6603665,
+          "min_predicted_voltage_v": 3.718039318,
+          "voltage_residual_v": {
+            "mae": 0.050804935,
+            "rmse": 0.055764804,
+            "bias": 0.050804935,
+            "max_abs_error": 0.250064235
+          },
+          "current_residual_a": {
+            "mae": 0.12550693,
+            "rmse": 0.568672582,
+            "bias": -0.12550693,
+            "max_abs_error": 5.086033577
+          }
+        },
+        "landing": {
+          "source_csv_lines_inclusive": [
+            19008,
+            19019
+          ],
+          "samples": 12,
+          "commanded_power_w": 54,
+          "mean_measured_power_w": 52.55,
+          "measured_energy_wh": 1.551118346,
+          "commanded_energy_over_sample_span_wh": 1.574970075,
+          "duration_s": 104.998005,
+          "current_a": [
+            10.097144,
+            17.124140999999998
+          ],
+          "temperature_c": [
+            30.422186,
+            44.069847
+          ],
+          "min_measured_voltage_v": 3.1553392,
+          "min_predicted_voltage_v": 3.305578067,
+          "voltage_residual_v": {
+            "mae": 0.120463566,
+            "rmse": 0.126182399,
+            "bias": 0.097129218,
+            "max_abs_error": 0.150238867
+          },
+          "current_residual_a": {
+            "mae": 1.008936794,
+            "rmse": 1.705906353,
+            "bias": -0.088199569,
+            "max_abs_error": 5.524423349
+          }
+        }
+      },
+      "max_sample_interval_s": 10.000000475,
+      "modeled_final_soc_pct": 45.526200695,
+      "measured_voltage_at_or_below_2_5_v": false,
+      "predicted_voltage_at_or_below_2_5_v": false,
+      "measured_temperature_at_or_above_70_c": false,
+      "measured_current_above_30_a": false
+    },
+    {
+      "tester_cycle": "1",
+      "phase_results": {
+        "takeoff": {
+          "source_csv_lines_inclusive": [
+            19185,
+            19193
+          ],
+          "samples": 9,
+          "commanded_power_w": 54,
+          "mean_measured_power_w": 53.648688,
+          "measured_energy_wh": 1.12014861,
+          "commanded_energy_over_sample_span_wh": 1.124250053,
+          "duration_s": 74.950004,
+          "current_a": [
+            12.762583000000001,
+            14.728021
+          ],
+          "temperature_c": [
+            22.696945,
+            31.133827
+          ],
+          "min_measured_voltage_v": 3.669306,
+          "min_predicted_voltage_v": 3.736080556,
+          "voltage_residual_v": {
+            "mae": 0.06634371,
+            "rmse": 0.067294761,
+            "bias": 0.045604869,
+            "max_abs_error": 0.093324786
+          },
+          "current_residual_a": {
+            "mae": 0.358259257,
+            "rmse": 0.466107648,
+            "bias": -0.091721645,
+            "max_abs_error": 1.199419256
+          }
+        },
+        "cruise": {
+          "source_csv_lines_inclusive": [
+            19194,
+            19274
+          ],
+          "samples": 81,
+          "commanded_power_w": 16,
+          "mean_measured_power_w": 16.263468,
+          "measured_energy_wh": 3.589884504,
+          "commanded_energy_over_sample_span_wh": 3.555537947,
+          "duration_s": 799.996038,
+          "current_a": [
+            4.0814331,
+            9.0941309
+          ],
+          "temperature_c": [
+            30.05846,
+            32.280354
+          ],
+          "min_measured_voltage_v": 3.6612329,
+          "min_predicted_voltage_v": 3.718031096,
+          "voltage_residual_v": {
+            "mae": 0.04937408,
+            "rmse": 0.054384965,
+            "bias": 0.04937408,
+            "max_abs_error": 0.246830894
+          },
+          "current_residual_a": {
+            "mae": 0.124200433,
+            "rmse": 0.566864896,
+            "bias": -0.124200433,
+            "max_abs_error": 5.070859387
+          }
+        },
+        "landing": {
+          "source_csv_lines_inclusive": [
+            19275,
+            19286
+          ],
+          "samples": 12,
+          "commanded_power_w": 54,
+          "mean_measured_power_w": 52.557053,
+          "measured_energy_wh": 1.551282499,
+          "commanded_energy_over_sample_span_wh": 1.574970075,
+          "duration_s": 104.998005,
+          "current_a": [
+            10.09616,
+            17.176938999999997
+          ],
+          "temperature_c": [
+            30.659401,
+            44.156826
+          ],
+          "min_measured_voltage_v": 3.1472266,
+          "min_predicted_voltage_v": 3.305565515,
+          "voltage_residual_v": {
+            "mae": 0.124208077,
+            "rmse": 0.130749701,
+            "bias": 0.100688457,
+            "max_abs_error": 0.158338915
+          },
+          "current_residual_a": {
+            "mae": 1.030593613,
+            "rmse": 1.716298367,
+            "bias": -0.109685659,
+            "max_abs_error": 5.525447724
+          }
+        }
+      },
+      "max_sample_interval_s": 10.000000475,
+      "modeled_final_soc_pct": 45.525039823,
+      "measured_voltage_at_or_below_2_5_v": false,
+      "predicted_voltage_at_or_below_2_5_v": false,
+      "measured_temperature_at_or_above_70_c": false,
+      "measured_current_above_30_a": false
+    },
+    {
+      "tester_cycle": "2",
+      "phase_results": {
+        "takeoff": {
+          "source_csv_lines_inclusive": [
+            19452,
+            19460
+          ],
+          "samples": 9,
+          "commanded_power_w": 54,
+          "mean_measured_power_w": 53.655836,
+          "measured_energy_wh": 1.120260692,
+          "commanded_energy_over_sample_span_wh": 1.124250053,
+          "duration_s": 74.950004,
+          "current_a": [
+            12.765341000000001,
+            14.723688
+          ],
+          "temperature_c": [
+            22.783924,
+            31.212898
+          ],
+          "min_measured_voltage_v": 3.6706057,
+          "min_predicted_voltage_v": 3.736080556,
+          "voltage_residual_v": {
+            "mae": 0.064829688,
+            "rmse": 0.066007265,
+            "bias": 0.043679535,
+            "max_abs_error": 0.095175686
+          },
+          "current_residual_a": {
+            "mae": 0.352086257,
+            "rmse": 0.462256568,
+            "bias": -0.086161533,
+            "max_abs_error": 1.196661256
+          }
+        },
+        "cruise": {
+          "source_csv_lines_inclusive": [
+            19461,
+            19541
+          ],
+          "samples": 81,
+          "commanded_power_w": 16,
+          "mean_measured_power_w": 16.262936,
+          "measured_energy_wh": 3.589780278,
+          "commanded_energy_over_sample_span_wh": 3.555537947,
+          "duration_s": 799.996038,
+          "current_a": [
+            4.0847822,
+            9.084082
+          ],
+          "temperature_c": [
+            30.011019,
+            32.114307
+          ],
+          "min_measured_voltage_v": 3.6611147,
+          "min_predicted_voltage_v": 3.718031096,
+          "voltage_residual_v": {
+            "mae": 0.049070209,
+            "rmse": 0.05405863,
+            "bias": 0.049070209,
+            "max_abs_error": 0.245452594
+          },
+          "current_residual_a": {
+            "mae": 0.123716395,
+            "rmse": 0.565719241,
+            "bias": -0.123716395,
+            "max_abs_error": 5.060810487
+          }
+        },
+        "landing": {
+          "source_csv_lines_inclusive": [
+            19542,
+            19553
+          ],
+          "samples": 12,
+          "commanded_power_w": 54,
+          "mean_measured_power_w": 52.558717,
+          "measured_energy_wh": 1.551380956,
+          "commanded_energy_over_sample_span_wh": 1.574970075,
+          "duration_s": 104.998005,
+          "current_a": [
+            10.098325999999998,
+            17.202552999999998
+          ],
+          "temperature_c": [
+            30.540792,
+            44.235897
+          ],
+          "min_measured_voltage_v": 3.1413589,
+          "min_predicted_voltage_v": 3.305565515,
+          "voltage_residual_v": {
+            "mae": 0.127611252,
+            "rmse": 0.134612907,
+            "bias": 0.104065366,
+            "max_abs_error": 0.164206615
+          },
+          "current_residual_a": {
+            "mae": 1.048506197,
+            "rmse": 1.723413206,
+            "bias": -0.127959243,
+            "max_abs_error": 5.523281724
+          }
+        }
+      },
+      "max_sample_interval_s": 10.000000475,
+      "modeled_final_soc_pct": 45.525039823,
+      "measured_voltage_at_or_below_2_5_v": false,
+      "predicted_voltage_at_or_below_2_5_v": false,
+      "measured_temperature_at_or_above_70_c": false,
+      "measured_current_above_30_a": false
+    },
+    {
+      "tester_cycle": "3",
+      "phase_results": {
+        "takeoff": {
+          "source_csv_lines_inclusive": [
+            19717,
+            19725
+          ],
+          "samples": 9,
+          "commanded_power_w": 54,
+          "mean_measured_power_w": 53.658732,
+          "measured_energy_wh": 1.12030123,
+          "commanded_energy_over_sample_span_wh": 1.124220053,
+          "duration_s": 74.948004,
+          "current_a": [
+            12.770857,
+            14.720732
+          ],
+          "temperature_c": [
+            22.736481,
+            30.833357
+          ],
+          "min_measured_voltage_v": 3.6708026,
+          "min_predicted_voltage_v": 3.736081693,
+          "voltage_residual_v": {
+            "mae": 0.064409747,
+            "rmse": 0.065590302,
+            "bias": 0.043399639,
+            "max_abs_error": 0.094545486
+          },
+          "current_residual_a": {
+            "mae": 0.350466635,
+            "rmse": 0.460037943,
+            "bias": -0.085767689,
+            "max_abs_error": 1.191145256
+          }
+        },
+        "cruise": {
+          "source_csv_lines_inclusive": [
+            19726,
+            19806
+          ],
+          "samples": 81,
+          "commanded_power_w": 16,
+          "mean_measured_power_w": 16.263165,
+          "measured_energy_wh": 3.589818137,
+          "commanded_energy_over_sample_span_wh": 3.555537947,
+          "duration_s": 799.996038,
+          "current_a": [
+            4.0839941,
+            9.088417
+          ],
+          "temperature_c": [
+            29.979389,
+            31.956165
+          ],
+          "min_measured_voltage_v": 3.6601303,
+          "min_predicted_voltage_v": 3.718033151,
+          "voltage_residual_v": {
+            "mae": 0.0497036,
+            "rmse": 0.054614781,
+            "bias": 0.0497036,
+            "max_abs_error": 0.245611054
+          },
+          "current_residual_a": {
+            "mae": 0.124480207,
+            "rmse": 0.566276378,
+            "bias": -0.124480207,
+            "max_abs_error": 5.065146559
+          }
+        },
+        "landing": {
+          "source_csv_lines_inclusive": [
+            19807,
+            19818
+          ],
+          "samples": 12,
+          "commanded_power_w": 54,
+          "mean_measured_power_w": 52.554778,
+          "measured_energy_wh": 1.551280455,
+          "commanded_energy_over_sample_span_wh": 1.574970075,
+          "duration_s": 104.998005,
+          "current_a": [
+            10.10207,
+            17.229544999999998
+          ],
+          "temperature_c": [
+            30.675213,
+            44.394039
+          ],
+          "min_measured_voltage_v": 3.135097,
+          "min_predicted_voltage_v": 3.305568653,
+          "voltage_residual_v": {
+            "mae": 0.131735687,
+            "rmse": 0.139064011,
+            "bias": 0.108334573,
+            "max_abs_error": 0.170471653
+          },
+          "current_residual_a": {
+            "mae": 1.068908929,
+            "rmse": 1.731713078,
+            "bias": -0.148987658,
+            "max_abs_error": 5.51952763
+          }
+        }
+      },
+      "max_sample_interval_s": 10.000000475,
+      "modeled_final_soc_pct": 45.525330041,
+      "measured_voltage_at_or_below_2_5_v": false,
+      "predicted_voltage_at_or_below_2_5_v": false,
+      "measured_temperature_at_or_above_70_c": false,
+      "measured_current_above_30_a": false
+    },
+    {
+      "tester_cycle": "4",
+      "phase_results": {
+        "takeoff": {
+          "source_csv_lines_inclusive": [
+            19985,
+            19993
+          ],
+          "samples": 9,
+          "commanded_power_w": 54,
+          "mean_measured_power_w": 53.658924,
+          "measured_energy_wh": 1.120219397,
+          "commanded_energy_over_sample_span_wh": 1.124160053,
+          "duration_s": 74.944004,
+          "current_a": [
+            12.767705,
+            14.716593999999999
+          ],
+          "temperature_c": [
+            22.855087,
+            30.825451
+          ],
+          "min_measured_voltage_v": 3.6718266,
+          "min_predicted_voltage_v": 3.736083966,
+          "voltage_residual_v": {
+            "mae": 0.063814855,
+            "rmse": 0.06522831,
+            "bias": 0.04218337,
+            "max_abs_error": 0.097341686
+          },
+          "current_residual_a": {
+            "mae": 0.346593056,
+            "rmse": 0.45888454,
+            "bias": -0.081193666,
+            "max_abs_error": 1.194297256
+          }
+        },
+        "cruise": {
+          "source_csv_lines_inclusive": [
+            19994,
+            20074
+          ],
+          "samples": 81,
+          "commanded_power_w": 16,
+          "mean_measured_power_w": 16.26683,
+          "measured_energy_wh": 3.590663791,
+          "commanded_energy_over_sample_span_wh": 3.555537947,
+          "duration_s": 799.996038,
+          "current_a": [
+            4.0839944,
+            9.0779746
+          ],
+          "temperature_c": [
+            29.789618,
+            31.908722
+          ],
+          "min_measured_voltage_v": 3.6608391,
+          "min_predicted_voltage_v": 3.718037262,
+          "voltage_residual_v": {
+            "mae": 0.048942483,
+            "rmse": 0.053907391,
+            "bias": 0.048942483,
+            "max_abs_error": 0.244510475
+          },
+          "current_residual_a": {
+            "mae": 0.124580074,
+            "rmse": 0.565152995,
+            "bias": -0.124580074,
+            "max_abs_error": 5.054706304
+          }
+        },
+        "landing": {
+          "source_csv_lines_inclusive": [
+            20075,
+            20086
+          ],
+          "samples": 12,
+          "commanded_power_w": 54,
+          "mean_measured_power_w": 52.5616,
+          "measured_energy_wh": 1.55144445,
+          "commanded_energy_over_sample_span_wh": 1.574970075,
+          "duration_s": 104.998005,
+          "current_a": [
+            10.110541999999999,
+            17.25102
+          ],
+          "temperature_c": [
+            30.343115,
+            44.196362
+          ],
+          "min_measured_voltage_v": 3.1313953,
+          "min_predicted_voltage_v": 3.305574929,
+          "voltage_residual_v": {
+            "mae": 0.133729406,
+            "rmse": 0.141393737,
+            "bias": 0.110217453,
+            "max_abs_error": 0.174179629
+          },
+          "current_residual_a": {
+            "mae": 1.079752395,
+            "rmse": 1.735210567,
+            "bias": -0.161246488,
+            "max_abs_error": 5.511035443
+          }
+        }
+      },
+      "max_sample_interval_s": 10.000000475,
+      "modeled_final_soc_pct": 45.525910477,
+      "measured_voltage_at_or_below_2_5_v": false,
+      "predicted_voltage_at_or_below_2_5_v": false,
+      "measured_temperature_at_or_above_70_c": false,
+      "measured_current_above_30_a": false
+    }
+  ]
+}
