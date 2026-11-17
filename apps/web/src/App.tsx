@@ -13,6 +13,7 @@ import { ScenarioPanel } from './panels/ScenarioPanel'
 import { StructuralLabPanel } from './panels/StructuralLabPanel'
 import { CombinedMetalPanel } from './panels/CombinedMetalPanel'
 import { RotorClearancePanel } from './panels/RotorClearancePanel'
+import { RotorTolerancePanel } from './panels/RotorTolerancePanel'
 import { BatteryEvidencePanel } from './panels/BatteryEvidencePanel'
 import { DischargeReplayPanel } from './panels/DischargeReplayPanel'
 import { BatteryCampaignPanel } from './panels/BatteryCampaignPanel'
@@ -24,6 +25,7 @@ import { TelemetryAuditPanel } from './panels/TelemetryAuditPanel'
 import { ValidationProtocolPanel } from './panels/ValidationProtocolPanel'
 import { HILEvidencePanel } from './panels/HILEvidencePanel'
 import { HILTrackingQualityPanel } from './panels/HILTrackingQualityPanel'
+import { SourcePinnedHoldoutPanel } from './panels/SourcePinnedHoldoutPanel'
 import { ResultsPanel } from './panels/ResultsPanel'
 import { TelemetryCharts } from './charts/TelemetryCharts'
 import { PlaybackWorkspace } from './playback/PlaybackWorkspace'
@@ -84,6 +86,7 @@ export default function App() {
             <StructuralLabPanel design={design} />
             <CombinedMetalPanel design={design} />
             <RotorClearancePanel design={design} />
+            <RotorTolerancePanel key={JSON.stringify(design.rotors)} design={design} />
           </div>
           <div className="border-t border-slate-800">
             <BatteryEvidencePanel design={design} />
@@ -111,6 +114,7 @@ export default function App() {
           <div className="border-t border-slate-800"><ValidationProtocolPanel /></div>
           <div className="border-t border-slate-800"><HILEvidencePanel /></div>
           <div className="border-t border-slate-800"><HILTrackingQualityPanel /></div>
+          <div className="border-t border-slate-800"><SourcePinnedHoldoutPanel /></div>
           <div className="border-t border-slate-800">
             <TelemetryCharts result={result} />
           </div>
