@@ -1,5 +1,7 @@
 # M22 — Published P80/G30 bench data: original-source acquisition and admission plan
 
+**18 November 2026 update.** The publisher released the three original Setup 3 CSVs under CC0. Their publisher byte counts and MD5s matched on retrieval. See the [admitted source and held-out results](M22_KOTARSKI_SETUP3_BENCHMARK.md) for file IDs, custody hashes and the bounded physical comparison. The text below records the earlier acquisition attempt.
+
 **Date:** 17 November 2026. **Current state:** VERIFIED ARTICLE / ORIGINAL DATASET NOT RETRIEVED / NO HARDWARE OR PHYSICAL VALIDATION. This work addresses [M22 physical-data issue #25](https://github.com/god88844-hub/aeroforge/issues/25) and [global issue #16](https://github.com/god88844-hub/aeroforge/issues/16). No actual experimental points were copied or invented.
 
 ## Evidence of a promising independent bench dataset

@@ -20,6 +20,17 @@ Create a separate `MotorSpec` for the source apparatus. At each PWM from 1200 to
 
 Score every rotating held-out sample inside the RPM range common to both calibration sweeps and between the nominal voltage planes. Report excluded samples, source CSV line numbers and unweighted residual MAE, RMSE, bias and maximum absolute error. Command levels 1000 and 1100 µs are stationary baseline readings and remain visible in the report. An observed or predicted value above the published 80 A ESC rating yields a sampled-limit failure. For this experiment, the published record supplies no independent uncertainty budget or decision-specific error tolerance. Acceptance is inconclusive in the absence of a sampled limit breach. The comparison addresses static conditional thrust and current for the published apparatus.
 
+## Held-out results
+
+The model and scoring code were [frozen before reading the holdout observations](https://github.com/god88844-hub/aeroforge/commit/4ed708ba917977f68b19eeea4e410a16162e1613). It scored 24 readings at 1300–1800 µs, covering 1,101–3,339 RPM and measured bus voltages of 46.21–47.90 V. It classified 8 readings as stationary and 12 as outside the common RPM range (the four readings at each of 1200, 1900 and 2000 µs). Those rows remain in the [published comparison](m22_kotarski_setup3_holdout.json).
+
+| Output | MAE | RMSE | Signed bias | Maximum absolute error |
+| --- | ---: | ---: | ---: | ---: |
+| Thrust (N) | 0.629 | 0.788 | −0.002 | 2.097 |
+| Current (A) | 0.313 | 0.532 | +0.312 | 1.655 |
+
+The maximum measured bus current across the sweep was 48.41 A. The sampled ESC current comparison yielded no limit breach. The recorded interval covers one rig and one held-out sweep, and the benchmark evaluates outputs conditioned on measured RPM and voltage. Dynamic response, long-duration heating, actual ESC limits in an aircraft installation and P80 III equivalence remain unresolved.
+
 ## Reproduce
 
 Download the original-format files into DATA_DIR from `https://dataverse.harvard.edu/api/access/datafile/FILE_ID?format=original` using the listed file IDs. From the repository root with Python backend dependencies installed, run the following commands.
