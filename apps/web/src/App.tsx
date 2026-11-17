@@ -11,6 +11,7 @@ import { DesignPanel } from './panels/DesignPanel'
 import { ComponentInspector } from './editor/ComponentInspector'
 import { ScenarioPanel } from './panels/ScenarioPanel'
 import { StructuralLabPanel } from './panels/StructuralLabPanel'
+import { CombinedMetalPanel } from './panels/CombinedMetalPanel'
 import { BatteryEvidencePanel } from './panels/BatteryEvidencePanel'
 import { DischargeReplayPanel } from './panels/DischargeReplayPanel'
 import { BatteryCampaignPanel } from './panels/BatteryCampaignPanel'
@@ -21,6 +22,7 @@ import { G30PublicBenchPanel } from './panels/G30PublicBenchPanel'
 import { TelemetryAuditPanel } from './panels/TelemetryAuditPanel'
 import { ValidationProtocolPanel } from './panels/ValidationProtocolPanel'
 import { HILEvidencePanel } from './panels/HILEvidencePanel'
+import { HILTrackingQualityPanel } from './panels/HILTrackingQualityPanel'
 import { ResultsPanel } from './panels/ResultsPanel'
 import { TelemetryCharts } from './charts/TelemetryCharts'
 import { PlaybackWorkspace } from './playback/PlaybackWorkspace'
@@ -79,6 +81,7 @@ export default function App() {
           </div>
           <div className="border-t border-slate-800">
             <StructuralLabPanel design={design} />
+            <CombinedMetalPanel design={design} />
           </div>
           <div className="border-t border-slate-800">
             <BatteryEvidencePanel design={design} />
@@ -105,6 +108,7 @@ export default function App() {
           <div className="border-t border-slate-800"><TelemetryAuditPanel /></div>
           <div className="border-t border-slate-800"><ValidationProtocolPanel /></div>
           <div className="border-t border-slate-800"><HILEvidencePanel /></div>
+          <div className="border-t border-slate-800"><HILTrackingQualityPanel /></div>
           <div className="border-t border-slate-800">
             <TelemetryCharts result={result} />
           </div>
