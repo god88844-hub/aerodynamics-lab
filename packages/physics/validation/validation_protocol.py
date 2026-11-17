@@ -4,6 +4,7 @@ from __future__ import annotations
 from datetime import date
 from hashlib import sha256
 import json
+import math
 from typing import Literal
 
 from pydantic import BaseModel, ConfigDict, Field, model_validator
@@ -212,6 +213,9 @@ def audit_protocol(body: ProtocolAuditRequest) -> dict:
         hard_terms = [t.absolute_value for t in terms if t.type == "hard_absolute_bound"]
         standard_terms = [t for t in terms if t.type == "standard_uncertainty"]
         hard_bound = sum(hard_terms) if terms and not standard_terms else None
+        if hard_bound is not None and not math.isfinite(hard_bound):
+            blockers.append(f"Nonfinite accumulated measurement bound for {ch}")
+            hard_bound = None
         if hard_bound is not None and hard_bound >= metric.maximum_absolute_prediction_error:
             blockers.append(f"Measurement bound alone exhausts prediction tolerance for {ch}")
         if standard_terms:
