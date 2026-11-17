@@ -1,0 +1,71 @@
+{
+  "schema_version": "1.0",
+  "candidate_id": "kotarski_2023_modular_heavy_lift_setup3",
+  "record_kind": "published_dataset_candidate_NOT_IMPORTED_DATA",
+  "research_status": "ARTICLE_VERIFIED_ORIGINAL_DATASET_NOT_RETRIEVED",
+  "article": {
+    "title": "Concept of a Modular Multirotor Heavy Lift Unmanned Aerial Vehicle Platform",
+    "authors": [
+      "Denis Kotarski",
+      "Petar Piljek",
+      "Marko Pranjić",
+      "Josip Kasać"
+    ],
+    "journal": "Aerospace",
+    "year": 2023,
+    "volume": 10,
+    "issue": 6,
+    "article_number": 528,
+    "doi": "10.3390/aerospace10060528",
+    "url": "https://www.mdpi.com/2226-4310/10/6/528"
+  },
+  "provider_dataset": {
+    "repository": "Harvard Dataverse",
+    "dataset_doi": "10.7910/DVN/J5L2P4",
+    "dataset_url": "https://doi.org/10.7910/DVN/J5L2P4",
+    "dataset_api_url": "https://dataverse.harvard.edu/api/datasets/:persistentId/?persistentId=doi%3A10.7910%2FDVN%2FJ5L2P4",
+    "provider_metadata_fetched": false,
+    "original_files_downloaded": false,
+    "source_data_license_verified": false,
+    "file_id": null,
+    "original_sha256": null,
+    "dataset_file_inventory": [],
+    "notes": "DOI and link cited in the article Data Availability Statement; this environment could not access the Dataverse DOI/API; no original file bytes are present."
+  },
+  "published_hardware": {
+    "setup": 3,
+    "motor_name": "P80 100 Kv",
+    "motor_revision": null,
+    "esc_name": "Alpha 80 A",
+    "propeller_name": "G30 x 10.5",
+    "mount_revision": null,
+    "test_bench": "RCbenchmark 1780",
+    "reported_channels": [
+      "thrust_force",
+      "torque",
+      "rpm",
+      "bus_voltage",
+      "bus_current"
+    ],
+    "reported_initial_cell_voltages_v": [
+      4.2,
+      4,
+      3.8
+    ]
+  },
+  "aeroforge_reference_comparison": {
+    "motor_name": "P80 III KV100",
+    "motor_revision": "III",
+    "esc_name": null,
+    "propeller_name": "G30 x 10.5",
+    "mount_revision": null,
+    "exact_motor_revision_match_verified": false,
+    "selected_esc_match_verified": false,
+    "physical_fixture_and_mount_match_verified": false,
+    "measurement_instrument_calibration_verified": false,
+    "unused_for_model_fitting_verified": false,
+    "blind_whole_experiment_holdouts_verified": false
+  },
+  "gate": "RESEARCH_LEAD_ONLY_M22_PHYSICAL_VALIDATION_NOT_ESTABLISHED",
+  "source_provenance_limitation": "A journal article and a claimed public dataset DOI cannot authenticate specific aircraft hardware or a validation dataset without retrieving original files and verifying exact source conditions."
+}
