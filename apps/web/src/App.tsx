@@ -11,6 +11,7 @@ import { DesignPanel } from './panels/DesignPanel'
 import { ComponentInspector } from './editor/ComponentInspector'
 import { ScenarioPanel } from './panels/ScenarioPanel'
 import { StructuralLabPanel } from './panels/StructuralLabPanel'
+import { CombinedMetalPanel } from './panels/CombinedMetalPanel'
 import { BatteryEvidencePanel } from './panels/BatteryEvidencePanel'
 import { DischargeReplayPanel } from './panels/DischargeReplayPanel'
 import { BatteryCampaignPanel } from './panels/BatteryCampaignPanel'
@@ -78,6 +79,9 @@ export default function App() {
           </div>
           <div className="border-t border-slate-800">
             <StructuralLabPanel design={design} />
+          </div>
+          <div className="border-t border-slate-800">
+            <CombinedMetalPanel design={design} />
           </div>
           <div className="border-t border-slate-800">
             <BatteryEvidencePanel design={design} />
