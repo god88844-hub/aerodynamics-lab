@@ -34,11 +34,23 @@ def audit_derived_holdout_group_coverage(root, manifest, *, holdout_case: Mappin
     split = prepare_whole_flight_holdout_manifest(root, manifest, **holdout_case)
     reports = []
     source_seen, prediction_seen = set(), set()
+    fixed_acceptance = None
     for item in comparison_cases:
         if not isinstance(item, Mapping) or set(item) != _CASE:
             raise ValueError("comparison cases require exact original-derived/prediction fields")
         if item["channel"] != required_channel:
             raise ValueError("wrong channel cannot satisfy declared coverage")
+        # One frozen numeric criterion and uncertainty budget for every
+        # independent claimed holdout in the same channel and regime.
+        criterion = tuple(item[k] for k in (
+            "measurement_hard_error", "numerical_hard_error",
+            "model_discrepancy_hard_error", "predeclared_max_conservative_error",
+            "predeclared_min_robust_coverage",
+        ))
+        if fixed_acceptance is None:
+            fixed_acceptance = criterion
+        elif criterion != fixed_acceptance:
+            raise ValueError("holdout cases cannot cherry-pick different critical acceptance thresholds or uncertainty budgets")
         path = str(item["derived_csv_path"])
         prediction = str(item["frozen_prediction_csv_path"])
         if path in source_seen or prediction in prediction_seen:
