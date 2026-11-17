@@ -4,9 +4,21 @@ on:
   push:
   pull_request:
 
+# Limit token permissions to source checkout only.
+permissions:
+  contents: read
+
+# Per-head concurrency keeps the most recent verification rather than
+# exhausting runners on stale commits and duplicate push/PR runs.
+# Main gets its own group; fork heads cannot cancel another repository.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.head.repo.full_name || github.repository }}-${{ github.head_ref || github.ref_name }}
+  cancel-in-progress: true
+
 jobs:
   python-tests:
     runs-on: ubuntu-latest
+    timeout-minutes: 30
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -19,6 +31,7 @@ jobs:
 
   web-build:
     runs-on: ubuntu-latest
+    timeout-minutes: 20
     defaults:
       run:
         working-directory: apps/web
