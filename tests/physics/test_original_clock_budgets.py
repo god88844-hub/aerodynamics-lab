@@ -14,7 +14,7 @@ def fixture():
         pred = ["sample_id,t_s,prediction,lower,upper"]
         budgets = []
         for k in range(5):
-            t = k * .1
+            t = round(k * .1, 1)
             observed = 10.1 + .1 * run_index
             predicted = 10 + .1 * run_index
             obs.append(f"s{k},{t:.1f},{observed:.2f},0.05")
