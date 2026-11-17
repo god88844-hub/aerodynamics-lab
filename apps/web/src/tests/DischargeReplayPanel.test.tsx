@@ -1,4 +1,4 @@
-import { afterEach, describe, expect, it, vi } from 'vitest'
+import { afterEach, describe, expect, it, rs } from '@rstest/core'
 import { cleanup, fireEvent, render, screen } from '@testing-library/react'
 import { DischargeReplayPanel } from '../panels/DischargeReplayPanel'
 import type { DroneDesign } from '../types/api'
@@ -20,7 +20,7 @@ const csv = [
   '180,5,23.4,25', '240,5,23.2,25', '300,5,23.0,25',
 ].join('\n')
 
-afterEach(() => { cleanup(); vi.unstubAllGlobals() })
+afterEach(() => { cleanup(); rs.unstubAllGlobals() })
 
 function fill() {
   fireEvent.change(screen.getByLabelText('Discharge evidence type'), {
@@ -56,8 +56,8 @@ describe('M15 discharge replay panel', () => {
         endpoint_time_error_pct: null, endpoint_tolerance_met: false,
       },
     }
-    const send = vi.fn().mockResolvedValue({ ok: true, json: async () => response })
-    vi.stubGlobal('fetch', send)
+    const send = rs.fn().mockResolvedValue({ ok: true, json: async () => response })
+    rs.stubGlobal('fetch', send)
     render(<DischargeReplayPanel design={design} />)
     fill()
     fireEvent.click(screen.getByRole('button', { name: /Replay held-out battery discharge/i }))
@@ -76,8 +76,8 @@ describe('M15 discharge replay panel', () => {
   })
 
   it('refuses incomplete predeclared tolerance without sending network request', async () => {
-    const send = vi.fn()
-    vi.stubGlobal('fetch', send)
+    const send = rs.fn()
+    rs.stubGlobal('fetch', send)
     render(<DischargeReplayPanel design={design} />)
     fill()
     fireEvent.change(screen.getByLabelText('Predeclared maximum voltage error V'),

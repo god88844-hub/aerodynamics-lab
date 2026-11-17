@@ -1,8 +1,8 @@
-import { afterEach, describe, expect, it, vi } from 'vitest'
+import { afterEach, describe, expect, it, rs } from '@rstest/core'
 import { cleanup, fireEvent, render, screen } from '@testing-library/react'
 import { HILTrackingQualityPanel } from '../panels/HILTrackingQualityPanel'
 
-afterEach(() => { cleanup(); vi.unstubAllGlobals() })
+afterEach(() => { cleanup(); rs.unstubAllGlobals() })
 
 const response = {
   status: 'HIL_PHYSICAL_VALIDATION_NOT_ESTABLISHED',
@@ -26,8 +26,8 @@ const body = { frozen_protocol: { protocol_id: 'synthetic' }, recordings: [{}] }
 
 describe('M23 control-loop source evidence panel', () => {
   it('shows reported tracking errors but does not claim physical flight prediction', async () => {
-    const send = vi.fn().mockResolvedValue({ ok: true, json: async () => response })
-    vi.stubGlobal('fetch', send)
+    const send = rs.fn().mockResolvedValue({ ok: true, json: async () => response })
+    rs.stubGlobal('fetch', send)
     render(<HILTrackingQualityPanel />)
     fireEvent.change(screen.getByLabelText('HIL controller campaign JSON'), {
       target: { value: JSON.stringify(body) },
@@ -46,8 +46,8 @@ describe('M23 control-loop source evidence panel', () => {
   })
 
   it('blocks malformed campaign before calling the API', async () => {
-    const send = vi.fn()
-    vi.stubGlobal('fetch', send)
+    const send = rs.fn()
+    rs.stubGlobal('fetch', send)
     render(<HILTrackingQualityPanel />)
     fireEvent.click(screen.getByRole('button', { name: 'Audit controller test evidence' }))
     expect(await screen.findByRole('alert')).toBeDefined()

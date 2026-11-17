@@ -1,5 +1,5 @@
 /** Deterministic playback interpolation, with no fabricated trajectory. */
-import { describe, expect, it } from 'vitest'
+import { describe, expect, it } from '@rstest/core'
 import type { Telemetry } from '../types/api'
 import { flightDuration, hasSpatialTelemetry, sampleFlightPose, slerpWxyz } from '../playback/flightPlayback'
 

@@ -1,4 +1,4 @@
-import { afterEach, describe, expect, it, vi } from 'vitest'
+import { afterEach, describe, expect, it, rs } from '@rstest/core'
 import { cleanup, fireEvent, render, screen } from '@testing-library/react'
 import { BatteryCampaignPanel } from '../panels/BatteryCampaignPanel'
 import type { DroneDesign } from '../types/api'
@@ -36,12 +36,12 @@ const fakeResult = {
   independently_authenticated_physical_pack_test: false,
 }
 
-afterEach(() => { cleanup(); vi.unstubAllGlobals() })
+afterEach(() => { cleanup(); rs.unstubAllGlobals() })
 
 describe('M21 battery campaign review', () => {
   it('reports uncertainty and physical blockers without a false approval', async () => {
-    const send = vi.fn().mockResolvedValue({ ok: true, json: async () => fakeResult })
-    vi.stubGlobal('fetch', send)
+    const send = rs.fn().mockResolvedValue({ ok: true, json: async () => fakeResult })
+    rs.stubGlobal('fetch', send)
     render(<BatteryCampaignPanel design={design} />)
     fireEvent.change(screen.getByLabelText('Battery campaign JSON'), {
       target: { value: JSON.stringify(fakePayload) },
@@ -62,8 +62,8 @@ describe('M21 battery campaign review', () => {
   })
 
   it('prevents requests for absent battery or mismatched model', async () => {
-    const send = vi.fn()
-    vi.stubGlobal('fetch', send)
+    const send = rs.fn()
+    rs.stubGlobal('fetch', send)
     const { rerender } = render(<BatteryCampaignPanel design={design} />)
     fireEvent.change(screen.getByLabelText('Battery campaign JSON'), {
       target: { value: JSON.stringify({ ...fakePayload, battery_model_id: 'wrong_pack' }) },

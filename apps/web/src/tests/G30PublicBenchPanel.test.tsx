@@ -1,9 +1,9 @@
-import { afterEach, describe, expect, it, vi } from 'vitest'
+import { afterEach, describe, expect, it, rs } from '@rstest/core'
 import { cleanup, render, screen } from '@testing-library/react'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { G30PublicBenchPanel } from '../panels/G30PublicBenchPanel'
 
-afterEach(() => { cleanup(); vi.unstubAllGlobals() })
+afterEach(() => { cleanup(); rs.unstubAllGlobals() })
 function mount() {
   const client = new QueryClient({ defaultOptions: { queries: { retry: false } } })
   return render(<QueryClientProvider client={client}>
@@ -44,8 +44,8 @@ const report = {
 
 describe('M17 external G30 test-bench display', () => {
   it('preserves published anomalous reading and visible model mismatch', async () => {
-    const send = vi.fn().mockResolvedValue({ ok: true, json: async () => report })
-    vi.stubGlobal('fetch', send)
+    const send = rs.fn().mockResolvedValue({ ok: true, json: async () => report })
+    rs.stubGlobal('fetch', send)
     mount()
     expect(await screen.findByText('Published operating points: 9')).toBeDefined()
     expect(screen.getByText(/REAL EXPERIMENTAL PROP DATA BUT INSTALLATION AND MOTOR MISMATCH/)).toBeDefined()
@@ -54,7 +54,7 @@ describe('M17 external G30 test-bench display', () => {
     expect(send.mock.calls[0][0]).toBe('/api/components/public-g30-benchmark')
   })
   it('refuses physical conclusions if the source audit fails', async () => {
-    vi.stubGlobal('fetch', vi.fn().mockResolvedValue({
+    rs.stubGlobal('fetch', rs.fn().mockResolvedValue({
       ok: false, status: 503, json: async () => ({ detail: 'source mismatch' }),
     }))
     mount()

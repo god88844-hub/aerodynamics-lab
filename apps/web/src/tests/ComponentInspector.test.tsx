@@ -1,5 +1,5 @@
 import { cleanup, fireEvent, render, screen } from '@testing-library/react'
-import { afterEach, beforeEach, describe, expect, it } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it } from '@rstest/core'
 import { ComponentInspector } from '../editor/ComponentInspector'
 import { useDesignStore } from '../state/designStore'
 import type { DroneDesign } from '../types/api'

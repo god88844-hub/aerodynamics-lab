@@ -1,4 +1,4 @@
-import { afterEach, describe, expect, it, vi } from 'vitest'
+import { afterEach, describe, expect, it, rs } from '@rstest/core'
 import { cleanup, fireEvent, render, screen } from '@testing-library/react'
 import { PropulsionEvidencePanel } from '../panels/PropulsionEvidencePanel'
 import type { DroneDesign } from '../types/api'
@@ -19,7 +19,7 @@ const csv = [
   'r5,4400,14.8,1070,7.2',
 ].join('\n')
 
-afterEach(() => { cleanup(); vi.unstubAllGlobals() })
+afterEach(() => { cleanup(); rs.unstubAllGlobals() })
 
 function enter() {
   fireEvent.change(screen.getByLabelText('Propulsion evidence dataset type'), {
@@ -52,8 +52,8 @@ describe('M14 propulsion held-out evidence user interface', () => {
         calibration_knot_operating_point_overlap_count: 0,
       },
     }
-    const send = vi.fn().mockResolvedValue({ ok: true, json: async () => response })
-    vi.stubGlobal('fetch', send)
+    const send = rs.fn().mockResolvedValue({ ok: true, json: async () => response })
+    rs.stubGlobal('fetch', send)
     render(<PropulsionEvidencePanel design={design} />)
     enter()
     fireEvent.click(screen.getByRole('button', { name: /Compare independent static bench data/i }))
@@ -72,8 +72,8 @@ describe('M14 propulsion held-out evidence user interface', () => {
     expect(screen.queryByText('SYNTHETIC VERIFICATION ONLY')).toBeNull()
   })
   it('requires explicit provenance before any request', async () => {
-    const send = vi.fn()
-    vi.stubGlobal('fetch', send)
+    const send = rs.fn()
+    rs.stubGlobal('fetch', send)
     render(<PropulsionEvidencePanel design={design} />)
     fireEvent.click(screen.getByRole('button', { name: /Compare independent static bench data/i }))
     expect(await screen.findByRole('alert')).toBeDefined()
