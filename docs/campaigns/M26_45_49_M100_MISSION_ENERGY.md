@@ -26,7 +26,17 @@ Compare with a baseline that averages earlier energies for the exact planned spe
 
 Report per-flight errors, aggregate energy and duration MAE/RMSE/bias/maximum absolute error, and eligibility outcomes. Before opening the later flight CSVs, freeze an empirical symmetric error band from the 90th percentile absolute Wh residual, leaving one calendar date out at a time in calibration. Measure its frequency on the later flights. The empirical band is specific to this experiment and sample, with correlation among flights on a given day. Its width represents calibration forecast error and does not supply a separate certified meter uncertainty budget.
 
-## M26.49 Reproduction
+## M26.49 Results and reproduction
+
+The [frozen model and scorer](https://github.com/god88844-hub/aeroforge/commit/fefb6c16247c68828a5d82f65f9df20d3aac5cb0) scored 24 later flights. Flight 277 was rejected because its largest sample gap was 1.3 s. Recorded energies of scored flights spanned 15.41–27.85 Wh. The [flight-by-flight report](m26_m100_mission_energy_results.json) records both predictions and the rejection.
+
+| Output | MAE | RMSE | Bias | Maximum absolute error |
+| --- | ---: | ---: | ---: | ---: |
+| Planned energy forecast (Wh) | 0.920 | 1.150 | +0.335 | 2.614 |
+| Configuration baseline (Wh) | 0.949 | 1.532 | −0.102 | 4.880 |
+| Recorded duration forecast (s) | 9.957 | 17.041 | −4.422 | 56.732 |
+
+The forecast had lower overall errors, including two flights for which the baseline fell back to the calibration-wide mean. On the 22 flights with an exact configuration match, the baseline had lower MAE, 0.619 Wh against 0.881 Wh. The ±1.620 Wh band covered 19 of 24 flights (79.2%). All 19 covered flights were on 5 August, which supplied 21 of the 24 scored flights. The three September and October flights all fell outside the band. The sample provides evidence of error growth across dates and leaves operational coverage unestablished.
 
 Download by file ID using the Figshare file API at `https://api.figshare.com/v2/file/download/FILE_ID`. Save the originals under the local names above without changing any bytes. From the repository root and backend Python environment, run the following, replacing DATA_DIR with that directory.
 
