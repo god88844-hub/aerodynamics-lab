@@ -15,6 +15,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass, field
 
+from physics.integration.runtime_limit import check_time_limit
 from physics.propulsion.battery import BatteryPack, PowertrainError
 from physics.propulsion.dataset import OutOfEnvelopeError, PowertrainDataset, QueryResult
 from physics.propulsion.esc import Esc
@@ -207,6 +208,7 @@ class StaticPowertrain:
         throttle = self.throttle_for_total_thrust(target_total, soc_start_pct)
 
         while t <= max_duration_s + 1e-9:
+            check_time_limit()
             # Altitude-hold assumption: thrust re-trimmed to m*g every step as
             # the bus voltage sags (perfect controller, documented).
             throttle = self.throttle_for_total_thrust(target_total, soc)

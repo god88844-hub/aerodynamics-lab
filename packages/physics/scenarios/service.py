@@ -33,6 +33,7 @@ from physics.validation.benchmarks import run_propulsion_benchmarks
 
 DEFAULT_DATA_DIR = Path(__file__).resolve().parents[3] / "data"
 MAX_TELEMETRY_POINTS = 400
+IDEAL_RK45_MAX_STEP_S = 0.05
 
 
 def _default_library(data_dir: Path | None) -> ComponentLibrary:
@@ -76,7 +77,8 @@ def _states_telemetry(times, states, thrusts, currents=None, v_bus=None, soc=Non
 
 
 def run_hover_ideal(
-    design: DroneDesign, duration_s: float = 2.0, dt_s: float = 0.002, solver: str = "rk4"
+    design: DroneDesign, duration_s: float = 2.0, dt_s: float = 0.002, solver: str = "rk4",
+    *, max_evaluations: int | None = None,
 ) -> dict:
     """M1 stationary-hover verification with ideal actuators."""
     plant, mass = build_multirotor(design)
@@ -93,7 +95,10 @@ def run_hover_ideal(
     if solver == "rk4":
         times, states = integrate_fixed(f, x0, 0.0, duration_s, dt_s, post_step=normalize_state)
     elif solver == "ivp":
-        times, states = integrate_ivp(f, x0, 0.0, duration_s, post_step=normalize_state, max_step=0.05)
+        times, states = integrate_ivp(
+            f, x0, 0.0, duration_s, post_step=normalize_state, max_step=IDEAL_RK45_MAX_STEP_S,
+            max_evaluations=max_evaluations,
+        )
     else:
         raise ValueError(f"unknown solver {solver!r}")
 

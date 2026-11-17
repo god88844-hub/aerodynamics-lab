@@ -197,6 +197,100 @@ def test_simulation_failure_is_reported_not_crashing(client):
     assert "powertrain" in body["error"]
 
 
+@pytest.mark.parametrize(("scenario", "options", "solver"), [
+    ("hover-ideal", {"duration_s": 0.02}, "run_hover_ideal"),
+    ("hover-ideal", {"duration_s": 0.10, "dt_s": 1, "solver": "ivp"}, "run_hover_ideal"),
+    ("hover-static", {"max_duration_s": 20}, "run_hover_static"),
+    ("hover-hold", {"duration_s": 0.02}, "run_hover_hold"),
+])
+def test_simulation_work_limit_records_refusal_before_solver(client, design_payload, monkeypatch, scenario, options, solver):
+    from app.services import simulation_service
+
+    monkeypatch.setitem(simulation_service.SIMULATION_STEP_LIMITS, scenario, 1)
+    monkeypatch.setattr(simulation_service.service, solver, lambda *a, **kw: pytest.fail("Solver started"))
+    saved = client.post("/api/designs", json={"snapshot": design_payload}).json()
+    reply = client.post(f"/api/designs/{saved['id']}/simulate", json={
+        "scenario": scenario, "params": options,
+    })
+    assert reply.status_code == 200, reply.text
+    report = reply.json()
+    assert report["status"] == "failed"
+    assert report["error_code"] == "simulation_work_limit"
+    assert report["telemetry"] is None
+    recorded = client.get(f"/api/simulations/{report['simulation_id']}/inputs").json()
+    assert recorded["requested_parameters"] == options
+    assert recorded["execution_limits"]["steps"] == 1
+
+
+@pytest.mark.parametrize("solver", ["rk4", "ivp"])
+def test_simulation_deadline_stops_integrator_and_releases_slot(client, design_payload, monkeypatch, solver):
+    from physics.integration import runtime_limit
+
+    clock = iter((0.0, 46.0))
+    monkeypatch.setattr(runtime_limit, "monotonic", lambda: next(clock, 46.0))
+    saved = client.post("/api/designs", json={"snapshot": design_payload}).json()
+    path = f"/api/designs/{saved['id']}/simulate"
+    payload = {"scenario": "hover-ideal", "params": {"duration_s": 0.02, "solver": solver}}
+    reply = client.post(path, json=payload)
+    assert reply.status_code == 200, reply.text
+    report = reply.json()
+    assert report["status"] == "failed"
+    assert report["error_code"] == "simulation_time_limit"
+    assert report["telemetry"] is None
+    assert client.get(f"/api/simulations/{report['simulation_id']}/inputs").status_code == 200
+    assert client.post(path, json=payload).json()["status"] == "completed"
+
+
+def test_adaptive_solver_enforces_its_evaluation_limit(client, design_payload, monkeypatch):
+    from app.services import simulation_service
+
+    monkeypatch.setattr(simulation_service, "SIMULATION_MAX_ADAPTIVE_EVALUATIONS", 1)
+    saved = client.post("/api/designs", json={"snapshot": design_payload}).json()
+    response = client.post(f"/api/designs/{saved['id']}/simulate", json={
+        "scenario": "hover-ideal", "params": {"duration_s": 0.02, "solver": "ivp"},
+    })
+    assert response.status_code == 200, response.text
+    report = response.json()
+    assert report["status"] == "failed"
+    assert report["error_code"] == "simulation_work_limit"
+    frozen = client.get(f"/api/simulations/{report['simulation_id']}/inputs").json()
+    assert frozen["effective_parameters"]["max_evaluations"] == 1
+
+
+def test_simulation_capacity_keeps_reads_available(client, design_payload, monkeypatch):
+    from concurrent.futures import ThreadPoolExecutor
+    from threading import Event
+
+    from app.services import simulation_service
+
+    started = Event()
+    release = Event()
+    original = simulation_service.service.run_hover_ideal
+
+    def wait_in_solver(*args, **kwargs):
+        started.set()
+        assert release.wait(10), "The test did not release the first request."
+        return original(*args, **kwargs)
+
+    monkeypatch.setattr(simulation_service.service, "run_hover_ideal", wait_in_solver)
+    saved = client.post("/api/designs", json={"snapshot": design_payload}).json()
+    path = f"/api/designs/{saved['id']}/simulate"
+    payload = {"scenario": "hover-ideal", "params": {"duration_s": 0.02}}
+    with ThreadPoolExecutor(max_workers=1) as pool:
+        pending = pool.submit(client.post, path, json=payload)
+        try:
+            assert started.wait(10), "The first request did not start."
+            busy = client.post(path, json=payload)
+            assert busy.status_code == 503, busy.text
+            assert busy.headers["retry-after"] == "1"
+            assert client.get("/api/health").status_code == 200
+            assert client.get(f"/api/designs/{saved['id']}/simulations").json() == []
+        finally:
+            release.set()
+        assert pending.result(timeout=10).json()["status"] == "completed"
+    assert client.post(path, json=payload).json()["status"] == "completed"
+
+
 def test_structural_envelope_returns_auditable_per_rotor_loads(client, design_payload):
     r = client.post("/api/designs/structural-envelope", json={
         "snapshot": design_payload,

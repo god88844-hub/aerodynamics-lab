@@ -14,6 +14,8 @@ from typing import Callable, Optional
 
 import numpy as np
 
+from physics.integration.runtime_limit import check_time_limit
+
 
 def rk4_step(
     f: Callable[[float, np.ndarray], np.ndarray],
@@ -54,6 +56,7 @@ def integrate_fixed(
     x = np.asarray(x0, dtype=float).copy()
     t = t0
     for _ in range(steps):
+        check_time_limit()
         h = min(dt, t1 - t)
         x = rk4_step(f, t, x, h)
         if post_step is not None:

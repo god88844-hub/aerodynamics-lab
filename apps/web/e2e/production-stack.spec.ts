@@ -92,6 +92,7 @@ test('packaged UI edits a design, runs the solver, and reloads saved data after 
     design: { name: revised },
     scenario: 'hover-ideal',
     effective_parameters: { duration_s: 2, dt_s: 0.002, solver: 'rk4' },
+    execution_limits: { time_s: 45, steps: 20_000 },
   })
 
   const editedAfterRun = `${revised} after run`
