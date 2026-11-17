@@ -211,14 +211,15 @@ def test_m269_unknown_clock_or_prediction_in_source_root_rejected(tmp_path):
     manifest["files"][1]["clock_reference"] = None
     with pytest.raises(ValueError, match="calibration and clock"):
         compare(root, manifest, holdout, cases[0])
-    root, manifest, holdout, _, cases, _ = fixtures_new(tmp_path)
-    # The second clause is exercised by a dedicated independent directory below.
 
 
-def fixtures_new(tmp_path):
-    other = tmp_path / "second"
-    other.mkdir()
-    return fixtures(other)
+def test_m269_frozen_prediction_cannot_live_inside_original_source_root(tmp_path):
+    root, manifest, holdout, _, cases, _ = fixtures(tmp_path)
+    src = root / "flight1" / "rotor_rpm.csv"
+    cases[0]["frozen_prediction_csv_path"] = str(src)
+    cases[0]["frozen_prediction_sha256"] = sha256(src.read_bytes()).hexdigest()
+    with pytest.raises(ValueError, match="outside immutable original measurement root"):
+        compare(root, manifest, holdout, cases[0])
 
 
 def test_m2610_same_fixed_metric_requirements_across_holdouts(tmp_path):
