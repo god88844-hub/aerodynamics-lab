@@ -4,6 +4,7 @@ from fastapi import APIRouter, HTTPException
 
 from app.services import component_service
 from physics.propulsion.loader import ComponentLibrary
+from physics.validation.battery_campaign import BatteryCampaignRequest, audit_battery_campaign
 from physics.validation.validation_protocol import ProtocolAuditRequest, audit_protocol
 from physics.validation.telemetry_ingestion import (
     TelemetryAuditRequest, audit_telemetry_bundle,
@@ -111,3 +112,17 @@ def telemetry_audit(body: TelemetryAuditRequest) -> dict:
 def validation_protocol_audit(body: ProtocolAuditRequest) -> dict:
     """Read-only preregistration readiness audit, NEVER physical test approval."""
     return audit_protocol(body)
+
+
+@router.post("/battery-campaign-audit")
+def battery_campaign_audit(body: BatteryCampaignRequest) -> dict:
+    """Audit source-pinned battery cohort without changing components or predictions."""
+    library = ComponentLibrary(component_service.REPO_ROOT / "data" / "components")
+    try:
+        spec = library.battery(body.battery_model_id)
+    except FileNotFoundError as exc:
+        raise HTTPException(status_code=404, detail="battery component not found") from exc
+    try:
+        return audit_battery_campaign(spec, body)
+    except ValueError as exc:
+        raise HTTPException(status_code=422, detail=str(exc)) from exc
