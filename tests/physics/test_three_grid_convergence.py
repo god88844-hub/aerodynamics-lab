@@ -77,7 +77,7 @@ def test_unknown_or_invalid_step_ratio_fails():
 def test_invalid_sample_data_cannot_pass(key,bad):
     req = fixture()
     req["samples"][0][key] = bad
-    with pytest.raises(ValueError, match="finite|positive"):
+    with pytest.raises(ValueError, match="finite|positive|nonnegative"):
         audit_three_resolution_convergence(**req)
 
 
