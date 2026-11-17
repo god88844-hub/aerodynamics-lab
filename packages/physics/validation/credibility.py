@@ -55,9 +55,10 @@ def gate(capability: str, *, independent_evidence: list[str] | None = None,
     """Apply the credibility gate from declared evidence facts.
 
     Rules:
-    - VALIDATED requires at least one INDEPENDENT physical dataset with
-      pre-declared tolerances met AND no known unmodeled failure mechanisms
-      relevant to the decision.
+    - This software-only gate cannot verify external experiment or reviewer
+      identity; it therefore NEVER emits VALIDATED_FOR_THIS_DECISION.
+    - Reported independent datasets, favorable tolerances and manufacturer
+      reproductions remain PROMISING pending separate authentic physical review.
     - Anything reproducing only its own calibration data stays PROMISING.
     - A functional model with known gaps that matter for the decision is
       PROMISING (not INCONCLUSIVE) when its applicability limits are stated.
@@ -68,21 +69,22 @@ def gate(capability: str, *, independent_evidence: list[str] | None = None,
         return CredibilityVerdict(
             capability, Status.INCONCLUSIVE,
             basis="model cannot support a conclusion in its current state")
-    if independent_evidence and independent_error_within_tolerance and not has_known_model_gaps:
-        return CredibilityVerdict(
-            capability, Status.VALIDATED_FOR_THIS_DECISION,
-            basis="independent physical evidence within pre-declared tolerance, "
-                  "no relevant unmodeled mechanisms",
-            independent_evidence=independent_evidence,
-            measured_prediction_error=None)
-    if independent_evidence or (independent_error_within_tolerance is not None
-                                and not has_known_model_gaps):
+    # A string identifier and caller-declared 'error within tolerance'
+    # are not cryptographically traceable independent experiments. Until
+    # externally authenticated physical review exists, NEVER emit VALIDATED.
+    if independent_evidence or independent_error_within_tolerance is not None:
         return CredibilityVerdict(
             capability, Status.PROMISING,
-            basis="independent evidence exists but known model gaps or missing "
-                  "coverage remain",
+            basis="reported external evidence or error criteria were supplied "
+                  "but their measurement-chain authenticity, frozen blind "
+                  "holdout status, applicability and independent review "
+                  "cannot be established by this software helper",
             independent_evidence=independent_evidence,
-            missing_evidence=["gap-dependent items — see evidence inventory"])
+            missing_evidence=[
+                "independently authenticated original physical records",
+                "predeclared blind comparison and uncertainty coverage",
+                "qualified independent review for the engineering decision",
+            ])
     return CredibilityVerdict(
         capability, Status.PROMISING,
         basis="functions and is verified in software, but no independent "

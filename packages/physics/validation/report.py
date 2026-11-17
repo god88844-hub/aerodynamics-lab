@@ -88,10 +88,16 @@ def generate_vv_report(
         "benchmarks": {"propulsion": propulsion, "dynamics": dynamics},
         "convergence": convergence,
         "uncertainty": uq,
+        # These gates verify software/numerical consistency only. They do
+        # NOT establish physical model credibility or aircraft readiness.
         "needs_further_analysis": len(gated_failures) > 0,
+        "needs_independent_physical_validation": True,
+        "independent_physical_accuracy_demonstrated": False,
+        "decision_equivalent_to_physical_testing": False,
         "gated_failures": gated_failures,
         "validated_vs_assumed": {
-            "validated": [
+            "validated": [],
+            "verified_in_software": [
                 "dynamics core (analytical solutions: free fall, spin-up, conservation laws)",
                 "mass-property assembly (parallel-axis hand calculations)",
                 "propulsion static table (manufacturer bench data, read-back gate)",
@@ -119,9 +125,12 @@ def render_markdown(report: dict) -> str:
     lines.append(f"**Design**: {d['name']} — {d['mass_kg']:.3f} kg, "
                  f"{d['n_rotors']} rotors")
     lines.append("")
-    verdict = ("NEEDS FURTHER ANALYSIS" if report["needs_further_analysis"]
-               else "all gated metrics within tolerance")
-    lines.append(f"**Verdict**: {verdict}")
+    verdict = ("NEEDS FURTHER SOFTWARE ANALYSIS" if report["needs_further_analysis"]
+               else "software/numerical gates within tolerance")
+    lines.append(f"**Verdict (software verification only)**: {verdict}")
+    lines.append("**Independent physical validation**: NOT ESTABLISHED")
+    lines.append("**Decision-equivalent to physical testing**: NO")
+    lines.append("**Scope**: manufacturer data read-back and numerical convergence are verification, not independent model validation.")
     if report["gated_failures"]:
         for f in report["gated_failures"]:
             lines.append(f"- FAIL: {f}")
@@ -151,9 +160,13 @@ def render_markdown(report: dict) -> str:
             lines.append(f"  - {name}: {s['endurance_low_s']:.0f} – "
                          f"{s['endurance_high_s']:.0f} s (Δ {s['delta_s']:.0f} s)")
     lines.append("")
-    lines.append("## Validated vs assumed")
-    lines.append("- **validated**: " + "; ".join(report["validated_vs_assumed"]["validated"]))
-    lines.append("- **assumed/estimated**: " + "; ".join(report["validated_vs_assumed"]["assumed_or_estimated"]))
+    lines.append("## Evidence classification")
+    lines.append("- **independently physically validated**: " +
+                 ("; ".join(report["validated_vs_assumed"]["validated"]) or "none"))
+    lines.append("- **verified in software**: " +
+                 "; ".join(report["validated_vs_assumed"]["verified_in_software"]))
+    lines.append("- **assumed/estimated**: " +
+                 "; ".join(report["validated_vs_assumed"]["assumed_or_estimated"]))
     lines.append("")
     return "\n".join(lines)
 
