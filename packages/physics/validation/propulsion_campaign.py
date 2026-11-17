@@ -197,6 +197,14 @@ def audit_propulsion_campaign(
             reasons.append("Hardware installation match not established")
         if run.ambient_air_density_kg_m3 is None or run.ambient_temperature_c is None:
             reasons.append("Static experimental density/temperature unavailable")
+        if run.partition_role == "holdout":
+            for channel in ("thrust_n", "current_a"):
+                criterion = metrics.get(channel)
+                if criterion is not None and len(observations) < criterion.minimum_holdout_samples:
+                    reasons.append(
+                        f"Insufficient holdout operating points for {channel}: "
+                        f"{len(observations)} < {criterion.minimum_holdout_samples}"
+                    )
         row_scores = []
         unsupported = []
         all_match = True
