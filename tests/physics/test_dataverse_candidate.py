@@ -4,6 +4,8 @@ from __future__ import annotations
 from copy import deepcopy
 from hashlib import md5
 import json
+from importlib import util
+from pathlib import Path
 
 import pytest
 
@@ -119,8 +121,17 @@ def test_matching_fabricated_strings_never_authenticate_real_equivalence():
     assert not r["physical_validation_eligible"]
 
 
+def _load_cli():
+    """Load root script by exact file path; CI sys.path need not contain repo root."""
+    path = Path(__file__).resolve().parents[2] / "scripts" / "inspect_dataverse_propulsion.py"
+    spec = util.spec_from_file_location("aeroforge_dataverse_acquisition_cli", path)
+    module = util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module.cli
+
+
 def test_offline_cli_lists_unverified_metadata(tmp_path, capsys):
-    from scripts.inspect_dataverse_propulsion import cli
+    cli = _load_cli()
     p = tmp_path / "dataverse.json"
     p.write_text(json.dumps(payload()), encoding="utf-8")
     assert cli(["--metadata-json", str(p)]) == 0
@@ -130,7 +141,7 @@ def test_offline_cli_lists_unverified_metadata(tmp_path, capsys):
 
 
 def test_offline_cli_local_file_cannot_claim_physical_validation(tmp_path, capsys):
-    from scripts.inspect_dataverse_propulsion import cli
+    cli = _load_cli()
     b = b"rpm,voltage_v,thrust_n,current_a\n1000,44,50,10\n"
     metadata = tmp_path / "metadata.json"
     metadata.write_text(json.dumps(payload(b)), encoding="utf-8")
