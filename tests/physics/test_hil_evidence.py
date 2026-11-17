@@ -59,7 +59,7 @@ def protocol():
 
 def recording(k, *, physical=False):
     rows = ["t_s,command_roll_deg,observed_roll_deg,command_pitch_deg,observed_pitch_deg,saturation_flag"]
-    rows += [f"{i*.01:.3f},10,{10+(.1 if k else 0):.3f},2,2.1,0" for i in range(10)]
+    rows += [f"{i*.01:.3f},{10+.01*k:.3f},{10.1+.01*k:.3f},2,2.1,0" for i in range(10)]
     csv = "\n".join(rows) + "\n"
     return {
         "dataset_id": f"fixture_{k}", "dataset_kind": (
@@ -205,3 +205,17 @@ def test_fixed_original_request_is_not_modified():
     original = copy.deepcopy(body)
     run(body)
     assert body == original
+
+
+def test_duplicate_original_holdout_bytes_fail_independence():
+    data = request(physical=True)
+    one, two = data["recordings"][1], data["recordings"][2]
+    two["csv_text"] = one["csv_text"]
+    two["source_sha256"] = one["source_sha256"]
+    report = run(data)
+    assert any(
+        "source_sha256" in x["shared_identifiers"]
+        for x in report["experiment_group_collisions"]
+    )
+    assert report["reported_samplewise_tracking_compatible_only"] is False
+    assert report["independent_controller_hardware_validation"] is False
