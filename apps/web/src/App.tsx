@@ -22,6 +22,7 @@ import { ValidationProtocolPanel } from './panels/ValidationProtocolPanel'
 import { ResultsPanel } from './panels/ResultsPanel'
 import { TelemetryCharts } from './charts/TelemetryCharts'
 import { PlaybackWorkspace } from './playback/PlaybackWorkspace'
+import { PropulsionCampaignPanel } from './panels/PropulsionCampaignPanel'
 
 function ApiStatus() {
   const health = useQuery({
@@ -95,6 +96,7 @@ export default function App() {
           <div className="border-t border-slate-800"><FlightEvidencePanel result={result} /></div>
           <div className="border-t border-slate-800"><PublicEvidencePanel /></div>
           <div className="border-t border-slate-800"><G30PublicBenchPanel /></div>
+          <div className="border-t border-slate-800"><PropulsionCampaignPanel /></div>
           <div className="border-t border-slate-800"><TelemetryAuditPanel /></div>
           <div className="border-t border-slate-800"><ValidationProtocolPanel /></div>
           <div className="border-t border-slate-800">
