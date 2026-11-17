@@ -38,6 +38,7 @@ from physics.controller.sensors import SensorConfig, SensorModel
 from physics.dynamics.quaternion import conjugate, rotate, rotation_matrix
 from physics.dynamics.rigid_body import make_state, normalize_state
 from physics.integration.rk4 import rk4_step
+from physics.integration.runtime_limit import check_time_limit
 from physics.propulsion.battery import BatteryPack
 from physics.propulsion.dataset import PowertrainDataset
 from physics.propulsion.esc import Esc
@@ -459,6 +460,7 @@ def run_scenario(
         notes.append("perfect state knowledge (sensor noise/latency disabled)")
 
     for k in range(n_steps):
+        check_time_limit()
         t = k * control_dt_s
 
         # Time-parameterized targets from the profiles.

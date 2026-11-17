@@ -16,6 +16,8 @@ from dataclasses import dataclass, field
 
 import numpy as np
 
+from physics.integration.runtime_limit import check_time_limit
+
 from physics.controller.attitude import ControlTargets, QuadcopterController
 from physics.dynamics.quaternion import conjugate, rotate
 from physics.dynamics.rigid_body import RigidBody, make_state, normalize_state, unpack_state
@@ -87,6 +89,7 @@ def run_controlled_simulation(
     times, states, thrusts_log, alt_cmd_log = [], [], [], []
 
     for k in range(n_steps):
+        check_time_limit()
         t = k * control_dt_s
         thrusts = controller.step(state, targets, control_dt_s)
 

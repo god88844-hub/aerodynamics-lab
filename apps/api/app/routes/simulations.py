@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import json
 from hashlib import sha256
+from threading import BoundedSemaphore
 
 from fastapi import APIRouter, Depends, HTTPException, Response
 from pydantic import BaseModel
@@ -14,6 +15,19 @@ from app.persistence.models import Design, SimulationRun, SimulationRunInput
 from app.services import simulation_service
 
 router = APIRouter(tags=["simulations"])
+_simulation_slot = BoundedSemaphore(1)
+
+
+def _require_simulation_slot():
+    if not _simulation_slot.acquire(blocking=False):
+        raise HTTPException(
+            503, "A simulation is already running. Try again after it finishes.",
+            headers={"Retry-After": "1"},
+        )
+    try:
+        yield
+    finally:
+        _simulation_slot.release()
 
 
 class SimulateRequest(BaseModel):
@@ -21,7 +35,7 @@ class SimulateRequest(BaseModel):
     params: dict | None = None
 
 
-@router.post("/designs/{design_id}/simulate")
+@router.post("/designs/{design_id}/simulate", dependencies=[Depends(_require_simulation_slot)])
 def simulate(design_id: int, body: SimulateRequest, db: Session = Depends(get_db)) -> dict:
     row = db.get(Design, design_id)
     if row is None:

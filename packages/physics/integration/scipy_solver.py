@@ -14,6 +14,8 @@ from typing import Callable, Optional
 import numpy as np
 from scipy.integrate import solve_ivp
 
+from physics.integration.runtime_limit import SimulationWorkLimit, check_time_limit
+
 
 def integrate_ivp(
     f: Callable[[float, np.ndarray], np.ndarray],
@@ -25,10 +27,22 @@ def integrate_ivp(
     max_step: float = np.inf,
     method: str = "RK45",
     post_step: Optional[Callable[[np.ndarray], np.ndarray]] = None,
+    max_evaluations: int | None = None,
 ) -> tuple[np.ndarray, np.ndarray]:
     """Integrate x' = f(t, x) adaptively; returns (times, states)."""
+    evaluations = 0
+
+    def derivative(t: float, x: np.ndarray) -> np.ndarray:
+        nonlocal evaluations
+        check_time_limit()
+        if max_evaluations is not None:
+            if evaluations >= max_evaluations:
+                raise SimulationWorkLimit("Adaptive hover exceeded its derivative evaluation limit.")
+            evaluations += 1
+        return f(t, x)
+
     sol = solve_ivp(
-        lambda t, x: f(t, x),
+        derivative,
         (t0, t1),
         np.asarray(x0, dtype=float),
         method=method,
