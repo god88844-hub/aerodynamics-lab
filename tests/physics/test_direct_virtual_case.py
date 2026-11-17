@@ -129,7 +129,7 @@ def test_insufficient_threshold_margin_blocks_all_software_conclusions():
     req["decision_thresholds"][0]["failure_limit"]=10.05
     report=audit(req)
     assert report["status"]=="DIRECTLY_RECOMPUTED_VIRTUAL_CASE_BLOCKED"
-    assert not report["decision_margins"][1]["declared_analytical_decision_margin_passed"]
+    assert not next(x for x in report["decision_margins"] if x["decision_id"]=="maximum_voltage")["declared_analytical_decision_margin_passed"]
 
 
 def test_frozen_protocol_identity_mismatch_is_an_error():
