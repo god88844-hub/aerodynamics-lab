@@ -143,6 +143,43 @@ def test_hover_static_end_to_end(client, design_payload):
     assert "pass" in benchmarks.values()
 
 
+def test_saved_run_inputs_survive_design_edits(client, design_payload):
+    from hashlib import sha256
+
+    original = {**design_payload, "name": "original frozen test"}
+    created = client.post("/api/designs", json={"snapshot": original}).json()
+    design_id = created["id"]
+    response = client.post(f"/api/designs/{design_id}/simulate", json={
+        "scenario": "hover-ideal",
+        "params": {"duration_s": "0.02"},
+    })
+    assert response.status_code == 200, response.text
+    run = response.json()
+    assert run["status"] == "completed"
+    path = f"/api/simulations/{run['simulation_id']}/inputs"
+    frozen = client.get(path)
+    assert frozen.status_code == 200, frozen.text
+    assert run["input_sha256"] == sha256(frozen.content).hexdigest()
+    assert frozen.headers["x-aeroforge-input-sha256"] == run["input_sha256"]
+    assert frozen.json()["design"] == created["snapshot"]
+    assert frozen.json()["scenario"] == "hover-ideal"
+    assert frozen.json()["requested_parameters"] == {"duration_s": "0.02"}
+    assert frozen.json()["effective_parameters"] == {
+        "duration_s": 0.02, "dt_s": 0.002, "solver": "rk4",
+    }
+
+    edited_parts = [*original["parts"]]
+    edited_parts[0] = {**edited_parts[0], "mass_kg": edited_parts[0]["mass_kg"] + 0.1}
+    updated = client.put(f"/api/designs/{design_id}", json={"snapshot": {
+        **original, "name": "edited after the simulation", "parts": edited_parts,
+    }})
+    assert updated.status_code == 200, updated.text
+    assert client.get(path).content == frozen.content
+    assert client.get(f"/api/simulations/{run['simulation_id']}").json()["input_sha256"] == run["input_sha256"]
+    assert client.delete(f"/api/designs/{design_id}").status_code == 200
+    assert client.get(path).status_code == 404
+
+
 def test_simulation_failure_is_reported_not_crashing(client):
     """A design that physics refuses (no powertrain + flight) returns a
     failed-status result with the error message — an engineering outcome."""

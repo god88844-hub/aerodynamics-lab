@@ -1,9 +1,4 @@
-"""ORM models: designs (immutable snapshots) and simulation runs.
-
-Traceability rule: a stored design's ``snapshot_json`` is the EXACT input the
-simulator executed; a stored run's ``result_json`` is the exact report the
-simulator produced.
-"""
+"""Editable designs, saved simulation results, and their frozen inputs."""
 
 from __future__ import annotations
 
@@ -45,3 +40,14 @@ class SimulationRun(Base):
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=_utcnow)
 
     design: Mapped[Design] = relationship(back_populates="simulations")
+    frozen_input: Mapped[SimulationRunInput | None] = relationship(
+        cascade="all, delete-orphan",
+    )
+
+
+class SimulationRunInput(Base):
+    __tablename__ = "simulation_run_inputs"
+
+    run_id: Mapped[int] = mapped_column(ForeignKey("simulation_runs.id"), primary_key=True)
+    input_json: Mapped[str] = mapped_column(Text)
+    input_sha256: Mapped[str] = mapped_column(String(64))

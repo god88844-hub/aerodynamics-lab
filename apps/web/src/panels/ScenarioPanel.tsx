@@ -65,8 +65,7 @@ export function ScenarioPanel() {
         </p>
       )}
       <p className="text-[10px] leading-relaxed text-slate-600">
-        Simulate saves the design snapshot first: the stored run references the exact
-        input that the physics engine executed (traceability).
+        Each run stores a copy of its design and solver settings for later download.
       </p>
     </div>
   )

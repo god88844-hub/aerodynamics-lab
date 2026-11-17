@@ -193,6 +193,15 @@ function TrustSection({ result }: { result: SimulationResult }) {
         Trustworthiness
       </h3>
       {verdict && <p className="mb-2 text-xs font-medium text-amber-300">{verdict}</p>}
+      {result.simulation_id != null && result.input_sha256 && (
+        <a
+          className="mb-2 inline-block text-xs text-cyan-300 underline"
+          href={`/api/simulations/${result.simulation_id}/inputs`}
+          download
+        >
+          Download simulation inputs
+        </a>
+      )}
       <div className="space-y-1.5">
         {entries.map(([key, entry]) => {
           if (typeof entry === 'string') return null
