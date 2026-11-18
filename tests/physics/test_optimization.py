@@ -59,6 +59,17 @@ def test_lut_matches_strict_inverse(library, design):
         assert gf_back == pytest.approx(gf, rel=5e-3)
 
 
+def test_grid_rejects_esc_overload_and_excludes_it_from_frontier(library, design, monkeypatch):
+    weak = library.esc(design.powertrain.esc_id).model_copy(update={"max_continuous_current_a": 1.0})
+    monkeypatch.setattr(library, "esc", lambda key: weak)
+    grid = {"battery_capacity_ah": [16.0], "rotor_count": [4],
+            "arm_length_m": [0.30], "payload_kg": [0.0]}
+    results = run_grid(design, library, grid)
+    assert len(results) == 1 and not results[0].feasible
+    assert any("ESC over-current" in flag for flag in results[0].flags)
+    assert pareto_front(results) == []
+
+
 def test_grid_evaluates_all_candidates_and_gates(library, design):
     material = load_materials(REPO_ROOT / "data" / "components" / "materials.json")["cfrp_quasi_iso"]
     grid = {

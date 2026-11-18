@@ -234,10 +234,18 @@ def test_static_hover_endurance_plausible(powertrain):
     assert result.min_cell_voltage_v > 3.3  # never reaches the damage cutoff
 
 
-def test_esc_overcurrent_detected(esc, dataset, battery):
-    from aeroforge_schemas.component import EscSpec
-
-    weak_esc = Esc(EscSpec(**{**esc.spec.model_dump(), "max_continuous_current_a": 5.0}))
-    pt = StaticPowertrain(dataset, weak_esc, battery, units=4)
+@pytest.mark.parametrize("rating, failed", [(2.0, True), (8.0, False)])
+def test_static_hover_checks_each_esc(esc, dataset, battery, rating, failed):
+    controller = Esc(esc.spec.model_copy(update={"max_continuous_current_a": rating}))
+    pt = StaticPowertrain(dataset, controller, battery, units=4)
     result = pt.static_hover(3.708, max_duration_s=60, dt_s=10.0)
-    assert any("ESC over-current" in i for i in result.limit_issues)
+    assert result.hover_point.total_current_a > rating
+    assert (result.hover_point.per_unit.current_a > rating) == failed
+    assert any("ESC over-current" in i for i in result.limit_issues) == failed
+    if failed:
+        assert len(result.samples) == 1 and result.energy_used_wh == 0
+        assert result.endurance_to_warning_s is None
+
+
+def test_esc_accepts_exact_ratings(esc):
+    assert esc.check(esc.spec.max_continuous_current_a, esc.spec.max_voltage_v) == []

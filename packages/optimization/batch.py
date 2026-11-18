@@ -147,7 +147,13 @@ class FastHoverEvaluator:
         t = 0.0
         endurance = None
         max_steps = int(max_endurance_hint / ENDURANCE_DT_S)
-        for _ in range(max_steps):
+        for step in range(max_steps + 1):
+            # Symmetric hover gives each controller the same branch current.
+            esc_issues = self.esc.check(float(currents[0]), v_bus)
+            if esc_issues:
+                return {"feasible": False, "reason": ", ".join(esc_issues)}
+            if step == max_steps:
+                break
             status = self.battery.status(soc, total_current)
             if status.cutoff:
                 break

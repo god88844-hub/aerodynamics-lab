@@ -234,7 +234,10 @@ def run_hover_static(design: DroneDesign, max_duration_s: float = 7200.0, dt_s: 
             "energy_used_wh_at_warning": hover.energy_used_wh,
             "min_cell_voltage_v": hover.min_cell_voltage_v,
         },
-        "limits": {"issues": hover.limit_issues},
+        "limits": {
+            "verdict": "FAIL" if hover.limit_issues else "INCONCLUSIVE",
+            "issues": hover.limit_issues,
+        },
         "telemetry": tel,
         "trustworthiness": {
             "propulsion_data": {
@@ -244,6 +247,10 @@ def run_hover_static(design: DroneDesign, max_duration_s: float = 7200.0, dt_s: 
             },
             "hover_envelope_flags": hover.envelope_flags,
             "estimated_components": estimated_components,
+            "controller_limits": {
+                "status": "declared continuous DC branch current and available bus voltage rating",
+                "caveat": "Thermal damage and transient overload capacity require hardware measurements.",
+            },
             "battery_model": {
                 "status": "first-order OCV + R model",
                 "caveat": battery_spec.source.notes or "",

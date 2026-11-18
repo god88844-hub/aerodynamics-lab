@@ -237,8 +237,28 @@ def test_hover_static_end_to_end(client, design_payload):
     body = r.json()
     assert body["status"] == "completed"
     assert body["endurance"]["to_warning_s"] > 1200
+    assert body["limits"] == {"verdict": "INCONCLUSIVE", "issues": []}
     benchmarks = {b["name"]: b["status"] for b in body["benchmarks"]}
     assert "pass" in benchmarks.values()
+
+
+def test_static_hover_saves_esc_failure_without_endurance(client, design_payload, monkeypatch):
+    from physics.propulsion.loader import ComponentLibrary
+
+    load_esc = ComponentLibrary.esc
+    def weak_esc(library, component_id):
+        return load_esc(library, component_id).model_copy(update={"max_continuous_current_a": 2.0})
+    monkeypatch.setattr(ComponentLibrary, "esc", weak_esc)
+    design_id = client.post("/api/designs", json={"snapshot": design_payload}).json()["id"]
+    response = client.post(f"/api/designs/{design_id}/simulate",
+                           json={"scenario": "hover-static", "params": {"max_duration_s": 60}})
+    assert response.status_code == 200, response.text
+    body = response.json()
+    assert body["limits"]["verdict"] == "FAIL"
+    assert "ESC over-current" in body["limits"]["issues"][0]
+    assert body["endurance"]["to_warning_s"] is None
+    saved = client.get(f"/api/simulations/{body['simulation_id']}").json()
+    assert saved["limits"] == body["limits"]
 
 
 def test_saved_run_inputs_survive_design_edits(client, design_payload):

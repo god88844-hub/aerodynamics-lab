@@ -100,6 +100,15 @@ function ScenarioResults({ result, scenario }: { result: SimulationResult; scena
         <h3 className="mb-2 text-[11px] font-semibold uppercase tracking-wider text-cyan-500">
           Hover point (full charge)
         </h3>
+        <p className="mb-2 text-xs">
+          Component limits · {result.limits?.verdict ?? 'INCONCLUSIVE'}
+        </p>
+        {!result.limits?.verdict && (
+          <p className="mb-2 text-xs text-slate-400">Rerun this saved design to check each controller’s current. Earlier results used total pack current for that check.</p>
+        )}
+        {result.limits?.issues.map((issue) => (
+          <p key={issue} className="mb-1 text-xs text-slate-300">{issue}</p>
+        ))}
         <div className="grid grid-cols-2 gap-2">
           <Metric label="throttle" value={fmt(Number(hp.throttle) * 100, 1)} unit="%" />
           <Metric label="bus voltage" value={fmt(Number(hp.v_bus_v))} unit="V" />

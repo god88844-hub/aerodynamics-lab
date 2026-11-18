@@ -232,7 +232,8 @@ class StaticPowertrain:
                     envelope_flags.append(flag)
 
             # Component limit checks (fail-closed policy: recorded as issues).
-            issues.extend(self.esc.check(op.total_current_a, op.v_bus))
+            esc_issues = self.esc.check(op.per_unit.current_a, op.v_bus)
+            issues.extend(esc_issues)
             motor = self.dataset.motor
             if (
                 motor.max_continuous_current_a is not None
@@ -243,6 +244,8 @@ class StaticPowertrain:
                     f"{motor.max_continuous_current_a:.1f} A (180 s rating)"
                 )
 
+            if esc_issues:
+                break
             if status.cutoff and end_cutoff is None:
                 end_cutoff = t
                 break
