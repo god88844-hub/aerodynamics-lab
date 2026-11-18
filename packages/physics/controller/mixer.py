@@ -1,19 +1,21 @@
 """Control mixer: desired wrench [total thrust, tx, ty, tz] -> per-rotor
 thrusts, using the plant's geometry matrix (same equations as hover_trim).
 
-Saturation handling: negative demands are clipped to zero and the reduced
-system re-solved iteratively (standard approach); the mixer reports whether
-any rotor saturated or any demand was unachievable, so reports can flag it
-instead of silently distorting the wrench.
+When a requested wrench needs an out-of-range rotor thrust, solve the same
+least-squares objective over all rotors with nonnegative thrust and any
+configured per-rotor ceiling. Report the remaining collective and torque errors.
 """
 
 from __future__ import annotations
 
 import numpy as np
+from scipy.optimize import lsq_linear
 
 from physics.dynamics.quadrotor import MultirotorPlant
 
-MAX_CLIP_ITERATIONS = 4
+ALLOCATION_FLAGS = ("clipped_negative", "saturated_max", "collective_residual", "torque_residual")
+BOUND_TOLERANCE_N = 1e-9
+RESIDUAL_TOLERANCE = 1e-3
 
 
 class Mixer:
@@ -23,6 +25,10 @@ class Mixer:
         max_thrust_per_rotor_n: float | None = None,
     ) -> None:
         self.plant = plant
+        if max_thrust_per_rotor_n is not None and (
+            not np.isfinite(max_thrust_per_rotor_n) or max_thrust_per_rotor_n < 0
+        ):
+            raise ValueError("maximum rotor thrust must be finite and nonnegative")
         self.max_thrust_per_rotor_n = max_thrust_per_rotor_n
         n = len(plant.rotors)
         if n == 0:
@@ -39,47 +45,31 @@ class Mixer:
     def mix(
         self, total_thrust: float, torque_body: np.ndarray
     ) -> tuple[np.ndarray, dict]:
-        """Solve per-rotor thrusts; returns (thrusts, status).
+        """Return physically bounded rotor thrusts and allocation flags."""
+        torque = np.asarray(torque_body, dtype=float)
+        if torque.shape != (3,) or not np.isfinite(total_thrust) or not np.all(np.isfinite(torque)):
+            raise ValueError("control allocation requires a finite thrust and three finite torques")
+        wrench = np.concatenate(([total_thrust], torque))
+        limit = self.max_thrust_per_rotor_n if self.max_thrust_per_rotor_n is not None else np.inf
+        unconstrained = np.linalg.lstsq(self.matrix, wrench, rcond=None)[0]
+        negative = bool(np.any(unconstrained < -BOUND_TOLERANCE_N))
+        above_limit = bool(np.any(unconstrained > limit + BOUND_TOLERANCE_N))
 
-        status flags: 'clipped_negative', 'saturated_max', 'torque_residual'.
-        """
-        n = len(self.plant.rotors)
-        wrench = np.array([total_thrust, *np.asarray(torque_body, dtype=float)])
-        active = np.ones(n, dtype=bool)
-        thrusts = np.zeros(n)
-        status: dict[str, bool] = {
-            "clipped_negative": False,
-            "saturated_max": False,
-            "torque_residual": False,
+        if limit == 0:
+            thrusts = np.zeros_like(unconstrained)
+        elif negative or above_limit:
+            solved = lsq_linear(self.matrix, wrench, bounds=(0.0, limit), method="bvls")
+            if not solved.success or not np.all(np.isfinite(solved.x)):
+                raise ValueError("bounded control allocation did not converge")
+            thrusts = np.clip(solved.x, 0.0, limit)
+        else:
+            thrusts = np.clip(unconstrained, 0.0, limit)
+
+        residual = self.matrix @ thrusts - wrench
+        status = {
+            "clipped_negative": negative,
+            "saturated_max": above_limit,
+            "collective_residual": bool(abs(residual[0]) > RESIDUAL_TOLERANCE),
+            "torque_residual": bool(np.linalg.norm(residual[1:]) > RESIDUAL_TOLERANCE),
         }
-
-        for _ in range(MAX_CLIP_ITERATIONS):
-            sol, _, _, _ = np.linalg.lstsq(self.matrix[:, active], wrench, rcond=None)
-            thrusts_active = sol
-            if np.any(thrusts_active < -1e-9):
-                # Clip the most negative rotor and re-solve on the rest.
-                idx_active = np.where(active)[0]
-                worst = idx_active[int(np.argmin(thrusts_active))]
-                thrusts[worst] = 0.0
-                active[worst] = False
-                status["clipped_negative"] = True
-                continue
-            thrusts[active] = thrusts_active
-            if self.max_thrust_per_rotor_n is not None:
-                over = thrusts > self.max_thrust_per_rotor_n
-                if np.any(over):
-                    thrusts[over] = self.max_thrust_per_rotor_n
-                    status["saturated_max"] = True
-                    # Keep solving on the non-saturated set.
-                    newly = np.where(over)[0]
-                    for j in newly:
-                        active[j] = False
-                    continue
-            break
-
-        # Report unachievable torque when the clipped solution cannot deliver
-        # the demanded wrench (yaw authority especially).
-        achieved = self.matrix @ thrusts
-        if np.linalg.norm(achieved[1:] - wrench[1:]) > 1e-3:
-            status["torque_residual"] = True
         return thrusts, status
