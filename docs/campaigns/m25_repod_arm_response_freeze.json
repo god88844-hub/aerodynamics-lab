@@ -1,0 +1,41 @@
+{
+  "plan": "m25-repod-drone-arm-force-v1",
+  "source": "https://doi.org/10.18150/JG8XQS",
+  "source_bytes": 3052355,
+  "source_sha256": "eb7c6df138780bcda7b44154c9ddf690d19708cba25a99e84c219b7de00166fd",
+  "calibration_samples": [
+    1,
+    2,
+    3
+  ],
+  "holdout_samples": [
+    4,
+    5
+  ],
+  "models": {
+    "PETG/25%": {
+      "effective_n_per_mm": 1.390585027,
+      "leave_sample_out_max_abs_error_n": 0.370758159,
+      "leave_sample_out_mae_n": 0.181850625
+    },
+    "PETG/100%": {
+      "effective_n_per_mm": 2.377917237,
+      "leave_sample_out_max_abs_error_n": 0.582502376,
+      "leave_sample_out_mae_n": 0.27124743
+    },
+    "PLA/25%": {
+      "effective_n_per_mm": 1.045993735,
+      "leave_sample_out_max_abs_error_n": 1.141327612,
+      "leave_sample_out_mae_n": 0.255668521
+    },
+    "PLA/100%": {
+      "effective_n_per_mm": 1.924798586,
+      "leave_sample_out_max_abs_error_n": 0.180304219,
+      "leave_sample_out_mae_n": 0.097727318
+    }
+  },
+  "infill_blind_baseline_n_per_mm": {
+    "PETG": 1.884251132,
+    "PLA": 1.485396161
+  }
+}
