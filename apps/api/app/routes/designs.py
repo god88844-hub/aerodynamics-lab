@@ -5,7 +5,8 @@ from __future__ import annotations
 
 import json
 
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Request, Response
+from starlette.concurrency import run_in_threadpool
 from pydantic import BaseModel, ValidationError
 from sqlalchemy import select
 from sqlalchemy.orm import Session, defer
@@ -14,6 +15,7 @@ from aeroforge_schemas.design import DroneDesign
 from app.persistence.database import get_db
 from app.persistence.design_history import canonical_snapshot, lock_design, make_revision, record_update, snapshot_digest
 from app.persistence.models import Design, DesignRevision, SimulationRun
+from app.services.cad_layout import MAX_DRAWING_BYTES, export_layout, import_layout
 
 router = APIRouter(prefix="/designs", tags=["designs"])
 
@@ -217,6 +219,34 @@ def restore_design_revision(design_id: int, number: int, db: Session = Depends(g
     record_update(db, row, design.name, revision.snapshot_json)
     db.commit()
     return _design_record(row)
+
+
+@router.get("/{design_id}/revisions/{number}/layout.dxf")
+def download_layout(design_id: int, number: int, db: Session = Depends(get_db)) -> Response:
+    revision = get_design_revision(design_id, number, db)
+    try:
+        data = export_layout(_validated_snapshot(revision["snapshot"]), revision["snapshot_sha256"])
+    except ValueError as exc:
+        raise HTTPException(422, str(exc)) from exc
+    filename = f"aeroforge-{design_id}-r{number}-{revision['snapshot_sha256'][:12]}.dxf"
+    return Response(content=data, media_type="application/dxf",
+                    headers={"Content-Disposition": f'attachment; filename="{filename}"'})
+
+
+@router.post("/{design_id}/revisions/{number}/layout-preview")
+async def preview_layout(design_id: int, number: int, request: Request, db: Session = Depends(get_db)) -> dict:
+    data = bytearray()
+    async for chunk in request.stream():
+        if len(data) + len(chunk) > MAX_DRAWING_BYTES:
+            raise HTTPException(413, "DXF exceeds the 1 MiB exchange limit")
+        data.extend(chunk)
+    revision = await run_in_threadpool(get_design_revision, design_id, number, db)
+    try:
+        design, changes = await run_in_threadpool(import_layout, _validated_snapshot(revision["snapshot"]),
+                                                  revision["snapshot_sha256"], bytes(data))
+    except ValueError as exc:
+        raise HTTPException(422, str(exc)) from exc
+    return {"snapshot": design.model_dump(mode="json"), "changes": changes, "source_sha256": revision["snapshot_sha256"]}
 
 
 @router.delete("/{design_id}")

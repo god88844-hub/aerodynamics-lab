@@ -11,3 +11,7 @@
 Open a saved design, choose an earlier **Saved revision**, and select **Restore revision**. A changed restore becomes the current revision immediately. Identical saves and retries of an already applied restore reuse the current revision. The revision history belongs to the saved design and is removed if the design is deleted.
 
 The revisions API lists the number, timestamp, name and SHA-256 for each snapshot at `GET /api/designs/{design_id}/revisions`. Retrieve a specific snapshot at `GET /api/designs/{design_id}/revisions/{number}`. The digest covers UTF-8 JSON with sorted keys and compact separators, using the same encoding convention as saved simulation inputs. Stored simulation reports retain the snapshots they originally ran against.
+
+## CAD exchange
+
+Saved revisions support a [DXF placement round trip](M28_17_21_CAD_LAYOUT.md) for component centers, rotors and mounts.
