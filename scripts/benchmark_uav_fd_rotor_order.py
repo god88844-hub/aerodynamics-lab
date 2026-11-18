@@ -69,16 +69,19 @@ def checked_signal(data: dict, name: str, label: str, channels: tuple[str, ...])
     return Signal(t, values)
 
 
-def load(directory: Path, name: str) -> tuple[Signal, Signal, list[Signal]]:
+def read_verified_mat(directory: Path, name: str, fingerprints: dict, channels: list[str]) -> dict:
     path = directory / name
-    expected_bytes, expected_digest = FILES[name]
+    expected_bytes, expected_digest = fingerprints[name]
     with path.open("rb") as stream:
         if path.stat().st_size != expected_bytes or hashlib.file_digest(stream, "sha256").hexdigest() != expected_digest:
             raise ValueError(f"{name} does not match the pinned publisher bytes")
+    return loadmat(path, variable_names=channels, simplify_cells=True)
+
+
+def load(directory: Path, name: str, fingerprints: dict) -> tuple[Signal, Signal, list[Signal]]:
     esc_names = [f"ESC_{index}" for index in range(6)]
-    data = loadmat(
-        path, variable_names=["IMU_0", "IMU_label", "CTUN", "CTUN_label", *esc_names, "ESC_label"],
-        simplify_cells=True,
+    data = read_verified_mat(
+        directory, name, fingerprints, ["IMU_0", "IMU_label", "CTUN", "CTUN_label", *esc_names, "ESC_label"],
     )
     imu = checked_signal(data, "IMU_0", "IMU_label", ("AccX", "AccY", "AccZ"))
     altitude = checked_signal(data, "CTUN", "CTUN_label", ("Alt",))
@@ -103,8 +106,8 @@ def spectral_score(t: np.ndarray, acceleration: np.ndarray, motor_rpm: np.ndarra
     return float(score), float(rms)
 
 
-def extract(directory: Path, name: str) -> tuple[list[WindowScore], dict[str, int]]:
-    imu, altitude, motors = load(directory, name)
+def extract(directory: Path, name: str, fingerprints: dict = FILES) -> tuple[list[WindowScore], dict[str, int]]:
+    imu, altitude, motors = load(directory, name, fingerprints)
     rejected = Counter()
     scores = []
     count = int((imu.t[-1] - imu.t[0]) // WINDOW_S)

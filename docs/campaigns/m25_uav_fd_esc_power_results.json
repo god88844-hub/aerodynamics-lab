@@ -1,0 +1,144 @@
+{
+  "plan": "m25-uavfd-esc-power-v1",
+  "frozen_canonical_sha256": "1ab24b17964eacbc0f64a9566810675fbb0d54d14553d03abf505eb6d9d1f233",
+  "flights": {
+    "NO_FAULT6.mat": {
+      "published_fault_label": false,
+      "window_exclusions": {
+        "unsupported_altitude_or_attitude": 26,
+        "rotor_speed_or_nonpositive_electrical_input": 3,
+        "outside_healthy_median_rpm": 1
+      },
+      "comparisons": {
+        "speed_normalized_power": {
+          "tested_windows": 26,
+          "above_threshold_windows": 5,
+          "repeat_alarms_by_source_esc": {
+            "ESC_2": 1
+          },
+          "first_alert_window": 40,
+          "verdict": "ESC_POWER_ALERT",
+          "agreement": "FALSE_ALERT"
+        },
+        "power_baseline": {
+          "tested_windows": 26,
+          "above_threshold_windows": 2,
+          "repeat_alarms_by_source_esc": {},
+          "first_alert_window": null,
+          "verdict": "NO_ALERT",
+          "agreement": "NO_ALERT_ON_HEALTHY_SOURCE"
+        },
+        "rotor_order_vibration": {
+          "tested_windows": 26,
+          "window_exclusions": {
+            "altitude_or_ground_context": 27,
+            "outside_rotor_speed_scope": 3,
+            "outside_healthy_median_rpm": 1
+          },
+          "threshold": 0.103437127,
+          "exceeding_windows": 1,
+          "longest_consecutive_exceedance": 1,
+          "first_alert_window": null,
+          "verdict": "NO_ALERT",
+          "agreement": "NO_ALERT_ON_HEALTHY_SOURCE"
+        },
+        "either_indicator": {
+          "verdict": "COMBINED_ALERT",
+          "agreement": "FALSE_ALERT"
+        }
+      }
+    },
+    "FAULT_M1_10.mat": {
+      "published_fault_label": true,
+      "window_exclusions": {
+        "unsupported_altitude_or_attitude": 24,
+        "rotor_speed_or_nonpositive_electrical_input": 1,
+        "outside_healthy_median_rpm": 1
+      },
+      "comparisons": {
+        "speed_normalized_power": {
+          "tested_windows": 41,
+          "above_threshold_windows": 5,
+          "repeat_alarms_by_source_esc": {},
+          "first_alert_window": null,
+          "verdict": "NO_ALERT",
+          "agreement": "MISSED"
+        },
+        "power_baseline": {
+          "tested_windows": 41,
+          "above_threshold_windows": 0,
+          "repeat_alarms_by_source_esc": {},
+          "first_alert_window": null,
+          "verdict": "NO_ALERT",
+          "agreement": "MISSED"
+        },
+        "rotor_order_vibration": {
+          "tested_windows": 41,
+          "window_exclusions": {
+            "altitude_or_ground_context": 23,
+            "outside_rotor_speed_scope": 1,
+            "imu_gap_or_count": 1,
+            "esc_gap_or_count": 1,
+            "outside_healthy_median_rpm": 0
+          },
+          "threshold": 0.103437127,
+          "exceeding_windows": 3,
+          "longest_consecutive_exceedance": 1,
+          "first_alert_window": null,
+          "verdict": "NO_ALERT",
+          "agreement": "MISSED"
+        },
+        "either_indicator": {
+          "verdict": "NO_ALERT",
+          "agreement": "MISSED"
+        }
+      }
+    },
+    "FAULT_M5_10.mat": {
+      "published_fault_label": true,
+      "window_exclusions": {
+        "unsupported_altitude_or_attitude": 24,
+        "rotor_speed_or_nonpositive_electrical_input": 1,
+        "outside_healthy_median_rpm": 1
+      },
+      "comparisons": {
+        "speed_normalized_power": {
+          "tested_windows": 36,
+          "above_threshold_windows": 4,
+          "repeat_alarms_by_source_esc": {},
+          "first_alert_window": null,
+          "verdict": "NO_ALERT",
+          "agreement": "MISSED"
+        },
+        "power_baseline": {
+          "tested_windows": 36,
+          "above_threshold_windows": 4,
+          "repeat_alarms_by_source_esc": {},
+          "first_alert_window": null,
+          "verdict": "NO_ALERT",
+          "agreement": "MISSED"
+        },
+        "rotor_order_vibration": {
+          "tested_windows": 36,
+          "window_exclusions": {
+            "altitude_or_ground_context": 23,
+            "imu_gap_or_count": 1,
+            "outside_rotor_speed_scope": 1,
+            "outside_healthy_median_rpm": 1
+          },
+          "threshold": 0.103437127,
+          "exceeding_windows": 36,
+          "longest_consecutive_exceedance": 26,
+          "first_alert_window": 5,
+          "verdict": "FAULT_INDICATOR_ALERT",
+          "agreement": "DETECTED"
+        },
+        "either_indicator": {
+          "verdict": "COMBINED_ALERT",
+          "agreement": "DETECTED"
+        }
+      }
+    }
+  },
+  "acceptance": "INCONCLUSIVE_FOR_STRUCTURAL_OR_FLIGHT_ACCEPTANCE"
+}
