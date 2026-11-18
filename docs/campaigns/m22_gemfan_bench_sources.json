@@ -1,0 +1,64 @@
+{
+  "repository": "mdttech/quadrotor-design",
+  "commit": "b6f1dde3aafb1c5f564485f91406226e236ab578",
+  "calibration": [
+    {
+      "path": "propeller_testing/data/RPM_11850.csv",
+      "size": 35103,
+      "git_blob_sha1": "63f3831fd9dbd04f26583ce3845b5926323d695a",
+      "sha256": "119b31a0054e07c64e7f4cc267addd577a0f3836e9ec2e8fd79968568f1d631b",
+      "url": "https://raw.githubusercontent.com/mdttech/quadrotor-design/b6f1dde3aafb1c5f564485f91406226e236ab578/propeller_testing/data/RPM_11850.csv"
+    },
+    {
+      "path": "propeller_testing/data/RPM_14100.csv",
+      "size": 41448,
+      "git_blob_sha1": "abfbc1b826ac76da50943a488d1bc3a816611edf",
+      "sha256": "325be27f654e172b92bcdbe473b6f693bd406123db11c52cef3944d1d5e958a1",
+      "url": "https://raw.githubusercontent.com/mdttech/quadrotor-design/b6f1dde3aafb1c5f564485f91406226e236ab578/propeller_testing/data/RPM_14100.csv"
+    },
+    {
+      "path": "propeller_testing/data/RPM_2130.csv",
+      "size": 59986,
+      "git_blob_sha1": "2fe32d3ae4729dbb14f49c362e9a00bb54cd2173",
+      "sha256": "e62c8629e9b09b26af4df6c349ce9cab6cfbed2ca1f1e27ed3d052be03a792cc",
+      "url": "https://raw.githubusercontent.com/mdttech/quadrotor-design/b6f1dde3aafb1c5f564485f91406226e236ab578/propeller_testing/data/RPM_2130.csv"
+    },
+    {
+      "path": "propeller_testing/data/RPM_8000.csv",
+      "size": 32006,
+      "git_blob_sha1": "f5fb835304aa026fa58f1243ed38122b2823330f",
+      "sha256": "8df036963fc2fe8a7c6174edda05172a76e5e701d6641041c1c391b1c6571a10",
+      "url": "https://raw.githubusercontent.com/mdttech/quadrotor-design/b6f1dde3aafb1c5f564485f91406226e236ab578/propeller_testing/data/RPM_8000.csv"
+    }
+  ],
+  "holdout": [
+    {
+      "path": "propeller_testing/data/RPM_10750.csv",
+      "size": 31610,
+      "git_blob_sha1": "f1478ea416e43bb415999c663906137299f0773f",
+      "sha256": "b2ea4dfe1149738c3150a58b1570b658cbf60a4069fd03023b6249ca3427ebcf",
+      "url": "https://raw.githubusercontent.com/mdttech/quadrotor-design/b6f1dde3aafb1c5f564485f91406226e236ab578/propeller_testing/data/RPM_10750.csv"
+    },
+    {
+      "path": "propeller_testing/data/RPM_12270.csv",
+      "size": 39870,
+      "git_blob_sha1": "324e1fd85789d88ba6339f38d0bcd922068915a0",
+      "sha256": "c0a1ab1e35848d0de8b9c8d231fca04065a192a2e8cec174a4f38374dfa2c60e",
+      "url": "https://raw.githubusercontent.com/mdttech/quadrotor-design/b6f1dde3aafb1c5f564485f91406226e236ab578/propeller_testing/data/RPM_12270.csv"
+    },
+    {
+      "path": "propeller_testing/data/RPM_5740.csv",
+      "size": 27267,
+      "git_blob_sha1": "32084e61f185c0db4863a74e1283e0bca7811f49",
+      "sha256": "531619be958925ed1d1213df7a5bbbbc49ddf8c510d489b11f88ca1d65057441",
+      "url": "https://raw.githubusercontent.com/mdttech/quadrotor-design/b6f1dde3aafb1c5f564485f91406226e236ab578/propeller_testing/data/RPM_5740.csv"
+    },
+    {
+      "path": "propeller_testing/data/RPM_9600.csv",
+      "size": 28329,
+      "git_blob_sha1": "8a615238f5fbc834f0b05e6d870ffcb4c961cbfc",
+      "sha256": "27aaa31b14438090f14217d2cc4b24a643e911ccbaab475e5d073c7a950e61ab",
+      "url": "https://raw.githubusercontent.com/mdttech/quadrotor-design/b6f1dde3aafb1c5f564485f91406226e236ab578/propeller_testing/data/RPM_9600.csv"
+    }
+  ]
+}
