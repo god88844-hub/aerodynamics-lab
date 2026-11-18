@@ -1,0 +1,93 @@
+{
+  "holdout_flights": [
+    {
+      "name": "F0_SV0_SP1_t4_D1_R1.mat",
+      "scored_samples": 1821,
+      "scored_duration_s": 36.4,
+      "moving_reference_samples": 159,
+      "direct_reference": {
+        "mae_m": 0.079527923,
+        "mean_signed_error_m": -0.004256154,
+        "max_absolute_error_m": 0.498865095
+      },
+      "causal_two_stage": {
+        "mae_m": 0.027344982,
+        "mean_signed_error_m": -0.016361946,
+        "max_absolute_error_m": 0.134494859
+      },
+      "moving_reference": {
+        "direct_reference": {
+          "mae_m": 0.269021303,
+          "mean_signed_error_m": 0.00146611,
+          "max_absolute_error_m": 0.498865095
+        },
+        "causal_two_stage": {
+          "mae_m": 0.038506135,
+          "mean_signed_error_m": -0.028954629,
+          "max_absolute_error_m": 0.132607822
+        }
+      }
+    },
+    {
+      "name": "F0_SV0_SP1_t4_D1_R2.mat",
+      "scored_samples": 1889,
+      "scored_duration_s": 37.76,
+      "moving_reference_samples": 160,
+      "direct_reference": {
+        "mae_m": 0.077505482,
+        "mean_signed_error_m": -0.003676945,
+        "max_absolute_error_m": 0.507924586
+      },
+      "causal_two_stage": {
+        "mae_m": 0.02835745,
+        "mean_signed_error_m": -0.015497057,
+        "max_absolute_error_m": 0.143376149
+      },
+      "moving_reference": {
+        "direct_reference": {
+          "mae_m": 0.268295606,
+          "mean_signed_error_m": 0.001660945,
+          "max_absolute_error_m": 0.507924586
+        },
+        "causal_two_stage": {
+          "mae_m": 0.04047643,
+          "mean_signed_error_m": -0.0331953,
+          "max_absolute_error_m": 0.138571193
+        }
+      }
+    },
+    {
+      "name": "F0_SV0_SP1_t4_D1_R3.mat",
+      "scored_samples": 2052,
+      "scored_duration_s": 41.02,
+      "moving_reference_samples": 160,
+      "direct_reference": {
+        "mae_m": 0.07622092,
+        "mean_signed_error_m": -0.002610193,
+        "max_absolute_error_m": 0.480789073
+      },
+      "causal_two_stage": {
+        "mae_m": 0.030423272,
+        "mean_signed_error_m": -0.013392441,
+        "max_absolute_error_m": 0.140439068
+      },
+      "moving_reference": {
+        "direct_reference": {
+          "mae_m": 0.266196982,
+          "mean_signed_error_m": 0.009126136,
+          "max_absolute_error_m": 0.480789073
+        },
+        "causal_two_stage": {
+          "mae_m": 0.033886475,
+          "mean_signed_error_m": -0.024432844,
+          "max_absolute_error_m": 0.135079019
+        }
+      }
+    }
+  ],
+  "mean_flight_mae_m": {
+    "direct_reference": 0.077751442,
+    "causal_two_stage": 0.028708568
+  },
+  "acceptance_status": "inconclusive_research_benchmark_without_a_flight_acceptance_threshold"
+}
