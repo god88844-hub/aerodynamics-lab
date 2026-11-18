@@ -382,6 +382,16 @@ def run_flight(design: DroneDesign, data_dir: Path | None = None) -> dict:
     max_current = (float(np.nanmax(res.per_motor_current_a))
                    if res.per_motor_current_a is not None else None)
     min_soc = float(res.soc_pct.min()) if res.soc_pct is not None else None
+    if res.structural_margin_min is None:
+        structure = {"status": "INCONCLUSIVE", "caveat": "No frame bending margin is available for this run."}
+    elif res.structural_margin_min < 1.0:
+        structure = {"status": "FAIL", "caveat": "Rotor-arm bending stress exceeded the modeled material limit."}
+    else:
+        structure = {
+            "status": "INCONCLUSIVE",
+            "caveat": "Rotor-arm bending stayed within the modeled material limit. Axial compression, "
+                      "buckling, joints, fatigue and installed-frame strength require separate evidence.",
+        }
     return {
         "scenario": "flight (M4 takeoff-hover-land, powertrain in the loop)",
         "physics_version": physics_version,
@@ -415,11 +425,13 @@ def run_flight(design: DroneDesign, data_dir: Path | None = None) -> dict:
         ],
         "success": res.success,
         "allocation_control_steps": res.allocation_counts,
+        "model_notes": res.notes,
         "telemetry": _states_telemetry(
             res.times, res.states, res.thrusts,
             currents=res.per_motor_current_a, v_bus=res.v_bus, soc=res.soc_pct,
         ),
         "trustworthiness": {
+            "structure": structure,
             "powertrain": {
                 "status": "sourced bench data in the loop (model of record)",
                 "caveat": "quasi-static bus solve; motor thermal rule is the "

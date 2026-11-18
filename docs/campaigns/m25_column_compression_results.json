@@ -1,0 +1,98 @@
+{
+  "source_sha256": "60a111532fe91494bd586eda3dd7f22142f5270fdf201f4fd7f3726ba1e9e883",
+  "design": "retrospective_length_transfer",
+  "gauge_lengths_mm": [
+    30,
+    65,
+    130
+  ],
+  "series": {
+    "e1": {
+      "sample_counts": [
+        5306,
+        4044,
+        10895
+      ],
+      "observed_peaks_n": [
+        743.7363,
+        228.4949,
+        82.7681
+      ],
+      "published_peaks_n": [
+        744.0,
+        228.6,
+        82.8
+      ],
+      "middle_length_comparison": {
+        "euler_from_long": {
+          "prediction_n": 331.0725,
+          "prediction_minus_peak_n": 102.5776,
+          "overestimates_observed_peak": true
+        },
+        "reciprocal_from_endpoints": {
+          "prediction_n": 279.6479,
+          "prediction_minus_peak_n": 51.153,
+          "overestimates_observed_peak": true
+        }
+      }
+    },
+    "e2": {
+      "sample_counts": [
+        3253,
+        7220,
+        1859
+      ],
+      "observed_peaks_n": [
+        976.252,
+        836.5072,
+        180.4424
+      ],
+      "published_peaks_n": [
+        976.6,
+        836.8,
+        180.5
+      ],
+      "middle_length_comparison": {
+        "euler_from_long": {
+          "prediction_n": 721.7694,
+          "prediction_minus_peak_n": -114.7378,
+          "overestimates_observed_peak": false
+        },
+        "reciprocal_from_endpoints": {
+          "prediction_n": 509.3876,
+          "prediction_minus_peak_n": -327.1196,
+          "overestimates_observed_peak": false
+        }
+      }
+    },
+    "e5": {
+      "sample_counts": [
+        26767,
+        6170,
+        1054
+      ],
+      "observed_peaks_n": [
+        2197.6703,
+        1154.2427,
+        682.5428
+      ],
+      "published_peaks_n": [
+        2198.0,
+        1155.0,
+        682.8
+      ],
+      "middle_length_comparison": {
+        "euler_from_long": {
+          "prediction_n": 2730.1714,
+          "prediction_minus_peak_n": 1575.9287,
+          "overestimates_observed_peak": true
+        },
+        "reciprocal_from_endpoints": {
+          "prediction_n": 1503.9064,
+          "prediction_minus_peak_n": 349.6636,
+          "overestimates_observed_peak": true
+        }
+      }
+    }
+  }
+}

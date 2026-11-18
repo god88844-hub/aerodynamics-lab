@@ -168,6 +168,7 @@ export interface SimulationResult {
   benchmarks?: { name: string; status: string; metrics: Record<string, number>; notes: string }[]
   events?: FailureEvent[]
   success?: Record<string, boolean>
+  model_notes?: string[]
   allocation_control_steps?: {
     clipped_negative: number
     saturated_max: number

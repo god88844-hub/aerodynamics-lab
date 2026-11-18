@@ -77,7 +77,7 @@ function ScenarioResults({ result, scenario }: { result: SimulationResult; scena
           <Metric label="energy used" value={fmt(r.energy_used_wh)} unit="Wh" />
           <Metric label="max motor current" value={fmt(r.max_motor_current_a)} unit="A" />
           <Metric label="final SOC" value={fmt(r.final_soc_pct, 1)} unit="%" />
-          <Metric label="struct. margin" value={fmt(r.structural_margin_min)} unit="×yield" />
+          <Metric label="arm bending margin" value={fmt(r.structural_margin_min)} unit="× limit" />
         </div>
         {result.mission && (
           <p className="mt-2 text-xs text-slate-400">
@@ -198,12 +198,28 @@ function TrustSection({ result }: { result: SimulationResult }) {
   const tw = result.trustworthiness ?? {}
   const verdict = typeof tw.verdict === 'string' ? tw.verdict : undefined
   const entries = Object.entries(tw).filter(([k]) => k !== 'verdict')
+  if (result.status === 'completed' && result.scenario.startsWith('flight') && !tw.structure) {
+    const margin = result.results?.structural_margin_min
+    const failed = (typeof margin === 'number' && margin < 1) ||
+      result.events?.some(event => event.kind === 'structure_yield' && event.critical)
+    entries.push(['structure', {
+      status: failed ? 'FAIL' : 'INCONCLUSIVE',
+      caveat: failed
+        ? 'The saved run recorded a structural bending-limit failure.'
+        : 'This saved run provides no assessment of installed-frame strength.',
+    }])
+  }
   return (
     <section className="rounded border border-slate-800 bg-slate-900/40 p-3">
       <h3 className="mb-2 text-[11px] font-semibold uppercase tracking-wider text-cyan-500">
         Trustworthiness
       </h3>
       {verdict && <p className="mb-2 text-xs font-medium text-amber-300">{verdict}</p>}
+      {Boolean(result.model_notes?.length) && (
+        <ul className="mb-2 list-disc space-y-1 pl-4 text-xs text-slate-300">
+          {result.model_notes?.map((note, index) => <li key={index}>{note}</li>)}
+        </ul>
+      )}
       {result.simulation_id != null && result.input_sha256 && (
         <a
           className="mb-2 inline-block text-xs text-cyan-300 underline"
