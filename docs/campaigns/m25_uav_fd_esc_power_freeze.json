@@ -1,0 +1,121 @@
+{
+  "plan": "m25-uavfd-esc-power-v1",
+  "source": "https://doi.org/10.5281/zenodo.7648996",
+  "source_files": {
+    "NO_FAULT1.mat": {
+      "bytes": 31477776,
+      "sha256": "8fa683680232dae902d7c906853fb80f5b89ffb6b43ff8e97b708bd8f8473ba5"
+    },
+    "NO_FAULT4.mat": {
+      "bytes": 43712272,
+      "sha256": "2a41050325fb9315cd2fd12429a31d3d7b1b2fef2a4802dada2eaea57ea3fcd3"
+    },
+    "NO_FAULT6.mat": {
+      "bytes": 45466208,
+      "sha256": "fe5d6f3f02fc8a99a076ba5d251f7f341c7ff7c5759bc42283c971b9aff52cab"
+    },
+    "FAULT_M1_10.mat": {
+      "bytes": 18742480,
+      "sha256": "5bfcc4846cc265fa2fe58d65561f09260644090a3f5cd02582a10fb4ea86a840"
+    },
+    "FAULT_M5_10.mat": {
+      "bytes": 17520095,
+      "sha256": "503844932d09b0ab8c243e6b986c2f979271843af3de7709f15a172f09a45d53"
+    }
+  },
+  "calibration_flights": {
+    "NO_FAULT1.mat": {
+      "eligible_windows": 20,
+      "exclusions": {
+        "unsupported_altitude_or_attitude": 15
+      }
+    },
+    "NO_FAULT4.mat": {
+      "eligible_windows": 23,
+      "exclusions": {
+        "unsupported_altitude_or_attitude": 25,
+        "rotor_speed_or_nonpositive_electrical_input": 2,
+        "incomplete_esc_windows": 1
+      }
+    }
+  },
+  "calibrated_median_rpm": [
+    5379.75,
+    6148.75
+  ],
+  "vibration_calibration": {
+    "plan": "m25-uavfd-rotor-order-v1",
+    "source": "https://doi.org/10.5281/zenodo.7648996",
+    "source_files": {
+      "NO_FAULT1.mat": {
+        "bytes": 31477776,
+        "sha256": "8fa683680232dae902d7c906853fb80f5b89ffb6b43ff8e97b708bd8f8473ba5"
+      },
+      "NO_FAULT4.mat": {
+        "bytes": 43712272,
+        "sha256": "2a41050325fb9315cd2fd12429a31d3d7b1b2fef2a4802dada2eaea57ea3fcd3"
+      },
+      "NO_FAULT5.mat": {
+        "bytes": 41697864,
+        "sha256": "85349d743ae4ea17aeb8bb4ac3c74fbe4c3f33ab8dc21b5ae29464e398c14cc2"
+      },
+      "FAULT_M3_10.mat": {
+        "bytes": 15650896,
+        "sha256": "9bd3284274615b2c1db7168ff930a2474abdda7a0686f4dba09f2cef46efa46b"
+      },
+      "FAULT_M4_10.mat": {
+        "bytes": 14544382,
+        "sha256": "1e99ccf414ac483d1945982a79b966caed5fe3385d0967b126d4624d0ff1a913"
+      }
+    },
+    "calibration_flights": {
+      "NO_FAULT1.mat": {
+        "eligible_windows": 20,
+        "rejections": {
+          "altitude_or_ground_context": 15,
+          "imu_gap_or_count": 1
+        }
+      },
+      "NO_FAULT4.mat": {
+        "eligible_windows": 21,
+        "rejections": {
+          "altitude_or_ground_context": 27,
+          "outside_rotor_speed_scope": 2,
+          "imu_gap_or_count": 2
+        }
+      }
+    },
+    "healthy_calibration_median_rpm_support": [
+      5377.5,
+      6049.5
+    ],
+    "thresholds": {
+      "rotor_order": 0.103437127,
+      "accel_rms": 0.587594531
+    }
+  },
+  "models": {
+    "speed_normalized_power": {
+      "motor_healthy_centers": [
+        56.430417629,
+        51.938409251,
+        51.799539657,
+        55.495250607,
+        53.846549144,
+        57.730282981
+      ],
+      "deficit_threshold": 0.106696969
+    },
+    "power_baseline": {
+      "motor_healthy_centers": [
+        65.02975,
+        24.0264,
+        49.786,
+        38.3362,
+        36.9292,
+        52.0182
+      ],
+      "deficit_threshold": 0.24889605
+    }
+  }
+}
