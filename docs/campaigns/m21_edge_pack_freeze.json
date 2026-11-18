@@ -1,0 +1,23 @@
+{
+  "archive_sha256": "f6ca7b1eeaed8b75da92479a778bbef9253997a572cc20ab480f872a9ee3a9b0",
+  "calibration_sha256": {
+    "HIRF10.mat": "29de6ef7ff6b58de894be255ee66b833d7d90d0d49412a6d8a89b2b340135682",
+    "HIRF11.mat": "31946842d58f70d9adb4c5b784b28c0ce9567f22444d2475af858f64d70d7e34",
+    "HIRF12.mat": "0db492c34777b32bdafbd738d8a8b266a33aefdca90133c0478c5e5f1b96fa1e",
+    "HIRF13.mat": "3d7507a7e920b52a6a30fb2c5c95e3ef2d230105a9b4881ce5e40c767c877abe",
+    "HIRF5.mat": "3924d20a34a46e818adaa8cb237ce3856fe843011fdd24e106b5df66f3273f94",
+    "HIRF6.mat": "81ac9ade2e47ef3dc0576da7f5c2d8852f15a69d6f836ce84cd474fa1b5f6190",
+    "HIRF7.mat": "06e8202e7139b212e0dca6206690bb3cb469919c4ff7f9007a3561bd435d929c",
+    "HIRF8.mat": "4d4ebc87eb4a9e46624302f7caf1fb1f5f86d27756f6f269b21494ed14f59c9a",
+    "HIRF9.mat": "9d3081c26e302089b217c01760672f1b5ba7a9521415b6c68c679ad1c4b2152c"
+  },
+  "coefficients": {
+    "charge_only": [
+      0.600308812598521
+    ],
+    "charge_and_sag": [
+      0.5151056047892908,
+      0.05685742740000055
+    ]
+  }
+}
