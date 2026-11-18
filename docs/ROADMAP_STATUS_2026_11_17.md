@@ -14,7 +14,7 @@ The repository contains merged implementation branches:
 - **M22** propulsion source-pinned campaign software: [PR #26](https://github.com/god88844-hub/aeroforge/pull/26); **physical exit still open** [#25](https://github.com/god88844-hub/aeroforge/issues/25).
 - **M23** HIL/controller evidence software: [PR #30](https://github.com/god88844-hub/aeroforge/pull/30) and later combined follow-ups. The [DronePropA altitude benchmark](campaigns/M23_3_7_DRONEPROPA_ALTITUDE.md) quantifies command-driven tracking error in three held-out QDrone 2 flights. The controller hardware acceptance gate remains open.
 - **M24–M25** analytical aerodynamic and material/rotor screening subscopes: merged, but physical/operating-envelope model-form validation remains unresolved.
-- **M27–M29** numerous source hashes, conservative uncertainty bounds, rotor clearance and release audits are software-implemented via incremental PRs. In the [QDrone 2 transfer benchmark](campaigns/M27_11_15_DRONEPROPA_TRANSFER.md), the frozen altitude error bands covered every scored sample in two of five independent test flights. Generalized uncertainty and full application acceptance remain open.
+- **M27–M29** numerous source hashes, conservative uncertainty bounds, rotor clearance and release audits are software-implemented via incremental PRs. In the [QDrone 2 transfer benchmark](campaigns/M27_11_15_DRONEPROPA_TRANSFER.md), the frozen altitude error bands covered every scored sample in two of five reserved test flights. Generalized uncertainty and full application acceptance remain open.
 - **M26** independent full-aircraft flight validation: **not complete**.
 - **M30** decision-grade Drone Lab v1 release: **not complete**.
 - **M31** post-drone vehicle class expansion: **not complete**.
