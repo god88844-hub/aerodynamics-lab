@@ -39,7 +39,12 @@ def load(source_dir: Path, entry: dict) -> list[Row]:
     reader = csv.DictReader(StringIO(raw.decode("utf-8-sig")))
     if not set(FIELDS).issubset(reader.fieldnames or ()):
         raise ValueError(f"Required data channels are missing in {filename}")
-    rows = [Row(*(float(row[field]) for field in FIELDS)) for row in reader if any(row[field] for field in FIELDS)]
+    rows = []
+    for row in reader:
+        if not any(row[field] for field in FIELDS) or (not rows and not row[FIELDS[1]]):
+            # Some exports start logging sensors before the PWM channel is armed.
+            continue
+        rows.append(Row(*(float(row[field]) for field in FIELDS)))
     if not rows or not all(isfinite(value) for row in rows for value in row):
         raise ValueError(f"Non-finite or absent recorded samples in {filename}")
     return rows
