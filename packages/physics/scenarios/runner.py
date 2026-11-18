@@ -11,7 +11,7 @@ project failure"):
     - motor current above the continuous rating sustained for the datasheet's
       continuous duration (180 s for the MN3508) — thermal burnout,
     - battery cell voltage (under load) at/below the cutoff threshold,
-    - ESC bus voltage above its rating,
+    - any ESC branch current or shared bus voltage above its declared rating,
     - arm root bending stress at/above material yield,
     - ground impact (z below start with negative speed at ground level),
     - attitude loss (|tilt| > 45 deg — unrecoverable for this controller class).
@@ -223,15 +223,15 @@ class LoopPowertrain:
                 else:
                     self._over_current_time[i] = 0.0
 
-        # ESC over-voltage.
-        esc_issues = self.esc.check(total_current / max(n, 1), v_bus)
-        for issue in esc_issues:
-            if "over-voltage" in issue:
-                events.append({"kind": "esc_overvoltage", "critical": True,
-                               "message": issue, "t_s": None})
-            else:
-                events.append({"kind": "esc_overcurrent", "critical": False,
-                               "message": issue, "t_s": None})
+        for i, current in enumerate(currents):
+            issue = self.esc.current_issue(current)
+            if issue:
+                events.append({"kind": "esc_overcurrent", "critical": True,
+                               "message": f"rotor {i}: {issue}", "t_s": None})
+        voltage_issue = self.esc.voltage_issue(v_bus)
+        if voltage_issue:
+            events.append({"kind": "esc_overvoltage", "critical": True,
+                           "message": voltage_issue, "t_s": None})
 
         return LoopAux(
             v_bus=v_bus,

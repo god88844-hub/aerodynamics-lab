@@ -165,6 +165,7 @@ export interface SimulationResult {
   mission?: { profile: string; duration_s: number; aborted: boolean; abort_event: string | null }
   hover_point?: Record<string, unknown>
   endurance?: Record<string, number | null>
+  limits?: { verdict?: 'FAIL' | 'INCONCLUSIVE'; issues: string[] }
   benchmarks?: { name: string; status: string; metrics: Record<string, number>; notes: string }[]
   events?: FailureEvent[]
   success?: Record<string, boolean>

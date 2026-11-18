@@ -96,6 +96,34 @@ def test_battery_depleted_aborts(design_mn, library):
     assert "battery_cutoff" in kinds
 
 
+def test_local_esc_overload_survives_averaging_and_aborts(design_mn, library, monkeypatch):
+    powertrain = design_mn.powertrain
+    motor = library.motor(powertrain.motor_id)
+    prop = library.propeller(powertrain.propeller_id)
+    dataset = PowertrainDataset(motor, prop.motor_test_data_key or prop.id)
+    battery = BatteryPack(library.battery(powertrain.battery_id))
+    spec = library.esc(powertrain.esc_id).model_copy(update={"max_continuous_current_a": 6.0})
+    loop = LoopPowertrain(dataset, Esc(spec), battery)
+    thrusts = np.array([6.0, 15.0, 6.0, 6.0])
+    aux = loop.step(thrusts, 0.004)
+    assert np.mean(aux.per_motor_current_a) < 6.0 < aux.per_motor_current_a[1]
+    events = [event for event in aux.events if event["kind"] == "esc_overcurrent"]
+    assert len(events) == 1 and events[0]["critical"]
+    assert "rotor 1" in events[0]["message"]
+
+    monkeypatch.setattr(library, "esc", lambda key: spec)
+    monkeypatch.setattr("physics.scenarios.runner.QuadcopterController.step",
+                        lambda *args: thrusts.copy())
+    mission = run_scenario(design_mn, takeoff_climb_scenario(2.0), library)
+    assert mission.aborted and mission.abort_event.kind == "esc_overcurrent"
+    assert mission.abort_event.t_s == 0 and mission.success_all is False
+
+    low_voltage = spec.model_copy(update={"max_voltage_v": 20.0})
+    aux = LoopPowertrain(dataset, Esc(low_voltage), battery).step(thrusts, 0.004)
+    voltage_events = [event for event in aux.events if event["kind"] == "esc_overvoltage"]
+    assert len(voltage_events) == 1 and voltage_events[0]["critical"]
+
+
 def test_over_max_thrust_detected(design_mn, library):
     """Forcing thrust above the measured static maximum (motor over-speed
     equivalent) must be reported as a critical failure, not silently accepted."""

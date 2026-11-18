@@ -9,15 +9,20 @@ class Esc:
     def __init__(self, spec: EscSpec) -> None:
         self.spec = spec
 
-    def check(self, current_a: float, voltage_v: float) -> list[str]:
-        issues: list[str] = []
+    def current_issue(self, current_a: float) -> str | None:
         if current_a > self.spec.max_continuous_current_a:
-            issues.append(
-                f"ESC over-current: {current_a:.1f} A > limit "
+            return (
+                f"ESC over-current: {current_a:.1f} A > continuous rating "
                 f"{self.spec.max_continuous_current_a:.1f} A"
             )
+        return None
+
+    def voltage_issue(self, voltage_v: float) -> str | None:
         if self.spec.max_voltage_v is not None and voltage_v > self.spec.max_voltage_v:
-            issues.append(
-                f"ESC over-voltage: {voltage_v:.1f} V > limit {self.spec.max_voltage_v:.1f} V"
-            )
-        return issues
+            return f"ESC over-voltage: {voltage_v:.1f} V > limit {self.spec.max_voltage_v:.1f} V"
+        return None
+
+    def check(self, current_a: float, voltage_v: float) -> list[str]:
+        """Check one controller's branch current and its supply voltage."""
+        return [issue for issue in (self.current_issue(current_a), self.voltage_issue(voltage_v))
+                if issue is not None]

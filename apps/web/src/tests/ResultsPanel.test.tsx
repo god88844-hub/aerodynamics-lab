@@ -44,6 +44,21 @@ describe('ResultsPanel', () => {
     expect(screen.getAllByText(/NOT a flight-worthiness claim/i).length).toBeGreaterThan(0)
   })
 
+  it('renders a static controller failure with the measured quantity and limit', () => {
+    const issue = 'ESC over-current: 4.5 A > continuous rating 2.0 A'
+    render(<ResultsPanel result={{ scenario: 'hover-static', status: 'completed',
+      hover_point: { per_rotor: {} }, endurance: {}, limits: { verdict: 'FAIL', issues: [issue] } }} />)
+    expect(screen.getByText('Component limits · FAIL')).toBeDefined()
+    expect(screen.getByText(issue)).toBeDefined()
+  })
+
+  it('asks for a rerun of a legacy hover result with the old aggregate current check', () => {
+    render(<ResultsPanel result={{ scenario: 'hover-static', status: 'completed',
+      hover_point: { per_rotor: {} }, endurance: {}, limits: { issues: ['ESC over-current'] } }} />)
+    expect(screen.getByText('Component limits · INCONCLUSIVE')).toBeDefined()
+    expect(screen.getByText(/Rerun this saved design/)).toBeDefined()
+  })
+
   it('preserves a bending failure in a historical result', () => {
     render(<ResultsPanel result={{ ...flightResult, results: { structural_margin_min: 0.6 } }} />)
     expect(screen.getByText('FAIL')).toBeDefined()
