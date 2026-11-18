@@ -7,11 +7,13 @@ import json
 
 from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel, ValidationError
-from sqlalchemy.orm import Session
+from sqlalchemy import select
+from sqlalchemy.orm import Session, defer
 
 from aeroforge_schemas.design import DroneDesign
 from app.persistence.database import get_db
-from app.persistence.models import Design, SimulationRun
+from app.persistence.design_history import canonical_snapshot, lock_design, make_revision, record_update, snapshot_digest
+from app.persistence.models import Design, DesignRevision, SimulationRun
 
 router = APIRouter(prefix="/designs", tags=["designs"])
 
@@ -58,6 +60,35 @@ def _validated_snapshot(snapshot: dict) -> DroneDesign:
         raise HTTPException(422, f"invalid design snapshot: {exc}")
 
 
+def _design_record(row: Design) -> dict:
+    return {"id": row.id, "name": row.name, "snapshot": json.loads(row.snapshot_json)}
+
+
+def _snapshot_json(design: DroneDesign) -> str:
+    try:
+        return canonical_snapshot(design.model_dump(mode="json"))
+    except ValueError as exc:
+        raise HTTPException(422, "design snapshot contains a non-finite value") from exc
+
+
+def _revision_summary(revision: DesignRevision) -> dict:
+    return {"number": revision.number, "name": revision.name,
+            "created_at": revision.created_at.isoformat(), "snapshot_sha256": revision.snapshot_sha256}
+
+
+def _revision(db: Session, row: Design, number: int) -> DesignRevision:
+    revision = db.get(DesignRevision, (row.id, number))
+    if revision is None and number == 1:
+        # Designs created before this feature have no saved history. Their
+        # current snapshot is the initial revision until the first edit.
+        revision = make_revision(row, 1, row.updated_at)
+    if revision is None:
+        raise HTTPException(404, f"revision {number} not found for design {row.id}")
+    if snapshot_digest(revision.snapshot_json) != revision.snapshot_sha256:
+        raise HTTPException(409, "stored revision failed snapshot integrity check")
+    return revision
+
+
 @router.get("")
 def list_designs(db: Session = Depends(get_db)) -> list[dict]:
     return [_design_summary(d) for d in db.query(Design).order_by(Design.updated_at.desc()).all()]
@@ -81,11 +112,12 @@ def reference_design() -> dict:
 @router.post("")
 def create_design(body: DesignCreate, db: Session = Depends(get_db)) -> dict:
     design = _validated_snapshot(body.snapshot)
-    row = Design(name=design.name, snapshot_json=design.model_dump_json())
+    row = Design(name=design.name, snapshot_json=_snapshot_json(design))
     db.add(row)
+    db.flush()
+    db.add(make_revision(row, 1, row.created_at))
     db.commit()
-    db.refresh(row)
-    return {"id": row.id, "name": row.name, "snapshot": json.loads(row.snapshot_json)}
+    return _design_record(row)
 
 
 @router.post("/preview")
@@ -137,15 +169,54 @@ def get_design(design_id: int, db: Session = Depends(get_db)) -> dict:
 
 @router.put("/{design_id}")
 def update_design(design_id: int, body: DesignUpdate, db: Session = Depends(get_db)) -> dict:
-    row = db.get(Design, design_id)
+    row = lock_design(db, design_id)
     if row is None:
         raise HTTPException(404, f"design {design_id} not found")
     design = _validated_snapshot(body.snapshot)
-    row.name = design.name
-    row.snapshot_json = design.model_dump_json()
+    record_update(db, row, design.name, _snapshot_json(design))
     db.commit()
-    db.refresh(row)
-    return {"id": row.id, "name": row.name, "snapshot": json.loads(row.snapshot_json)}
+    return _design_record(row)
+
+
+@router.get("/{design_id}/revisions")
+def list_design_revisions(design_id: int, db: Session = Depends(get_db)) -> list[dict]:
+    statement = (
+        select(Design, DesignRevision)
+        .outerjoin(DesignRevision, DesignRevision.design_id == Design.id)
+        .where(Design.id == design_id)
+        .options(defer(DesignRevision.snapshot_json))
+        .order_by(DesignRevision.number.desc())
+    )
+    # Read the current design and history together so a concurrent update
+    # cannot turn an initial snapshot into a different revision in this read.
+    rows = db.execute(statement).all()
+    if not rows:
+        raise HTTPException(404, f"design {design_id} not found")
+    design, latest = rows[0]
+    if latest is None:
+        return [_revision_summary(make_revision(design, 1, design.updated_at))]
+    return [_revision_summary(revision) for _, revision in rows]
+
+
+@router.get("/{design_id}/revisions/{number}")
+def get_design_revision(design_id: int, number: int, db: Session = Depends(get_db)) -> dict:
+    row = db.get(Design, design_id)
+    if row is None:
+        raise HTTPException(404, f"design {design_id} not found")
+    revision = _revision(db, row, number)
+    return {**_revision_summary(revision), "snapshot": json.loads(revision.snapshot_json)}
+
+
+@router.post("/{design_id}/revisions/{number}/restore")
+def restore_design_revision(design_id: int, number: int, db: Session = Depends(get_db)) -> dict:
+    row = lock_design(db, design_id)
+    if row is None:
+        raise HTTPException(404, f"design {design_id} not found")
+    revision = _revision(db, row, number)
+    design = _validated_snapshot(json.loads(revision.snapshot_json))
+    record_update(db, row, design.name, revision.snapshot_json)
+    db.commit()
+    return _design_record(row)
 
 
 @router.delete("/{design_id}")

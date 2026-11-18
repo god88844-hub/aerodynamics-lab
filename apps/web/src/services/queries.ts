@@ -6,6 +6,7 @@ import type {
   ComponentsResponse,
   DesignPreview,
   DesignRecord,
+  DesignRevisionSummary,
   DesignSummary,
   DroneDesign,
   SimulationResult,
@@ -23,6 +24,27 @@ export function useDesignsList() {
   return useQuery({
     queryKey: ['designs'],
     queryFn: () => api.get<DesignSummary[]>('/designs'),
+  })
+}
+
+export function useDesignRevisions(id: number | null) {
+  return useQuery({
+    queryKey: ['design-revisions', id],
+    queryFn: () => api.get<DesignRevisionSummary[]>(`/designs/${id}/revisions`),
+    enabled: id !== null,
+  })
+}
+
+export function useRestoreDesignRevision() {
+  const qc = useQueryClient()
+  return useMutation({
+    mutationFn: ({ id, number }: { id: number; number: number }) =>
+      api.post<DesignRecord>(`/designs/${id}/revisions/${number}/restore`),
+    onSuccess: (design) => Promise.all([
+      qc.invalidateQueries({ queryKey: ['designs'] }),
+      qc.invalidateQueries({ queryKey: ['design', design.id] }),
+      qc.invalidateQueries({ queryKey: ['design-revisions', design.id] }),
+    ]),
   })
 }
 
@@ -62,7 +84,11 @@ export function useSaveDesign() {
       }
       return api.post<DesignRecord>('/designs', { snapshot: design })
     },
-    onSuccess: () => qc.invalidateQueries({ queryKey: ['designs'] }),
+    onSuccess: (design) => Promise.all([
+      qc.invalidateQueries({ queryKey: ['designs'] }),
+      qc.invalidateQueries({ queryKey: ['design', design.id] }),
+      qc.invalidateQueries({ queryKey: ['design-revisions', design.id] }),
+    ]),
   })
 }
 
