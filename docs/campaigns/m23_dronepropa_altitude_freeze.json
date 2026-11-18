@@ -1,0 +1,26 @@
+{
+  "sample_interval_s": 0.02,
+  "min_reference_m": 0.19,
+  "moving_reference_m_s": 0.05,
+  "time_constant_grid_s": [
+    0.04,
+    0.06,
+    0.1,
+    0.16,
+    0.25,
+    0.4,
+    0.63,
+    1.0
+  ],
+  "delay_grid_samples": [
+    0,
+    2,
+    5,
+    10,
+    15,
+    25
+  ],
+  "selected_time_constant_s": 0.4,
+  "selected_delay_samples": 0,
+  "mean_calibration_flight_mae_m": 0.015721861
+}

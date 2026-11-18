@@ -1,0 +1,45 @@
+{
+  "doi": "10.17632/ftdyxrr3c5.1",
+  "hardware": "Quanser QDrone 2, D1, healthy, SP1",
+  "channel_definition": "https://github.com/DrIsmailCode/DronePropA-Motion-Trajectories-Dataset/blob/07b0c260352d7c9b4dd9fb8bf503c9bc7e019647/plot_data_commander.m.txt",
+  "calibration": [
+    {
+      "name": "F0_SV0_SP1_t3_D1_R1.mat",
+      "bytes": 41025566,
+      "sha256": "d1bfd446f35895bbb6f83074fffd0696d18b3f3e1dad82d7d3bfcadb20d9c5fa",
+      "url": "https://data.mendeley.com/public-files/datasets/ftdyxrr3c5/files/78fe71ea-209d-49a9-a777-3953475b9583/file_downloaded"
+    },
+    {
+      "name": "F0_SV0_SP1_t3_D1_R2.mat",
+      "bytes": 40119278,
+      "sha256": "0fb9679c2fec8f2e9eeb3362b3e81ff4dd355bfebde89357b2520be239c482a1",
+      "url": "https://data.mendeley.com/public-files/datasets/ftdyxrr3c5/files/85007018-3dfa-4f9c-823f-72e97883c2c8/file_downloaded"
+    },
+    {
+      "name": "F0_SV0_SP1_t3_D1_R3.mat",
+      "bytes": 40890606,
+      "sha256": "216f7f330be58ff8b9ffc4eccfa2fa7d75c606ba9ebbf0c2aca8800108d324c2",
+      "url": "https://data.mendeley.com/public-files/datasets/ftdyxrr3c5/files/2eac7bee-3322-4aba-a92e-19b5d754e110/file_downloaded"
+    }
+  ],
+  "holdout": [
+    {
+      "name": "F0_SV0_SP1_t4_D1_R1.mat",
+      "bytes": 22253156,
+      "sha256": "36e05e9a61dbfd647157e4db2877b1fb60d782c9da448741f1d0cc3f8ea9b25d",
+      "url": "https://data.mendeley.com/public-files/datasets/ftdyxrr3c5/files/cbab1243-a07b-4814-9c5c-52349a89723c/file_downloaded"
+    },
+    {
+      "name": "F0_SV0_SP1_t4_D1_R2.mat",
+      "bytes": 22878642,
+      "sha256": "f4931b29c94a9c2b16bc39dff1e5cc7d5c94bbabd418a135496322aa2b9e96b0",
+      "url": "https://data.mendeley.com/public-files/datasets/ftdyxrr3c5/files/828b86c1-f29b-4b0d-98ca-ea05a9ad89ed/file_downloaded"
+    },
+    {
+      "name": "F0_SV0_SP1_t4_D1_R3.mat",
+      "bytes": 24307357,
+      "sha256": "f52b43f23b00de1d1d5648247431bb4ebab0f3d800969c636115e84af1673bd6",
+      "url": "https://data.mendeley.com/public-files/datasets/ftdyxrr3c5/files/24ce2d58-5007-46fe-bd8e-9ec986de0279/file_downloaded"
+    }
+  ]
+}

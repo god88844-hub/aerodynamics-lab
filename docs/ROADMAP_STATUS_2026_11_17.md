@@ -12,7 +12,7 @@ The repository contains merged implementation branches:
 - **M20** preregistration protocol audit/readiness: [PR #22](https://github.com/god88844-hub/aeroforge/pull/22).
 - **M21** battery source-pinned campaign software: [PR #24](https://github.com/god88844-hub/aeroforge/pull/24); **physical exit still open** [#23](https://github.com/god88844-hub/aeroforge/issues/23).
 - **M22** propulsion source-pinned campaign software: [PR #26](https://github.com/god88844-hub/aeroforge/pull/26); **physical exit still open** [#25](https://github.com/god88844-hub/aeroforge/issues/25).
-- **M23** HIL/controller evidence software: [PR #30](https://github.com/god88844-hub/aeroforge/pull/30) and later combined follow-ups; actual controller hardware remains unvalidated.
+- **M23** HIL/controller evidence software: [PR #30](https://github.com/god88844-hub/aeroforge/pull/30) and later combined follow-ups. The [DronePropA altitude benchmark](campaigns/M23_3_7_DRONEPROPA_ALTITUDE.md) quantifies command-driven tracking error in three held-out QDrone 2 flights. The controller hardware acceptance gate remains open.
 - **M24–M25** analytical aerodynamic and material/rotor screening subscopes: merged, but physical/operating-envelope model-form validation remains unresolved.
 - **M27–M29** numerous source hashes, conservative uncertainty bounds, rotor clearance and release audits are software-implemented via incremental PRs, but neither authenticated physical evidence nor full application/product signoff is established.
 - **M26** independent full-aircraft flight validation: **not complete**.
