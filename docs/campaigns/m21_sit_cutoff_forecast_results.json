@@ -1,0 +1,69 @@
+{
+  "plan": "m21-sit-cutoff-forecast-v1",
+  "frozen_guard_canonical_sha256": "16c92466dc5f4f4af8820cdb194524f61c57724dc02a81280acace33937b2664",
+  "one_sided_cycle_residual_v": 1.207804065,
+  "cohorts": {
+    "first": {
+      "selected_cycles": 50,
+      "source_rejections": {},
+      "full_pairs": 50,
+      "unsupported_or_missing_pair": 0,
+      "observed_post_issue_cutoff": 31,
+      "observed_cutoff_outside_pairs": 0,
+      "original_cutoff_missed": 31,
+      "updated_cutoff_missed": 31,
+      "original_point_cutoff_any": 0,
+      "updated_point_cutoff_any": 0,
+      "guard_warning_any": 50,
+      "guard_cutoff_missed": 0,
+      "guard_only_without_observed_crossing": 19,
+      "guard_only_in_early_ending_recordings": 19,
+      "lower_band_covered_entire_compared_segment": 49,
+      "original_voltage_error_v": {
+        "mae": 1.55051055,
+        "rmse": 1.57072504,
+        "bias": 1.55051055,
+        "maximum_absolute_error": 2.46612771
+      },
+      "updated_voltage_error_v": {
+        "mae": 0.21893274,
+        "rmse": 0.28110437,
+        "bias": 0.21580319,
+        "maximum_absolute_error": 1.32653647
+      },
+      "guard_lead_time_s_median": 8.0,
+      "status": "FAILED_SAMPLED_STUDY_LIMIT"
+    },
+    "second": {
+      "selected_cycles": 50,
+      "source_rejections": {},
+      "full_pairs": 50,
+      "unsupported_or_missing_pair": 0,
+      "observed_post_issue_cutoff": 37,
+      "observed_cutoff_outside_pairs": 0,
+      "original_cutoff_missed": 37,
+      "updated_cutoff_missed": 37,
+      "original_point_cutoff_any": 0,
+      "updated_point_cutoff_any": 0,
+      "guard_warning_any": 50,
+      "guard_cutoff_missed": 0,
+      "guard_only_without_observed_crossing": 13,
+      "guard_only_in_early_ending_recordings": 13,
+      "lower_band_covered_entire_compared_segment": 49,
+      "original_voltage_error_v": {
+        "mae": 1.91613568,
+        "rmse": 1.93693285,
+        "bias": 1.91613568,
+        "maximum_absolute_error": 3.01623747
+      },
+      "updated_voltage_error_v": {
+        "mae": 0.31742905,
+        "rmse": 0.38295303,
+        "bias": 0.31742905,
+        "maximum_absolute_error": 1.30393368
+      },
+      "guard_lead_time_s_median": 6.0,
+      "status": "FAILED_SAMPLED_STUDY_LIMIT"
+    }
+  }
+}
