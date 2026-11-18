@@ -71,6 +71,13 @@ jobs:
       - name: Verify browser, proxy, solver, and stored data
         working-directory: apps/web
         run: npm run test:e2e
+      - name: Verify authenticated HTTPS deployment
+        run: |
+          if ! command -v htpasswd >/dev/null; then
+            sudo apt-get update
+            sudo apt-get install -y apache2-utils
+          fi
+          bash scripts/check_authenticated_compose.sh
       - name: Print container logs on failure
         if: failure()
         run: docker compose --project-name aeroforge-e2e logs --no-color

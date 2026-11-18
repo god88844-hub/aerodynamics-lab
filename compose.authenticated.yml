@@ -1,0 +1,29 @@
+services:
+  api:
+    ports: !reset []
+
+  db:
+    ports: !reset []
+
+  web:
+    ports: !override
+      - "${AEROFORGE_HTTPS_BIND_ADDRESS:-127.0.0.1}:${AEROFORGE_HTTPS_PORT:-8443}:443"
+    volumes:
+      - type: bind
+        source: ./apps/web/nginx.authenticated.conf
+        target: /etc/nginx/conf.d/default.conf
+        read_only: true
+        bind:
+          create_host_path: false
+    secrets:
+      - aeroforge_tls_certificate
+      - aeroforge_tls_key
+      - aeroforge_htpasswd
+
+secrets:
+  aeroforge_tls_certificate:
+    file: ${AEROFORGE_TLS_CERT_FILE:?Set AEROFORGE_TLS_CERT_FILE to the PEM certificate chain}
+  aeroforge_tls_key:
+    file: ${AEROFORGE_TLS_KEY_FILE:?Set AEROFORGE_TLS_KEY_FILE to the PEM private key}
+  aeroforge_htpasswd:
+    file: ${AEROFORGE_HTPASSWD_FILE:?Set AEROFORGE_HTPASSWD_FILE to the bcrypt password file}

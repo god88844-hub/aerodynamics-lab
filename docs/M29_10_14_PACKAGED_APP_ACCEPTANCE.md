@@ -18,9 +18,8 @@ docker compose up --build --wait
 
 Open <http://127.0.0.1:5173>. The default SQLite database lives in the
 `appdata` Compose volume, which survives `docker compose down` and container
-recreation. The app currently has no authentication. Keep it on the default
-loopback address unless you provide authenticated access controls around the
-deployment.
+recreation. This default mode is for local loopback access. For an installation
+with authenticated users, use the [authenticated HTTPS overlay](M29_25_29_AUTHENTICATED_COMPOSE.md).
 
 ## Preserve existing Compose SQLite data before upgrading
 
