@@ -1,0 +1,17 @@
+{
+  "hardware": "APC Thin Electric 10x5, UIUC Volume 1",
+  "publisher": "https://m-selig.ae.illinois.edu/props/volume-1/propDB-volume-1.html",
+  "static_sha256": "9d4f0434c5e31f6c53082e8551426d2dba40def4a60ee5aca5eeee60a514f2dd",
+  "upper_plane_seam_j": 0.388,
+  "calibration": [
+    {"rpm": 4005, "file": "apce_10x5_pg0820_4005.txt", "sha256": "088add9d07eae933fb0098c187c980427e5f21525239791095e0dbb4ce2780ee"},
+    {"rpm": 6707, "file": "apce_10x5_kt0825_6707.txt", "sha256": "5ca121ee2ee1f69809cbaeb20601a12c43f7040b8e7bce9e2eda1c1a21723e73"},
+    {"rpm": 6710, "file": "apce_10x5_kt0826_6710.txt", "sha256": "ac7bef0903f53c227883c68b3e44867242ae00beb27ab6c27a7d8b76ac30b8e3"}
+  ],
+  "holdout": [
+    {"rpm": 5000, "file": "apce_10x5_kt0821_5000.txt", "sha256": "3df32a75d9b09452a6cd22f4853a7ce4c09b51e412fda3c6bea247dd7ce09c61"},
+    {"rpm": 6005, "file": "apce_10x5_kt0823_6005.txt", "sha256": "64b4415521393691d7cfdcc75d29db5a04a24c7df82104bd68c68614228be417"},
+    {"rpm": 6018, "file": "apce_10x5_kt0824_6018.txt", "sha256": "9f8a6f9c8775a8cf2334b7b8a6f75b9c4ebbd0ad7474da4938de05557c0278bb"}
+  ],
+  "scoring": "Score only within the shared calibration J range. Interpolate CT and CP linearly in J on each calibration plane, then blend by RPM. Compare with a fixed equal blend in J and with RPM-interpolated matched static data. Record coefficient errors and CT sign disagreements."
+}
