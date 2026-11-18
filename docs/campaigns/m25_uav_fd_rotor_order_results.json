@@ -1,0 +1,89 @@
+{
+  "plan": "m25-uavfd-rotor-order-v1",
+  "frozen_thresholds_canonical_sha256": "7f9e06ceb03b986fa794bfab3d8fe82d7879b0a1edcf96f2ed10eb5d4ccb451d",
+  "flights": {
+    "NO_FAULT5.mat": {
+      "published_fault_label": false,
+      "eligible_windows": 23,
+      "excluded_windows": {
+        "altitude_or_ground_context": 47,
+        "outside_rotor_speed_scope": 1,
+        "imu_gap_or_count": 1,
+        "outside_calibration_median_rpm_support": 2
+      },
+      "models": {
+        "rotor_order": {
+          "threshold": 0.103437127,
+          "exceeding_windows": 0,
+          "longest_consecutive_exceedance": 0,
+          "first_alert_window": null,
+          "verdict": "NO_ALERT",
+          "agreement": "NO_ALERT_ON_HEALTHY_SOURCE"
+        },
+        "accel_rms": {
+          "threshold": 0.587594531,
+          "exceeding_windows": 3,
+          "longest_consecutive_exceedance": 2,
+          "first_alert_window": 55,
+          "verdict": "FAULT_INDICATOR_ALERT",
+          "agreement": "FALSE_ALERT"
+        }
+      }
+    },
+    "FAULT_M3_10.mat": {
+      "published_fault_label": true,
+      "eligible_windows": 34,
+      "excluded_windows": {
+        "altitude_or_ground_context": 21,
+        "imu_gap_or_count": 1,
+        "outside_calibration_median_rpm_support": 0
+      },
+      "models": {
+        "rotor_order": {
+          "threshold": 0.103437127,
+          "exceeding_windows": 0,
+          "longest_consecutive_exceedance": 0,
+          "first_alert_window": null,
+          "verdict": "NO_ALERT",
+          "agreement": "MISSED"
+        },
+        "accel_rms": {
+          "threshold": 0.587594531,
+          "exceeding_windows": 2,
+          "longest_consecutive_exceedance": 1,
+          "first_alert_window": null,
+          "verdict": "NO_ALERT",
+          "agreement": "MISSED"
+        }
+      }
+    },
+    "FAULT_M4_10.mat": {
+      "published_fault_label": true,
+      "eligible_windows": 31,
+      "excluded_windows": {
+        "altitude_or_ground_context": 17,
+        "esc_gap_or_count": 3,
+        "outside_calibration_median_rpm_support": 0
+      },
+      "models": {
+        "rotor_order": {
+          "threshold": 0.103437127,
+          "exceeding_windows": 22,
+          "longest_consecutive_exceedance": 6,
+          "first_alert_window": 6,
+          "verdict": "FAULT_INDICATOR_ALERT",
+          "agreement": "DETECTED"
+        },
+        "accel_rms": {
+          "threshold": 0.587594531,
+          "exceeding_windows": 4,
+          "longest_consecutive_exceedance": 1,
+          "first_alert_window": null,
+          "verdict": "NO_ALERT",
+          "agreement": "MISSED"
+        }
+      }
+    }
+  },
+  "acceptance": "INCONCLUSIVE_FOR_STRUCTURAL_OR_FLIGHT_ACCEPTANCE"
+}
