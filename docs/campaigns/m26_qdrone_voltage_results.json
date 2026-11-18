@@ -1,0 +1,71 @@
+{
+  "holdout": [
+    {
+      "controller": "original_mpc",
+      "trajectory": "11a",
+      "scored_samples": 2600,
+      "altitude_prediction_error_m": {
+        "mae": 1.181952052,
+        "mean_signed_error": 1.175365397,
+        "maximum_absolute_error": 1.703516535
+      },
+      "observed_nominal_tracking_error_m": {
+        "mae": 1.207337576,
+        "mean_signed_error": 1.20223508,
+        "maximum_absolute_error": 1.7
+      },
+      "measured_end_altitude_m": 0.000727378,
+      "predicted_end_altitude_m": 1.703516536,
+      "voltage_prediction_error_v": {
+        "mae": 0.232480462,
+        "mean_signed_error": -0.189666731,
+        "maximum_absolute_error": 0.660156621
+      },
+      "held_baseline_voltage_error_v": {
+        "mae": 0.338996789,
+        "mean_signed_error": -0.236214506,
+        "maximum_absolute_error": 0.70012207
+      },
+      "measured_min_voltage_v": 13.727709961,
+      "predicted_min_voltage_v": 13.559874402,
+      "measured_first_below_reference_s": 1.2075,
+      "predicted_first_below_reference_s": 1.2075,
+      "reported_energy_delta_j": 4138.895305779,
+      "integral_of_reported_power_j": 4138.895305779
+    },
+    {
+      "controller": "battery_aware_mpc",
+      "trajectory": "11b",
+      "scored_samples": 2600,
+      "altitude_prediction_error_m": {
+        "mae": 0.014259675,
+        "mean_signed_error": 0.011065589,
+        "maximum_absolute_error": 0.038243677
+      },
+      "observed_nominal_tracking_error_m": {
+        "mae": 0.184233075,
+        "mean_signed_error": 0.177086859,
+        "maximum_absolute_error": 0.838966148
+      },
+      "measured_end_altitude_m": 1.70624011,
+      "predicted_end_altitude_m": 1.705001228,
+      "voltage_prediction_error_v": {
+        "mae": 0.031772893,
+        "mean_signed_error": 0.007420355,
+        "maximum_absolute_error": 0.142330873
+      },
+      "held_baseline_voltage_error_v": {
+        "mae": 0.039484976,
+        "mean_signed_error": 0.008126052,
+        "maximum_absolute_error": 0.310180664
+      },
+      "measured_min_voltage_v": 14.091064453,
+      "predicted_min_voltage_v": 14.172667374,
+      "measured_first_below_reference_s": null,
+      "predicted_first_below_reference_s": null,
+      "reported_energy_delta_j": 4468.343915658,
+      "integral_of_reported_power_j": 4468.343915658
+    }
+  ],
+  "acceptance_status": "two_conditional_flights_without_full_aircraft_acceptance"
+}
