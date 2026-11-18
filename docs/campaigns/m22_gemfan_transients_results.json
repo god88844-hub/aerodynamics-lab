@@ -1,0 +1,36 @@
+{
+  "holdout_rows": 2063,
+  "holdout_rows_within_pwm_support": 312,
+  "overlapping_prior_rows_within_pwm_support": 19,
+  "metrics": {
+    "static": {
+      "thrust_n": {
+        "samples": 291,
+        "mae": 0.23397631,
+        "mean_signed_error": -0.228437255,
+        "max_error": 5.912664251
+      },
+      "current_a": {
+        "samples": 291,
+        "mae": 0.219061492,
+        "mean_signed_error": 0.076631275,
+        "max_error": 9.09236194
+      }
+    },
+    "frozen_lag": {
+      "thrust_n": {
+        "samples": 291,
+        "mae": 0.314952522,
+        "mean_signed_error": -0.314952522,
+        "max_error": 0.937150694
+      },
+      "current_a": {
+        "samples": 291,
+        "mae": 0.127343422,
+        "mean_signed_error": -0.000168231,
+        "max_error": 1.857728817
+      }
+    }
+  },
+  "acceptance_status": "single_reserved_sweep_without_instrument_timing_or_transient_acceptance"
+}

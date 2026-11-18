@@ -1,0 +1,16 @@
+{
+  "repository": "mdttech/quadrotor-design",
+  "commit": "b6f1dde3aafb1c5f564485f91406226e236ab578",
+  "calibration": {
+    "path": "propeller_testing/data/Log_2026-05-02_151943.csv",
+    "bytes": 590230,
+    "sha256": "3cfcbff481a89cdced3319e6e5b86ba5e5ca959a737def1a825ccb5b0c3ce0db",
+    "url": "https://raw.githubusercontent.com/mdttech/quadrotor-design/b6f1dde3aafb1c5f564485f91406226e236ab578/propeller_testing/data/Log_2026-05-02_151943.csv"
+  },
+  "holdout": {
+    "path": "propeller_testing/data/Log_2026-05-02_152432.csv",
+    "bytes": 381636,
+    "sha256": "8f7cd9c96e0ceeab1249afbb46d36e22addd658ea29419b08689a7199ed5ba68",
+    "url": "https://raw.githubusercontent.com/mdttech/quadrotor-design/b6f1dde3aafb1c5f564485f91406226e236ab578/propeller_testing/data/Log_2026-05-02_152432.csv"
+  }
+}
