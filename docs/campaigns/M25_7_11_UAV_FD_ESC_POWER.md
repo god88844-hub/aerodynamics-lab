@@ -20,7 +20,17 @@ Also score the earlier frozen rotor-order vibration rule on the three new files.
 
 Report declared fault detections, misses, false alerts and exclusion counts per recording. This is a retrospective test across measured flights on one apparatus. Its scope is the offline fault indicator. Applied loads, structural strength, and real-time fail-safe response remain separate acceptance requirements.
 
-## M25.11 Reproduction
+## M25.11 Results and reproduction
+
+The source split, thresholds and stated alarm rules were [frozen before parsing the three holdouts](https://github.com/god88844-hub/aeroforge/commit/0fd76d969d98c8bc188233313b39abfdf1273f60). The first scoring implementation matched `NO_ALERT` with a string suffix intended for positive alerts. The corrected scorer recognizes the explicit positive verdicts and reproduces the frozen decision rule. Source data, window eligibility, thresholds and individual detector outputs are unchanged. [Machine-readable results](m25_uav_fd_esc_power_results.json)
+
+| Published source | Eligible electrical / vibration windows | Speed-normalized power | Raw power | Vibration | Combined |
+| --- | ---: | --- | --- | --- | --- |
+| Healthy | 26 / 26 | False alert | No alert | No alert | False alert |
+| Fault M1 | 41 / 41 | Missed | Missed | Missed | Missed |
+| Fault M5 | 36 / 36 | Missed | Missed | Detected | Detected |
+
+The electrical rule added a false alert and recovered no missed fault in this held-out split. This is evidence against enabling the combined rule as a standalone clearance check. Results are based on three recordings from one rig and do not establish a population false-alarm rate.
 
 Place the publisher's unchanged MAT files in DATA_DIR and use the repository Python environment.
 

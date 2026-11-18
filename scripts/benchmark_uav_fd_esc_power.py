@@ -24,6 +24,7 @@ NEW_FILES = {
 }
 ESC_NAMES = [f"ESC_{i}" for i in range(6)]
 FEATURES = ("speed_normalized_power", "power_baseline")
+ALERT_VERDICTS = {"ESC_POWER_ALERT", "FAULT_INDICATOR_ALERT", "COMBINED_ALERT"}
 
 
 @dataclass(frozen=True)
@@ -133,6 +134,23 @@ def decide(windows: list[EscWindow], feature: str, fit: dict) -> dict:
     }
 
 
+def combined_verdict(electrical: str, vibration: str) -> str:
+    statuses = (electrical, vibration)
+    if any(status in ALERT_VERDICTS for status in statuses):
+        return "COMBINED_ALERT"
+    if any(status.startswith("INCONCLUSIVE") for status in statuses):
+        return "INCONCLUSIVE_INSUFFICIENT_WINDOWS"
+    return "NO_ALERT"
+
+
+def agreement(verdict: str, fault: bool) -> str:
+    if verdict.startswith("INCONCLUSIVE"):
+        return "UNTESTED"
+    if fault:
+        return "DETECTED" if verdict in ALERT_VERDICTS else "MISSED"
+    return "FALSE_ALERT" if verdict in ALERT_VERDICTS else "NO_ALERT_ON_HEALTHY_SOURCE"
+
+
 def compare(directory: Path, freeze: dict) -> dict:
     fingerprints = {**EARLIER_FILES, **NEW_FILES}
     lo, hi = freeze["calibrated_median_rpm"]
@@ -151,23 +169,11 @@ def compare(directory: Path, freeze: dict) -> dict:
             "tested_windows": len(vib_accepted), "window_exclusions": vib_exclusions,
             **vibration.decide(vib_accepted, "rotor_order", vibration_fit["thresholds"]["rotor_order"]),
         }
-        primary = (scores["speed_normalized_power"]["verdict"], scores["rotor_order_vibration"]["verdict"])
-        if any(status.endswith("_ALERT") for status in primary):
-            combined = "COMBINED_ALERT"
-        elif any(status.startswith("INCONCLUSIVE") for status in primary):
-            combined = "INCONCLUSIVE_INSUFFICIENT_WINDOWS"
-        else:
-            combined = "NO_ALERT"
-        scores["either_indicator"] = {"verdict": combined}
+        scores["either_indicator"] = {"verdict": combined_verdict(
+            scores["speed_normalized_power"]["verdict"], scores["rotor_order_vibration"]["verdict"]
+        )}
         for score in scores.values():
-            if score["verdict"].startswith("INCONCLUSIVE"):
-                score["agreement"] = "UNTESTED"
-            elif fault:
-                score["agreement"] = "DETECTED" if score["verdict"].endswith("_ALERT") else "MISSED"
-            else:
-                score["agreement"] = (
-                    "FALSE_ALERT" if score["verdict"].endswith("_ALERT") else "NO_ALERT_ON_HEALTHY_SOURCE"
-                )
+            score["agreement"] = agreement(score["verdict"], fault)
         results[name] = {"published_fault_label": fault, "window_exclusions": rejected, "comparisons": scores}
     return {"plan": PLAN, "frozen_canonical_sha256": digest(freeze), "flights": results,
             "acceptance": "INCONCLUSIVE_FOR_STRUCTURAL_OR_FLIGHT_ACCEPTANCE"}

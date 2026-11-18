@@ -24,3 +24,13 @@ def test_alarm_requires_consecutive_deficits_on_the_same_esc(monkeypatch):
     report = bench["decide"](same, "speed_normalized_power", model)
     assert report["first_alert_window"] == 8
     assert report["repeat_alarms_by_source_esc"] == {"ESC_4": 1}
+
+
+def test_no_alert_is_never_interpreted_as_a_positive_alert(monkeypatch):
+    monkeypatch.syspath_prepend(str(ROOT / "scripts"))
+    bench = runpy.run_path(str(ROOT / "scripts/benchmark_uav_fd_esc_power.py"))
+    assert bench["combined_verdict"]("NO_ALERT", "NO_ALERT") == "NO_ALERT"
+    assert bench["combined_verdict"]("NO_ALERT", "INCONCLUSIVE_INSUFFICIENT_WINDOWS").startswith("INCONCLUSIVE")
+    assert bench["combined_verdict"]("NO_ALERT", "FAULT_INDICATOR_ALERT") == "COMBINED_ALERT"
+    assert bench["agreement"]("NO_ALERT", True) == "MISSED"
+    assert bench["agreement"]("NO_ALERT", False) == "NO_ALERT_ON_HEALTHY_SOURCE"
