@@ -10,6 +10,7 @@ import type { DesignRecord } from '../types/api'
 import { batteryPart, quadXRadius } from '../state/designStore'
 import { NumberField, SectionTitle, SelectField, TextField } from './fields'
 import { analyzeGeometry } from '../editor/geometryChecks'
+import { CadLayoutPanel } from './CadLayoutPanel'
 
 export function DesignPanel() {
   const { design, designId, setSnapshot, setName, setArmLength, setBatteryPosition,
@@ -25,6 +26,7 @@ export function DesignPanel() {
   const load = useMutation({ mutationFn: (id: number) => api.get<DesignRecord>(`/designs/${id}`) })
   const busy = save.isPending || load.isPending || restore.isPending
   const currentRevision = revisions.data?.[0]?.number
+  const cadRevision = selectedRevision ?? currentRevision
 
   const battery = batteryPart(design)
   const motorOpts = (components.data?.motors ?? []).map((m) => ({
@@ -106,6 +108,9 @@ export function DesignPanel() {
             </div>
             {(revisions.isError || restore.isError) && (
               <p className="text-xs text-rose-400" role="alert">{(restore.error ?? revisions.error)?.message}</p>
+            )}
+            {cadRevision != null && (
+              <CadLayoutPanel key={`${designId}-${cadRevision}`} id={designId} revision={cadRevision} />
             )}
           </div>
         )}

@@ -55,6 +55,32 @@ test('packaged UI edits a design, runs the solver, and reloads saved data after 
   const saveDesign = page.getByRole('button', { name: 'Save design', exact: true })
   await expect(saveDesign).toBeEnabled()
 
+  const layoutDownload = page.waitForEvent('download')
+  await page.getByRole('link', { name: 'Download revision 1 CAD layout (DXF)' }).click()
+  const layoutBytes = await readFile((await (await layoutDownload).path())!)
+  const cadEdit = [
+    'import base64, ezdxf, io, sys',
+    'doc = ezdxf.read(io.StringIO(base64.b64decode(sys.argv[1]).decode()))',
+    'battery = next(p for p in doc.modelspace() if p.dxf.layer.endswith("_BATTERY"))',
+    'battery.dxf.location = (0.05, 0.0, -0.03)',
+    'out = io.StringIO()',
+    'doc.write(out)',
+    'print(base64.b64encode(out.getvalue().encode()).decode())',
+  ].join('\n')
+  const drawing = await compose('exec', '-T', 'api', 'python', '-c', cadEdit, layoutBytes.toString('base64'))
+  await page.getByLabel('Preview edited DXF').setInputFiles({
+    name: 'edited.dxf', mimeType: 'application/dxf', buffer: Buffer.from(drawing.stdout.trim(), 'base64'),
+  })
+  await expect(page.getByText('1 position change from revision 1')).toBeVisible()
+  const copyResponse = page.waitForResponse(response =>
+    new URL(response.url()).pathname === '/api/designs' && response.request().method() === 'POST')
+  await page.getByRole('button', { name: 'Save CAD changes as new design' }).click()
+  const copy = await (await copyResponse).json()
+  expect(copy.id).not.toBe(saved.id)
+  const expectedCadSnapshot = structuredClone(saved.snapshot)
+  expectedCadSnapshot.parts.find((part: { name: string }) => part.name === 'battery').position_m = [0.05, 0, -0.03]
+  expect(copy.snapshot).toEqual(expectedCadSnapshot)
+
   const revised = `${label} revised`
   await name.fill(revised)
   const updateResponse = page.waitForResponse((response) =>

@@ -57,6 +57,62 @@ def test_health(client):
     assert r.json()["status"] == "ok"
 
 
+def test_cad_layout_revision_round_trip(client, design_payload):
+    from copy import deepcopy
+    from io import StringIO
+    import ezdxf
+
+    design = deepcopy(design_payload)
+    battery = next(p for p in design["parts"] if p["name"] == "battery")
+    battery["mount_id"] = "battery_mount"
+    design["frame"]["mount_points"] = [{"id": "battery_mount", "position_m": battery["position_m"]}]
+    saved = client.post("/api/designs", json={"snapshot": design}).json()
+    revision = f"/api/designs/{saved['id']}/revisions/1"
+    download = client.get(revision + "/layout.dxf")
+    assert download.status_code == 200
+    drawing = ezdxf.read(StringIO(download.content.decode("utf-8")))
+    assert not drawing.audit().has_errors
+    points = list(drawing.modelspace())
+    assert len(points) == len(design["rotors"]) + len(design["parts"])
+    preview = client.post(revision + "/layout-preview", content=download.content)
+    assert preview.status_code == 200, preview.text
+    assert preview.json()["snapshot"] == saved["snapshot"]
+    assert preview.json()["changes"] == []
+
+    mount = next(p for p in points if p.dxf.layer.startswith("AF_MOUNT_"))
+    rotor = next(p for p in points if p.dxf.layer.startswith("AF_ROTOR_1_"))
+    mount.dxf.location = (0.05, 0.0, -0.04)
+    rotor.dxf.location = (0.3, 0.25, 0.02)
+
+    def preview_drawing(path=revision):
+        stream = StringIO()
+        drawing.write(stream)
+        return client.post(path + "/layout-preview", content=stream.getvalue().encode("utf-8"))
+
+    result = preview_drawing()
+    assert result.status_code == 200, result.text
+    expected = deepcopy(saved["snapshot"])
+    expected["frame"]["mount_points"][0]["position_m"] = [0.05, 0.0, -0.04]
+    next(p for p in expected["parts"] if p["name"] == "battery")["position_m"] = [0.05, 0.0, -0.04]
+    expected["rotors"][0]["position_m"] = [0.3, 0.25, 0.02]
+    assert result.json()["snapshot"] == expected
+    assert len(result.json()["changes"]) == 3
+    assert client.get(revision).json()["snapshot"] == saved["snapshot"]
+
+    assert client.put(f"/api/designs/{saved['id']}", json={"snapshot": expected}).status_code == 200
+    assert preview_drawing(f"/api/designs/{saved['id']}/revisions/2").status_code == 422
+    drawing.units = ezdxf.units.MM
+    assert preview_drawing().status_code == 422
+    drawing.units = ezdxf.units.M
+    added = drawing.modelspace().add_line((0, 0), (1, 1))
+    assert preview_drawing().status_code == 422
+    drawing.modelspace().delete_entity(added)
+    drawing.modelspace().delete_entity(rotor)
+    assert preview_drawing().status_code == 422
+    assert client.post(revision + "/layout-preview", content=b"broken DXF").status_code == 422
+    assert client.post(revision + "/layout-preview", content=b"x" * (1024**2 + 1)).status_code == 413
+
+
 def test_components_listed(client):
     r = client.get("/api/components")
     assert r.status_code == 200
