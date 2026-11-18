@@ -25,7 +25,14 @@ jobs:
         with:
           python-version: "3.11"
       - name: Install backend dependencies
-        run: pip install -r apps/api/requirements.txt
+        run: |
+          pip install --require-hashes --only-binary=:all: -r apps/api/requirements.lock
+          pip check
+      - name: Audit locked backend dependencies
+        run: |
+          python -m venv "$RUNNER_TEMP/aeroforge-audit"
+          "$RUNNER_TEMP/aeroforge-audit/bin/pip" install pip-audit==2.10.1
+          "$RUNNER_TEMP/aeroforge-audit/bin/python" -m pip_audit -r apps/api/requirements.lock --disable-pip --no-deps
       - name: Run pytest (physics, integration, regression)
         run: pytest
 

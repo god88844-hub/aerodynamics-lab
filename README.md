@@ -48,7 +48,7 @@ browser test and how to preserve the database when upgrading an older stack.
 
 ```bash
 cd apps/api
-python -m pip install -r requirements.txt
+python -m pip install --require-hashes --only-binary=:all: -r requirements.lock
 python -m uvicorn app.main:app --reload --port 8000
 # http://127.0.0.1:8000/api/health
 ```

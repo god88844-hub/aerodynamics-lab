@@ -3,7 +3,7 @@
 ## Environment
 
 - Python 3.11+ (backend + physics), Node 20+/22+ (frontend), git.
-- Backend deps: `cd apps/api && python -m pip install -r requirements.txt`.
+- Backend deps: `cd apps/api && python -m pip install --require-hashes --only-binary=:all: -r requirements.lock`.
 - Frontend deps: `cd apps/web && npm install`.
 
 ## Running
