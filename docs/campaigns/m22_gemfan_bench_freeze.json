@@ -1,0 +1,72 @@
+{
+  "source_manifest_sha256": "05d886226d7d494bddc17bd823a30a804e7dec3bad982312dbebab94861840e4",
+  "calibration_records": [
+    {
+      "file": "RPM_2130.csv",
+      "rows": 332,
+      "pwm_us": 1100.0,
+      "bus_voltage_v": 16.499692916870117,
+      "thrust_n": 0.15008466376188773,
+      "current_a": 0.166015625,
+      "thrust_iqr_n": 0.00823366817874338,
+      "current_iqr_a": 0.008655034005641937,
+      "negative_thrust_rows": 1,
+      "nonincreasing_time_pairs": 2,
+      "time_gaps_above_half_second": 1,
+      "positive_rpm_rows": 0
+    },
+    {
+      "file": "RPM_8000.csv",
+      "rows": 177,
+      "pwm_us": 1200.0,
+      "bus_voltage_v": 16.362932205200195,
+      "thrust_n": 2.687051199355378,
+      "current_a": 3.2784597873687744,
+      "thrust_iqr_n": 0.038044619861923756,
+      "current_iqr_a": 0.06467044353485107,
+      "negative_thrust_rows": 0,
+      "nonincreasing_time_pairs": 1,
+      "time_gaps_above_half_second": 0,
+      "positive_rpm_rows": 0
+    },
+    {
+      "file": "RPM_11850.csv",
+      "rows": 197,
+      "pwm_us": 1350.0,
+      "bus_voltage_v": 16.04933738708496,
+      "thrust_n": 6.3369197940790265,
+      "current_a": 9.595102310180664,
+      "thrust_iqr_n": 0.013225712765111197,
+      "current_iqr_a": 0.10081100463867188,
+      "negative_thrust_rows": 0,
+      "nonincreasing_time_pairs": 1,
+      "time_gaps_above_half_second": 0,
+      "positive_rpm_rows": 0
+    },
+    {
+      "file": "RPM_14100.csv",
+      "rows": 231,
+      "pwm_us": 1450.0,
+      "bus_voltage_v": 15.686933517456055,
+      "thrust_n": 9.372101856193547,
+      "current_a": 16.609235763549805,
+      "thrust_iqr_n": 0.025858289244357735,
+      "current_iqr_a": 0.32263946533203125,
+      "negative_thrust_rows": 0,
+      "nonincreasing_time_pairs": 0,
+      "time_gaps_above_half_second": 1,
+      "positive_rpm_rows": 0
+    }
+  ],
+  "power_law": {
+    "thrust_n": {
+      "slope": 2.806838263228,
+      "intercept": -2.971721884813
+    },
+    "current_a": {
+      "slope": 3.121023563829,
+      "intercept": -3.071517685948
+    }
+  },
+  "pwm_zero_us": 1000
+}
