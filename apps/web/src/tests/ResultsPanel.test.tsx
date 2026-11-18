@@ -36,11 +36,17 @@ describe('ResultsPanel', () => {
     expect(screen.getByText('2.34')).toBeDefined()
     expect(screen.getByText(/completed/i)).toBeDefined()
     expect(screen.getByText(/PASS · reached 5m/i)).toBeDefined()
+    expect(screen.getByText('INCONCLUSIVE')).toBeDefined()
   })
 
   it('renders the verdict prominently', () => {
     render(<ResultsPanel result={flightResult} />)
     expect(screen.getAllByText(/NOT a flight-worthiness claim/i).length).toBeGreaterThan(0)
+  })
+
+  it('preserves a bending failure in a historical result', () => {
+    render(<ResultsPanel result={{ ...flightResult, results: { structural_margin_min: 0.6 } }} />)
+    expect(screen.getByText('FAIL')).toBeDefined()
   })
 
   it('renders a failed run with the physics refusal', () => {
