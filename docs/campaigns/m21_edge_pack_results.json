@@ -1,0 +1,1237 @@
+{
+  "archive_sha256": "f6ca7b1eeaed8b75da92479a778bbef9253997a572cc20ab480f872a9ee3a9b0",
+  "runs": {
+    "HIRF14.mat": {
+      "source_set": 2,
+      "sha256": "6f042984040f2935d95beeb6c6e80a3795c1b241734f215c7268a25f951c95b3",
+      "seconds": 2685,
+      "initial_v": 21.00197,
+      "measured_net_wh": 79.83879,
+      "current_range_a": [
+        -0.6423,
+        40.6951
+      ],
+      "minimum_mean_voltage_v": 17.15917,
+      "models": {
+        "charge_only": {
+          "mae_v": 0.728873,
+          "rmse_v": 0.944616,
+          "max_optimistic_v": 3.227128,
+          "error_at_minimum_mean_voltage_v": 1.156165,
+          "net_energy_error_wh": 7.504908
+        },
+        "charge_and_sag": {
+          "mae_v": 0.228949,
+          "rmse_v": 0.302534,
+          "max_optimistic_v": 1.099376,
+          "error_at_minimum_mean_voltage_v": 0.366833,
+          "net_energy_error_wh": 2.211902
+        }
+      }
+    },
+    "HIRF15.mat": {
+      "source_set": 2,
+      "sha256": "0386f7f72927e1c680bde880a2a536bf3c8d2b574b4f67b2ed51a5998d52d3f2",
+      "seconds": 2501,
+      "initial_v": 20.87139,
+      "measured_net_wh": 100.81578,
+      "current_range_a": [
+        0.1592,
+        38.8296
+      ],
+      "minimum_mean_voltage_v": 17.45015,
+      "models": {
+        "charge_only": {
+          "mae_v": 0.980675,
+          "rmse_v": 1.06506,
+          "max_optimistic_v": 2.396084,
+          "error_at_minimum_mean_voltage_v": 0.173266,
+          "net_energy_error_wh": 5.283636
+        },
+        "charge_and_sag": {
+          "mae_v": 0.46764,
+          "rmse_v": 0.529403,
+          "max_optimistic_v": 0.472648,
+          "error_at_minimum_mean_voltage_v": -0.574345,
+          "net_energy_error_wh": -0.360734
+        }
+      }
+    },
+    "HIRF16.mat": {
+      "source_set": 2,
+      "sha256": "2cec22f708a47f49e688312bfd7e1a7db250a5f94cfe23427aeeed0c07d37c47",
+      "seconds": 3367,
+      "initial_v": 20.96441,
+      "measured_net_wh": 87.22184,
+      "current_range_a": [
+        -0.3225,
+        38.5313
+      ],
+      "minimum_mean_voltage_v": 18.12592,
+      "models": {
+        "charge_only": {
+          "mae_v": 0.523138,
+          "rmse_v": 0.652233,
+          "max_optimistic_v": 1.94498,
+          "error_at_minimum_mean_voltage_v": 0.06583,
+          "net_energy_error_wh": 3.536712
+        },
+        "charge_and_sag": {
+          "mae_v": 0.197441,
+          "rmse_v": 0.252028,
+          "max_optimistic_v": 0.718098,
+          "error_at_minimum_mean_voltage_v": -0.379844,
+          "net_energy_error_wh": -0.102493
+        }
+      }
+    },
+    "HIRF17.mat": {
+      "source_set": 2,
+      "sha256": "8546aaba569024deef02954217df73bd811f515f80c5739a419cd03f9d216b09",
+      "seconds": 2764,
+      "initial_v": 20.93522,
+      "measured_net_wh": 100.29669,
+      "current_range_a": [
+        0.2286,
+        38.3123
+      ],
+      "minimum_mean_voltage_v": 17.65703,
+      "models": {
+        "charge_only": {
+          "mae_v": 0.812512,
+          "rmse_v": 0.943489,
+          "max_optimistic_v": 2.405549,
+          "error_at_minimum_mean_voltage_v": 0.091542,
+          "net_energy_error_wh": 4.743322
+        },
+        "charge_and_sag": {
+          "mae_v": 0.370904,
+          "rmse_v": 0.449199,
+          "max_optimistic_v": 0.489612,
+          "error_at_minimum_mean_voltage_v": -0.49084,
+          "net_energy_error_wh": 0.12312
+        }
+      }
+    },
+    "HIRF18.mat": {
+      "source_set": 2,
+      "sha256": "71cecfdfa4943db5c7361f1844b596bb3d7c7c8682b67a7d90de7e9f06fdb906",
+      "seconds": 2379,
+      "initial_v": 20.93105,
+      "measured_net_wh": 99.83945,
+      "current_range_a": [
+        -1.165,
+        53.1611
+      ],
+      "minimum_mean_voltage_v": 17.41449,
+      "models": {
+        "charge_only": {
+          "mae_v": 0.845143,
+          "rmse_v": 0.941307,
+          "max_optimistic_v": 2.152772,
+          "error_at_minimum_mean_voltage_v": 0.174529,
+          "net_energy_error_wh": 4.760669
+        },
+        "charge_and_sag": {
+          "mae_v": 0.366813,
+          "rmse_v": 0.432671,
+          "max_optimistic_v": 0.337936,
+          "error_at_minimum_mean_voltage_v": -0.511517,
+          "net_energy_error_wh": -0.831557
+        }
+      }
+    },
+    "HIRF19.mat": {
+      "source_set": 2,
+      "sha256": "6b9c2260e38bc06213502a375083e153dbe23e32d48930a0e4a70f17fdf6d207",
+      "seconds": 2883,
+      "initial_v": 20.92751,
+      "measured_net_wh": 89.07938,
+      "current_range_a": [
+        -0.5337,
+        40.7341
+      ],
+      "minimum_mean_voltage_v": 17.78341,
+      "models": {
+        "charge_only": {
+          "mae_v": 0.698853,
+          "rmse_v": 0.850194,
+          "max_optimistic_v": 2.368689,
+          "error_at_minimum_mean_voltage_v": 0.247796,
+          "net_energy_error_wh": 5.387459
+        },
+        "charge_and_sag": {
+          "mae_v": 0.27519,
+          "rmse_v": 0.335683,
+          "max_optimistic_v": 0.624233,
+          "error_at_minimum_mean_voltage_v": -0.50417,
+          "net_energy_error_wh": 0.102541
+        }
+      }
+    },
+    "HIRF20.mat": {
+      "source_set": 2,
+      "sha256": "bd809f82d3bb55842654303d06c0f15b74f30e72de16b163fbd7b23d01c36155",
+      "seconds": 2863,
+      "initial_v": 20.98088,
+      "measured_net_wh": 97.5824,
+      "current_range_a": [
+        0.088,
+        34.9073
+      ],
+      "minimum_mean_voltage_v": 17.91026,
+      "models": {
+        "charge_only": {
+          "mae_v": 0.757595,
+          "rmse_v": 0.848488,
+          "max_optimistic_v": 1.978062,
+          "error_at_minimum_mean_voltage_v": 0.075934,
+          "net_energy_error_wh": 3.862796
+        },
+        "charge_and_sag": {
+          "mae_v": 0.329992,
+          "rmse_v": 0.388956,
+          "max_optimistic_v": 0.516341,
+          "error_at_minimum_mean_voltage_v": -0.403346,
+          "net_energy_error_wh": 0.128309
+        }
+      }
+    },
+    "HIRF21.mat": {
+      "source_set": 2,
+      "sha256": "c7a130863c28d94e75ba5741c186e67eee073b1710c941dfb2080a1ecece3bff",
+      "seconds": 2300,
+      "initial_v": 20.96357,
+      "measured_net_wh": 97.70823,
+      "current_range_a": [
+        -1.6226,
+        43.5167
+      ],
+      "minimum_mean_voltage_v": 17.29738,
+      "models": {
+        "charge_only": {
+          "mae_v": 0.860886,
+          "rmse_v": 0.929274,
+          "max_optimistic_v": 1.834363,
+          "error_at_minimum_mean_voltage_v": 0.38391,
+          "net_energy_error_wh": 5.171684
+        },
+        "charge_and_sag": {
+          "mae_v": 0.350766,
+          "rmse_v": 0.407431,
+          "max_optimistic_v": 0.299477,
+          "error_at_minimum_mean_voltage_v": -0.540039,
+          "net_energy_error_wh": -1.135882
+        }
+      }
+    },
+    "HIRF22.mat": {
+      "source_set": 3,
+      "sha256": "9f96f55180af841fa52f237c007a49b9809752a087fad4ec0a85cc1125a61b70",
+      "seconds": 2506,
+      "initial_v": 20.91862,
+      "measured_net_wh": 93.22489,
+      "current_range_a": [
+        -0.35,
+        41.5109
+      ],
+      "minimum_mean_voltage_v": 17.64645,
+      "models": {
+        "charge_only": {
+          "mae_v": 0.790918,
+          "rmse_v": 0.904286,
+          "max_optimistic_v": 2.319261,
+          "error_at_minimum_mean_voltage_v": 0.211621,
+          "net_energy_error_wh": 5.22759
+        },
+        "charge_and_sag": {
+          "mae_v": 0.309436,
+          "rmse_v": 0.361762,
+          "max_optimistic_v": 0.487172,
+          "error_at_minimum_mean_voltage_v": -0.524872,
+          "net_energy_error_wh": 0.021577
+        }
+      }
+    },
+    "HIRF23.mat": {
+      "source_set": 3,
+      "sha256": "33152be66a4fc956e7c84b6054f5c1c95951b65036d243728c29941f624b2f1f",
+      "seconds": 2223,
+      "initial_v": 20.91253,
+      "measured_net_wh": 72.19918,
+      "current_range_a": [
+        -0.9671,
+        38.5927
+      ],
+      "minimum_mean_voltage_v": 17.35805,
+      "models": {
+        "charge_only": {
+          "mae_v": 0.759234,
+          "rmse_v": 0.98638,
+          "max_optimistic_v": 3.121369,
+          "error_at_minimum_mean_voltage_v": 1.048451,
+          "net_energy_error_wh": 7.047009
+        },
+        "charge_and_sag": {
+          "mae_v": 0.225921,
+          "rmse_v": 0.330113,
+          "max_optimistic_v": 1.184097,
+          "error_at_minimum_mean_voltage_v": 0.212012,
+          "net_energy_error_wh": 2.271324
+        }
+      }
+    },
+    "HIRF24.mat": {
+      "source_set": 3,
+      "sha256": "6d7f07ec0e75d3211db7b47c194cfb2905d2b2ad64fd4590c1a565385ac0483c",
+      "seconds": 2380,
+      "initial_v": 20.96397,
+      "measured_net_wh": 77.89074,
+      "current_range_a": [
+        -0.0235,
+        37.3157
+      ],
+      "minimum_mean_voltage_v": 17.88477,
+      "models": {
+        "charge_only": {
+          "mae_v": 0.673836,
+          "rmse_v": 0.814335,
+          "max_optimistic_v": 2.553825,
+          "error_at_minimum_mean_voltage_v": 0.569698,
+          "net_energy_error_wh": 5.165846
+        },
+        "charge_and_sag": {
+          "mae_v": 0.19133,
+          "rmse_v": 0.244678,
+          "max_optimistic_v": 0.735954,
+          "error_at_minimum_mean_voltage_v": -0.084677,
+          "net_energy_error_wh": 1.374583
+        }
+      }
+    },
+    "HIRF25.mat": {
+      "source_set": 3,
+      "sha256": "059395e30f12936ed72e788e45a5185029b130bcde3a3d915446d012c1f44489",
+      "seconds": 2350,
+      "initial_v": 20.90041,
+      "measured_net_wh": 84.60743,
+      "current_range_a": [
+        -1.8168,
+        46.9609
+      ],
+      "minimum_mean_voltage_v": 17.40015,
+      "models": {
+        "charge_only": {
+          "mae_v": 0.768706,
+          "rmse_v": 0.863354,
+          "max_optimistic_v": 2.190951,
+          "error_at_minimum_mean_voltage_v": 0.506754,
+          "net_energy_error_wh": 5.788893
+        },
+        "charge_and_sag": {
+          "mae_v": 0.230724,
+          "rmse_v": 0.265611,
+          "max_optimistic_v": 0.476845,
+          "error_at_minimum_mean_voltage_v": -0.432409,
+          "net_energy_error_wh": -0.185488
+        }
+      }
+    },
+    "HIRF26.mat": {
+      "source_set": 3,
+      "sha256": "06e29f9e5b40198ac4bcaf6734a17861fd032d2302ad4bb3e0e4fafe8635ed99",
+      "seconds": 2728,
+      "initial_v": 20.90424,
+      "measured_net_wh": 81.99618,
+      "current_range_a": [
+        -0.7472,
+        34.9754
+      ],
+      "minimum_mean_voltage_v": 17.66338,
+      "models": {
+        "charge_only": {
+          "mae_v": 0.7074,
+          "rmse_v": 0.823037,
+          "max_optimistic_v": 2.359428,
+          "error_at_minimum_mean_voltage_v": 0.425726,
+          "net_energy_error_wh": 5.573815
+        },
+        "charge_and_sag": {
+          "mae_v": 0.216865,
+          "rmse_v": 0.249602,
+          "max_optimistic_v": 0.921676,
+          "error_at_minimum_mean_voltage_v": -0.283969,
+          "net_energy_error_wh": 0.95573
+        }
+      }
+    },
+    "HIRF27.mat": {
+      "source_set": 3,
+      "sha256": "96fcd499d993ec2008d760b796703df0c0d72ed7590d1910347ab1ab47c60e25",
+      "seconds": 2423,
+      "initial_v": 20.99549,
+      "measured_net_wh": 81.44008,
+      "current_range_a": [
+        -1.5565,
+        47.3448
+      ],
+      "minimum_mean_voltage_v": 17.77098,
+      "models": {
+        "charge_only": {
+          "mae_v": 0.705772,
+          "rmse_v": 0.826225,
+          "max_optimistic_v": 2.397733,
+          "error_at_minimum_mean_voltage_v": 0.383799,
+          "net_energy_error_wh": 5.6461
+        },
+        "charge_and_sag": {
+          "mae_v": 0.175263,
+          "rmse_v": 0.209132,
+          "max_optimistic_v": 0.764155,
+          "error_at_minimum_mean_voltage_v": -0.128288,
+          "net_energy_error_wh": 1.053737
+        }
+      }
+    },
+    "HIRF28.mat": {
+      "source_set": 3,
+      "sha256": "fdded5a3777763048c3950cdc5af88c84d0c630f8baed13f991a97ab7f482df8",
+      "seconds": 2367,
+      "initial_v": 20.92801,
+      "measured_net_wh": 79.72889,
+      "current_range_a": [
+        -2.2572,
+        47.6424
+      ],
+      "minimum_mean_voltage_v": 17.40827,
+      "models": {
+        "charge_only": {
+          "mae_v": 0.716996,
+          "rmse_v": 0.827572,
+          "max_optimistic_v": 2.264712,
+          "error_at_minimum_mean_voltage_v": 0.611959,
+          "net_energy_error_wh": 6.020111
+        },
+        "charge_and_sag": {
+          "mae_v": 0.165064,
+          "rmse_v": 0.189276,
+          "max_optimistic_v": 0.479695,
+          "error_at_minimum_mean_voltage_v": -0.358394,
+          "net_energy_error_wh": 0.137238
+        }
+      }
+    },
+    "HIRF29.mat": {
+      "source_set": 3,
+      "sha256": "ae93ba23a777969129ee858c93e3216a12304c8bdc00b5f964565a1be625028a",
+      "seconds": 2281,
+      "initial_v": 20.94112,
+      "measured_net_wh": 70.8362,
+      "current_range_a": [
+        -0.2589,
+        35.6424
+      ],
+      "minimum_mean_voltage_v": 17.46798,
+      "models": {
+        "charge_only": {
+          "mae_v": 0.66808,
+          "rmse_v": 0.934208,
+          "max_optimistic_v": 2.669494,
+          "error_at_minimum_mean_voltage_v": 1.184476,
+          "net_energy_error_wh": 6.152948
+        },
+        "charge_and_sag": {
+          "mae_v": 0.244435,
+          "rmse_v": 0.400249,
+          "max_optimistic_v": 1.072139,
+          "error_at_minimum_mean_voltage_v": 0.391432,
+          "net_energy_error_wh": 2.588707
+        }
+      }
+    },
+    "HIRF30.mat": {
+      "source_set": 3,
+      "sha256": "8629db18e769ad7b2d3d851cbd3ce62bd11012dfef53eacc63255245d7c65f35",
+      "seconds": 2446,
+      "initial_v": 20.90181,
+      "measured_net_wh": 73.77746,
+      "current_range_a": [
+        -2.9609,
+        42.4257
+      ],
+      "minimum_mean_voltage_v": 17.72613,
+      "models": {
+        "charge_only": {
+          "mae_v": 0.682529,
+          "rmse_v": 0.831342,
+          "max_optimistic_v": 2.736858,
+          "error_at_minimum_mean_voltage_v": 0.4676,
+          "net_energy_error_wh": 5.950207
+        },
+        "charge_and_sag": {
+          "mae_v": 0.153458,
+          "rmse_v": 0.202983,
+          "max_optimistic_v": 0.881828,
+          "error_at_minimum_mean_voltage_v": -0.158807,
+          "net_energy_error_wh": 1.172716
+        }
+      }
+    },
+    "HIRF31.mat": {
+      "source_set": 3,
+      "sha256": "cb70c58d7f52346d9c16c0207c767fda11212a8930d4760c5152f67e9c44a367",
+      "seconds": 2352,
+      "initial_v": 20.90694,
+      "measured_net_wh": 72.02678,
+      "current_range_a": [
+        -2.2282,
+        38.5787
+      ],
+      "minimum_mean_voltage_v": 17.47053,
+      "models": {
+        "charge_only": {
+          "mae_v": 0.654464,
+          "rmse_v": 0.792204,
+          "max_optimistic_v": 2.334774,
+          "error_at_minimum_mean_voltage_v": 0.723158,
+          "net_energy_error_wh": 6.017713
+        },
+        "charge_and_sag": {
+          "mae_v": 0.102055,
+          "rmse_v": 0.135095,
+          "max_optimistic_v": 0.509616,
+          "error_at_minimum_mean_voltage_v": -0.312009,
+          "net_energy_error_wh": 0.326345
+        }
+      }
+    },
+    "HIRF32.mat": {
+      "source_set": 3,
+      "sha256": "8b5f2c898cc440de4bbe0ac523eb495e8086ed9609ee10aed9eef81cec684a3b",
+      "seconds": 2642,
+      "initial_v": 20.90928,
+      "measured_net_wh": 77.29733,
+      "current_range_a": [
+        -1.2854,
+        36.2612
+      ],
+      "minimum_mean_voltage_v": 17.57223,
+      "models": {
+        "charge_only": {
+          "mae_v": 0.697573,
+          "rmse_v": 0.825214,
+          "max_optimistic_v": 2.451803,
+          "error_at_minimum_mean_voltage_v": 0.541382,
+          "net_energy_error_wh": 6.047222
+        },
+        "charge_and_sag": {
+          "mae_v": 0.167062,
+          "rmse_v": 0.208189,
+          "max_optimistic_v": 0.692331,
+          "error_at_minimum_mean_voltage_v": -0.225207,
+          "net_energy_error_wh": 1.122421
+        }
+      }
+    },
+    "HIRF33.mat": {
+      "source_set": 3,
+      "sha256": "5eac0114bb8385be0fcc4a01d234ef0b173becf2cbdbac28393e71ac832bc22a",
+      "seconds": 2421,
+      "initial_v": 20.94579,
+      "measured_net_wh": 78.75655,
+      "current_range_a": [
+        -1.769,
+        42.7823
+      ],
+      "minimum_mean_voltage_v": 17.80571,
+      "models": {
+        "charge_only": {
+          "mae_v": 0.707013,
+          "rmse_v": 0.838101,
+          "max_optimistic_v": 2.504593,
+          "error_at_minimum_mean_voltage_v": 0.418321,
+          "net_energy_error_wh": 5.824319
+        },
+        "charge_and_sag": {
+          "mae_v": 0.175863,
+          "rmse_v": 0.2094,
+          "max_optimistic_v": 0.974386,
+          "error_at_minimum_mean_voltage_v": -0.161044,
+          "net_energy_error_wh": 1.014782
+        }
+      }
+    },
+    "HIRF34.mat": {
+      "source_set": 3,
+      "sha256": "94d3e4f1d4e172a0dc2a988467588760a1398e64ef83cf2be8c24e1142d8b208",
+      "seconds": 2237,
+      "initial_v": 20.92985,
+      "measured_net_wh": 77.24126,
+      "current_range_a": [
+        -0.3085,
+        48.4934
+      ],
+      "minimum_mean_voltage_v": 17.74598,
+      "models": {
+        "charge_only": {
+          "mae_v": 0.700228,
+          "rmse_v": 0.844214,
+          "max_optimistic_v": 2.440919,
+          "error_at_minimum_mean_voltage_v": 0.65237,
+          "net_energy_error_wh": 5.521626
+        },
+        "charge_and_sag": {
+          "mae_v": 0.181023,
+          "rmse_v": 0.224594,
+          "max_optimistic_v": 0.815862,
+          "error_at_minimum_mean_voltage_v": -0.184601,
+          "net_energy_error_wh": 1.109752
+        }
+      }
+    },
+    "HIRF35.mat": {
+      "source_set": 3,
+      "sha256": "f43575284d691c8a45ada23354ed365bcf794735d0b3c5b7ff733388addaaa31",
+      "seconds": 2215,
+      "initial_v": 20.93036,
+      "measured_net_wh": 73.89784,
+      "current_range_a": [
+        -2.2458,
+        41.5351
+      ],
+      "minimum_mean_voltage_v": 17.50362,
+      "models": {
+        "charge_only": {
+          "mae_v": 0.675612,
+          "rmse_v": 0.807356,
+          "max_optimistic_v": 2.304909,
+          "error_at_minimum_mean_voltage_v": 0.697598,
+          "net_energy_error_wh": 5.935463
+        },
+        "charge_and_sag": {
+          "mae_v": 0.106608,
+          "rmse_v": 0.137963,
+          "max_optimistic_v": 0.646528,
+          "error_at_minimum_mean_voltage_v": -0.283604,
+          "net_energy_error_wh": 0.353071
+        }
+      }
+    },
+    "HIRF36.mat": {
+      "source_set": 3,
+      "sha256": "4332cd90531fa50c04dfc564fae983cb86e6a484bbc774896202443d0f84a8fd",
+      "seconds": 2532,
+      "initial_v": 20.95293,
+      "measured_net_wh": 88.28788,
+      "current_range_a": [
+        -0.2539,
+        38.4343
+      ],
+      "minimum_mean_voltage_v": 17.72441,
+      "models": {
+        "charge_only": {
+          "mae_v": 0.734865,
+          "rmse_v": 0.846889,
+          "max_optimistic_v": 2.442835,
+          "error_at_minimum_mean_voltage_v": 0.342128,
+          "net_energy_error_wh": 5.161587
+        },
+        "charge_and_sag": {
+          "mae_v": 0.250008,
+          "rmse_v": 0.286723,
+          "max_optimistic_v": 0.559827,
+          "error_at_minimum_mean_voltage_v": -0.292991,
+          "net_energy_error_wh": 0.749726
+        }
+      }
+    },
+    "HIRF37.mat": {
+      "source_set": 4,
+      "sha256": "f672de2dedfc956964b9da69feaa08953e4d99fe298e03fae9fff54dacaca024",
+      "seconds": 2360,
+      "initial_v": 21.03363,
+      "measured_net_wh": 83.87729,
+      "current_range_a": [
+        0.1281,
+        33.7226
+      ],
+      "minimum_mean_voltage_v": 17.79412,
+      "models": {
+        "charge_only": {
+          "mae_v": 0.72948,
+          "rmse_v": 0.857258,
+          "max_optimistic_v": 2.31604,
+          "error_at_minimum_mean_voltage_v": 0.585541,
+          "net_energy_error_wh": 5.618504
+        },
+        "charge_and_sag": {
+          "mae_v": 0.212585,
+          "rmse_v": 0.245586,
+          "max_optimistic_v": 0.700995,
+          "error_at_minimum_mean_voltage_v": -0.213044,
+          "net_energy_error_wh": 1.048858
+        }
+      }
+    },
+    "HIRF38.mat": {
+      "source_set": 4,
+      "sha256": "7a00d014e3c90eee7341e90d03c76e6257046593b9285c328809141a751587ee",
+      "seconds": 2847,
+      "initial_v": 21.04424,
+      "measured_net_wh": 95.63083,
+      "current_range_a": [
+        -0.0518,
+        36.6385
+      ],
+      "minimum_mean_voltage_v": -12.45306,
+      "models": {
+        "charge_only": {
+          "mae_v": 1.520713,
+          "rmse_v": 3.872004,
+          "max_optimistic_v": 30.392715,
+          "error_at_minimum_mean_voltage_v": 30.392715,
+          "net_energy_error_wh": 5.241601
+        },
+        "charge_and_sag": {
+          "mae_v": 1.080141,
+          "rmse_v": 3.880468,
+          "max_optimistic_v": 30.83597,
+          "error_at_minimum_mean_voltage_v": 30.83597,
+          "net_energy_error_wh": 0.523011
+        }
+      }
+    },
+    "HIRF39.mat": {
+      "source_set": 4,
+      "sha256": "78b77b6210394448ad8d636f0450fc846ed0da6339e70f7e7dc68bf81796b721",
+      "seconds": 2425,
+      "initial_v": 21.02713,
+      "measured_net_wh": 89.80547,
+      "current_range_a": [
+        -1.0689,
+        41.3006
+      ],
+      "minimum_mean_voltage_v": 17.61295,
+      "models": {
+        "charge_only": {
+          "mae_v": 0.826424,
+          "rmse_v": 0.927542,
+          "max_optimistic_v": 2.376943,
+          "error_at_minimum_mean_voltage_v": 0.414323,
+          "net_energy_error_wh": 6.068201
+        },
+        "charge_and_sag": {
+          "mae_v": 0.283167,
+          "rmse_v": 0.31842,
+          "max_optimistic_v": 0.560206,
+          "error_at_minimum_mean_voltage_v": -0.407814,
+          "net_energy_error_wh": 0.272185
+        }
+      }
+    },
+    "HIRF40.mat": {
+      "source_set": 4,
+      "sha256": "dc5a22b16557327c59bcd704001cd84323f26737c54eecd6bbe022b8c7d28b24",
+      "seconds": 2497,
+      "initial_v": 21.03794,
+      "measured_net_wh": 87.10667,
+      "current_range_a": [
+        -1.4355,
+        38.3868
+      ],
+      "minimum_mean_voltage_v": 17.5798,
+      "models": {
+        "charge_only": {
+          "mae_v": 0.726411,
+          "rmse_v": 0.822915,
+          "max_optimistic_v": 2.105865,
+          "error_at_minimum_mean_voltage_v": 0.47837,
+          "net_energy_error_wh": 5.480525
+        },
+        "charge_and_sag": {
+          "mae_v": 0.202795,
+          "rmse_v": 0.238275,
+          "max_optimistic_v": 0.411313,
+          "error_at_minimum_mean_voltage_v": -0.368956,
+          "net_energy_error_wh": 0.011043
+        }
+      }
+    },
+    "HIRF41.mat": {
+      "source_set": 4,
+      "sha256": "0ceda1c3a351a7fad077d1ec2964adbba496ccd8b2f569c8d90d4dab20bc793e",
+      "seconds": 2315,
+      "initial_v": 20.97077,
+      "measured_net_wh": 94.12091,
+      "current_range_a": [
+        -0.1987,
+        37.8424
+      ],
+      "minimum_mean_voltage_v": 17.55986,
+      "models": {
+        "charge_only": {
+          "mae_v": 0.837365,
+          "rmse_v": 0.925644,
+          "max_optimistic_v": 2.192311,
+          "error_at_minimum_mean_voltage_v": 0.326858,
+          "net_energy_error_wh": 5.439355
+        },
+        "charge_and_sag": {
+          "mae_v": 0.307207,
+          "rmse_v": 0.353257,
+          "max_optimistic_v": 0.452369,
+          "error_at_minimum_mean_voltage_v": -0.450649,
+          "net_energy_error_wh": 0.095267
+        }
+      }
+    },
+    "HIRF63.mat": {
+      "source_set": 5,
+      "sha256": "f062f74ffcda839fffe4851125df39ede61cf717bd41d414b5ce57d20f521287",
+      "seconds": 2488,
+      "initial_v": 20.85017,
+      "measured_net_wh": 76.8019,
+      "current_range_a": [
+        0.5409,
+        32.8891
+      ],
+      "minimum_mean_voltage_v": 16.33832,
+      "models": {
+        "charge_only": {
+          "mae_v": 0.7653,
+          "rmse_v": 0.979596,
+          "max_optimistic_v": 3.156698,
+          "error_at_minimum_mean_voltage_v": 2.165361,
+          "net_energy_error_wh": 6.249263
+        },
+        "charge_and_sag": {
+          "mae_v": 0.332731,
+          "rmse_v": 0.441628,
+          "max_optimistic_v": 1.389529,
+          "error_at_minimum_mean_voltage_v": 0.698896,
+          "net_energy_error_wh": 2.827996
+        }
+      }
+    },
+    "HIRF64.mat": {
+      "source_set": 5,
+      "sha256": "51ed59f632da2ada9a7cb4fe4ae8f2d14e61e9c995cd3ea5e0e9e29418e67d7e",
+      "seconds": 2461,
+      "initial_v": 20.88286,
+      "measured_net_wh": 85.69086,
+      "current_range_a": [
+        0.2178,
+        33.8211
+      ],
+      "minimum_mean_voltage_v": 17.22462,
+      "models": {
+        "charge_only": {
+          "mae_v": 0.887035,
+          "rmse_v": 1.009038,
+          "max_optimistic_v": 2.692385,
+          "error_at_minimum_mean_voltage_v": 0.920186,
+          "net_energy_error_wh": 6.172911
+        },
+        "charge_and_sag": {
+          "mae_v": 0.372951,
+          "rmse_v": 0.420084,
+          "max_optimistic_v": 0.97802,
+          "error_at_minimum_mean_voltage_v": 0.175948,
+          "net_energy_error_wh": 2.149073
+        }
+      }
+    },
+    "HIRF67.mat": {
+      "source_set": 5,
+      "sha256": "3290bc74306866ab6bea8c20a1a06a358f80423aad296ebed2b585fb323af1a8",
+      "seconds": 2668,
+      "initial_v": 20.76863,
+      "measured_net_wh": 86.47263,
+      "current_range_a": [
+        -1.418,
+        35.7264
+      ],
+      "minimum_mean_voltage_v": 17.26759,
+      "models": {
+        "charge_only": {
+          "mae_v": 0.772943,
+          "rmse_v": 0.911314,
+          "max_optimistic_v": 2.606338,
+          "error_at_minimum_mean_voltage_v": 0.670655,
+          "net_energy_error_wh": 5.4584
+        },
+        "charge_and_sag": {
+          "mae_v": 0.302829,
+          "rmse_v": 0.365627,
+          "max_optimistic_v": 0.750117,
+          "error_at_minimum_mean_voltage_v": 0.09623,
+          "net_energy_error_wh": 1.325845
+        }
+      }
+    },
+    "HIRF68.mat": {
+      "source_set": 5,
+      "sha256": "a61f0162553737cf3744f9da7fb986c20691c7295970a67d115f7d2b0b00d237",
+      "seconds": 2570,
+      "initial_v": 20.82685,
+      "measured_net_wh": 90.95854,
+      "current_range_a": [
+        0.5281,
+        30.5297
+      ],
+      "minimum_mean_voltage_v": 17.27787,
+      "models": {
+        "charge_only": {
+          "mae_v": 0.841945,
+          "rmse_v": 0.934874,
+          "max_optimistic_v": 2.386145,
+          "error_at_minimum_mean_voltage_v": 0.744394,
+          "net_energy_error_wh": 5.101776
+        },
+        "charge_and_sag": {
+          "mae_v": 0.383744,
+          "rmse_v": 0.425874,
+          "max_optimistic_v": 0.863135,
+          "error_at_minimum_mean_voltage_v": 0.210646,
+          "net_energy_error_wh": 1.985062
+        }
+      }
+    },
+    "HIRF69.mat": {
+      "source_set": 5,
+      "sha256": "5093babb5366ffc1b1060cb45177c5bca7ae5fc6f21f818d711658b272ea39b7",
+      "seconds": 3572,
+      "initial_v": 20.87371,
+      "measured_net_wh": 85.95989,
+      "current_range_a": [
+        0.4022,
+        29.363
+      ],
+      "minimum_mean_voltage_v": 17.6524,
+      "models": {
+        "charge_only": {
+          "mae_v": 0.780261,
+          "rmse_v": 0.860016,
+          "max_optimistic_v": 2.365591,
+          "error_at_minimum_mean_voltage_v": 0.677185,
+          "net_energy_error_wh": 4.821794
+        },
+        "charge_and_sag": {
+          "mae_v": 0.36087,
+          "rmse_v": 0.397013,
+          "max_optimistic_v": 0.864215,
+          "error_at_minimum_mean_voltage_v": 0.192624,
+          "net_energy_error_wh": 2.011092
+        }
+      }
+    },
+    "HIRF71.mat": {
+      "source_set": 5,
+      "sha256": "7e285a140d895a2af905cf18aa8ebd65596dac56ac490bd6174db3dd9e0300fd",
+      "seconds": 2604,
+      "initial_v": 20.81074,
+      "measured_net_wh": 82.61665,
+      "current_range_a": [
+        0.4308,
+        30.0507
+      ],
+      "minimum_mean_voltage_v": 17.79607,
+      "models": {
+        "charge_only": {
+          "mae_v": 0.762934,
+          "rmse_v": 0.87255,
+          "max_optimistic_v": 2.425856,
+          "error_at_minimum_mean_voltage_v": 0.50281,
+          "net_energy_error_wh": 4.762076
+        },
+        "charge_and_sag": {
+          "mae_v": 0.336443,
+          "rmse_v": 0.382862,
+          "max_optimistic_v": 0.873676,
+          "error_at_minimum_mean_voltage_v": 0.116036,
+          "net_energy_error_wh": 1.902763
+        }
+      }
+    },
+    "HIRF72.mat": {
+      "source_set": 5,
+      "sha256": "c6535290233a6207b6bbe4842b66946b75a54165ecb9b4911c24d2178810cf18",
+      "seconds": 2652,
+      "initial_v": 20.96623,
+      "measured_net_wh": 71.02814,
+      "current_range_a": [
+        0.3174,
+        28.6786
+      ],
+      "minimum_mean_voltage_v": 17.36581,
+      "models": {
+        "charge_only": {
+          "mae_v": 0.687063,
+          "rmse_v": 1.005741,
+          "max_optimistic_v": 3.234726,
+          "error_at_minimum_mean_voltage_v": 1.415923,
+          "net_energy_error_wh": 6.280965
+        },
+        "charge_and_sag": {
+          "mae_v": 0.382804,
+          "rmse_v": 0.600279,
+          "max_optimistic_v": 1.732691,
+          "error_at_minimum_mean_voltage_v": 0.967156,
+          "net_energy_error_wh": 3.803683
+        }
+      }
+    },
+    "HIRF73.mat": {
+      "source_set": 5,
+      "sha256": "bed0bec9629cba7281b686775f5fbae5378484071c8b6a9b0f5a0baa855ad715",
+      "seconds": 2218,
+      "initial_v": 20.79049,
+      "measured_net_wh": 71.35906,
+      "current_range_a": [
+        0.3679,
+        33.3174
+      ],
+      "minimum_mean_voltage_v": 17.3299,
+      "models": {
+        "charge_only": {
+          "mae_v": 0.780578,
+          "rmse_v": 1.00997,
+          "max_optimistic_v": 2.9064,
+          "error_at_minimum_mean_voltage_v": 1.199519,
+          "net_energy_error_wh": 6.239145
+        },
+        "charge_and_sag": {
+          "mae_v": 0.324113,
+          "rmse_v": 0.455861,
+          "max_optimistic_v": 1.248189,
+          "error_at_minimum_mean_voltage_v": 0.543155,
+          "net_energy_error_wh": 2.89604
+        }
+      }
+    },
+    "HIRF74.mat": {
+      "source_set": 5,
+      "sha256": "eb09c816e88e720f5abef0e65a822412850fd90946a2aea66aedb3317022b0bd",
+      "seconds": 2330,
+      "initial_v": 20.92022,
+      "measured_net_wh": 45.37985,
+      "current_range_a": [
+        -0.5241,
+        37.8436
+      ],
+      "minimum_mean_voltage_v": 17.51052,
+      "models": {
+        "charge_only": {
+          "mae_v": 0.343929,
+          "rmse_v": 0.680247,
+          "max_optimistic_v": 2.791036,
+          "error_at_minimum_mean_voltage_v": 2.029868,
+          "net_energy_error_wh": 3.987072
+        },
+        "charge_and_sag": {
+          "mae_v": 0.155146,
+          "rmse_v": 0.239577,
+          "max_optimistic_v": 0.881261,
+          "error_at_minimum_mean_voltage_v": 0.467208,
+          "net_energy_error_wh": 1.143651
+        }
+      }
+    },
+    "HIRF75.mat": {
+      "source_set": 6,
+      "sha256": "0054ff3e6d0478b501c9e1b252c27c80c55f5fb3d02ac2af411da857f20210eb",
+      "seconds": 2265,
+      "initial_v": 20.87581,
+      "measured_net_wh": 55.61655,
+      "current_range_a": [
+        0.4558,
+        49.2736
+      ],
+      "minimum_mean_voltage_v": 16.45759,
+      "models": {
+        "charge_only": {
+          "mae_v": 0.432649,
+          "rmse_v": 0.916793,
+          "max_optimistic_v": 4.039869,
+          "error_at_minimum_mean_voltage_v": 3.994456,
+          "net_energy_error_wh": 6.748026
+        },
+        "charge_and_sag": {
+          "mae_v": 0.169465,
+          "rmse_v": 0.310777,
+          "max_optimistic_v": 1.530968,
+          "error_at_minimum_mean_voltage_v": 1.518872,
+          "net_energy_error_wh": 2.058089
+        }
+      }
+    },
+    "HIRF76.mat": {
+      "source_set": 6,
+      "sha256": "7517afd8dfb15631d295de08298966573709f40e341236efec6f5bb96e69e00d",
+      "seconds": 2189,
+      "initial_v": 20.87123,
+      "measured_net_wh": 71.67602,
+      "current_range_a": [
+        -1.7268,
+        48.2048
+      ],
+      "minimum_mean_voltage_v": 17.07398,
+      "models": {
+        "charge_only": {
+          "mae_v": 0.644376,
+          "rmse_v": 0.953516,
+          "max_optimistic_v": 3.50232,
+          "error_at_minimum_mean_voltage_v": 3.293165,
+          "net_energy_error_wh": 7.349372
+        },
+        "charge_and_sag": {
+          "mae_v": 0.162047,
+          "rmse_v": 0.230142,
+          "max_optimistic_v": 0.905045,
+          "error_at_minimum_mean_voltage_v": 0.666616,
+          "net_energy_error_wh": 1.650623
+        }
+      }
+    },
+    "HIRF77.mat": {
+      "source_set": 6,
+      "sha256": "d08f0403ec8e12fbf40a666fa29e20fb3e431e94581729bd5d3abb0939018be9",
+      "seconds": 2634,
+      "initial_v": 20.73221,
+      "measured_net_wh": 81.59699,
+      "current_range_a": [
+        0.8717,
+        41.5191
+      ],
+      "minimum_mean_voltage_v": 16.46508,
+      "models": {
+        "charge_only": {
+          "mae_v": 0.897113,
+          "rmse_v": 1.13935,
+          "max_optimistic_v": 3.799782,
+          "error_at_minimum_mean_voltage_v": 1.765011,
+          "net_energy_error_wh": 8.572022
+        },
+        "charge_and_sag": {
+          "mae_v": 0.386038,
+          "rmse_v": 0.464614,
+          "max_optimistic_v": 1.540238,
+          "error_at_minimum_mean_voltage_v": 0.703113,
+          "net_energy_error_wh": 2.937156
+        }
+      }
+    },
+    "HIRF78.mat": {
+      "source_set": 6,
+      "sha256": "e57a4760e142224bc446a14bea00a2a82f5fe83a2bb63433f38b1e008dbcffd5",
+      "seconds": 2905,
+      "initial_v": 20.94207,
+      "measured_net_wh": 119.14237,
+      "current_range_a": [
+        0.614,
+        37.0571
+      ],
+      "minimum_mean_voltage_v": 17.95401,
+      "models": {
+        "charge_only": {
+          "mae_v": 0.998913,
+          "rmse_v": 1.173472,
+          "max_optimistic_v": 1.485119,
+          "error_at_minimum_mean_voltage_v": -0.495701,
+          "net_energy_error_wh": 2.151536
+        },
+        "charge_and_sag": {
+          "mae_v": 0.724651,
+          "rmse_v": 0.830057,
+          "max_optimistic_v": 0.137772,
+          "error_at_minimum_mean_voltage_v": -1.337722,
+          "net_energy_error_wh": -3.893967
+        }
+      }
+    },
+    "HIRF79.mat": {
+      "source_set": 6,
+      "sha256": "252614baec682f18127c80ed05a9d5a36953834598eb486f8d5e203d3c6701b2",
+      "seconds": 2664,
+      "initial_v": 20.96334,
+      "measured_net_wh": 117.06972,
+      "current_range_a": [
+        0.5421,
+        44.54
+      ],
+      "minimum_mean_voltage_v": 17.94175,
+      "models": {
+        "charge_only": {
+          "mae_v": 0.904181,
+          "rmse_v": 1.100617,
+          "max_optimistic_v": 1.375931,
+          "error_at_minimum_mean_voltage_v": -0.55822,
+          "net_energy_error_wh": 2.314553
+        },
+        "charge_and_sag": {
+          "mae_v": 0.719369,
+          "rmse_v": 0.83216,
+          "max_optimistic_v": 0.004143,
+          "error_at_minimum_mean_voltage_v": -1.656765,
+          "net_energy_error_wh": -5.197515
+        }
+      }
+    },
+    "HIRF80.mat": {
+      "source_set": 6,
+      "sha256": "4af7dd5d6cb8c6aad9272b01a5a31213870fea18aaaaa66d71f6781a5c7536f9",
+      "seconds": 2866,
+      "initial_v": 20.90925,
+      "measured_net_wh": 143.6356,
+      "current_range_a": [
+        0.358,
+        45.2851
+      ],
+      "minimum_mean_voltage_v": 16.69296,
+      "models": {
+        "charge_only": {
+          "mae_v": 0.878942,
+          "rmse_v": 1.022209,
+          "max_optimistic_v": 1.475654,
+          "error_at_minimum_mean_voltage_v": -0.315454,
+          "net_energy_error_wh": 0.794407
+        },
+        "charge_and_sag": {
+          "mae_v": 0.687994,
+          "rmse_v": 0.800668,
+          "max_optimistic_v": 0.006823,
+          "error_at_minimum_mean_voltage_v": -0.938444,
+          "net_energy_error_wh": -7.173068
+        }
+      }
+    },
+    "HIRF81.mat": {
+      "source_set": 6,
+      "sha256": "1a30c0bccaaaaecb09312ec078a5728367987ba3e46a0e2f2167fdd54b40a77f",
+      "seconds": 2390,
+      "initial_v": 20.94032,
+      "measured_net_wh": 127.46363,
+      "current_range_a": [
+        0.3731,
+        36.6868
+      ],
+      "minimum_mean_voltage_v": 17.82279,
+      "models": {
+        "charge_only": {
+          "mae_v": 1.084364,
+          "rmse_v": 1.252738,
+          "max_optimistic_v": 1.459164,
+          "error_at_minimum_mean_voltage_v": -0.588187,
+          "net_energy_error_wh": 2.474908
+        },
+        "charge_and_sag": {
+          "mae_v": 0.841377,
+          "rmse_v": 0.938493,
+          "max_optimistic_v": 0.011391,
+          "error_at_minimum_mean_voltage_v": -1.541471,
+          "net_energy_error_wh": -5.440109
+        }
+      }
+    }
+  }
+}
