@@ -1,0 +1,152 @@
+{
+  "half_width_m": {
+    "moving_reference": 0.138571194,
+    "remaining_window": 0.143376149
+  },
+  "cohorts": {
+    "different_vehicle_same_setting": {
+      "flights": 2,
+      "whole_flights_covered": 1,
+      "mean_flight_mae_m": 0.030034325,
+      "worst_flight_max_absolute_error_m": 0.168165809,
+      "worst_band_excess_m": 0.028689932,
+      "runs": [
+        {
+          "name": "F0_SV0_SP1_t4_D2.mat",
+          "mae_m": 0.032308525,
+          "mean_signed_error_m": -0.01749198,
+          "max_absolute_error_m": 0.168165809,
+          "regimes": {
+            "moving_reference": {
+              "mae_m": 0.044451024,
+              "mean_signed_error_m": -0.033711335,
+              "max_absolute_error_m": 0.167261126,
+              "scored_samples": 158,
+              "covered_samples": 137,
+              "max_band_excess_m": 0.028689932
+            },
+            "remaining_window": {
+              "mae_m": 0.031216598,
+              "mean_signed_error_m": -0.016033438,
+              "max_absolute_error_m": 0.168165809,
+              "scored_samples": 1757,
+              "covered_samples": 1742,
+              "max_band_excess_m": 0.02478966
+            }
+          },
+          "whole_flight_covered": false
+        },
+        {
+          "name": "F0_SV0_SP1_t4_D3.mat",
+          "mae_m": 0.027760124,
+          "mean_signed_error_m": -0.016900879,
+          "max_absolute_error_m": 0.142246236,
+          "regimes": {
+            "moving_reference": {
+              "mae_m": 0.038926524,
+              "mean_signed_error_m": -0.02810544,
+              "max_absolute_error_m": 0.136611519,
+              "scored_samples": 160,
+              "covered_samples": 160,
+              "max_band_excess_m": 0.0
+            },
+            "remaining_window": {
+              "mae_m": 0.026763681,
+              "mean_signed_error_m": -0.015901029,
+              "max_absolute_error_m": 0.142246236,
+              "scored_samples": 1793,
+              "covered_samples": 1793,
+              "max_band_excess_m": 0.0
+            }
+          },
+          "whole_flight_covered": true
+        }
+      ]
+    },
+    "same_vehicle_different_speed_setting": {
+      "flights": 3,
+      "whole_flights_covered": 1,
+      "mean_flight_mae_m": 0.027171986,
+      "worst_flight_max_absolute_error_m": 0.142312267,
+      "worst_band_excess_m": 0.002354998,
+      "runs": [
+        {
+          "name": "F0_SV0_SP2_t4_D1_R1.mat",
+          "mae_m": 0.026587438,
+          "mean_signed_error_m": -0.013989369,
+          "max_absolute_error_m": 0.142312267,
+          "regimes": {
+            "moving_reference": {
+              "mae_m": 0.019941789,
+              "mean_signed_error_m": -0.017973604,
+              "max_absolute_error_m": 0.140710293,
+              "scored_samples": 452,
+              "covered_samples": 451,
+              "max_band_excess_m": 0.002139099
+            },
+            "remaining_window": {
+              "mae_m": 0.028625317,
+              "mean_signed_error_m": -0.012767609,
+              "max_absolute_error_m": 0.142312267,
+              "scored_samples": 1474,
+              "covered_samples": 1474,
+              "max_band_excess_m": 0.0
+            }
+          },
+          "whole_flight_covered": false
+        },
+        {
+          "name": "F0_SV0_SP2_t4_D1_R2.mat",
+          "mae_m": 0.024906005,
+          "mean_signed_error_m": -0.013441342,
+          "max_absolute_error_m": 0.140926192,
+          "regimes": {
+            "moving_reference": {
+              "mae_m": 0.020181684,
+              "mean_signed_error_m": -0.016387152,
+              "max_absolute_error_m": 0.140926192,
+              "scored_samples": 452,
+              "covered_samples": 451,
+              "max_band_excess_m": 0.002354998
+            },
+            "remaining_window": {
+              "mae_m": 0.02620254,
+              "mean_signed_error_m": -0.012632899,
+              "max_absolute_error_m": 0.13667446,
+              "scored_samples": 1647,
+              "covered_samples": 1647,
+              "max_band_excess_m": 0.0
+            }
+          },
+          "whole_flight_covered": false
+        },
+        {
+          "name": "F0_SV0_SP2_t4_D1_R3.mat",
+          "mae_m": 0.030022515,
+          "mean_signed_error_m": -0.011564353,
+          "max_absolute_error_m": 0.136724081,
+          "regimes": {
+            "moving_reference": {
+              "mae_m": 0.016844126,
+              "mean_signed_error_m": -0.013237469,
+              "max_absolute_error_m": 0.136724081,
+              "scored_samples": 453,
+              "covered_samples": 453,
+              "max_band_excess_m": 0.0
+            },
+            "remaining_window": {
+              "mae_m": 0.033337235,
+              "mean_signed_error_m": -0.01114352,
+              "max_absolute_error_m": 0.136096512,
+              "scored_samples": 1801,
+              "covered_samples": 1801,
+              "max_band_excess_m": 0.0
+            }
+          },
+          "whole_flight_covered": true
+        }
+      ]
+    }
+  },
+  "acceptance_status": "inconclusive_few_independent_flights_and_no_calibrated_coverage_requirement"
+}

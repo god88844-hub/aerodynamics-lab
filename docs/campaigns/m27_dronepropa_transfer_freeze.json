@@ -1,0 +1,12 @@
+{
+  "frozen_altitude_model_sha256_with_lf": "253427b17541cae8e36ba54f40856977411ac291a0486a26a19ba0b5483df728",
+  "band_calibration_runs": [
+    "F0_SV0_SP1_t4_D1_R1.mat",
+    "F0_SV0_SP1_t4_D1_R2.mat",
+    "F0_SV0_SP1_t4_D1_R3.mat"
+  ],
+  "half_width_m": {
+    "moving_reference": 0.138571194,
+    "remaining_window": 0.143376149
+  }
+}

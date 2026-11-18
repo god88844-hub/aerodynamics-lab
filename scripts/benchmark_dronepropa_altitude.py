@@ -89,12 +89,16 @@ def metrics(error: np.ndarray) -> dict:
     }
 
 
+def moving_reference_mask(desired: np.ndarray, window: np.ndarray) -> np.ndarray:
+    return window & (np.abs(np.diff(desired, prepend=desired[0])) >= MOVING_REFERENCE_M_S * SAMPLE_S)
+
+
 def evaluate(folder: Path, records: list[dict], frozen: dict) -> dict:
     reports = []
     for record in records:
         desired, measured, window = load_flight(folder, record)
         estimate = predicted_altitude(desired, frozen["selected_time_constant_s"], frozen["selected_delay_samples"])
-        moving = window & (np.abs(np.diff(desired, prepend=desired[0])) >= MOVING_REFERENCE_M_S * SAMPLE_S)
+        moving = moving_reference_mask(desired, window)
         if not np.any(moving):
             raise ValueError(f"No moving-reference samples in {record['name']}")
         reports.append({
