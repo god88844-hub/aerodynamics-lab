@@ -163,5 +163,27 @@ test('packaged UI edits a design, runs the solver, and reloads saved data after 
   const storedInputs = await request.get(`/api/simulations/${result.simulation_id}/inputs`)
   expect(storedInputs.status()).toBe(200)
   expect(await storedInputs.body()).toEqual(frozenBytes)
+  const backup = `/tmp/aeroforge-backup-${randomUUID()}.db`
+  const restored = `/tmp/aeroforge-restored-${randomUUID()}.db`
+  const copied = await compose('exec', '-T', 'api', 'python', '-m', 'app.persistence.snapshot',
+    '/srv/aeroforge/state/aeroforge.db', backup)
+  expect(copied.stdout.trim()).toMatch(/^[a-f0-9]{64}$/)
+  await compose('exec', '-T', 'api', 'python', '-m', 'app.persistence.snapshot', backup, restored)
+  const recoveryCheck = [
+    'import hashlib, json, sys',
+    'from fastapi.testclient import TestClient',
+    'from app.main import app',
+    'with TestClient(app) as client:',
+    '    history = client.get("/api/designs/" + sys.argv[1] + "/revisions").json()',
+    '    result = client.get("/api/simulations/" + sys.argv[2]).json()',
+    '    inputs = client.get("/api/simulations/" + sys.argv[2] + "/inputs").content',
+    'print(json.dumps(dict(history=history, result=result, digest=hashlib.sha256(inputs).hexdigest())))',
+  ].join('\n')
+  const recovered = await compose('exec', '-T', '-e', `AEROFORGE_DB_URL=sqlite:///${restored}`,
+    'api', 'python', '-c', recoveryCheck, String(saved.id), String(result.simulation_id))
+  const recoveredData = JSON.parse(recovered.stdout.trim())
+  expect(recoveredData.result).toEqual(await storedRun.json())
+  expect(recoveredData.digest).toBe(result.input_sha256)
+  expect(recoveredData.history).toEqual(await history.json())
   expect(errors).toEqual([])
 })
