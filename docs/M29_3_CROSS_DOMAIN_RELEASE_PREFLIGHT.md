@@ -2,6 +2,8 @@
 
 Implements `physics.validation.release_readiness.assess_release_readiness`.
 
+For GitHub-sourced software verification of a frozen `main` commit, use the [release CI verifier](M29_30_34_GITHUB_RELEASE_CI.md).
+
 Combine **operator-reported** M27.4 original-file/ledger cross-links, M28.5 assumed 3D rotor swept-cylinder analytical screen, and two named claimed GitHub CI checks (`python-tests` and `web-build`). Strictly compare frozen model Git SHA and ledger SHA-256 across the original provenance report and review snapshot. Reject missing job names, nonboolean states, mismatched model/digest, incomplete provenance, unknown design identity and absent geometry pair data. Create an order-independent canonical SHA-256 fingerprint of the sanitized preflight snapshot.
 
 The only software-positive state is `REPORTED_SOFTWARE_GATES_CONSISTENT_EXTERNAL_VERIFICATION_REQUIRED`. This is self-reported **consistency**, not a trusted CI status or an engineering approval; any negative subgate yields `REPORTED_RELEASE_PREFLIGHT_BLOCKED`. The preflight does not use GitHub's authenticated check-run API or external measurement authority, and it does not verify the provenance snapshots were produced by their modules. An attacker could supply fabricated report flags. Such flags never make it safe to release.
