@@ -10,7 +10,7 @@
   ],
   "holdout": [
     {"rpm": 5000, "file": "apce_10x5_kt0821_5000.txt", "sha256": "3df32a75d9b09452a6cd22f4853a7ce4c09b51e412fda3c6bea247dd7ce09c61"},
-    {"rpm": 6005, "file": "apce_10x5_kt0823_6005.txt", "sha256": "64b4415521393691d7cfdcc75d29db5a04a24c7df82104bd68c68614228be417"},
+    {"rpm": 6005, "file": "apce_10x5_kt0823_6005.txt", "sha256": "1db2ff99dc611079a5aa91f73ed13fb48a1ebe6874b294789e0872b9756c41e6"},
     {"rpm": 6018, "file": "apce_10x5_kt0824_6018.txt", "sha256": "9f8a6f9c8775a8cf2334b7b8a6f75b9c4ebbd0ad7474da4938de05557c0278bb"}
   ],
   "scoring": "Score only within the shared calibration J range. Interpolate CT and CP linearly in J on each calibration plane, then blend by RPM. Compare with a fixed equal blend in J and with RPM-interpolated matched static data. Record coefficient errors and CT sign disagreements."
