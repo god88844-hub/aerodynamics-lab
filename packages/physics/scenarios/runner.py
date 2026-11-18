@@ -352,6 +352,7 @@ class ScenarioResult:
     success: dict[str, bool]
     success_all: bool | None
     notes: list[str]
+    allocation_counts: dict[str, int] = field(default_factory=dict)
 
 
 def run_scenario(
@@ -596,6 +597,7 @@ def run_scenario(
         success=success,
         success_all=success_all,
         notes=notes,
+        allocation_counts=controller.allocation_counts.copy(),
     )
 
 

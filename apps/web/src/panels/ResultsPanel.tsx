@@ -45,6 +45,17 @@ export function ResultsPanel({ result }: { result: SimulationResult | null }) {
   return (
     <div className="space-y-4 p-4">
       <ScenarioResults result={result} scenario={scenario} />
+      {result.allocation_control_steps && (
+        <section aria-label="Control allocation">
+          <h3 className="mb-2 text-[11px] font-semibold uppercase tracking-wider text-cyan-500">Control allocation</h3>
+          <div className="grid grid-cols-2 gap-2">
+            <Metric label="Negative command clipped" value={result.allocation_control_steps.clipped_negative} unit="steps" />
+            <Metric label="Thrust ceiling requested" value={result.allocation_control_steps.saturated_max} unit="steps" />
+            <Metric label="Total thrust error" value={result.allocation_control_steps.collective_residual} unit="steps" />
+            <Metric label="Torque error" value={result.allocation_control_steps.torque_residual} unit="steps" />
+          </div>
+        </section>
+      )}
       {result.events && result.events.length > 0 && <EventsSection result={result} />}
       {result.success && <SuccessSection result={result} />}
       <TrustSection result={result} />

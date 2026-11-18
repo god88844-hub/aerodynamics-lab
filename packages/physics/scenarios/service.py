@@ -331,6 +331,7 @@ def run_hover_hold(design: DroneDesign, duration_s: float = 10.0,
             "max_motor_thrust_n": float(res.thrusts.max()),
             "oscillation": "persistent" if float(np.std(z_tail)) > 0.02 else "none detected",
         },
+        "allocation_control_steps": controller.allocation_counts.copy(),
         "telemetry": _states_telemetry(res.times, res.states, res.thrusts,
                                        alt_cmd=res.alt_commands),
         "trustworthiness": {
@@ -413,6 +414,7 @@ def run_flight(design: DroneDesign, data_dir: Path | None = None) -> dict:
             for e in res.events
         ],
         "success": res.success,
+        "allocation_control_steps": res.allocation_counts,
         "telemetry": _states_telemetry(
             res.times, res.states, res.thrusts,
             currents=res.per_motor_current_a, v_bus=res.v_bus, soc=res.soc_pct,

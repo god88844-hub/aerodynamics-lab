@@ -25,7 +25,7 @@ from dataclasses import dataclass
 
 import numpy as np
 
-from physics.controller.mixer import Mixer
+from physics.controller.mixer import ALLOCATION_FLAGS, Mixer
 from physics.controller.pid import PID
 from physics.dynamics.quadrotor import MultirotorPlant
 from physics.dynamics.quaternion import rotation_matrix
@@ -129,12 +129,14 @@ class QuadcopterController:
         self._ff_vx = 0.0
         self._ff_vy = 0.0
         self._ff_vz = 0.0
+        self.allocation_counts = dict.fromkeys(ALLOCATION_FLAGS, 0)
 
     def reset(self) -> None:
         for pid in (self.rate_roll, self.rate_pitch, self.rate_yaw, self.altitude_i):
             pid.reset()
         self._last_accel_cmd = 0.0
         self._ff_vx = self._ff_vy = self._ff_vz = 0.0
+        self.allocation_counts = dict.fromkeys(ALLOCATION_FLAGS, 0)
 
     @staticmethod
     def _slew(current: float, target: float, dt: float) -> float:
@@ -200,7 +202,9 @@ class QuadcopterController:
         self._last_accel_cmd = accel_cmd
         total_thrust = mass * (9.80665 + accel_cmd) / cos_tilt
 
-        thrusts, _mix_status = self.mixer.mix(total_thrust, np.array([tx, ty, tz]))
+        thrusts, mix_status = self.mixer.mix(total_thrust, np.array([tx, ty, tz]))
+        for flag, occurred in mix_status.items():
+            self.allocation_counts[flag] += occurred
         return thrusts
 
     @staticmethod

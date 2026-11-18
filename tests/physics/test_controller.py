@@ -197,7 +197,33 @@ def test_mixer_reports_saturation():
     mixer = Mixer(plant, max_thrust_per_rotor_n=5.0)
     thrusts, status = mixer.mix(30.0, np.zeros(3))
     assert status["saturated_max"]
+    assert status["collective_residual"]
     assert np.all(thrusts <= 5.0 + 1e-9)
+
+
+def test_mixer_includes_capped_rotors_in_the_wrench_fit(quad_2kg):
+    plant, _ = quad_2kg
+    mixer = Mixer(plant, max_thrust_per_rotor_n=5.0)
+    arm_y = float(mixer.matrix[1, 0])
+    assert arm_y > 0
+    total_thrust, roll_torque = 15.0, 2.0
+    thrusts, status = mixer.mix(total_thrust, np.array([roll_torque, 0.0, 0.0]))
+    # The positive-Y pair reaches the ceiling. The negative-Y pair solves
+    # the remaining collective and roll errors in one scalar objective.
+    remaining = (total_thrust - 10.0 + arm_y * (arm_y * 10.0 - roll_torque)) / (1 + arm_y**2)
+    assert thrusts[mixer.matrix[1] > 0] == pytest.approx([5.0, 5.0])
+    assert thrusts[mixer.matrix[1] < 0] == pytest.approx([remaining / 2, remaining / 2])
+    assert status["saturated_max"] and status["torque_residual"]
+
+
+def test_controller_allocation_counts_reset_for_a_new_run(quad_2kg):
+    plant, _ = quad_2kg
+    controller = QuadcopterController(plant, mixer=Mixer(plant, max_thrust_per_rotor_n=5.0))
+    for _ in range(2):
+        result = run_controlled_simulation(plant, controller, ControlTargets(altitude_m=1.0), duration_s=0.04)
+        assert float(result.thrusts.max()) <= 5.0
+        assert controller.allocation_counts["saturated_max"] == len(result.times)
+        assert controller.allocation_counts["collective_residual"] == len(result.times)
 
 
 def test_controller_gains_derived_from_plant(quad_2kg, quad_mn):

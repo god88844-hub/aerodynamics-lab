@@ -168,6 +168,12 @@ export interface SimulationResult {
   benchmarks?: { name: string; status: string; metrics: Record<string, number>; notes: string }[]
   events?: FailureEvent[]
   success?: Record<string, boolean>
+  allocation_control_steps?: {
+    clipped_negative: number
+    saturated_max: number
+    collective_residual: number
+    torque_residual: number
+  }
   telemetry?: Telemetry | null
   trustworthiness?: Record<string, TrustEntry | string>
 }
