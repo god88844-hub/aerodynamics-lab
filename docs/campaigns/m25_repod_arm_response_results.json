@@ -1,0 +1,567 @@
+{
+  "plan": "m25-repod-drone-arm-force-v1",
+  "frozen_calibration_canonical_sha256": "c2ffe93e928c8041af47966c29e33411dbfecb36bb1bab67a3c59108f51861da",
+  "status": "INCONCLUSIVE_FOR_STRUCTURAL_STRENGTH_OR_FLIGHT_ACCEPTANCE",
+  "heldout_source_groups": 8,
+  "heldout_strokes": 40,
+  "model": {
+    "mae_n": 0.298328427,
+    "rmse_n": 0.34443213,
+    "bias_n": 0.288113535,
+    "max_abs_n": 0.788844387
+  },
+  "infill_blind_baseline": {
+    "mae_n": 1.389817505,
+    "rmse_n": 1.545735384,
+    "bias_n": 0.288113536,
+    "max_abs_n": 2.64243775
+  },
+  "by_configuration": {
+    "PETG/25%": {
+      "model": {
+        "mae_n": 0.28886006,
+        "rmse_n": 0.315505387,
+        "bias_n": 0.28886006,
+        "max_abs_n": 0.536340037
+      },
+      "infill_blind_baseline": {
+        "mae_n": 1.769858375,
+        "rmse_n": 1.86231041,
+        "bias_n": 1.769858375,
+        "max_abs_n": 2.64243775
+      },
+      "strokes_inside_empirical_band": 7,
+      "whole_groups_inside_empirical_band": 0
+    },
+    "PETG/100%": {
+      "model": {
+        "mae_n": 0.415556805,
+        "rmse_n": 0.471306789,
+        "bias_n": 0.415556805,
+        "max_abs_n": 0.788844387
+      },
+      "infill_blind_baseline": {
+        "mae_n": 1.155956533,
+        "rmse_n": 1.401166296,
+        "bias_n": -1.06544151,
+        "max_abs_n": 2.45545628
+      },
+      "strokes_inside_empirical_band": 7,
+      "whole_groups_inside_empirical_band": 0
+    },
+    "PLA/25%": {
+      "model": {
+        "mae_n": 0.263398484,
+        "rmse_n": 0.314951459,
+        "bias_n": 0.222538918,
+        "max_abs_n": 0.52472467
+      },
+      "infill_blind_baseline": {
+        "mae_n": 1.540746195,
+        "rmse_n": 1.592255632,
+        "bias_n": 1.540746195,
+        "max_abs_n": 2.117828425
+      },
+      "strokes_inside_empirical_band": 10,
+      "whole_groups_inside_empirical_band": 2
+    },
+    "PLA/100%": {
+      "model": {
+        "mae_n": 0.225498358,
+        "rmse_n": 0.231658822,
+        "bias_n": 0.225498358,
+        "max_abs_n": 0.301277921
+      },
+      "infill_blind_baseline": {
+        "mae_n": 1.092708917,
+        "rmse_n": 1.261129044,
+        "bias_n": -1.092708917,
+        "max_abs_n": 2.015605265
+      },
+      "strokes_inside_empirical_band": 2,
+      "whole_groups_inside_empirical_band": 0
+    }
+  },
+  "strokes": [
+    {
+      "configuration": "PETG/100%",
+      "sample": 4,
+      "nominal_stroke_mm": 1,
+      "source_rows": 266,
+      "measured_force_q95_n": 1.7268543,
+      "predicted_force_q95_n": 2.377917237,
+      "infill_blind_prediction_n": 1.884251132,
+      "error_n": 0.651062937,
+      "baseline_error_n": 0.157396832,
+      "inside_empirical_calibration_band": false
+    },
+    {
+      "configuration": "PETG/100%",
+      "sample": 4,
+      "nominal_stroke_mm": 2,
+      "source_rows": 532,
+      "measured_force_q95_n": 4.29876162,
+      "predicted_force_q95_n": 4.755834474,
+      "infill_blind_prediction_n": 3.768502264,
+      "error_n": 0.457072854,
+      "baseline_error_n": -0.530259356,
+      "inside_empirical_calibration_band": true
+    },
+    {
+      "configuration": "PETG/100%",
+      "sample": 4,
+      "nominal_stroke_mm": 3,
+      "source_rows": 800,
+      "measured_force_q95_n": 6.781114431,
+      "predicted_force_q95_n": 7.133751711,
+      "infill_blind_prediction_n": 5.652753396,
+      "error_n": 0.35263728,
+      "baseline_error_n": -1.128361035,
+      "inside_empirical_calibration_band": true
+    },
+    {
+      "configuration": "PETG/100%",
+      "sample": 4,
+      "nominal_stroke_mm": 4,
+      "source_rows": 1066,
+      "measured_force_q95_n": 9.247394048,
+      "predicted_force_q95_n": 9.511668948,
+      "infill_blind_prediction_n": 7.537004528,
+      "error_n": 0.264274901,
+      "baseline_error_n": -1.71038952,
+      "inside_empirical_calibration_band": true
+    },
+    {
+      "configuration": "PETG/100%",
+      "sample": 4,
+      "nominal_stroke_mm": 5,
+      "source_rows": 1332,
+      "measured_force_q95_n": 11.87671194,
+      "predicted_force_q95_n": 11.889586185,
+      "infill_blind_prediction_n": 9.42125566,
+      "error_n": 0.012874245,
+      "baseline_error_n": -2.45545628,
+      "inside_empirical_calibration_band": true
+    },
+    {
+      "configuration": "PETG/100%",
+      "sample": 5,
+      "nominal_stroke_mm": 1,
+      "source_rows": 266,
+      "measured_force_q95_n": 1.58907285,
+      "predicted_force_q95_n": 2.377917237,
+      "infill_blind_prediction_n": 1.884251132,
+      "error_n": 0.788844387,
+      "baseline_error_n": 0.295178282,
+      "inside_empirical_calibration_band": false
+    },
+    {
+      "configuration": "PETG/100%",
+      "sample": 5,
+      "nominal_stroke_mm": 2,
+      "source_rows": 532,
+      "measured_force_q95_n": 4.16098017,
+      "predicted_force_q95_n": 4.755834474,
+      "infill_blind_prediction_n": 3.768502264,
+      "error_n": 0.594854304,
+      "baseline_error_n": -0.392477906,
+      "inside_empirical_calibration_band": false
+    },
+    {
+      "configuration": "PETG/100%",
+      "sample": 5,
+      "nominal_stroke_mm": 3,
+      "source_rows": 800,
+      "measured_force_q95_n": 6.64103646,
+      "predicted_force_q95_n": 7.133751711,
+      "infill_blind_prediction_n": 5.652753396,
+      "error_n": 0.492715251,
+      "baseline_error_n": -0.988283064,
+      "inside_empirical_calibration_band": true
+    },
+    {
+      "configuration": "PETG/100%",
+      "sample": 5,
+      "nominal_stroke_mm": 4,
+      "source_rows": 1066,
+      "measured_force_q95_n": 9.12109275,
+      "predicted_force_q95_n": 9.511668948,
+      "infill_blind_prediction_n": 7.537004528,
+      "error_n": 0.390576198,
+      "baseline_error_n": -1.584088222,
+      "inside_empirical_calibration_band": true
+    },
+    {
+      "configuration": "PETG/100%",
+      "sample": 5,
+      "nominal_stroke_mm": 5,
+      "source_rows": 1332,
+      "measured_force_q95_n": 11.73893049,
+      "predicted_force_q95_n": 11.889586185,
+      "infill_blind_prediction_n": 9.42125566,
+      "error_n": 0.150655695,
+      "baseline_error_n": -2.31767483,
+      "inside_empirical_calibration_band": true
+    },
+    {
+      "configuration": "PETG/25%",
+      "sample": 4,
+      "nominal_stroke_mm": 1,
+      "source_rows": 266,
+      "measured_force_q95_n": 0.94609602,
+      "predicted_force_q95_n": 1.390585027,
+      "infill_blind_prediction_n": 1.884251132,
+      "error_n": 0.444489007,
+      "baseline_error_n": 0.938155112,
+      "inside_empirical_calibration_band": false
+    },
+    {
+      "configuration": "PETG/25%",
+      "sample": 4,
+      "nominal_stroke_mm": 2,
+      "source_rows": 532,
+      "measured_force_q95_n": 2.46168216,
+      "predicted_force_q95_n": 2.781170054,
+      "infill_blind_prediction_n": 3.768502264,
+      "error_n": 0.319487894,
+      "baseline_error_n": 1.306820104,
+      "inside_empirical_calibration_band": true
+    },
+    {
+      "configuration": "PETG/25%",
+      "sample": 4,
+      "nominal_stroke_mm": 3,
+      "source_rows": 800,
+      "measured_force_q95_n": 3.93134769,
+      "predicted_force_q95_n": 4.171755081,
+      "infill_blind_prediction_n": 5.652753396,
+      "error_n": 0.240407391,
+      "baseline_error_n": 1.721405706,
+      "inside_empirical_calibration_band": true
+    },
+    {
+      "configuration": "PETG/25%",
+      "sample": 4,
+      "nominal_stroke_mm": 4,
+      "source_rows": 1066,
+      "measured_force_q95_n": 5.40101322,
+      "predicted_force_q95_n": 5.562340108,
+      "infill_blind_prediction_n": 7.537004528,
+      "error_n": 0.161326888,
+      "baseline_error_n": 2.135991308,
+      "inside_empirical_calibration_band": true
+    },
+    {
+      "configuration": "PETG/25%",
+      "sample": 4,
+      "nominal_stroke_mm": 5,
+      "source_rows": 1332,
+      "measured_force_q95_n": 6.82474833,
+      "predicted_force_q95_n": 6.952925135,
+      "infill_blind_prediction_n": 9.42125566,
+      "error_n": 0.128176805,
+      "baseline_error_n": 2.59650733,
+      "inside_empirical_calibration_band": true
+    },
+    {
+      "configuration": "PETG/25%",
+      "sample": 5,
+      "nominal_stroke_mm": 1,
+      "source_rows": 266,
+      "measured_force_q95_n": 0.85424499,
+      "predicted_force_q95_n": 1.390585027,
+      "infill_blind_prediction_n": 1.884251132,
+      "error_n": 0.536340037,
+      "baseline_error_n": 1.030006142,
+      "inside_empirical_calibration_band": false
+    },
+    {
+      "configuration": "PETG/25%",
+      "sample": 5,
+      "nominal_stroke_mm": 2,
+      "source_rows": 532,
+      "measured_force_q95_n": 2.390499819,
+      "predicted_force_q95_n": 2.781170054,
+      "infill_blind_prediction_n": 3.768502264,
+      "error_n": 0.390670235,
+      "baseline_error_n": 1.378002445,
+      "inside_empirical_calibration_band": false
+    },
+    {
+      "configuration": "PETG/25%",
+      "sample": 5,
+      "nominal_stroke_mm": 3,
+      "source_rows": 800,
+      "measured_force_q95_n": 3.88541727,
+      "predicted_force_q95_n": 4.171755081,
+      "infill_blind_prediction_n": 5.652753396,
+      "error_n": 0.286337811,
+      "baseline_error_n": 1.767336126,
+      "inside_empirical_calibration_band": true
+    },
+    {
+      "configuration": "PETG/25%",
+      "sample": 5,
+      "nominal_stroke_mm": 4,
+      "source_rows": 1066,
+      "measured_force_q95_n": 5.3550828,
+      "predicted_force_q95_n": 5.562340108,
+      "infill_blind_prediction_n": 7.537004528,
+      "error_n": 0.207257308,
+      "baseline_error_n": 2.181921728,
+      "inside_empirical_calibration_band": true
+    },
+    {
+      "configuration": "PETG/25%",
+      "sample": 5,
+      "nominal_stroke_mm": 5,
+      "source_rows": 1332,
+      "measured_force_q95_n": 6.77881791,
+      "predicted_force_q95_n": 6.952925135,
+      "infill_blind_prediction_n": 9.42125566,
+      "error_n": 0.174107225,
+      "baseline_error_n": 2.64243775,
+      "inside_empirical_calibration_band": true
+    },
+    {
+      "configuration": "PLA/100%",
+      "sample": 4,
+      "nominal_stroke_mm": 1,
+      "source_rows": 266,
+      "measured_force_q95_n": 1.7268543,
+      "predicted_force_q95_n": 1.924798586,
+      "infill_blind_prediction_n": 1.485396161,
+      "error_n": 0.197944286,
+      "baseline_error_n": -0.241458139,
+      "inside_empirical_calibration_band": false
+    },
+    {
+      "configuration": "PLA/100%",
+      "sample": 4,
+      "nominal_stroke_mm": 2,
+      "source_rows": 532,
+      "measured_force_q95_n": 3.676453479,
+      "predicted_force_q95_n": 3.849597172,
+      "infill_blind_prediction_n": 2.970792322,
+      "error_n": 0.173143693,
+      "baseline_error_n": -0.705661157,
+      "inside_empirical_calibration_band": true
+    },
+    {
+      "configuration": "PLA/100%",
+      "sample": 4,
+      "nominal_stroke_mm": 3,
+      "source_rows": 800,
+      "measured_force_q95_n": 5.6306457,
+      "predicted_force_q95_n": 5.774395758,
+      "infill_blind_prediction_n": 4.456188483,
+      "error_n": 0.143750058,
+      "baseline_error_n": -1.174457217,
+      "inside_empirical_calibration_band": true
+    },
+    {
+      "configuration": "PLA/100%",
+      "sample": 4,
+      "nominal_stroke_mm": 4,
+      "source_rows": 1066,
+      "measured_force_q95_n": 7.51365558,
+      "predicted_force_q95_n": 7.699194344,
+      "infill_blind_prediction_n": 5.941584644,
+      "error_n": 0.185538764,
+      "baseline_error_n": -1.572070936,
+      "inside_empirical_calibration_band": false
+    },
+    {
+      "configuration": "PLA/100%",
+      "sample": 4,
+      "nominal_stroke_mm": 5,
+      "source_rows": 1332,
+      "measured_force_q95_n": 9.44258607,
+      "predicted_force_q95_n": 9.62399293,
+      "infill_blind_prediction_n": 7.426980805,
+      "error_n": 0.18140686,
+      "baseline_error_n": -2.015605265,
+      "inside_empirical_calibration_band": false
+    },
+    {
+      "configuration": "PLA/100%",
+      "sample": 5,
+      "nominal_stroke_mm": 1,
+      "source_rows": 266,
+      "measured_force_q95_n": 1.623520665,
+      "predicted_force_q95_n": 1.924798586,
+      "infill_blind_prediction_n": 1.485396161,
+      "error_n": 0.301277921,
+      "baseline_error_n": -0.138124504,
+      "inside_empirical_calibration_band": false
+    },
+    {
+      "configuration": "PLA/100%",
+      "sample": 5,
+      "nominal_stroke_mm": 2,
+      "source_rows": 532,
+      "measured_force_q95_n": 3.56393376,
+      "predicted_force_q95_n": 3.849597172,
+      "infill_blind_prediction_n": 2.970792322,
+      "error_n": 0.285663412,
+      "baseline_error_n": -0.593141438,
+      "inside_empirical_calibration_band": false
+    },
+    {
+      "configuration": "PLA/100%",
+      "sample": 5,
+      "nominal_stroke_mm": 3,
+      "source_rows": 800,
+      "measured_force_q95_n": 5.53879467,
+      "predicted_force_q95_n": 5.774395758,
+      "infill_blind_prediction_n": 4.456188483,
+      "error_n": 0.235601088,
+      "baseline_error_n": -1.082606187,
+      "inside_empirical_calibration_band": false
+    },
+    {
+      "configuration": "PLA/100%",
+      "sample": 5,
+      "nominal_stroke_mm": 4,
+      "source_rows": 1066,
+      "measured_force_q95_n": 7.42179474,
+      "predicted_force_q95_n": 7.699194344,
+      "infill_blind_prediction_n": 5.941584644,
+      "error_n": 0.277399604,
+      "baseline_error_n": -1.480210096,
+      "inside_empirical_calibration_band": false
+    },
+    {
+      "configuration": "PLA/100%",
+      "sample": 5,
+      "nominal_stroke_mm": 5,
+      "source_rows": 1332,
+      "measured_force_q95_n": 9.35073504,
+      "predicted_force_q95_n": 9.62399293,
+      "infill_blind_prediction_n": 7.426980805,
+      "error_n": 0.27325789,
+      "baseline_error_n": -1.923754235,
+      "inside_empirical_calibration_band": false
+    },
+    {
+      "configuration": "PLA/25%",
+      "sample": 4,
+      "nominal_stroke_mm": 1,
+      "source_rows": 266,
+      "measured_force_q95_n": 0.53275167,
+      "predicted_force_q95_n": 1.045993735,
+      "infill_blind_prediction_n": 1.485396161,
+      "error_n": 0.513242065,
+      "baseline_error_n": 0.952644491,
+      "inside_empirical_calibration_band": true
+    },
+    {
+      "configuration": "PLA/25%",
+      "sample": 4,
+      "nominal_stroke_mm": 2,
+      "source_rows": 532,
+      "measured_force_q95_n": 1.7268543,
+      "predicted_force_q95_n": 2.09198747,
+      "infill_blind_prediction_n": 2.970792322,
+      "error_n": 0.36513317,
+      "baseline_error_n": 1.243938022,
+      "inside_empirical_calibration_band": true
+    },
+    {
+      "configuration": "PLA/25%",
+      "sample": 4,
+      "nominal_stroke_mm": 3,
+      "source_rows": 800,
+      "measured_force_q95_n": 2.92325296,
+      "predicted_force_q95_n": 3.137981205,
+      "infill_blind_prediction_n": 4.456188483,
+      "error_n": 0.214728245,
+      "baseline_error_n": 1.532935523,
+      "inside_empirical_calibration_band": true
+    },
+    {
+      "configuration": "PLA/25%",
+      "sample": 4,
+      "nominal_stroke_mm": 4,
+      "source_rows": 1066,
+      "measured_force_q95_n": 4.16098017,
+      "predicted_force_q95_n": 4.18397494,
+      "infill_blind_prediction_n": 5.941584644,
+      "error_n": 0.02299477,
+      "baseline_error_n": 1.780604474,
+      "inside_empirical_calibration_band": true
+    },
+    {
+      "configuration": "PLA/25%",
+      "sample": 4,
+      "nominal_stroke_mm": 5,
+      "source_rows": 1332,
+      "measured_force_q95_n": 5.3550828,
+      "predicted_force_q95_n": 5.229968675,
+      "infill_blind_prediction_n": 7.426980805,
+      "error_n": -0.125114125,
+      "baseline_error_n": 2.071898005,
+      "inside_empirical_calibration_band": true
+    },
+    {
+      "configuration": "PLA/25%",
+      "sample": 5,
+      "nominal_stroke_mm": 1,
+      "source_rows": 266,
+      "measured_force_q95_n": 0.521269065,
+      "predicted_force_q95_n": 1.045993735,
+      "infill_blind_prediction_n": 1.485396161,
+      "error_n": 0.52472467,
+      "baseline_error_n": 0.964127096,
+      "inside_empirical_calibration_band": true
+    },
+    {
+      "configuration": "PLA/25%",
+      "sample": 5,
+      "nominal_stroke_mm": 2,
+      "source_rows": 532,
+      "measured_force_q95_n": 1.68092388,
+      "predicted_force_q95_n": 2.09198747,
+      "infill_blind_prediction_n": 2.970792322,
+      "error_n": 0.41106359,
+      "baseline_error_n": 1.289868442,
+      "inside_empirical_calibration_band": true
+    },
+    {
+      "configuration": "PLA/25%",
+      "sample": 5,
+      "nominal_stroke_mm": 3,
+      "source_rows": 800,
+      "measured_force_q95_n": 2.87502651,
+      "predicted_force_q95_n": 3.137981205,
+      "infill_blind_prediction_n": 4.456188483,
+      "error_n": 0.262954695,
+      "baseline_error_n": 1.581161973,
+      "inside_empirical_calibration_band": true
+    },
+    {
+      "configuration": "PLA/25%",
+      "sample": 5,
+      "nominal_stroke_mm": 4,
+      "source_rows": 1066,
+      "measured_force_q95_n": 4.06912914,
+      "predicted_force_q95_n": 4.18397494,
+      "infill_blind_prediction_n": 5.941584644,
+      "error_n": 0.1148458,
+      "baseline_error_n": 1.872455504,
+      "inside_empirical_calibration_band": true
+    },
+    {
+      "configuration": "PLA/25%",
+      "sample": 5,
+      "nominal_stroke_mm": 5,
+      "source_rows": 1332,
+      "measured_force_q95_n": 5.30915238,
+      "predicted_force_q95_n": 5.229968675,
+      "infill_blind_prediction_n": 7.426980805,
+      "error_n": -0.079183705,
+      "baseline_error_n": 2.117828425,
+      "inside_empirical_calibration_band": true
+    }
+  ]
+}
