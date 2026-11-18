@@ -1,0 +1,628 @@
+{
+  "source": "https://doi.org/10.5281/zenodo.17457069",
+  "forces_sha256": "7d2ad1e86e2a30f12f9105b6f5f6aeaa03738ce173e694e55946a92ebaf89d8b",
+  "coverage": {
+    "off_grid_rows_by_heading_deg": {
+      "0": 0,
+      "30": 0,
+      "60": 1,
+      "90": 2,
+      "120": 0,
+      "150": 0,
+      "180": 0
+    },
+    "rows_without_all_headings_by_heading_deg": {
+      "0": 3,
+      "30": 3,
+      "60": 2,
+      "90": 1,
+      "120": 3,
+      "150": 3,
+      "180": 3
+    },
+    "matched_configurations": 130
+  },
+  "holdout_force_readings": 252,
+  "metrics": {
+    "adjacent": {
+      "configurations": 24,
+      "median_between_heading_force_range_n": 1.6913922452,
+      "additive": {
+        "mean_absolute_error_n": 0.8950991979,
+        "mean_signed_error_n": -0.8622386451,
+        "max_absolute_error_n": 2.661557839
+      },
+      "pooled": {
+        "mean_absolute_error_n": 0.4039535248,
+        "mean_signed_error_n": -0.0554295797,
+        "max_absolute_error_n": 1.4321345013
+      },
+      "arrangement": {
+        "mean_absolute_error_n": 0.4040480272,
+        "mean_signed_error_n": -0.0435222796,
+        "max_absolute_error_n": 1.413990044
+      }
+    },
+    "diagonal": {
+      "configurations": 12,
+      "median_between_heading_force_range_n": 0.8097398706,
+      "additive": {
+        "mean_absolute_error_n": 0.8195660861,
+        "mean_signed_error_n": -0.8195660861,
+        "max_absolute_error_n": 1.6436320818
+      },
+      "pooled": {
+        "mean_absolute_error_n": 0.1576434667,
+        "mean_signed_error_n": -0.0127570207,
+        "max_absolute_error_n": 0.4142087441
+      },
+      "arrangement": {
+        "mean_absolute_error_n": 0.1554952459,
+        "mean_signed_error_n": -0.0353133389,
+        "max_absolute_error_n": 0.4485802765
+      }
+    },
+    "all": {
+      "configurations": 36,
+      "median_between_heading_force_range_n": 1.2808008123,
+      "additive": {
+        "mean_absolute_error_n": 0.869921494,
+        "mean_signed_error_n": -0.8480144588,
+        "max_absolute_error_n": 2.661557839
+      },
+      "pooled": {
+        "mean_absolute_error_n": 0.3218501721,
+        "mean_signed_error_n": -0.0412053934,
+        "max_absolute_error_n": 1.4321345013
+      },
+      "arrangement": {
+        "mean_absolute_error_n": 0.3211971001,
+        "mean_signed_error_n": -0.040785966,
+        "max_absolute_error_n": 1.413990044
+      }
+    }
+  },
+  "holdouts": [
+    {
+      "command": [
+        0.1,
+        0.1,
+        0.55,
+        0.55
+      ],
+      "high_rotor_arrangement": "diagonal",
+      "heading_repeats": 7,
+      "measured_median_force_n": 5.60978897153366,
+      "measured_force_range_n": 0.5911913321,
+      "additive_prediction_n": 4.9969403804,
+      "pooled_prediction_n": 5.6884910079,
+      "arrangement_prediction_n": 5.6691570209
+    },
+    {
+      "command": [
+        0.1,
+        0.1,
+        0.7,
+        0.7
+      ],
+      "high_rotor_arrangement": "diagonal",
+      "heading_repeats": 7,
+      "measured_median_force_n": 8.41432667454745,
+      "measured_force_range_n": 0.7116331982,
+      "additive_prediction_n": 7.3004233831,
+      "pooled_prediction_n": 8.5298467208,
+      "arrangement_prediction_n": 8.4954751884
+    },
+    {
+      "command": [
+        0.1,
+        0.55,
+        0.1,
+        0.55
+      ],
+      "high_rotor_arrangement": "adjacent",
+      "heading_repeats": 7,
+      "measured_median_force_n": 5.745316035922,
+      "measured_force_range_n": 1.3408799441,
+      "additive_prediction_n": 4.9969403804,
+      "pooled_prediction_n": 5.6884910079,
+      "arrangement_prediction_n": 5.6986972651
+    },
+    {
+      "command": [
+        0.1,
+        0.55,
+        0.55,
+        0.1
+      ],
+      "high_rotor_arrangement": "adjacent",
+      "heading_repeats": 7,
+      "measured_median_force_n": 5.49453958690273,
+      "measured_force_range_n": 1.0277094682,
+      "additive_prediction_n": 4.9969403804,
+      "pooled_prediction_n": 5.6884910079,
+      "arrangement_prediction_n": 5.6986972651
+    },
+    {
+      "command": [
+        0.1,
+        0.7,
+        0.1,
+        0.7
+      ],
+      "high_rotor_arrangement": "adjacent",
+      "heading_repeats": 7,
+      "measured_median_force_n": 8.70976593425604,
+      "measured_force_range_n": 1.8958990037,
+      "additive_prediction_n": 7.3004233831,
+      "pooled_prediction_n": 8.5298467208,
+      "arrangement_prediction_n": 8.5479911781
+    },
+    {
+      "command": [
+        0.1,
+        0.7,
+        0.7,
+        0.1
+      ],
+      "high_rotor_arrangement": "adjacent",
+      "heading_repeats": 7,
+      "measured_median_force_n": 8.04198756275041,
+      "measured_force_range_n": 1.701402757,
+      "additive_prediction_n": 7.3004233831,
+      "pooled_prediction_n": 8.5298467208,
+      "arrangement_prediction_n": 8.5479911781
+    },
+    {
+      "command": [
+        0.25,
+        0.25,
+        0.85,
+        0.85
+      ],
+      "high_rotor_arrangement": "diagonal",
+      "heading_repeats": 7,
+      "measured_median_force_n": 11.8335808539737,
+      "measured_force_range_n": 1.076268433,
+      "additive_prediction_n": 10.4817805475,
+      "pooled_prediction_n": 11.7112038852,
+      "arrangement_prediction_n": 11.6768323528
+    },
+    {
+      "command": [
+        0.25,
+        0.85,
+        0.25,
+        0.85
+      ],
+      "high_rotor_arrangement": "adjacent",
+      "heading_repeats": 7,
+      "measured_median_force_n": 12.0633973220838,
+      "measured_force_range_n": 2.7058372898,
+      "additive_prediction_n": 10.4817805475,
+      "pooled_prediction_n": 11.7112038852,
+      "arrangement_prediction_n": 11.7293483425
+    },
+    {
+      "command": [
+        0.25,
+        0.85,
+        0.85,
+        0.25
+      ],
+      "high_rotor_arrangement": "adjacent",
+      "heading_repeats": 7,
+      "measured_median_force_n": 11.4127056394192,
+      "measured_force_range_n": 1.9151110569,
+      "additive_prediction_n": 10.4817805475,
+      "pooled_prediction_n": 11.7112038852,
+      "arrangement_prediction_n": 11.7293483425
+    },
+    {
+      "command": [
+        0.4,
+        0.4,
+        0.85,
+        0.85
+      ],
+      "high_rotor_arrangement": "diagonal",
+      "heading_repeats": 7,
+      "measured_median_force_n": 12.8650675951853,
+      "measured_force_range_n": 0.907846543,
+      "additive_prediction_n": 12.1951714731,
+      "pooled_prediction_n": 12.8867221006,
+      "arrangement_prediction_n": 12.8673881136
+    },
+    {
+      "command": [
+        0.4,
+        0.85,
+        0.4,
+        0.85
+      ],
+      "high_rotor_arrangement": "adjacent",
+      "heading_repeats": 7,
+      "measured_median_force_n": 13.1499004456593,
+      "measured_force_range_n": 2.3840883262,
+      "additive_prediction_n": 12.1951714731,
+      "pooled_prediction_n": 12.8867221006,
+      "arrangement_prediction_n": 12.8969283578
+    },
+    {
+      "command": [
+        0.4,
+        0.85,
+        0.85,
+        0.4
+      ],
+      "high_rotor_arrangement": "adjacent",
+      "heading_repeats": 7,
+      "measured_median_force_n": 12.6405857893907,
+      "measured_force_range_n": 1.6813817333,
+      "additive_prediction_n": 12.1951714731,
+      "pooled_prediction_n": 12.8867221006,
+      "arrangement_prediction_n": 12.8969283578
+    },
+    {
+      "command": [
+        0.55,
+        0.1,
+        0.1,
+        0.55
+      ],
+      "high_rotor_arrangement": "adjacent",
+      "heading_repeats": 7,
+      "measured_median_force_n": 6.18114257981163,
+      "measured_force_range_n": 1.0231133337,
+      "additive_prediction_n": 4.9969403804,
+      "pooled_prediction_n": 5.6884910079,
+      "arrangement_prediction_n": 5.6986972651
+    },
+    {
+      "command": [
+        0.55,
+        0.1,
+        0.55,
+        0.1
+      ],
+      "high_rotor_arrangement": "adjacent",
+      "heading_repeats": 7,
+      "measured_median_force_n": 5.52222680875687,
+      "measured_force_range_n": 0.7293596581,
+      "additive_prediction_n": 4.9969403804,
+      "pooled_prediction_n": 5.6884910079,
+      "arrangement_prediction_n": 5.6986972651
+    },
+    {
+      "command": [
+        0.55,
+        0.55,
+        0.1,
+        0.1
+      ],
+      "high_rotor_arrangement": "diagonal",
+      "heading_repeats": 7,
+      "measured_median_force_n": 5.65953039549523,
+      "measured_force_range_n": 0.5139315209,
+      "additive_prediction_n": 4.9969403804,
+      "pooled_prediction_n": 5.6884910079,
+      "arrangement_prediction_n": 5.6691570209
+    },
+    {
+      "command": [
+        0.55,
+        0.55,
+        1.0,
+        1.0
+      ],
+      "high_rotor_arrangement": "diagonal",
+      "heading_repeats": 7,
+      "measured_median_force_n": 16.6603886131967,
+      "measured_force_range_n": 1.2207216805,
+      "additive_prediction_n": 16.1744182956,
+      "pooled_prediction_n": 16.8659689231,
+      "arrangement_prediction_n": 16.8466349361
+    },
+    {
+      "command": [
+        0.55,
+        1.0,
+        0.55,
+        1.0
+      ],
+      "high_rotor_arrangement": "adjacent",
+      "heading_repeats": 7,
+      "measured_median_force_n": 16.4262537769472,
+      "measured_force_range_n": 2.8011648303,
+      "additive_prediction_n": 16.1744182956,
+      "pooled_prediction_n": 16.8659689231,
+      "arrangement_prediction_n": 16.8761751803
+    },
+    {
+      "command": [
+        0.55,
+        1.0,
+        1.0,
+        0.55
+      ],
+      "high_rotor_arrangement": "adjacent",
+      "heading_repeats": 7,
+      "measured_median_force_n": 16.3304360717715,
+      "measured_force_range_n": 1.5884898951,
+      "additive_prediction_n": 16.1744182956,
+      "pooled_prediction_n": 16.8659689231,
+      "arrangement_prediction_n": 16.8761751803
+    },
+    {
+      "command": [
+        0.7,
+        0.1,
+        0.1,
+        0.7
+      ],
+      "high_rotor_arrangement": "adjacent",
+      "heading_repeats": 7,
+      "measured_median_force_n": 9.31665513175382,
+      "measured_force_range_n": 1.7212859181,
+      "additive_prediction_n": 7.3004233831,
+      "pooled_prediction_n": 8.5298467208,
+      "arrangement_prediction_n": 8.5479911781
+    },
+    {
+      "command": [
+        0.7,
+        0.1,
+        0.7,
+        0.1
+      ],
+      "high_rotor_arrangement": "adjacent",
+      "heading_repeats": 7,
+      "measured_median_force_n": 8.3868844657952,
+      "measured_force_range_n": 1.0120617599,
+      "additive_prediction_n": 7.3004233831,
+      "pooled_prediction_n": 8.5298467208,
+      "arrangement_prediction_n": 8.5479911781
+    },
+    {
+      "command": [
+        0.7,
+        0.7,
+        0.1,
+        0.1
+      ],
+      "high_rotor_arrangement": "diagonal",
+      "heading_repeats": 7,
+      "measured_median_force_n": 8.757390332347,
+      "measured_force_range_n": 0.4163230087,
+      "additive_prediction_n": 7.3004233831,
+      "pooled_prediction_n": 8.5298467208,
+      "arrangement_prediction_n": 8.4954751884
+    },
+    {
+      "command": [
+        0.7,
+        0.7,
+        1.0,
+        1.0
+      ],
+      "high_rotor_arrangement": "diagonal",
+      "heading_repeats": 7,
+      "measured_median_force_n": 18.576319633211,
+      "measured_force_range_n": 1.3576639775,
+      "additive_prediction_n": 18.4779012982,
+      "pooled_prediction_n": 18.7852571327,
+      "arrangement_prediction_n": 18.7766642496
+    },
+    {
+      "command": [
+        0.7,
+        1.0,
+        0.7,
+        1.0
+      ],
+      "high_rotor_arrangement": "adjacent",
+      "heading_repeats": 7,
+      "measured_median_force_n": 18.648985376746,
+      "measured_force_range_n": 2.4683840851,
+      "additive_prediction_n": 18.4779012982,
+      "pooled_prediction_n": 18.7852571327,
+      "arrangement_prediction_n": 18.789793247
+    },
+    {
+      "command": [
+        0.7,
+        1.0,
+        1.0,
+        0.7
+      ],
+      "high_rotor_arrangement": "adjacent",
+      "heading_repeats": 7,
+      "measured_median_force_n": 18.0835746642556,
+      "measured_force_range_n": 1.4129999671,
+      "additive_prediction_n": 18.4779012982,
+      "pooled_prediction_n": 18.7852571327,
+      "arrangement_prediction_n": 18.789793247
+    },
+    {
+      "command": [
+        0.85,
+        0.25,
+        0.25,
+        0.85
+      ],
+      "high_rotor_arrangement": "adjacent",
+      "heading_repeats": 7,
+      "measured_median_force_n": 13.1433383864919,
+      "measured_force_range_n": 2.3744111337,
+      "additive_prediction_n": 10.4817805475,
+      "pooled_prediction_n": 11.7112038852,
+      "arrangement_prediction_n": 11.7293483425
+    },
+    {
+      "command": [
+        0.85,
+        0.25,
+        0.85,
+        0.25
+      ],
+      "high_rotor_arrangement": "adjacent",
+      "heading_repeats": 7,
+      "measured_median_force_n": 11.7695268308288,
+      "measured_force_range_n": 1.3521906947,
+      "additive_prediction_n": 10.4817805475,
+      "pooled_prediction_n": 11.7112038852,
+      "arrangement_prediction_n": 11.7293483425
+    },
+    {
+      "command": [
+        0.85,
+        0.4,
+        0.4,
+        0.85
+      ],
+      "high_rotor_arrangement": "adjacent",
+      "heading_repeats": 7,
+      "measured_median_force_n": 13.9840143873464,
+      "measured_force_range_n": 2.1465244596,
+      "additive_prediction_n": 12.1951714731,
+      "pooled_prediction_n": 12.8867221006,
+      "arrangement_prediction_n": 12.8969283578
+    },
+    {
+      "command": [
+        0.85,
+        0.4,
+        0.85,
+        0.4
+      ],
+      "high_rotor_arrangement": "adjacent",
+      "heading_repeats": 7,
+      "measured_median_force_n": 12.7582017112867,
+      "measured_force_range_n": 0.7342980337,
+      "additive_prediction_n": 12.1951714731,
+      "pooled_prediction_n": 12.8867221006,
+      "arrangement_prediction_n": 12.8969283578
+    },
+    {
+      "command": [
+        0.85,
+        0.85,
+        0.25,
+        0.25
+      ],
+      "high_rotor_arrangement": "diagonal",
+      "heading_repeats": 7,
+      "measured_median_force_n": 12.1254126292859,
+      "measured_force_range_n": 0.6311798878,
+      "additive_prediction_n": 10.4817805475,
+      "pooled_prediction_n": 11.7112038852,
+      "arrangement_prediction_n": 11.6768323528
+    },
+    {
+      "command": [
+        0.85,
+        0.85,
+        0.4,
+        0.4
+      ],
+      "high_rotor_arrangement": "diagonal",
+      "heading_repeats": 7,
+      "measured_median_force_n": 13.1449957005138,
+      "measured_force_range_n": 0.6149405514,
+      "additive_prediction_n": 12.1951714731,
+      "pooled_prediction_n": 12.8867221006,
+      "arrangement_prediction_n": 12.8673881136
+    },
+    {
+      "command": [
+        1.0,
+        0.55,
+        0.55,
+        1.0
+      ],
+      "high_rotor_arrangement": "adjacent",
+      "heading_repeats": 7,
+      "measured_median_force_n": 17.6592404372385,
+      "measured_force_range_n": 2.7403633582,
+      "additive_prediction_n": 16.1744182956,
+      "pooled_prediction_n": 16.8659689231,
+      "arrangement_prediction_n": 16.8761751803
+    },
+    {
+      "command": [
+        1.0,
+        0.55,
+        1.0,
+        0.55
+      ],
+      "high_rotor_arrangement": "adjacent",
+      "heading_repeats": 7,
+      "measured_median_force_n": 16.5221439469208,
+      "measured_force_range_n": 0.6127796001,
+      "additive_prediction_n": 16.1744182956,
+      "pooled_prediction_n": 16.8659689231,
+      "arrangement_prediction_n": 16.8761751803
+    },
+    {
+      "command": [
+        1.0,
+        0.7,
+        0.7,
+        1.0
+      ],
+      "high_rotor_arrangement": "adjacent",
+      "heading_repeats": 7,
+      "measured_median_force_n": 18.6538412173173,
+      "measured_force_range_n": 2.6356177259,
+      "additive_prediction_n": 18.4779012982,
+      "pooled_prediction_n": 18.7852571327,
+      "arrangement_prediction_n": 18.789793247
+    },
+    {
+      "command": [
+        1.0,
+        0.7,
+        1.0,
+        0.7
+      ],
+      "high_rotor_arrangement": "adjacent",
+      "heading_repeats": 7,
+      "measured_median_force_n": 18.5556048847451,
+      "measured_force_range_n": 0.6993330015,
+      "additive_prediction_n": 18.4779012982,
+      "pooled_prediction_n": 18.7852571327,
+      "arrangement_prediction_n": 18.789793247
+    },
+    {
+      "command": [
+        1.0,
+        1.0,
+        0.55,
+        0.55
+      ],
+      "high_rotor_arrangement": "diagonal",
+      "heading_repeats": 7,
+      "measured_median_force_n": 16.748352234716,
+      "measured_force_range_n": 0.9085540586,
+      "additive_prediction_n": 16.1744182956,
+      "pooled_prediction_n": 16.8659689231,
+      "arrangement_prediction_n": 16.8466349361
+    },
+    {
+      "command": [
+        1.0,
+        1.0,
+        0.7,
+        0.7
+      ],
+      "high_rotor_arrangement": "diagonal",
+      "heading_repeats": 7,
+      "measured_median_force_n": 18.692910155284,
+      "measured_force_range_n": 1.1202823641,
+      "additive_prediction_n": 18.4779012982,
+      "pooled_prediction_n": 18.7852571327,
+      "arrangement_prediction_n": 18.7766642496
+    }
+  ],
+  "acceptance_status": "research_fixture_comparison_inconclusive_for_operational_prediction"
+}
