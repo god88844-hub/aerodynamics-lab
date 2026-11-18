@@ -1,0 +1,70 @@
+{
+  "doi": "10.5281/zenodo.19464105",
+  "license": "cc-by-4.0",
+  "exports": {
+    "12b": {
+      "file": "Fig12b DataRevised.xlsx",
+      "bytes": 124303,
+      "md5": "1bd5072d45f13a0124f4569900fd7a0d",
+      "sha256": "8015f8318a0c1c150dd5f41925e2f9cb86acab480bad3cb9c54f6732dfa0d760",
+      "url": "https://zenodo.org/api/records/19464105/files/Fig12b%20DataRevised.xlsx/content"
+    },
+    "12a": {
+      "file": "Fig12a DataRevised.xlsx",
+      "bytes": 122913,
+      "md5": "ad1a6ebad43f00f352f3feb57bcf5302",
+      "sha256": "17181f0e85e9071cbb0ea7c916f17d9d02bf26376065c1c3f56c9c0d8c590b7e",
+      "url": "https://zenodo.org/api/records/19464105/files/Fig12a%20DataRevised.xlsx/content"
+    },
+    "11a": {
+      "file": "Fig11a DataRevised.xlsx",
+      "bytes": 359067,
+      "md5": "25b9424ae43df6bd620d3a0149699f98",
+      "sha256": "896901bf7dcf44b6c710c058e132751620bccb55206e486d5dceed2ebcbaafcd",
+      "url": "https://zenodo.org/api/records/19464105/files/Fig11a%20DataRevised.xlsx/content"
+    },
+    "11b": {
+      "file": "Fig11b DataRevised.xlsx",
+      "bytes": 415181,
+      "md5": "d95b532870f38fe7017eabf671821968",
+      "sha256": "26e6da59ef373beef1590d4d5b156c7e568835a71c218781ad65e1333ad7c462",
+      "url": "https://zenodo.org/api/records/19464105/files/Fig11b%20DataRevised.xlsx/content"
+    },
+    "9b": {
+      "file": "Fig9b DataRevised.xlsx",
+      "bytes": 413479,
+      "md5": "7507eb6865f187c3c6341bdab420f65d",
+      "sha256": "551f03d25c47e0ea8b4859bd17fa8388bc63757067d663e79160be018bb00b49",
+      "url": "https://zenodo.org/api/records/19464105/files/Fig9b%20DataRevised.xlsx/content"
+    },
+    "9a": {
+      "file": "Fig9a DataRevised.xlsx",
+      "bytes": 404892,
+      "md5": "5d0304ae0dd5f1ef68c5d7015e6723ca",
+      "sha256": "ebe17e32d8dc8fd236d1d0c8e064b6004bc94882542d87379eefbf426143d434",
+      "url": "https://zenodo.org/api/records/19464105/files/Fig9a%20DataRevised.xlsx/content"
+    }
+  },
+  "calibration": [
+    {
+      "controller": "original_mpc",
+      "trajectory": "9a"
+    },
+    {
+      "controller": "battery_aware_mpc",
+      "trajectory": "9b"
+    }
+  ],
+  "holdout": [
+    {
+      "controller": "original_mpc",
+      "trajectory": "11a",
+      "reported_energy": "12a"
+    },
+    {
+      "controller": "battery_aware_mpc",
+      "trajectory": "11b",
+      "reported_energy": "12b"
+    }
+  ]
+}
