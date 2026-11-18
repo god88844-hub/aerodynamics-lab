@@ -1,0 +1,263 @@
+{
+  "source": "https://doi.org/10.5281/zenodo.12543440",
+  "summary": {
+    "4": {
+      "runs": 5,
+      "constant_sag": {
+        "mean_voltage_mae_v": 0.0328432,
+        "mean_absolute_terminal_error_v": 0.071377105,
+        "mean_absolute_average_power_error_w": 0.222241698,
+        "max_absolute_voltage_error_v": 0.088456594
+      },
+      "sqrt_time_sag": {
+        "mean_voltage_mae_v": 0.007627208,
+        "mean_absolute_terminal_error_v": 0.008849705,
+        "mean_absolute_average_power_error_w": 0.236737946,
+        "max_absolute_voltage_error_v": 0.040202026
+      }
+    },
+    "5": {
+      "runs": 5,
+      "constant_sag": {
+        "mean_voltage_mae_v": 0.030951656,
+        "mean_absolute_terminal_error_v": 0.067289496,
+        "mean_absolute_average_power_error_w": 0.234606435,
+        "max_absolute_voltage_error_v": 0.081211394
+      },
+      "sqrt_time_sag": {
+        "mean_voltage_mae_v": 0.008875847,
+        "mean_absolute_terminal_error_v": 0.004762096,
+        "mean_absolute_average_power_error_w": 0.249102683,
+        "max_absolute_voltage_error_v": 0.045376226
+      }
+    },
+    "all": {
+      "runs": 10,
+      "constant_sag": {
+        "mean_voltage_mae_v": 0.031897428,
+        "mean_absolute_terminal_error_v": 0.0693333,
+        "mean_absolute_average_power_error_w": 0.228424066,
+        "max_absolute_voltage_error_v": 0.088456594
+      },
+      "sqrt_time_sag": {
+        "mean_voltage_mae_v": 0.008251527,
+        "mean_absolute_terminal_error_v": 0.006805901,
+        "mean_absolute_average_power_error_w": 0.242920314,
+        "max_absolute_voltage_error_v": 0.045376226
+      }
+    }
+  },
+  "holdout_runs": [
+    {
+      "cell": 4,
+      "repeat": 1,
+      "prepulse_voltage_v": 3.3920382,
+      "measured_terminal_voltage_v": 3.278353078,
+      "measured_mean_pulse_power_w": 227.949317004,
+      "models": {
+        "constant_sag": {
+          "voltage_mae_v": 0.032849001,
+          "max_absolute_voltage_error_v": 0.088456594,
+          "terminal_voltage_error_v": 0.069311328,
+          "mean_pulse_power_error_w": -0.308137383
+        },
+        "sqrt_time_sag": {
+          "voltage_mae_v": 0.007868218,
+          "max_absolute_voltage_error_v": 0.035893026,
+          "terminal_voltage_error_v": 0.006783929,
+          "mean_pulse_power_error_w": -0.32263363
+        }
+      }
+    },
+    {
+      "cell": 4,
+      "repeat": 2,
+      "prepulse_voltage_v": 3.395758,
+      "measured_terminal_voltage_v": 3.27980494,
+      "measured_mean_pulse_power_w": 228.09703236,
+      "models": {
+        "constant_sag": {
+          "voltage_mae_v": 0.032776671,
+          "max_absolute_voltage_error_v": 0.085933794,
+          "terminal_voltage_error_v": 0.071579266,
+          "mean_pulse_power_error_w": -0.202906338
+        },
+        "sqrt_time_sag": {
+          "voltage_mae_v": 0.007497782,
+          "max_absolute_voltage_error_v": 0.038415826,
+          "terminal_voltage_error_v": 0.009051867,
+          "mean_pulse_power_error_w": -0.217402586
+        }
+      }
+    },
+    {
+      "cell": 4,
+      "repeat": 3,
+      "prepulse_voltage_v": 3.3949416,
+      "measured_terminal_voltage_v": 3.278981258,
+      "measured_mean_pulse_power_w": 228.062513017,
+      "models": {
+        "constant_sag": {
+          "voltage_mae_v": 0.032822766,
+          "max_absolute_voltage_error_v": 0.085964194,
+          "terminal_voltage_error_v": 0.071586548,
+          "mean_pulse_power_error_w": -0.223902195
+        },
+        "sqrt_time_sag": {
+          "voltage_mae_v": 0.007584858,
+          "max_absolute_voltage_error_v": 0.038385426,
+          "terminal_voltage_error_v": 0.009059149,
+          "mean_pulse_power_error_w": -0.238398443
+        }
+      }
+    },
+    {
+      "cell": 4,
+      "repeat": 4,
+      "prepulse_voltage_v": 3.3981552,
+      "measured_terminal_voltage_v": 3.279960884,
+      "measured_mean_pulse_power_w": 228.136354078,
+      "models": {
+        "constant_sag": {
+          "voltage_mae_v": 0.032757938,
+          "max_absolute_voltage_error_v": 0.084147594,
+          "terminal_voltage_error_v": 0.073820522,
+          "mean_pulse_power_error_w": -0.079218456
+        },
+        "sqrt_time_sag": {
+          "voltage_mae_v": 0.007076029,
+          "max_absolute_voltage_error_v": 0.040202026,
+          "terminal_voltage_error_v": 0.011293123,
+          "mean_pulse_power_error_w": -0.093714704
+        }
+      }
+    },
+    {
+      "cell": 4,
+      "repeat": 5,
+      "prepulse_voltage_v": 3.3948304,
+      "measured_terminal_voltage_v": 3.279868747,
+      "measured_mean_pulse_power_w": 228.12809334,
+      "models": {
+        "constant_sag": {
+          "voltage_mae_v": 0.033009626,
+          "max_absolute_voltage_error_v": 0.087109394,
+          "terminal_voltage_error_v": 0.070587859,
+          "mean_pulse_power_error_w": -0.297044118
+        },
+        "sqrt_time_sag": {
+          "voltage_mae_v": 0.008109151,
+          "max_absolute_voltage_error_v": 0.037240226,
+          "terminal_voltage_error_v": 0.008060459,
+          "mean_pulse_power_error_w": -0.311540366
+        }
+      }
+    },
+    {
+      "cell": 5,
+      "repeat": 1,
+      "prepulse_voltage_v": 3.4251978,
+      "measured_terminal_voltage_v": 3.313406385,
+      "measured_mean_pulse_power_w": 230.12719666,
+      "models": {
+        "constant_sag": {
+          "voltage_mae_v": 0.03081661,
+          "max_absolute_voltage_error_v": 0.080758994,
+          "terminal_voltage_error_v": 0.067417621,
+          "mean_pulse_power_error_w": -0.231164239
+        },
+        "sqrt_time_sag": {
+          "voltage_mae_v": 0.008844666,
+          "max_absolute_voltage_error_v": 0.043590626,
+          "terminal_voltage_error_v": 0.004890222,
+          "mean_pulse_power_error_w": -0.245660486
+        }
+      }
+    },
+    {
+      "cell": 5,
+      "repeat": 2,
+      "prepulse_voltage_v": 3.426997,
+      "measured_terminal_voltage_v": 3.314032894,
+      "measured_mean_pulse_power_w": 230.21802642,
+      "models": {
+        "constant_sag": {
+          "voltage_mae_v": 0.031116112,
+          "max_absolute_voltage_error_v": 0.080043794,
+          "terminal_voltage_error_v": 0.068590312,
+          "mean_pulse_power_error_w": -0.199648398
+        },
+        "sqrt_time_sag": {
+          "voltage_mae_v": 0.008575165,
+          "max_absolute_voltage_error_v": 0.044305826,
+          "terminal_voltage_error_v": 0.006062912,
+          "mean_pulse_power_error_w": -0.214144646
+        }
+      }
+    },
+    {
+      "cell": 5,
+      "repeat": 3,
+      "prepulse_voltage_v": 3.4272054,
+      "measured_terminal_voltage_v": 3.315475399,
+      "measured_mean_pulse_power_w": 230.227677081,
+      "models": {
+        "constant_sag": {
+          "voltage_mae_v": 0.030808587,
+          "max_absolute_voltage_error_v": 0.078973394,
+          "terminal_voltage_error_v": 0.067356208,
+          "mean_pulse_power_error_w": -0.19512786
+        },
+        "sqrt_time_sag": {
+          "voltage_mae_v": 0.00872156,
+          "max_absolute_voltage_error_v": 0.045376226,
+          "terminal_voltage_error_v": 0.004828808,
+          "mean_pulse_power_error_w": -0.209624107
+        }
+      }
+    },
+    {
+      "cell": 5,
+      "repeat": 4,
+      "prepulse_voltage_v": 3.4268522,
+      "measured_terminal_voltage_v": 3.315566352,
+      "measured_mean_pulse_power_w": 230.257745291,
+      "models": {
+        "constant_sag": {
+          "voltage_mae_v": 0.031007986,
+          "max_absolute_voltage_error_v": 0.080465594,
+          "terminal_voltage_error_v": 0.066912054,
+          "mean_pulse_power_error_w": -0.24921367
+        },
+        "sqrt_time_sag": {
+          "voltage_mae_v": 0.008925981,
+          "max_absolute_voltage_error_v": 0.043884026,
+          "terminal_voltage_error_v": 0.004384654,
+          "mean_pulse_power_error_w": -0.263709918
+        }
+      }
+    },
+    {
+      "cell": 5,
+      "repeat": 5,
+      "prepulse_voltage_v": 3.4241824,
+      "measured_terminal_voltage_v": 3.313637321,
+      "measured_mean_pulse_power_w": 230.12486323,
+      "models": {
+        "constant_sag": {
+          "voltage_mae_v": 0.031008986,
+          "max_absolute_voltage_error_v": 0.081211394,
+          "terminal_voltage_error_v": 0.066171285,
+          "mean_pulse_power_error_w": -0.297878008
+        },
+        "sqrt_time_sag": {
+          "voltage_mae_v": 0.009311862,
+          "max_absolute_voltage_error_v": 0.043138226,
+          "terminal_voltage_error_v": 0.003643885,
+          "mean_pulse_power_error_w": -0.312374256
+        }
+      }
+    }
+  ],
+  "acceptance_status": "conditional_cell_pulse_benchmark_without_pack_or_endurance_acceptance"
+}

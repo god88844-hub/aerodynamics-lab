@@ -1,0 +1,21 @@
+{
+  "source": "https://doi.org/10.5281/zenodo.12543440",
+  "sha256": "a879965afef8691cb2a845e217581d4f5275249fb80dbb615f2cb56418876ff6",
+  "calibration_cells": [
+    1,
+    2,
+    3
+  ],
+  "holdout_cells": [
+    4,
+    5
+  ],
+  "repeats_per_cell": 5,
+  "prepulse_voltage_window_s": 0.5,
+  "score_through_s": 29.0,
+  "grid_spacing_s": 0.2,
+  "programmed_current_a": 68.0,
+  "constant_sag_v": 0.0443737938,
+  "sqrt_time_intercept_v": -0.079975826,
+  "sqrt_time_slope_v_per_sqrt_s": 0.0347021913
+}
