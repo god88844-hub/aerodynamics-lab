@@ -1,0 +1,205 @@
+{
+  "plan_sha256": "f06e2d5abc4f1886d560cb973fb1642072c1a5ca1edffa3cc3e48c214d927530",
+  "hardware": "APC Thin Electric 10x5, UIUC Volume 1",
+  "source": "https://m-selig.ae.illinois.edu/props/volume-1/data/",
+  "calibration_envelope": {
+    "rpm": [
+      4005,
+      6708.5
+    ],
+    "j": [
+      0.146,
+      0.684
+    ]
+  },
+  "heldout_sweeps": [
+    {
+      "rpm": 5000,
+      "rows_scored": 15,
+      "rows_outside_calibration_j": 2,
+      "measured_nonpositive_ct": 0,
+      "thrust_sign_disagreements": {
+        "axial_interpolator": 0,
+        "advance_ratio_only": 0,
+        "static_reference": 0
+      },
+      "errors": {
+        "axial_interpolator": {
+          "ct": {
+            "mae": 0.0008756717,
+            "mean_signed_error": 6.25384e-05,
+            "max_absolute_error": 0.0019058236
+          },
+          "cp": {
+            "mae": 0.000391936,
+            "mean_signed_error": 0.0002051745,
+            "max_absolute_error": 0.0006292899
+          }
+        },
+        "advance_ratio_only": {
+          "ct": {
+            "mae": 0.0013776006,
+            "mean_signed_error": 0.0013306933,
+            "max_absolute_error": 0.0032329655
+          },
+          "cp": {
+            "mae": 0.0007248514,
+            "mean_signed_error": 0.0007117986,
+            "max_absolute_error": 0.0014636552
+          }
+        },
+        "static_reference": {
+          "ct": {
+            "mae": 0.0455490071,
+            "mean_signed_error": 0.0455490071,
+            "max_absolute_error": 0.0818556738
+          },
+          "cp": {
+            "mae": 0.0079183924,
+            "mean_signed_error": 0.0070156028,
+            "max_absolute_error": 0.0206822695
+          }
+        }
+      }
+    },
+    {
+      "rpm": 6005,
+      "rows_scored": 15,
+      "rows_outside_calibration_j": 2,
+      "measured_nonpositive_ct": 0,
+      "thrust_sign_disagreements": {
+        "axial_interpolator": 0,
+        "advance_ratio_only": 0,
+        "static_reference": 0
+      },
+      "errors": {
+        "axial_interpolator": {
+          "ct": {
+            "mae": 0.0006840852,
+            "mean_signed_error": -0.0002543544,
+            "max_absolute_error": 0.001525797
+          },
+          "cp": {
+            "mae": 0.0002317394,
+            "mean_signed_error": 7.9617e-06,
+            "max_absolute_error": 0.0005420264
+          }
+        },
+        "advance_ratio_only": {
+          "ct": {
+            "mae": 0.0028007138,
+            "mean_signed_error": -0.0028007138,
+            "max_absolute_error": 0.0052529762
+          },
+          "cp": {
+            "mae": 0.0009610687,
+            "mean_signed_error": -0.0009610687,
+            "max_absolute_error": 0.0020055749
+          }
+        },
+        "static_reference": {
+          "ct": {
+            "mae": 0.0320545848,
+            "mean_signed_error": 0.0320545848,
+            "max_absolute_error": 0.0641945848
+          },
+          "cp": {
+            "mae": 0.0041299398,
+            "mean_signed_error": 0.0022024308,
+            "max_absolute_error": 0.0124490975
+          }
+        }
+      }
+    },
+    {
+      "rpm": 6018,
+      "rows_scored": 12,
+      "rows_outside_calibration_j": 1,
+      "measured_nonpositive_ct": 1,
+      "thrust_sign_disagreements": {
+        "axial_interpolator": 1,
+        "advance_ratio_only": 0,
+        "static_reference": 1
+      },
+      "errors": {
+        "axial_interpolator": {
+          "ct": {
+            "mae": 0.0004479487,
+            "mean_signed_error": 0.0004479487,
+            "max_absolute_error": 0.0010668813
+          },
+          "cp": {
+            "mae": 0.0002727365,
+            "mean_signed_error": 0.0002727365,
+            "max_absolute_error": 0.0005400892
+          }
+        },
+        "advance_ratio_only": {
+          "ct": {
+            "mae": 0.000896016,
+            "mean_signed_error": -0.000896016,
+            "max_absolute_error": 0.0011889234
+          },
+          "cp": {
+            "mae": 0.0003757737,
+            "mean_signed_error": -0.0003757737,
+            "max_absolute_error": 0.0006569358
+          }
+        },
+        "static_reference": {
+          "ct": {
+            "mae": 0.074081077,
+            "mean_signed_error": 0.074081077,
+            "max_absolute_error": 0.0981227437
+          },
+          "cp": {
+            "mae": 0.0171121239,
+            "mean_signed_error": 0.0171121239,
+            "max_absolute_error": 0.0288537906
+          }
+        }
+      }
+    }
+  ],
+  "rows_scored": 42,
+  "rows_outside_calibration_j": 5,
+  "errors": {
+    "axial_interpolator": {
+      "ct": {
+        "mae": 0.0006850414,
+        "mean_signed_error": 5.94796e-05,
+        "max_absolute_error": 0.0019058236
+      },
+      "cp": {
+        "mae": 0.0003006659,
+        "mean_signed_error": 0.0001540448,
+        "max_absolute_error": 0.0006292899
+      }
+    },
+    "advance_ratio_only": {
+      "ct": {
+        "mae": 0.0017482597,
+        "mean_signed_error": -0.0007810119,
+        "max_absolute_error": 0.0052529762
+      },
+      "cp": {
+        "mae": 0.0007094782,
+        "mean_signed_error": -0.000196389,
+        "max_absolute_error": 0.0020055749
+      }
+    },
+    "static_reference": {
+      "ct": {
+        "mae": 0.0488815906,
+        "mean_signed_error": 0.0488815906,
+        "max_absolute_error": 0.0981227437
+      },
+      "cp": {
+        "mae": 0.0091921541,
+        "mean_signed_error": 0.0081813331,
+        "max_absolute_error": 0.0288537906
+      }
+    }
+  },
+  "acceptance_status": "inconclusive_no_predeclared_engineering_tolerances_or_uncertainty"
+}
