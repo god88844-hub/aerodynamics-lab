@@ -1,0 +1,119 @@
+{
+  "held_out_setpoints": [
+    {
+      "measurement": {
+        "file": "RPM_5740.csv",
+        "rows": 150,
+        "pwm_us": 1150.0,
+        "bus_voltage_v": 16.44681167602539,
+        "thrust_n": 1.2642777977398432,
+        "current_a": 1.3912760019302368,
+        "thrust_iqr_n": 0.006925277263390095,
+        "current_iqr_a": 0.00934988260269165,
+        "negative_thrust_rows": 0,
+        "nonincreasing_time_pairs": 1,
+        "time_gaps_above_half_second": 0,
+        "positive_rpm_rows": 0
+      },
+      "predictions": {
+        "pwm_interpolation": {
+          "thrust_n": 1.418567932,
+          "current_a": 1.722237706
+        },
+        "drive_power_law": {
+          "thrust_n": 0.645897652,
+          "current_a": 0.776314906
+        }
+      }
+    },
+    {
+      "measurement": {
+        "file": "RPM_9600.csv",
+        "rows": 158,
+        "pwm_us": 1250.0,
+        "bus_voltage_v": 16.26285171508789,
+        "thrust_n": 3.9464133243802477,
+        "current_a": 5.364606618881226,
+        "thrust_iqr_n": 0.046218918666189435,
+        "current_iqr_a": 0.08716464042663574,
+        "negative_thrust_rows": 0,
+        "nonincreasing_time_pairs": 0,
+        "time_gaps_above_half_second": 0,
+        "positive_rpm_rows": 0
+      },
+      "predictions": {
+        "pwm_interpolation": {
+          "thrust_n": 3.903674064,
+          "current_a": 5.384007295
+        },
+        "drive_power_law": {
+          "thrust_n": 2.625099753,
+          "current_a": 3.691363774
+        }
+      }
+    },
+    {
+      "measurement": {
+        "file": "RPM_10750.csv",
+        "rows": 177,
+        "pwm_us": 1300.0,
+        "bus_voltage_v": 16.157068252563477,
+        "thrust_n": 5.13577031628268,
+        "current_a": 7.4661688804626465,
+        "thrust_iqr_n": 0.025053039841232305,
+        "current_iqr_a": 0.1325068473815918,
+        "negative_thrust_rows": 0,
+        "nonincreasing_time_pairs": 1,
+        "time_gaps_above_half_second": 0,
+        "positive_rpm_rows": 0
+      },
+      "predictions": {
+        "pwm_interpolation": {
+          "thrust_n": 5.120296929,
+          "current_a": 7.489554803
+        },
+        "drive_power_law": {
+          "thrust_n": 4.299716114,
+          "current_a": 6.389515897
+        }
+      }
+    },
+    {
+      "measurement": {
+        "file": "RPM_12270.csv",
+        "rows": 221,
+        "pwm_us": 1400.0,
+        "bus_voltage_v": 15.895384788513184,
+        "thrust_n": 7.683573295730373,
+        "current_a": 11.736523628234863,
+        "thrust_iqr_n": 0.015631147984561444,
+        "current_iqr_a": 0.06578397750854492,
+        "negative_thrust_rows": 0,
+        "nonincreasing_time_pairs": 0,
+        "time_gaps_above_half_second": 2,
+        "positive_rpm_rows": 0
+      },
+      "predictions": {
+        "pwm_interpolation": {
+          "thrust_n": 7.854510825,
+          "current_a": 13.102169037
+        },
+        "drive_power_law": {
+          "thrust_n": 9.209114572,
+          "current_a": 14.902938653
+        }
+      }
+    }
+  ],
+  "mean_absolute_error": {
+    "pwm_interpolation": {
+      "thrust_n": 0.095860078,
+      "current_a": 0.434848428
+    },
+    "drive_power_law": {
+      "thrust_n": 1.075322299,
+      "current_a": 1.632817987
+    }
+  },
+  "acceptance_status": "static_bench_comparison_without_independent_repeat_runs_or_acceptance_thresholds"
+}
