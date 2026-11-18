@@ -16,7 +16,16 @@ Simulate samples from 372 to 426 s assuming the 9 kW final load in the published
 
 Calibrate a one-sided voltage margin from the 95th percentile of the worst optimistic voltage error per earlier comparison cycle. Evaluate whole-compared-segment coverage, point forecast misses, and warning misses at the study's 80 V threshold. An observed or predicted point crossing fails the sampled limit screen. The lower-band crossing warns of possible undervoltage. For comparison, an observed crossing is detected when the corresponding point or warning first crosses at or before the recorded crossing. Compare only matched timestamps through each source record's end. Counts of warnings without a recorded crossing are reported separately for files ending before 426 s, since the recording can stop before a crossing is captured. Empirical coverage on a single module cannot support flight release.
 
-## M21.15 Reproduction
+## M21.15 Results and reproduction
+
+The [frozen pre-cutoff method](https://github.com/god88844-hub/aeroforge/commit/e9da50fd9fa265ff4aa15ef2af5e79975fb133b2) scored both models on all 100 later cycles. [Aggregate results](m21_sit_cutoff_forecast_results.json)
+
+| Held-out cycles | Module voltage MAE, unchanged / updated | Observed crossings | Updated point forecast misses | Lower-band warning misses | Entire segment above lower band |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| 201–250 | 1.551 / 0.219 V | 31 of 50 | 31 | 0 | 49 of 50 |
+| 279–328 | 1.916 / 0.317 V | 37 of 50 | 37 | 0 | 49 of 50 |
+
+The updated point forecast missed all 68 observed crossings. The lower band warned in all 100 cycles. In the 68 observed cases its first forecast crossing preceded or coincided with the recorded crossing, with median differences of 8 s and 6 s in the two cohorts. The other 32 warnings were in records ending before the forecast horizon with no sampled crossing. Those records cannot establish a false-alarm rate for a full-length discharge. The warning supplies no discrimination among the evaluated cycles. Both cohorts fail the sampled study-limit screen, and the findings do not support using this model for release or operation clearance.
 
 Use the pinned local original workbook and backend setup described in the earlier report.
 
@@ -25,5 +34,5 @@ python scripts/benchmark_sit_cutoff_forecast.py calibrate WORKBOOK local-guard.j
 python scripts/benchmark_sit_cutoff_forecast.py evaluate WORKBOOK local-report.json --freeze local-guard.json
 ```
 
-The source and model are frozen in the earlier benchmark. The holdout labels, time windows, update equation and empirical warning rule in this commit are frozen before numerical inspection of the specified evaluation cycles. The frozen guard uses 100 earlier cycles and has a one-sided margin of 1.207804065 V.
+The original laboratory data stay outside Git. The holdout labels, time windows, update equation and empirical warning rule were frozen before numerical inspection of these evaluation cycles. The frozen guard uses 100 earlier cycles and has a one-sided margin of 1.207804065 V.
 `16c92466dc5f4f4af8820cdb194524f61c57724dc02a81280acace33937b2664` is the SHA-256 of the canonical frozen guard JSON.
