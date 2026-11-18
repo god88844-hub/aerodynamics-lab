@@ -29,6 +29,16 @@ class Design(Base):
     )
 
 
+class DesignRevision(Base):
+    __tablename__ = "design_revisions"
+    design_id: Mapped[int] = mapped_column(ForeignKey("designs.id", ondelete="CASCADE"), primary_key=True)
+    number: Mapped[int] = mapped_column(Integer, primary_key=True)
+    name: Mapped[str] = mapped_column(String(200))
+    snapshot_json: Mapped[str] = mapped_column(Text)
+    snapshot_sha256: Mapped[str] = mapped_column(String(64))
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=_utcnow)
+
+
 class SimulationRun(Base):
     __tablename__ = "simulation_runs"
 
@@ -65,6 +75,19 @@ event.listen(
         AFTER DELETE ON simulation_runs
         BEGIN
             DELETE FROM simulation_run_inputs WHERE run_id = OLD.id;
+        END
+    """).execute_if(dialect="sqlite"),
+)
+
+# Legacy SQLite clients may delete designs with foreign keys disabled.
+event.listen(
+    DesignRevision.__table__,
+    "after_create",
+    DDL("""
+        CREATE TRIGGER IF NOT EXISTS delete_design_revisions
+        AFTER DELETE ON designs
+        BEGIN
+            DELETE FROM design_revisions WHERE design_id = OLD.id;
         END
     """).execute_if(dialect="sqlite"),
 )

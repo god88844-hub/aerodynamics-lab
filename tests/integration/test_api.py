@@ -96,6 +96,48 @@ def test_invalid_snapshot_rejected(client):
     assert "invalid design snapshot" in r.json()["detail"]
 
 
+def test_design_history_is_immutable_across_saves_and_restore(client, design_payload):
+    from hashlib import sha256
+    import json
+
+    created = client.post("/api/designs", json={"snapshot": design_payload}).json()
+    path = f"/api/designs/{created['id']}"
+    initial = client.get(f"{path}/revisions/1").json()
+    exact = json.dumps(initial["snapshot"], sort_keys=True, separators=(",", ":")).encode()
+    assert initial["snapshot_sha256"] == sha256(exact).hexdigest()
+
+    update = {**created["snapshot"], "name": "Revised airframe"}
+    for _ in range(2):
+        assert client.put(path, json={"snapshot": update}).json()["snapshot"] == update
+    assert [row["number"] for row in client.get(f"{path}/revisions").json()] == [2, 1]
+    assert client.get(f"{path}/revisions/1").json() == initial
+    assert client.post(f"{path}/revisions/99/restore").status_code == 404
+    for _ in range(2):
+        assert client.post(f"{path}/revisions/1/restore").json() == created
+    history = client.get(f"{path}/revisions").json()
+    assert [row["number"] for row in history] == [3, 2, 1]
+    assert history[0]["snapshot_sha256"] == history[2]["snapshot_sha256"]
+
+
+def test_concurrent_design_saves_keep_both_revisions(client, design_payload):
+    from concurrent.futures import ThreadPoolExecutor
+
+    created = client.post("/api/designs", json={"snapshot": design_payload}).json()
+    path = f"/api/designs/{created['id']}"
+    names = ("Concurrent A", "Concurrent B")
+
+    def save(name):
+        return client.put(path, json={"snapshot": {**created["snapshot"], "name": name}})
+
+    with ThreadPoolExecutor(max_workers=2) as pool:
+        assert [result.status_code for result in pool.map(save, names)] == [200, 200]
+
+    history = client.get(f"{path}/revisions").json()
+    assert [row["number"] for row in history] == [3, 2, 1]
+    assert {row["name"] for row in history[:2]} == set(names)
+    assert client.get(path).json()["snapshot"]["name"] == history[0]["name"]
+
+
 def test_preview_returns_mass_properties(client, design_payload):
     r = client.post("/api/designs/preview", json={"snapshot": design_payload})
     assert r.status_code == 200

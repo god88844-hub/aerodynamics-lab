@@ -1,8 +1,12 @@
 /** Design editor panel: name, arm length, battery placement, powertrain
   picks, frame geometry, drag. All numeric inputs are SI. */
 
+import { useState } from 'react'
+import { useMutation } from '@tanstack/react-query'
 import { useDesignStore } from '../state/designStore'
-import { useComponents, useDesignsList, usePreview, useSaveDesign } from '../services/queries'
+import { useComponents, useDesignRevisions, useDesignsList, usePreview, useRestoreDesignRevision, useSaveDesign } from '../services/queries'
+import { api } from '../services/api'
+import type { DesignRecord } from '../types/api'
 import { batteryPart, quadXRadius } from '../state/designStore'
 import { NumberField, SectionTitle, SelectField, TextField } from './fields'
 import { analyzeGeometry } from '../editor/geometryChecks'
@@ -15,6 +19,12 @@ export function DesignPanel() {
   const designsList = useDesignsList()
   const preview = usePreview(design)
   const save = useSaveDesign()
+  const revisions = useDesignRevisions(designId)
+  const restore = useRestoreDesignRevision()
+  const [selectedRevision, setSelectedRevision] = useState<number | null>(null)
+  const load = useMutation({ mutationFn: (id: number) => api.get<DesignRecord>(`/designs/${id}`) })
+  const busy = save.isPending || load.isPending || restore.isPending
+  const currentRevision = revisions.data?.[0]?.number
 
   const battery = batteryPart(design)
   const motorOpts = (components.data?.motors ?? []).map((m) => ({
@@ -42,14 +52,13 @@ export function DesignPanel() {
   )
   const constraints = analyzeGeometry(design, selectedProp?.diameter_in)
 
-  const onSave = async () => {
-    const saved = await save.mutateAsync(designId == null ? design : { ...design, id: designId })
+  const applySavedSnapshot = (saved: DesignRecord) => {
     setSnapshot(saved.snapshot, saved.id)
+    setSelectedRevision(null)
   }
 
-  const loadDesign = async (id: number) => {
-    const rec = await fetch(`/api/designs/${id}`).then((r) => r.json())
-    setSnapshot(rec.snapshot, rec.id)
+  const onSave = () => {
+    save.mutate(designId == null ? design : { ...design, id: designId }, { onSuccess: applySavedSnapshot })
   }
 
   return (
@@ -60,9 +69,10 @@ export function DesignPanel() {
           aria-label="Saved designs"
           className="w-full rounded border border-slate-700 bg-slate-900 px-2 py-1 text-xs text-slate-200"
           value={designId ?? ''}
+          disabled={busy}
           onChange={(e) => {
             const id = parseInt(e.target.value, 10)
-            if (Number.isFinite(id)) void loadDesign(id)
+            if (Number.isFinite(id)) load.mutate(id, { onSuccess: applySavedSnapshot })
           }}
         >
           <option value="">— load a design —</option>
@@ -72,6 +82,33 @@ export function DesignPanel() {
             </option>
           ))}
         </select>
+        {load.isError && <p className="text-xs text-rose-400" role="alert">{load.error.message}</p>}
+        {designId != null && (
+          <div className="mt-3 space-y-2">
+            <label htmlFor="design-revision" className="block text-xs text-slate-300">Saved revision</label>
+            <div className="flex gap-2">
+              <select id="design-revision" value={selectedRevision ?? ''}
+                disabled={busy || !revisions.data?.length}
+                onChange={(e) => setSelectedRevision(e.target.value ? Number(e.target.value) : null)}
+                className="min-w-0 flex-1 rounded border border-slate-700 bg-slate-900 px-2 py-1 text-xs text-slate-200">
+                <option value="">{currentRevision == null ? 'Choose revision' : `Current revision ${currentRevision}`}</option>
+                {(revisions.data ?? []).slice(1).map((revision) => (
+                  <option key={revision.number} value={revision.number}>{revision.number} · {revision.name}</option>
+                ))}
+              </select>
+              <button type="button" disabled={busy || selectedRevision == null}
+                className="rounded border border-slate-700 px-2 py-1 text-xs text-slate-200 disabled:opacity-50"
+                onClick={() => {
+                  if (selectedRevision != null) {
+                    restore.mutate({ id: designId, number: selectedRevision }, { onSuccess: applySavedSnapshot })
+                  }
+                }}>Restore revision</button>
+            </div>
+            {(revisions.isError || restore.isError) && (
+              <p className="text-xs text-rose-400" role="alert">{(restore.error ?? revisions.error)?.message}</p>
+            )}
+          </div>
+        )}
       </section>
 
       <section className="space-y-2">
@@ -279,8 +316,8 @@ export function DesignPanel() {
 
       <button
         className="w-full rounded bg-slate-700 px-3 py-2 text-xs font-medium text-slate-100 hover:bg-slate-600 disabled:opacity-50"
-        onClick={() => void onSave()}
-        disabled={save.isPending}
+        onClick={onSave}
+        disabled={busy}
       >
         {save.isPending ? 'saving…' : designId != null ? 'Save design' : 'Save as new design'}
       </button>

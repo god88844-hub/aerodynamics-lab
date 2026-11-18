@@ -119,6 +119,17 @@ test('packaged UI edits a design, runs the solver, and reloads saved data after 
   await expect(savedDesigns.getByRole('option', { name: `#${saved.id} ${editedAfterRun}` })).toHaveCount(1)
   await savedDesigns.selectOption(String(saved.id))
   await expect(name).toHaveValue(editedAfterRun)
+  const revisions = page.getByLabel('Saved revision')
+  await expect(revisions.getByRole('option', { name: 'Current revision 3' })).toHaveCount(1)
+  await revisions.selectOption('1')
+  await page.getByRole('button', { name: 'Restore revision' }).click()
+  await expect(name).toHaveValue(label)
+  await expect(revisions.getByRole('option', { name: 'Current revision 4' })).toHaveCount(1)
+  const history = await request.get(`/api/designs/${saved.id}/revisions`)
+  expect(history.ok()).toBeTruthy()
+  expect((await history.json()).map((revision: { name: string }) => revision.name)).toEqual([
+    label, editedAfterRun, revised, label,
+  ])
 
   const storedRun = await request.get(`/api/simulations/${result.simulation_id}`)
   expect(storedRun.ok()).toBeTruthy()

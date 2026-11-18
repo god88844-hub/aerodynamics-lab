@@ -65,6 +65,13 @@ export interface DesignSummary {
   updated_at: string
 }
 
+export interface DesignRevisionSummary {
+  number: number
+  name: string
+  created_at: string
+  snapshot_sha256: string
+}
+
 export interface DesignRecord {
   id: number
   name: string
