@@ -1,0 +1,608 @@
+{
+  "status": "conditional_flight_specific_force_benchmark",
+  "testset_sha256": "d59cd589105cf4cd3fcfe0a34a0b4824d6ae2560db13d34b9a7acd169deeb367",
+  "source_sha256": {
+    "2021-02-18-13-44-23_seg_2": "07ec70532b8865101e3cf52a93f4ee46166d84c9ae69241b0df7e7cdb83c95a9",
+    "2021-02-18-16-53-35_seg_2": "0256a2c99a5d08e8ba039cf29653ad710d3a2a82f3e834188f96cd830a40e0bf",
+    "2021-02-18-17-03-20_seg_2": "2a0c3d172edbec0d606af101590ab77f621ac52f2b498bda4171dc462044fa7f",
+    "2021-02-18-17-19-08_seg_2": "0ac1afbac26b04ad0b40eb15fb0c3bfba0254d53659005107463f019d9776a08",
+    "2021-02-18-17-26-00_seg_1": "9dba2dfc44da51bc0e4ef8a062682fb76b1933dfef0eb976d64ec2f868222585",
+    "2021-02-18-18-08-45_seg_1": "22c2218014873b1dbd9944fae05ebe00a44decaf6f01021372f99faec7bf1805",
+    "2021-02-23-10-48-03_seg_2": "1f225d075e1402d00825710eb5681b4df8d1d8a8fc1f7ad3255a6e371c2f9695",
+    "2021-02-23-11-41-38_seg_3": "feeb7ad880e66a0a2026bb912db17180506ead78f8b04cfbef1b5ebd9c7a9836",
+    "2021-02-23-14-21-48_seg_3": "705ca398351876094b3807f1b0d55f037949c0b498ba8cd4c8c444faeb840219",
+    "2021-02-23-17-27-24_seg_2": "001cff6f1193f565d3c23f3639ef7d0e0ace57d3f11490980d006e1ab62c5435",
+    "2021-02-23-19-45-06_seg_2": "5f8369cb9881521111dd4767919474aea2cbbca95d48e88df7cfb8adecdffd0e",
+    "2021-02-23-22-26-25_seg_2": "afc5ab9021ad12ab216d1f98e59b79265e295dc06349d9d37a6723d568e612dd",
+    "2021-02-23-22-54-17_seg_1": "0c6fc9f1feac5120fd873f7a1f704fc06e65e29a122f79c55a20420e89f88147"
+  },
+  "speed_range_m_s": [
+    0.000831,
+    17.724156
+  ],
+  "segments": {
+    "2021-02-18-13-44-23_seg_2": {
+      "sample_interval_ms": 2.5,
+      "models": {
+        "thrust_only": {
+          "samples": 16797,
+          "seconds": 41.99,
+          "axis_rmse_m_s2": [
+            1.322189,
+            1.32575,
+            1.041959
+          ],
+          "vector_rmse_m_s2": 2.142773
+        },
+        "airframe_drag": {
+          "samples": 16797,
+          "seconds": 41.99,
+          "axis_rmse_m_s2": [
+            0.344482,
+            0.320357,
+            0.890346
+          ],
+          "vector_rmse_m_s2": 1.006982
+        },
+        "rotor_drag": {
+          "samples": 16797,
+          "seconds": 41.99,
+          "axis_rmse_m_s2": [
+            0.344482,
+            0.320357,
+            0.890346
+          ],
+          "vector_rmse_m_s2": 1.006982
+        }
+      }
+    },
+    "2021-02-18-16-53-35_seg_2": {
+      "sample_interval_ms": 2.5,
+      "models": {
+        "thrust_only": {
+          "samples": 15996,
+          "seconds": 39.9875,
+          "axis_rmse_m_s2": [
+            1.195382,
+            1.159789,
+            3.048541
+          ],
+          "vector_rmse_m_s2": 3.473852
+        },
+        "airframe_drag": {
+          "samples": 15996,
+          "seconds": 39.9875,
+          "axis_rmse_m_s2": [
+            1.014245,
+            0.799838,
+            1.608859
+          ],
+          "vector_rmse_m_s2": 2.063216
+        },
+        "rotor_drag": {
+          "samples": 15996,
+          "seconds": 39.9875,
+          "axis_rmse_m_s2": [
+            1.014245,
+            0.799838,
+            1.608859
+          ],
+          "vector_rmse_m_s2": 2.063216
+        }
+      }
+    },
+    "2021-02-18-17-03-20_seg_2": {
+      "sample_interval_ms": 2.5,
+      "models": {
+        "thrust_only": {
+          "samples": 14306,
+          "seconds": 35.7625,
+          "axis_rmse_m_s2": [
+            0.587306,
+            0.450911,
+            0.416769
+          ],
+          "vector_rmse_m_s2": 0.849674
+        },
+        "airframe_drag": {
+          "samples": 14306,
+          "seconds": 35.7625,
+          "axis_rmse_m_s2": [
+            0.247057,
+            0.177571,
+            0.444748
+          ],
+          "vector_rmse_m_s2": 0.538859
+        },
+        "rotor_drag": {
+          "samples": 14306,
+          "seconds": 35.7625,
+          "axis_rmse_m_s2": [
+            0.247057,
+            0.177571,
+            0.444748
+          ],
+          "vector_rmse_m_s2": 0.538859
+        }
+      }
+    },
+    "2021-02-18-17-19-08_seg_2": {
+      "sample_interval_ms": 2.5,
+      "models": {
+        "thrust_only": {
+          "samples": 12724,
+          "seconds": 31.8075,
+          "axis_rmse_m_s2": [
+            1.541346,
+            1.21172,
+            1.590942
+          ],
+          "vector_rmse_m_s2": 2.524898
+        },
+        "airframe_drag": {
+          "samples": 12724,
+          "seconds": 31.8075,
+          "axis_rmse_m_s2": [
+            0.625352,
+            0.391271,
+            1.122034
+          ],
+          "vector_rmse_m_s2": 1.342803
+        },
+        "rotor_drag": {
+          "samples": 12724,
+          "seconds": 31.8075,
+          "axis_rmse_m_s2": [
+            0.625352,
+            0.391271,
+            1.122034
+          ],
+          "vector_rmse_m_s2": 1.342803
+        }
+      }
+    },
+    "2021-02-18-17-26-00_seg_1": {
+      "sample_interval_ms": 2.5,
+      "models": {
+        "thrust_only": {
+          "samples": 10452,
+          "seconds": 26.1275,
+          "axis_rmse_m_s2": [
+            2.099226,
+            1.992945,
+            2.349117
+          ],
+          "vector_rmse_m_s2": 3.727858
+        },
+        "airframe_drag": {
+          "samples": 10452,
+          "seconds": 26.1275,
+          "axis_rmse_m_s2": [
+            0.928842,
+            0.611972,
+            1.487432
+          ],
+          "vector_rmse_m_s2": 1.857339
+        },
+        "rotor_drag": {
+          "samples": 10452,
+          "seconds": 26.1275,
+          "axis_rmse_m_s2": [
+            0.928842,
+            0.611972,
+            1.487432
+          ],
+          "vector_rmse_m_s2": 1.857339
+        }
+      }
+    },
+    "2021-02-18-18-08-45_seg_1": {
+      "sample_interval_ms": 2.5,
+      "models": {
+        "thrust_only": {
+          "samples": 15626,
+          "seconds": 39.0625,
+          "axis_rmse_m_s2": [
+            1.983653,
+            1.963422,
+            1.293318
+          ],
+          "vector_rmse_m_s2": 3.07613
+        },
+        "airframe_drag": {
+          "samples": 15626,
+          "seconds": 39.0625,
+          "axis_rmse_m_s2": [
+            0.350342,
+            0.226579,
+            1.191378
+          ],
+          "vector_rmse_m_s2": 1.262322
+        },
+        "rotor_drag": {
+          "samples": 15626,
+          "seconds": 39.0625,
+          "axis_rmse_m_s2": [
+            0.350342,
+            0.226579,
+            1.191378
+          ],
+          "vector_rmse_m_s2": 1.262322
+        }
+      }
+    },
+    "2021-02-23-10-48-03_seg_2": {
+      "sample_interval_ms": 2.5,
+      "models": {
+        "thrust_only": {
+          "samples": 11749,
+          "seconds": 29.37,
+          "axis_rmse_m_s2": [
+            0.338484,
+            0.253778,
+            0.226064
+          ],
+          "vector_rmse_m_s2": 0.479666
+        },
+        "airframe_drag": {
+          "samples": 11749,
+          "seconds": 29.37,
+          "axis_rmse_m_s2": [
+            0.208761,
+            0.133933,
+            0.120769
+          ],
+          "vector_rmse_m_s2": 0.27587
+        },
+        "rotor_drag": {
+          "samples": 11749,
+          "seconds": 29.37,
+          "axis_rmse_m_s2": [
+            0.208761,
+            0.133933,
+            0.120769
+          ],
+          "vector_rmse_m_s2": 0.27587
+        }
+      }
+    },
+    "2021-02-23-11-41-38_seg_3": {
+      "sample_interval_ms": 2.5,
+      "models": {
+        "thrust_only": {
+          "samples": 11431,
+          "seconds": 28.575,
+          "axis_rmse_m_s2": [
+            0.749672,
+            0.74713,
+            0.64489
+          ],
+          "vector_rmse_m_s2": 1.239393
+        },
+        "airframe_drag": {
+          "samples": 11431,
+          "seconds": 28.575,
+          "axis_rmse_m_s2": [
+            0.296465,
+            0.267199,
+            0.518382
+          ],
+          "vector_rmse_m_s2": 0.654223
+        },
+        "rotor_drag": {
+          "samples": 11431,
+          "seconds": 28.575,
+          "axis_rmse_m_s2": [
+            0.296465,
+            0.267199,
+            0.518382
+          ],
+          "vector_rmse_m_s2": 0.654223
+        }
+      }
+    },
+    "2021-02-23-14-21-48_seg_3": {
+      "sample_interval_ms": 2.5,
+      "models": {
+        "thrust_only": {
+          "samples": 14784,
+          "seconds": 36.9575,
+          "axis_rmse_m_s2": [
+            1.679113,
+            1.690901,
+            3.024321
+          ],
+          "vector_rmse_m_s2": 3.850336
+        },
+        "airframe_drag": {
+          "samples": 14784,
+          "seconds": 36.9575,
+          "axis_rmse_m_s2": [
+            1.217769,
+            0.618123,
+            1.688251
+          ],
+          "vector_rmse_m_s2": 2.171457
+        },
+        "rotor_drag": {
+          "samples": 14784,
+          "seconds": 36.9575,
+          "axis_rmse_m_s2": [
+            1.217769,
+            0.618123,
+            1.688251
+          ],
+          "vector_rmse_m_s2": 2.171457
+        }
+      }
+    },
+    "2021-02-23-17-27-24_seg_2": {
+      "sample_interval_ms": 2.5,
+      "models": {
+        "thrust_only": {
+          "samples": 9400,
+          "seconds": 23.4975,
+          "axis_rmse_m_s2": [
+            2.465876,
+            2.716256,
+            5.170394
+          ],
+          "vector_rmse_m_s2": 6.339682
+        },
+        "airframe_drag": {
+          "samples": 9400,
+          "seconds": 23.4975,
+          "axis_rmse_m_s2": [
+            2.210388,
+            1.215889,
+            2.574163
+          ],
+          "vector_rmse_m_s2": 3.604236
+        },
+        "rotor_drag": {
+          "samples": 9400,
+          "seconds": 23.4975,
+          "axis_rmse_m_s2": [
+            2.210388,
+            1.215889,
+            2.574163
+          ],
+          "vector_rmse_m_s2": 3.604236
+        }
+      }
+    },
+    "2021-02-23-19-45-06_seg_2": {
+      "sample_interval_ms": 2.5,
+      "models": {
+        "thrust_only": {
+          "samples": 23390,
+          "seconds": 58.4725,
+          "axis_rmse_m_s2": [
+            2.167686,
+            2.319647,
+            2.208857
+          ],
+          "vector_rmse_m_s2": 3.867644
+        },
+        "airframe_drag": {
+          "samples": 23390,
+          "seconds": 58.4725,
+          "axis_rmse_m_s2": [
+            0.60365,
+            0.590068,
+            1.860344
+          ],
+          "vector_rmse_m_s2": 2.042903
+        },
+        "rotor_drag": {
+          "samples": 23390,
+          "seconds": 58.4725,
+          "axis_rmse_m_s2": [
+            0.60365,
+            0.590068,
+            1.860344
+          ],
+          "vector_rmse_m_s2": 2.042903
+        }
+      }
+    },
+    "2021-02-23-22-26-25_seg_2": {
+      "sample_interval_ms": 2.5,
+      "models": {
+        "thrust_only": {
+          "samples": 42265,
+          "seconds": 105.66,
+          "axis_rmse_m_s2": [
+            0.779939,
+            0.811703,
+            1.026893
+          ],
+          "vector_rmse_m_s2": 1.523705
+        },
+        "airframe_drag": {
+          "samples": 42265,
+          "seconds": 105.66,
+          "axis_rmse_m_s2": [
+            0.646526,
+            0.638346,
+            0.930594
+          ],
+          "vector_rmse_m_s2": 1.300572
+        },
+        "rotor_drag": {
+          "samples": 42265,
+          "seconds": 105.66,
+          "axis_rmse_m_s2": [
+            0.646526,
+            0.638346,
+            0.930594
+          ],
+          "vector_rmse_m_s2": 1.300572
+        }
+      }
+    },
+    "2021-02-23-22-54-17_seg_1": {
+      "sample_interval_ms": 2.5,
+      "models": {
+        "thrust_only": {
+          "samples": 16909,
+          "seconds": 42.27,
+          "axis_rmse_m_s2": [
+            3.447601,
+            3.828661,
+            3.134245
+          ],
+          "vector_rmse_m_s2": 6.030596
+        },
+        "airframe_drag": {
+          "samples": 16909,
+          "seconds": 42.27,
+          "axis_rmse_m_s2": [
+            0.996264,
+            0.723483,
+            3.07168
+          ],
+          "vector_rmse_m_s2": 3.309258
+        },
+        "rotor_drag": {
+          "samples": 16909,
+          "seconds": 42.27,
+          "axis_rmse_m_s2": [
+            0.996264,
+            0.723483,
+            3.07168
+          ],
+          "vector_rmse_m_s2": 3.309258
+        }
+      }
+    }
+  },
+  "summary": {
+    "thrust_only": {
+      "all": {
+        "samples": 215829,
+        "seconds": 539.54,
+        "axis_rmse_m_s2": [
+          1.719496,
+          1.794096,
+          2.154717
+        ],
+        "vector_rmse_m_s2": 3.289111
+      },
+      "under_5_m_s": {
+        "samples": 120726,
+        "seconds": 301.7825,
+        "axis_rmse_m_s2": [
+          0.504703,
+          0.45617,
+          0.552559
+        ],
+        "vector_rmse_m_s2": 0.876435
+      },
+      "5_to_10_m_s": {
+        "samples": 62422,
+        "seconds": 156.055,
+        "axis_rmse_m_s2": [
+          1.844743,
+          1.964299,
+          2.079034
+        ],
+        "vector_rmse_m_s2": 3.403517
+      },
+      "at_least_10_m_s": {
+        "samples": 32681,
+        "seconds": 81.7025,
+        "axis_rmse_m_s2": [
+          3.476218,
+          3.621804,
+          4.6126
+        ],
+        "vector_rmse_m_s2": 6.817451
+      }
+    },
+    "airframe_drag": {
+      "all": {
+        "samples": 215829,
+        "seconds": 539.54,
+        "axis_rmse_m_s2": [
+          0.826886,
+          0.584999,
+          1.527569
+        ],
+        "vector_rmse_m_s2": 1.832875
+      },
+      "under_5_m_s": {
+        "samples": 120726,
+        "seconds": 301.7825,
+        "axis_rmse_m_s2": [
+          0.351827,
+          0.296097,
+          0.540792
+        ],
+        "vector_rmse_m_s2": 0.709867
+      },
+      "5_to_10_m_s": {
+        "samples": 62422,
+        "seconds": 156.055,
+        "axis_rmse_m_s2": [
+          0.700576,
+          0.655957,
+          1.569911
+        ],
+        "vector_rmse_m_s2": 1.840029
+      },
+      "at_least_10_m_s": {
+        "samples": 32681,
+        "seconds": 81.7025,
+        "axis_rmse_m_s2": [
+          1.766509,
+          1.055586,
+          3.101902
+        ],
+        "vector_rmse_m_s2": 3.722447
+      }
+    },
+    "rotor_drag": {
+      "all": {
+        "samples": 215829,
+        "seconds": 539.54,
+        "axis_rmse_m_s2": [
+          0.826886,
+          0.584999,
+          1.527569
+        ],
+        "vector_rmse_m_s2": 1.832875
+      },
+      "under_5_m_s": {
+        "samples": 120726,
+        "seconds": 301.7825,
+        "axis_rmse_m_s2": [
+          0.351827,
+          0.296097,
+          0.540792
+        ],
+        "vector_rmse_m_s2": 0.709867
+      },
+      "5_to_10_m_s": {
+        "samples": 62422,
+        "seconds": 156.055,
+        "axis_rmse_m_s2": [
+          0.700576,
+          0.655957,
+          1.569911
+        ],
+        "vector_rmse_m_s2": 1.840029
+      },
+      "at_least_10_m_s": {
+        "samples": 32681,
+        "seconds": 81.7025,
+        "axis_rmse_m_s2": [
+          1.766509,
+          1.055586,
+          3.101902
+        ],
+        "vector_rmse_m_s2": 3.722447
+      }
+    }
+  }
+}
