@@ -58,6 +58,10 @@ def test_project_api_handles_each_family_without_inventing_a_backend(family):
 
 
 def test_invalid_hierarchy_frames_and_nonfinite_values_are_rejected(legacy):
+    nonfinite = import_legacy_project(legacy).model_dump(mode="json")
+    nonfinite["vehicle"]["snapshot"]["parts"][0]["mass_kg"] = float("inf")
+    with pytest.raises(ValidationError):
+        EngineeringProject.model_validate(nonfinite)
     source = import_legacy_project(legacy).model_dump(mode="json")
     source["aircraft_family"] = "fixed_wing"
     with pytest.raises(ValidationError, match="legacy snapshots describe multirotors"):
@@ -124,3 +128,12 @@ def test_cli_import_validate_and_run_without_changing_source(tmp_path, legacy):
     before = checked.read_bytes()
     assert invoke("validate", checked, checked).returncode != 0
     assert checked.read_bytes() == before
+    error_path = tmp_path / "error.json"
+    document["environment"]["rain_mm_h"] = 5
+    project_path.write_text(json.dumps(document), encoding="utf-8")
+    previous_result = result.read_bytes()
+    failed = subprocess.run([sys.executable, script, "run", str(project_path), str(result),
+                             "--error-output", str(error_path)], capture_output=True, text=True, timeout=45)
+    assert failed.returncode == 2
+    assert "fixed default environment" in json.loads(error_path.read_text(encoding="utf-8"))["error"]
+    assert result.read_bytes() == previous_result

@@ -35,7 +35,8 @@ def test_full_verification_requires_every_packaged_and_audit_step(published_run)
     verify = VERIFY["check_attempt"]
     assert verify(run, jobs, source)["software_ci_verified"]
     jobs[-1]["steps"][-1]["conclusion"] = "skipped"
-    jobs[1]["steps"][0]["conclusion"] = "failure"
+    web_job = next(job for job in jobs if job["name"] == "web-build")
+    web_job["steps"][0]["conclusion"] = "failure"
     report = verify(run, jobs, source)
     assert not report["software_ci_verified"]
     assert any("authenticated HTTPS" in reason for reason in report["blockers"])

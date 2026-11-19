@@ -18,6 +18,10 @@ apps/web/test-results/
 *.db
 outputs/
 reports/
+apps/desktop/.godot/
+apps/desktop/bin/
+packages/engineering-core/build*/
+.cache/desktop/
 
 # Environment
 .env

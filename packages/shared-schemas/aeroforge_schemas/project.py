@@ -84,6 +84,12 @@ class LegacyMultirotorVehicle(ProjectModel):
     format: Literal["legacy_multirotor_0.1"] = "legacy_multirotor_0.1"
     snapshot: DroneDesign
 
+    @field_validator("snapshot")
+    @classmethod
+    def finite_snapshot(cls, value):
+        json.dumps(value.model_dump(mode="json"), allow_nan=False)
+        return value
+
 
 class Environment(ProjectModel):
     """Stored settings. Backend capability checks govern their physical use."""
