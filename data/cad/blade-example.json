@@ -1,0 +1,11 @@
+{
+  "name": "Three-station blade concept",
+  "stations": [
+    {"radius_m": 0.03, "chord_m": 0.045, "twist_deg": 22},
+    {"radius_m": 0.12, "chord_m": 0.035, "twist_deg": 12},
+    {"radius_m": 0.22, "chord_m": 0.018, "twist_deg": 6}
+  ],
+  "profile_samples": 48,
+  "mesh_deflection_m": 0.00025,
+  "material_density_kg_m3": null
+}

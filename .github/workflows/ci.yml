@@ -24,9 +24,19 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: "3.11"
-      - name: Install backend dependencies
+      - name: Install locked CAD worker dependencies
         run: |
-          pip install --require-hashes --only-binary=:all: -r apps/api/requirements.lock
+          pip install --require-hashes --only-binary=:all: -r apps/desktop/requirements-cad.lock
+          pip check
+      - name: Audit locked CAD worker dependencies
+        run: |
+          python -m venv "$RUNNER_TEMP/lab-cad-audit"
+          "$RUNNER_TEMP/lab-cad-audit/bin/pip" install pip-audit==2.10.1
+          "$RUNNER_TEMP/lab-cad-audit/bin/python" -m pip_audit -r apps/desktop/requirements-cad.lock --disable-pip --no-deps
+      - name: Verify CAD geometry and portable assets
+        run: |
+          python -c "import cadquery"
+          pytest tests/cad tests/integration/test_project_assets.py
       - name: Download pinned Godot
         run: |
           curl --fail --location --output godot.zip https://github.com/godotengine/godot/releases/download/4.7.2-stable/Godot_v4.7.2-stable_linux.x86_64.zip
@@ -40,6 +50,8 @@ jobs:
       - name: Run native and desktop integration checks
         env:
           LAB_PYTHON: python
+          LAB_CAD_PYTHON: python
+          LAB_TEST_CAD: "1"
         run: |
           ctest --test-dir packages/engineering-core/build --output-on-failure
           xvfb-run -a /tmp/aerodynamics-godot/Godot_v4.7.2-stable_linux.x86_64 --rendering-method gl_compatibility --path apps/desktop --editor --import --quit

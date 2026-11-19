@@ -17,6 +17,7 @@ var job_pid: int = -1
 var job_action: String = ""
 var job_output: String = ""
 var job_error: String = ""
+var job_completion: String = ""
 var job_started_ms: int = 0
 var playing: bool = false
 var replay_time: float = 0.0
@@ -25,6 +26,10 @@ var elevation: float = 0.5
 var distance_m: float = 1.4
 var capture_path: String = ""
 var capture_frames: int = 0
+var project_asset_root: String = ""
+var job_asset_root: String = ""
+var scope_label: Label
+var view_center: Vector3 = Vector3.ZERO
 
 
 func repository_root() -> String:
@@ -42,10 +47,16 @@ func _ready() -> void:
 		status_label.text = "Build the native engineering extension before loading a project."
 		return
 	engineering = ClassDB.instantiate("LabEngineering")
+	var initial_project: String = ""
 	for argument in OS.get_cmdline_user_args():
 		if argument.begins_with("--capture="):
 			capture_path = argument.trim_prefix("--capture=")
-	_load_reference()
+		if argument.begins_with("--open-project="):
+			initial_project = argument.trim_prefix("--open-project=")
+	if initial_project.is_empty():
+		_load_reference()
+	else:
+		_start_job("validate", initial_project)
 
 
 func _add_button(parent: Node, title: String, action: Callable) -> void:
@@ -71,13 +82,16 @@ func _build_interface() -> void:
 	project_label = Label.new()
 	project_label.text = "Desktop foundation prototype"
 	layout.add_child(project_label)
-	var toolbar: HBoxContainer = HBoxContainer.new()
+	var toolbar: HFlowContainer = HFlowContainer.new()
 	layout.add_child(toolbar)
 	_add_button(toolbar, "Load reference", _load_reference)
 	_add_button(toolbar, "Open project", _open_project)
 	_add_button(toolbar, "Save project", _save_project)
 	_add_button(toolbar, "Run reference experiment", _run_experiment)
 	_add_button(toolbar, "Cancel job", _cancel_job)
+	_add_button(toolbar, "Build blade example", func():
+		_start_job("build-blade", repository_root().path_join("data/cad/blade-example.json")))
+	_add_button(toolbar, "Build blade recipe", _open_blade_recipe)
 	var split: HSplitContainer = HSplitContainer.new()
 	split.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	layout.add_child(split)
@@ -141,9 +155,9 @@ func _build_interface() -> void:
 	timeline.step = 0.001
 	timeline.value_changed.connect(_seek)
 	replay.add_child(timeline)
-	var scope: Label = Label.new()
-	scope.text = "Schematic component positions · reference Python dynamics · physical validation pending"
-	layout.add_child(scope)
+	scope_label = Label.new()
+	scope_label.text = "Schematic component positions · reference Python dynamics · physical validation pending"
+	layout.add_child(scope_label)
 	status_label = Label.new()
 	status_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	layout.add_child(status_label)
@@ -185,7 +199,7 @@ func _viewport_input(event: InputEvent) -> void:
 
 
 func _update_camera() -> void:
-	var target: Vector3 = aircraft.position
+	var target: Vector3 = aircraft.to_global(view_center)
 	camera.position = target + Vector3(sin(yaw) * cos(elevation), sin(elevation),
 		cos(yaw) * cos(elevation)) * distance_m
 	camera.look_at(target)
@@ -195,12 +209,13 @@ func _scene_position(position: Array) -> Vector3:
 	return Vector3(float(position[0]), float(position[2]), -float(position[1]))
 
 
-func _refresh_project() -> void:
+func _refresh_project() -> bool:
 	result = {}
 	playing = false
 	replay_time = 0
 	aircraft.position = Vector3.ZERO
 	aircraft.quaternion = Quaternion.IDENTITY
+	view_center = Vector3.ZERO
 	for child in aircraft.get_children():
 		aircraft.remove_child(child)
 		child.queue_free()
@@ -210,11 +225,30 @@ func _refresh_project() -> void:
 		project["name"], project["aircraft_family"], project["document_version"]]
 	var vehicle: Dictionary = project["vehicle"]
 	if vehicle["format"] != "legacy_multirotor_0.1":
+		var node_objects: Dictionary = {}
 		for node in vehicle.get("nodes", []):
+			var assembly_node: Node3D = Node3D.new()
+			assembly_node.position = _scene_position(node["position_m"])
+			var q: Array = node["orientation_wxyz"]
+			assembly_node.quaternion = Quaternion(float(q[1]), float(q[3]), -float(q[2]), float(q[0]))
+			node_objects[node["id"]] = assembly_node
+		for node in vehicle.get("nodes", []):
+			var assembly_node: Node3D = node_objects[node["id"]]
+			var parent: Node3D = aircraft if node["parent_id"] == null else node_objects[node["parent_id"]]
+			parent.add_child(assembly_node)
 			var item: TreeItem = components.create_item(root)
 			item.set_text(0, str(node["name"]))
-		metrics_label.text = "Assembly document loaded. Geometry and simulation adapters remain pending."
-		return
+			if node["geometry_asset_id"] != null:
+				var asset: Dictionary = _asset(node["geometry_asset_id"])
+				var marker: MeshInstance3D = _display_mesh(asset)
+				if marker == null:
+					return false
+				assembly_node.add_child(marker)
+				item.set_metadata(0, {"marker": marker, "node": node})
+		metrics_label.text = "Assembly geometry loaded. Simulation backend is unassigned."
+		scope_label.text = "CAD geometry · physical validation pending"
+		_fit_camera()
+		return true
 	var parts: Array = vehicle["snapshot"]["parts"]
 	for part in parts:
 		var item: TreeItem = components.create_item(root)
@@ -236,7 +270,111 @@ func _refresh_project() -> void:
 			properties["mass_kg"], str(properties["center_of_mass_m"])]
 	else:
 		metrics_label.text = properties["error"]
+		return false
+	scope_label.text = "Schematic component positions · reference Python dynamics · physical validation pending"
+	_fit_camera()
+	return true
+
+
+func _fit_camera() -> void:
+	var meshes: Array[Node] = aircraft.find_children("*", "MeshInstance3D", true, false)
+	if meshes.is_empty():
+		_update_camera()
+		return
+	var first_mesh: MeshInstance3D = meshes[0] as MeshInstance3D
+	var bounds: AABB = first_mesh.global_transform * first_mesh.get_aabb()
+	for candidate in meshes:
+		var mesh: MeshInstance3D = candidate as MeshInstance3D
+		bounds = bounds.merge(mesh.global_transform * mesh.get_aabb())
+	view_center = aircraft.to_local(bounds.get_center())
+	distance_m = maxf(0.3, bounds.size.length() * 1.7)
 	_update_camera()
+
+
+func _asset(identity: String) -> Dictionary:
+	for asset in project["assets"]:
+		if asset["id"] == identity:
+			return asset
+	return {}
+
+
+func _display_mesh(asset: Dictionary) -> MeshInstance3D:
+	if asset.get("role") != "display_mesh":
+		status_label.text = "This geometry needs a display-mesh adapter."
+		return null
+	var path: String = project_asset_root.path_join(asset["path"])
+	var file: FileAccess = FileAccess.open(path, FileAccess.READ)
+	if file == null or file.get_length() > 16 * 1024 * 1024:
+		status_label.text = "Display mesh is missing or exceeds the prototype's 16 MiB limit."
+		return null
+	var bytes: PackedByteArray = file.get_buffer(file.get_length())
+	file.close()
+	var hash: HashingContext = HashingContext.new()
+	hash.start(HashingContext.HASH_SHA256)
+	hash.update(bytes)
+	if hash.finish().hex_encode() != asset["sha256"]:
+		status_label.text = "Display mesh failed its SHA-256 check."
+		return null
+	var mesh_data: Variant = JSON.parse_string(bytes.get_string_from_utf8())
+	if not mesh_data is Dictionary or mesh_data.get("units") != "m" or mesh_data.get("frame") != "local_right_handed_z_up":
+		status_label.text = "Display mesh has unsupported units or coordinates."
+		return null
+	var positions: Array = mesh_data.get("vertices_m", [])
+	var triangles: Array = mesh_data.get("triangles", [])
+	if positions.is_empty() or triangles.is_empty() or triangles.size() > 100000:
+		status_label.text = "Display mesh is empty or exceeds the prototype triangle limit."
+		return null
+	var vertices: PackedVector3Array = PackedVector3Array()
+	for position in positions:
+		if not position is Array or position.size() != 3:
+			status_label.text = "Invalid display vertex."
+			return null
+		for coordinate in position:
+			if not (coordinate is float or coordinate is int) or not is_finite(float(coordinate)):
+				status_label.text = "Display coordinates must be finite numbers."
+				return null
+		vertices.append(_scene_position(position))
+	var surface: SurfaceTool = SurfaceTool.new()
+	surface.begin(Mesh.PRIMITIVE_TRIANGLES)
+	for triangle in triangles:
+		if not triangle is Array or triangle.size() != 3:
+			status_label.text = "Invalid display triangle."
+			return null
+		for offset in [0, 2, 1]:
+			var index: Variant = triangle[offset]
+			if not (index is float or index is int) or float(index) != floorf(float(index)) or index < 0 or index >= vertices.size():
+				status_label.text = "Display triangle references an invalid vertex."
+				return null
+			surface.add_vertex(vertices[int(index)])
+	surface.generate_normals()
+	surface.index()
+	# Procedural JSON meshes do not pass through Godot's scene-import LOD pipeline.
+	var importer: ImporterMesh = ImporterMesh.new()
+	importer.add_surface(Mesh.PRIMITIVE_TRIANGLES, surface.commit_to_arrays())
+	importer.generate_lods(60.0, 60.0, [])
+	var marker: MeshInstance3D = MeshInstance3D.new()
+	marker.mesh = importer.get_mesh()
+	marker.set_meta("display_lod_count", importer.get_surface_lod_count(0))
+	var material: StandardMaterial3D = StandardMaterial3D.new()
+	material.albedo_color = Color(0.2, 0.75, 0.9)
+	marker.material_override = material
+	return marker
+
+
+func _adopt_project(next_project: Dictionary, asset_root: String) -> bool:
+	var previous_project: Dictionary = project
+	var previous_root: String = project_asset_root
+	project = next_project
+	project_asset_root = asset_root
+	if _refresh_project():
+		return true
+	var reason: String = status_label.text
+	project = previous_project
+	project_asset_root = previous_root
+	if not project.is_empty():
+		_refresh_project()
+	status_label.text = reason
+	return false
 
 
 func _select_component() -> void:
@@ -250,8 +388,12 @@ func _select_component() -> void:
 			var marker: MeshInstance3D = metadata["marker"]
 			marker.material_override.albedo_color = Color(1.0, 0.7, 0.25) if item == selected else Color(0.2, 0.75, 0.9)
 		item = item.get_next()
-	var part: Dictionary = selected.get_metadata(0)["part"]
-	status_label.text = "%s · mass %.3f kg · position %s m" % [part["name"], part["mass_kg"], str(part["position_m"])]
+	var metadata: Dictionary = selected.get_metadata(0)
+	if metadata.has("part"):
+		var part: Dictionary = metadata["part"]
+		status_label.text = "%s · mass %.3f kg · position %s m" % [part["name"], part["mass_kg"], str(part["position_m"])]
+	else:
+		status_label.text = "%s · CAD geometry · material and physical models require qualification" % metadata["node"]["name"]
 
 
 func _load_reference() -> void:
@@ -266,6 +408,14 @@ func _open_project() -> void:
 	file_dialog.popup_centered_ratio(0.75)
 
 
+func _open_blade_recipe() -> void:
+	if job_pid > 0:
+		return
+	file_dialog.file_mode = FileDialog.FILE_MODE_OPEN_FILE
+	_connect_dialog(func(path: String): _start_job("build-blade", path))
+	file_dialog.popup_centered_ratio(0.75)
+
+
 func _save_project() -> void:
 	if project.is_empty() or job_pid > 0:
 		return
@@ -273,7 +423,7 @@ func _save_project() -> void:
 	file_dialog.current_file = "project.json"
 	_connect_dialog(func(path: String):
 		var snapshot: String = _write_job_input()
-		_start_job("validate", snapshot, path))
+		_start_job("package", snapshot, path))
 	file_dialog.popup_centered_ratio(0.75)
 
 
@@ -308,10 +458,21 @@ func _start_job(action: String, input_path: String, output_path: String = "") ->
 	var stem: String = "user://job-%s" % Time.get_ticks_usec()
 	job_output = output_path if not output_path.is_empty() else ProjectSettings.globalize_path(stem + ".json")
 	job_error = ProjectSettings.globalize_path(stem + "-error.json")
+	job_completion = ProjectSettings.globalize_path(stem + "-complete.json")
 	var arguments: PackedStringArray = [
 		repository_root().path_join("scripts/lab_project.py"), action, input_path, job_output,
-		"--error-output", job_error]
-	job_pid = OS.create_process(python_command(), arguments, false)
+		"--error-output", job_error, "--completion-output", job_completion]
+	job_asset_root = project_asset_root if action == "package" else input_path.get_base_dir()
+	if action == "validate" or action == "package":
+		arguments.append_array(["--asset-root", job_asset_root])
+	var interpreter: String = python_command()
+	if action == "build-blade":
+		arguments = [repository_root().path_join("scripts/lab_cad.py"), input_path, job_output,
+			"--error-output", job_error, "--completion-output", job_completion]
+		var cad_python: String = OS.get_environment("LAB_CAD_PYTHON")
+		if not cad_python.is_empty():
+			interpreter = cad_python
+	job_pid = OS.create_process(interpreter, arguments, false)
 	status_label.text = "Running %s…" % action if job_pid > 0 else "Cannot start the configured Python worker"
 
 
@@ -329,7 +490,7 @@ func _process(delta: float) -> void:
 		if FileAccess.file_exists(job_error):
 			var error: Variant = JSON.parse_string(FileAccess.get_file_as_string(job_error))
 			status_label.text = "Worker refused the operation. " + str(error.get("error", "Invalid result"))
-		elif FileAccess.file_exists(job_output):
+		elif _completed_output():
 			var output: Variant = JSON.parse_string(FileAccess.get_file_as_string(job_output))
 			if not output is Dictionary:
 				status_label.text = "Worker returned invalid JSON"
@@ -343,9 +504,16 @@ func _process(delta: float) -> void:
 					result.get("result", {}).get("status", "failed"),
 					(Time.get_ticks_msec() - job_started_ms) / 1000.0]
 			else:
-				project = output
-				_refresh_project()
-				status_label.text = "Project loaded and validated" if job_action == "import-legacy" else "Project validated"
+				var next_project: Dictionary
+				var next_root: String
+				if job_action == "build-blade":
+					next_project = output["project"]
+					next_root = str(output["project_path"]).get_base_dir()
+				else:
+					next_project = output
+					next_root = job_output.get_base_dir() if job_action == "package" else job_asset_root
+				if _adopt_project(next_project, next_root):
+					status_label.text = "Blade geometry built. Physical validation pending." if job_action == "build-blade" else "Project opened. Document and asset checks passed."
 		else:
 			status_label.text = "Worker ended without a result. Check LAB_PYTHON and backend dependencies."
 	if playing and not result.is_empty():
@@ -360,6 +528,13 @@ func _process(delta: float) -> void:
 			await RenderingServer.frame_post_draw
 			get_viewport().get_texture().get_image().save_png(capture_path)
 			get_tree().quit()
+
+
+func _completed_output() -> bool:
+	if not FileAccess.file_exists(job_output) or not FileAccess.file_exists(job_completion):
+		return false
+	var receipt: Variant = JSON.parse_string(FileAccess.get_file_as_string(job_completion))
+	return receipt is Dictionary and receipt.get("output_sha256") == FileAccess.get_sha256(job_output)
 
 
 func _seek(time_s: float) -> void:

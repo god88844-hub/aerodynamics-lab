@@ -2,7 +2,7 @@
 
 This checkout contains the first Godot desktop shell, a C++ engineering library and a Python project worker. It loads and saves project document 1.0, lists/selects schematic components, computes native mass/CoG and runs/replays the existing reference simulation. Right-drag orbits and the mouse wheel zooms.
 
-The full prototype acceptance gate in [the product specification](../../docs/PRODUCT_SPEC.md) also requires constrained CAD, custom blade generation and the recorded performance target. Those requirements remain open in [desktop issue #100](https://github.com/god88844-hub/aerodynamics-lab/issues/100).
+The CAD worker builds a sample or user-supplied blade recipe into a valid Open CASCADE solid, STEP, a hash-bound display mesh and a portable project. Procedural display meshes generate automatic Godot LODs. The full prototype acceptance gate in [the product specification](../../docs/PRODUCT_SPEC.md) still requires representative performance and geometry-to-physics acceptance under [desktop issue #100](https://github.com/god88844-hub/aerodynamics-lab/issues/100).
 
 ## Windows
 
@@ -12,16 +12,18 @@ Install Python 3.11, CMake, Ninja and a C++20 compiler in the developer environm
 .\scripts\build_desktop.ps1 -Launch
 ```
 
-The script downloads pinned Godot 4.7.2 and godot-cpp source archives, checks SHA-256, creates a local Python environment with the locked API dependencies, builds the extension and runs integration checks before launching. Downloaded tools and build state live in the checkout's ignored desktop cache. An existing compatible Python environment can be supplied through `-PythonPath`.
+The script downloads pinned Godot 4.7.2 and godot-cpp source archives, checks SHA-256, creates a local Python environment with the locked API and CAD dependencies, builds the extension and runs integration checks before launching. CAD uses prebuilt pinned binary wheels. Downloaded tools and build state live in the checkout's ignored desktop cache. An existing Python environment containing `requirements-cad.lock` can be supplied through `-PythonPath`.
 
 ## Linux
 
 ```sh
-python -m pip install --require-hashes --only-binary=:all: -r apps/api/requirements.lock
+python -m pip install --require-hashes --only-binary=:all: -r apps/desktop/requirements-cad.lock
 cmake -S packages/engineering-core -B packages/engineering-core/build -DLAB_BUILD_GDEXTENSION=ON -DCMAKE_BUILD_TYPE=Release
 cmake --build packages/engineering-core/build --parallel 2
 ctest --test-dir packages/engineering-core/build --output-on-failure
 export LAB_PYTHON="$(command -v python)"
+export LAB_CAD_PYTHON="$LAB_PYTHON"
+export LAB_TEST_CAD=1
 xvfb-run -a godot --rendering-method gl_compatibility --path apps/desktop --editor --import --quit
 godot --headless --path apps/desktop --script smoke_test.gd
 godot --path apps/desktop
@@ -33,7 +35,7 @@ Linux editor import uses a virtual X display with Xvfb. Godot's upstream headles
 
 ## Model and job behavior
 
-The application starts the existing Python project worker as a separate process. It polls atomic output files and can terminate that process through Cancel job or on application exit. Reference replay interpolates stored position and attitude. Display coordinates map engineering `(x, y, z)` to Godot `(x, z, -y)`.
+The application starts the existing Python project worker as a separate process. It requires a per-job completion receipt matching the output hash, so an old saved file cannot stand in for a successful worker. It can terminate that process through Cancel job or on application exit. Reference replay interpolates stored position and attitude. Display coordinates map engineering `(x, y, z)` to Godot `(x, z, -y)`.
 
 The native library combines supplied part masses and coordinates using double precision. Rendered markers represent component positions. Source geometry, calibrated component behavior and validation limits remain recorded in the project/backend inputs.
 
@@ -42,3 +44,26 @@ New project runs freeze their input document and capture Python model/component 
 The legacy backend explicitly refuses changed environment settings and generic assembly documents. Other family identities are available for project authoring while their physical backends are implemented. The worker reports failed operations separately from saved projects.
 
 Godot and godot-cpp use the MIT license. The extension build copies the bindings' full license notice into its output directory. Source archive URLs and checksums are pinned in the build definitions.
+
+## CAD prototype scope
+
+Choose **Build blade example** or **Build blade recipe**. The recipe declares station radii, chords, twist, thickness ratio, spline sampling and display tolerance in SI units. The example is conceptual geometry with no claimed aerodynamic performance. Edit its JSON recipe and rebuild to change the solid. A full interactive sketcher, history editor and arbitrary geometry-to-flight model remain future CAD work.
+
+The worker uses CadQuery 2.8.0 and cadquery-ocp 7.9.3.1.1. A separate constrained rectangle demonstration exercises the experimental sketch solver and checks actual edge lengths and enclosed area. The blade loft itself uses declared section coordinates, with a symmetric four-digit thickness distribution and a closed trailing edge. These operations do not establish a general constrained sketcher or a validated propeller design.
+
+The kernel works in millimetres and exports STEP in millimetres. Display vertices use metres and an explicit right-handed Z-up frame. STEP import/export must preserve a valid positive-volume solid and its volume. Optional density produces a uniform-density mass estimate. Missing density leaves mass unknown. The generic CAD project has no assigned flight backend; Run refuses it until an applicable physical adapter exists.
+
+Save project copies all declared, SHA-256-verified assets to the destination. Conflicting asset bytes are refused before project publication. Opening a project verifies its asset bytes. The desktop bounds each display file at 16 MiB and 100,000 triangles; the worker bounds generated mesh counts and the packaging worker bounds individual asset reads at 256 MiB. These are current prototype limits, with [measured hardware tiers](../../docs/HARDWARE_AND_FIDELITY.md) defining the delivery target. They are not OS memory admission or complete large-assembly protection.
+
+The display path explicitly generates LODs through ImporterMesh because these procedural JSON meshes bypass Godot scene import. Exact geometry and engineering inputs retain their original hashes. Headless acceptance requires actual generated LODs, a mesh resource, a save/reopen round trip and refusal of an unsupported CAD flight run.
+
+For headless use:
+
+```sh
+python scripts/lab_cad.py data/cad/blade-example.json blade-result.json --error-output blade-error.json
+python scripts/lab_project.py package blade-result-cad/project.json saved/project.json
+```
+
+Create the `saved` destination directory first. The CAD output directory must be new. Failed/cancelled builds may leave incomplete assets; the project manifest is published last. `LAB_CAD_PYTHON` can select a dedicated locked CAD environment. Launch arguments after `--` accept `--open-project=/absolute/project.json`.
+
+CadQuery is Apache-2.0. Its OCCT binding and kernel retain their LGPL/exception notices and distribution obligations. The worker environment also includes other dependencies. This source prototype does not establish installer license acceptance. [CadQuery source/license](https://github.com/CadQuery/cadquery/tree/v2.8.0), [OCP](https://github.com/CadQuery/OCP).
