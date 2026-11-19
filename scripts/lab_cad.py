@@ -9,8 +9,8 @@ import sys
 ROOT = Path(__file__).resolve().parents[1]
 sys.path[:0] = [str(ROOT / "apps/api"), str(ROOT / "packages"), str(ROOT / "packages/shared-schemas")]
 
-from aeroforge_schemas.cad import BladeRecipe  # noqa: E402
-from geometry.cad_backend import build_blade_project  # noqa: E402
+from aeroforge_schemas.cad import BladeRecipe, BoxRecipe  # noqa: E402
+from geometry.cad_backend import build_blade_project, build_box_project  # noqa: E402
 from lab_project import write_result  # noqa: E402
 
 
@@ -29,9 +29,11 @@ def main() -> int:
     if len(paths) != len(set(paths)):
         parser.error("input, output, error and completion paths must be separate")
     try:
-        recipe = BladeRecipe.model_validate_json(args.input.read_bytes())
+        raw = json.loads(args.input.read_bytes())
         directory = args.output.parent / (args.output.stem + "-cad")
-        result = build_blade_project(recipe, directory)
+        result = (build_box_project(BoxRecipe.model_validate(raw), directory)
+                  if raw.get("recipe_type") == "box_1"
+                  else build_blade_project(BladeRecipe.model_validate(raw), directory))
         write_result(args.output, result)
         if args.completion_output:
             write_result(args.completion_output, {"output_sha256": sha256(args.output.read_bytes()).hexdigest()})

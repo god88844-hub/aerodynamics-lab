@@ -121,6 +121,54 @@ func _run() -> void:
 			push_error("CAD shape was incorrectly accepted as a qualified flight model")
 			quit(15)
 			return
+		# Exercise the actual editor controls, rebuild, torque worker and CoG replay.
+		desktop.call("_open_body_editor")
+		desktop.get("body_dialog").hide()
+		desktop.call("_rebuild_body")
+		if not await _wait_for_job(desktop):
+			quit(16)
+			return
+		desktop.call("_run_cad_torque")
+		if not await _wait_for_job(desktop):
+			quit(17)
+			return
+		var first_run: Dictionary = desktop.get("result")
+		if first_run.get("experiment_kind") != "cad_torque_1" or first_run["result"]["status"] != "completed":
+			push_error("Desktop did not run the exact geometry through the rigid-body backend")
+			quit(18)
+			return
+		var first_speed: float = first_run["result"]["telemetry"]["omega_body_rad_s"][-1][2]
+		desktop.call("_seek", 1.0)
+		var cad_aircraft: Node3D = desktop.get("aircraft")
+		var center: Vector3 = desktop.call("_scene_position", first_run["mass_properties"]["center_of_mass_m"])
+		if cad_aircraft.to_global(center).length() > 1e-5:
+			push_error("CAD replay rotated the body around its datum instead of its CoG")
+			quit(19)
+			return
+		desktop.get("body_fields")["width_m"].value = 0.3
+		desktop.call("_rebuild_body")
+		if not await _wait_for_job(desktop):
+			quit(20)
+			return
+		desktop.call("_run_cad_torque")
+		if not await _wait_for_job(desktop):
+			quit(21)
+			return
+		var edited_run: Dictionary = desktop.get("result")
+		if edited_run["result"]["telemetry"]["omega_body_rad_s"][-1][2] >= first_speed:
+			push_error("Widening the body did not reduce spin-up under the same torque")
+			quit(22)
+			return
+		desktop.get("density_enabled").button_pressed = false
+		desktop.call("_rebuild_body")
+		if not await _wait_for_job(desktop):
+			quit(23)
+			return
+		desktop.call("_run_cad_torque")
+		if not await _wait_for_job(desktop) or desktop.get("result")["result"]["status"] != "inconclusive":
+			push_error("Unknown material density was incorrectly treated as a known rigid body")
+			quit(24)
+			return
 	print("Desktop/native/worker smoke checks passed. Physical validation remains pending.")
 	quit(0)
 

@@ -67,3 +67,9 @@ python scripts/lab_project.py package blade-result-cad/project.json saved/projec
 Create the `saved` destination directory first. The CAD output directory must be new. Failed/cancelled builds may leave incomplete assets; the project manifest is published last. `LAB_CAD_PYTHON` can select a dedicated locked CAD environment. Launch arguments after `--` accept `--open-project=/absolute/project.json`.
 
 CadQuery is Apache-2.0. Its OCCT binding and kernel retain their LGPL/exception notices and distribution obligations. The worker environment also includes other dependencies. This source prototype does not establish installer license acceptance. [CadQuery source/license](https://github.com/CadQuery/cadquery/tree/v2.8.0), [OCP](https://github.com/CadQuery/OCP).
+
+## Constrained body and applied-torque experiment
+
+**New / edit test body** exposes width, height, extrusion depth and optional assumed uniform density. Rebuild uses the solved sketch to construct the actual solid. **Run applied-torque experiment** recomputes mass and full central inertia from frozen STEP bytes, then runs the existing rigid-body/RK4 engine with body-Z torque and gravity disabled. Choose the integration step explicitly. Play/seek shows rotation about the computed CoG.
+
+Missing density returns INCONCLUSIVE. A completed mathematical experiment remains physically unvalidated. The prototype supports one solid and explicit node placement; multiple-body assembly and aircraft/propeller aerodynamics need separate adapters. Ordinary flight runs still refuse generic CAD. See [the mass/dynamics evidence and headless interface](../../docs/prototypes/CAD_MASS_DYNAMICS.md).
