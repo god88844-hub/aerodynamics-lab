@@ -22,12 +22,14 @@ cmake -S packages/engineering-core -B packages/engineering-core/build -DLAB_BUIL
 cmake --build packages/engineering-core/build --parallel 2
 ctest --test-dir packages/engineering-core/build --output-on-failure
 export LAB_PYTHON="$(command -v python)"
-godot --headless --path apps/desktop --editor --import --quit
+xvfb-run -a godot --rendering-method gl_compatibility --path apps/desktop --editor --import --quit
 godot --headless --path apps/desktop --script smoke_test.gd
 godot --path apps/desktop
 ```
 
 Use Godot 4.7.2. The C++ bindings are pinned to the 4.5 stable source commit and use its compatible extension API. CI downloads and verifies the exact Linux Godot release.
+
+Linux editor import uses a virtual X display with Xvfb. Godot's upstream headless GDExtension import/shutdown issue affects cold-cache editor initialization. The subsequent runtime checks run headless and retain their exit-code gate. [Upstream issue](https://github.com/godotengine/godot/issues/111645)
 
 ## Model and job behavior
 
