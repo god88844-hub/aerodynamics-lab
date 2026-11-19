@@ -16,7 +16,7 @@ Implementation states are planned, partial, implemented and software-verified. S
 
 | Requirement | Implementation baseline | Scientific baseline | Next acceptance evidence |
 | --- | --- | --- | --- |
-| FND | Project document 1.0, four-family assembly representation, legacy import, normalization API and headless reference runner | Unvalidated product foundation | Project round-trip, invalid-input/backend refusal and legacy execution tests pass locally. Desktop/native and complete foundation acceptance remain pending. |
+| FND | Project document 1.0, four-family assembly representation, legacy import, normalization API, headless reference runner and initial Godot/C++/Python desktop integration | Unvalidated product foundation | Local project/backend tests and native/desktop smoke checks pass. Constrained CAD, blade generation and representative performance acceptance remain pending under #100. |
 | CAD | Primitive editing, mounts, clearance, revisions and placement DXF | Analytical screening | Exact geometry/history, drawings, assemblies and engineering round trips. |
 | ELEC | Powertrain/battery models and limit checks | Separate measured comparisons | Installed component behavior, uncertainty, dynamics and failure tests. |
 | WORLD | Fixed scenarios, core uniform relative-wind drag | Analytical screening | Normal UI/API environment/mission authoring, contact and reproducibility. |

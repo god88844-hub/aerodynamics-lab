@@ -14,6 +14,7 @@ from pydantic import ValidationError
 from aeroforge_schemas.project import EngineeringProject, import_legacy_project
 from app.main import app
 from app.services.project_service import run_project
+from app.services import project_service
 
 ROOT = Path(__file__).resolve().parents[2]
 
@@ -40,6 +41,8 @@ def test_legacy_import_round_trip_and_real_solver(legacy):
     assert report["result"]["status"] == "completed"
     assert report["project_sha256"] == sha256(restored.canonical_bytes()).hexdigest()
     assert report["physical_validation_status"] == "unvalidated"
+    assert report["model_environment"]["package_versions"]["numpy"]
+    assert "packages/physics/scenarios/runner.py" in report["model_environment"]["files_sha256"]
     assert report["result"]["telemetry"]["t"]
 
 
@@ -58,6 +61,10 @@ def test_project_api_handles_each_family_without_inventing_a_backend(family):
 
 
 def test_invalid_hierarchy_frames_and_nonfinite_values_are_rejected(legacy):
+    nonfinite = import_legacy_project(legacy).model_dump(mode="json")
+    nonfinite["vehicle"]["snapshot"]["parts"][0]["mass_kg"] = float("inf")
+    with pytest.raises(ValidationError):
+        EngineeringProject.model_validate(nonfinite)
     source = import_legacy_project(legacy).model_dump(mode="json")
     source["aircraft_family"] = "fixed_wing"
     with pytest.raises(ValidationError, match="legacy snapshots describe multirotors"):
@@ -92,6 +99,22 @@ def test_nondefault_environment_is_stored_and_explicitly_refused(legacy):
         run_project(restored)
 
 
+def test_run_freezes_caller_inputs_and_refuses_environment_changes(legacy, monkeypatch):
+    project = import_legacy_project(legacy)
+    original_name = project.name
+    def mutate_caller(*args):
+        project.name = "concurrent edit"
+        return {"status": "completed"}, {}
+    monkeypatch.setattr(project_service, "run_simulation", mutate_caller)
+    report = run_project(project)
+    assert report["project"]["name"] == original_name
+    assert project.name == "concurrent edit"
+    hashes = iter([{"sha256": "a" * 64}, {"sha256": "b" * 64}])
+    monkeypatch.setattr(project_service, "capture_provenance", lambda: next(hashes))
+    with pytest.raises(ValueError, match="changed during the run"):
+        run_project(project)
+
+
 @pytest.mark.parametrize("path", ["../part.step", "/part.step", "C:/part.step", "part\\file.step"])
 def test_asset_paths_cannot_escape_project(path):
     document = {"id": str(uuid4()), "name": "geometry", "aircraft_family": "fixed_wing",
@@ -124,3 +147,12 @@ def test_cli_import_validate_and_run_without_changing_source(tmp_path, legacy):
     before = checked.read_bytes()
     assert invoke("validate", checked, checked).returncode != 0
     assert checked.read_bytes() == before
+    error_path = tmp_path / "error.json"
+    document["environment"]["rain_mm_h"] = 5
+    project_path.write_text(json.dumps(document), encoding="utf-8")
+    previous_result = result.read_bytes()
+    failed = subprocess.run([sys.executable, script, "run", str(project_path), str(result),
+                             "--error-output", str(error_path)], capture_output=True, text=True, timeout=45)
+    assert failed.returncode == 2
+    assert "fixed default environment" in json.loads(error_path.read_text(encoding="utf-8"))["error"]
+    assert result.read_bytes() == previous_result

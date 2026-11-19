@@ -1,7 +1,9 @@
 """Read-only project normalization and legacy import."""
 
+import json
+
 from fastapi import APIRouter
-from pydantic import BaseModel, ConfigDict
+from pydantic import BaseModel, ConfigDict, field_validator
 
 from aeroforge_schemas.design import DroneDesign
 from aeroforge_schemas.project import EngineeringProject, import_legacy_project
@@ -22,6 +24,12 @@ def validate_project(project: EngineeringProject) -> dict:
 class LegacyImport(BaseModel):
     model_config = ConfigDict(extra="forbid")
     snapshot: DroneDesign
+
+    @field_validator("snapshot")
+    @classmethod
+    def finite_snapshot(cls, value):
+        json.dumps(value.model_dump(mode="json"), allow_nan=False)
+        return value
 
 
 @router.post("/projects/import-legacy")

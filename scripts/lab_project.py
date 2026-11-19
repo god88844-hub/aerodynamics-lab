@@ -33,9 +33,12 @@ def main() -> int:
     parser.add_argument("command", choices=("import-legacy", "validate", "run"))
     parser.add_argument("input", type=Path)
     parser.add_argument("output", type=Path)
+    parser.add_argument("--error-output", type=Path)
     args = parser.parse_args()
     if args.input.resolve() == args.output.resolve():
         parser.error("choose an output path separate from the input project")
+    if args.error_output and args.error_output.resolve() in (args.input.resolve(), args.output.resolve()):
+        parser.error("choose a separate error output path")
     try:
         raw = json.loads(args.input.read_text(encoding="utf-8"))
         project = import_legacy_project(raw) if args.command == "import-legacy" else EngineeringProject.model_validate(raw)
@@ -43,6 +46,11 @@ def main() -> int:
         write_result(args.output, payload)
     except (ValueError, OSError) as error:
         print(str(error), file=sys.stderr)
+        if args.error_output:
+            try:
+                write_result(args.error_output, {"status": "failed", "error": str(error)})
+            except OSError as publication_error:
+                print(str(publication_error), file=sys.stderr)
         return 2
     return 0
 
