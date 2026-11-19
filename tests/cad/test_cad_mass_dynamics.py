@@ -24,6 +24,10 @@ def request_for(built, duration=0.2):
     return CadTorqueRequest(project=built["project"], experiment=TorqueExperiment(duration_s=duration))
 
 
+def asset_path(root, built, identity):
+    return root / next(asset["path"] for asset in built["project"]["assets"] if asset["id"] == identity)
+
+
 def test_solved_sketch_solid_tensor_and_torque_agree_with_analytic_box(tmp_path):
     built = build_box_project(BoxRecipe(material_density_kg_m3=500), tmp_path / "body")
     mass = 500 * 0.2 * 0.1 * 0.02
@@ -93,7 +97,7 @@ def test_unknown_density_and_unsupported_environment_do_not_become_success(tmp_p
 def test_cached_mass_is_ignored_tampering_is_refused_and_model_change_is_detected(tmp_path, monkeypatch):
     built = build_box_project(BoxRecipe(material_density_kg_m3=500), tmp_path / "body")
     request = request_for(built)
-    metadata_path = tmp_path / "body/assets/body.recipe.json"
+    metadata_path = asset_path(tmp_path / "body", built, "body_recipe")
     metadata = json.loads(metadata_path.read_bytes())
     metadata["mass_properties"]["mass_kg"] = 999
     metadata_path.write_text(json.dumps(metadata), encoding="utf-8")
@@ -103,7 +107,7 @@ def test_cached_mass_is_ignored_tampering_is_refused_and_model_change_is_detecte
     monkeypatch.setattr(cad_dynamics, "_identity", lambda: next(calls))
     with pytest.raises(ValueError, match="changed during"):
         cad_dynamics.run_cad_torque(request, tmp_path / "body")
-    (tmp_path / "body/assets/body.step").write_bytes(b"changed exact solid")
+    asset_path(tmp_path / "body", built, "body_exact").write_bytes(b"changed exact solid")
     monkeypatch.setattr(cad_dynamics, "_identity", lambda: {})
     with pytest.raises(ValueError, match="SHA-256"):
         cad_dynamics.run_cad_torque(request, tmp_path / "body")
@@ -120,13 +124,49 @@ def test_analysis_cli_receipt_and_failure_preserve_previous_output(tmp_path):
     previous = output.read_bytes()
     assert json.loads(receipt.read_bytes())["output_sha256"] == sha256(previous).hexdigest()
     receipt.unlink()
-    exact_path = tmp_path / "body/assets/body.step"
+    exact_path = asset_path(tmp_path / "body", built, "body_exact")
     original_solid = exact_path.read_bytes()
     colliding = command.copy()
     colliding[3] = str(exact_path)
     collision = subprocess.run(colliding, capture_output=True, text=True, timeout=45)
     assert collision.returncode == 2 and exact_path.read_bytes() == original_solid
-    (tmp_path / "body/assets/body.step").write_bytes(b"broken source")
+    exact_path.write_bytes(b"broken source")
     result = subprocess.run(command, capture_output=True, text=True, timeout=45)
     assert result.returncode == 2 and "SHA-256" in error.read_text()
     assert output.read_bytes() == previous and not receipt.exists()
+
+
+def test_edited_project_versions_save_into_one_folder_without_losing_previous_assets(tmp_path):
+    original = build_box_project(BoxRecipe(material_density_kg_m3=500), tmp_path / "first")
+    edited = build_box_project(BoxRecipe(width_m=0.3, material_density_kg_m3=500), tmp_path / "second")
+    saved = tmp_path / "saved"
+    saved.mkdir()
+    script = str(ROOT / "scripts/lab_project.py")
+    for built, name in ((original, "v0.json"), (original, "v1.json"), (edited, "v2.json"), (edited, "v1.json")):
+        result = subprocess.run([sys.executable, script, "package", built["project_path"], str(saved / name)],
+                                capture_output=True, text=True, timeout=45)
+        assert result.returncode == 0, result.stderr
+    assert EngineeringProject.model_validate_json((saved / "v1.json").read_bytes()).fingerprint() == edited["project_sha256"]
+    for built in (original, edited):
+        for asset in built["project"]["assets"]:
+            assert Path(asset["path"]).parent.name == asset["sha256"]
+            assert sha256((saved / asset["path"]).read_bytes()).hexdigest() == asset["sha256"]
+        report = cad_dynamics.run_cad_torque(request_for(built), saved)
+        assert report["result"]["status"] == "completed"
+    # Open the earlier saved snapshot alongside the edited one.
+    restored = EngineeringProject.model_validate_json((saved / "v0.json").read_bytes())
+    assert cad_dynamics.run_cad_torque(CadTorqueRequest(project=restored), saved)["mass_properties"]["mass_kg"] == pytest.approx(0.2)
+
+
+def test_legacy_flat_asset_paths_still_run(tmp_path):
+    built = build_box_project(BoxRecipe(material_density_kg_m3=500), tmp_path / "body")
+    request = request_for(built)
+    legacy = tmp_path / "legacy"
+    (legacy / "assets").mkdir(parents=True)
+    for asset in request.project.assets:
+        source = tmp_path / "body" / asset.path
+        target = legacy / "assets" / source.name
+        target.write_bytes(source.read_bytes())
+        asset.path = target.relative_to(legacy).as_posix()
+    report = cad_dynamics.run_cad_torque(request, legacy)
+    assert report["mass_properties"]["mass_kg"] == pytest.approx(0.2)

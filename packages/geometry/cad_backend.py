@@ -161,15 +161,19 @@ def _publish_solid(shape, recipe, directory: Path, stem: str, sketch_check: dict
     mesh_path, recipe_path = assets_dir / f"{stem}.mesh.json", assets_dir / f"{stem}.recipe.json"
     mesh_path.write_text(json.dumps(mesh, allow_nan=False, separators=(",", ":")), encoding="utf-8")
     recipe_path.write_text(json.dumps(metadata, allow_nan=False, indent=2) + "\n", encoding="utf-8")
-    assets = [
-        GeometryAsset(id=identity, path=path.relative_to(directory).as_posix(),
-                      sha256=sha256(path.read_bytes()).hexdigest(), role=role)
-        for identity, path, role in (
-            (f"{stem}_exact", step_path, "exact_geometry"),
-            (f"{stem}_mesh", mesh_path, "display_mesh"),
-            (f"{stem}_recipe", recipe_path, "parametric_source"),
-        )
-    ]
+    assets = []
+    for identity, path, role in (
+        (f"{stem}_exact", step_path, "exact_geometry"),
+        (f"{stem}_mesh", mesh_path, "display_mesh"),
+        (f"{stem}_recipe", recipe_path, "parametric_source"),
+    ):
+        digest = sha256(path.read_bytes()).hexdigest()
+        # Generated revisions can share a destination without replacing earlier bytes.
+        stored = assets_dir / digest / path.name
+        stored.parent.mkdir(exist_ok=True)
+        path.replace(stored)
+        assets.append(GeometryAsset(id=identity, path=stored.relative_to(directory).as_posix(),
+                                    sha256=digest, role=role))
     project = EngineeringProject(
         id=uuid4(), name=recipe.name, aircraft_family="multirotor",
         vehicle=AssemblyVehicle(nodes=[
