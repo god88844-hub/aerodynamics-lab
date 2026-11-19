@@ -30,6 +30,11 @@ def write_result(destination: Path, payload: dict) -> None:
         Path(temporary).unlink(missing_ok=True)
 
 
+def write_started(destination: Path | None) -> None:
+    if destination:
+        write_result(destination, {"worker_pid": os.getpid()})
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("command", choices=("import-legacy", "validate", "package", "run"))
@@ -37,9 +42,10 @@ def main() -> int:
     parser.add_argument("output", type=Path)
     parser.add_argument("--error-output", type=Path)
     parser.add_argument("--completion-output", type=Path)
+    parser.add_argument("--started-output", type=Path)
     parser.add_argument("--asset-root", type=Path)
     args = parser.parse_args()
-    paths = [path.resolve() for path in (args.input, args.output, args.error_output, args.completion_output) if path]
+    paths = [path.resolve() for path in (args.input, args.output, args.error_output, args.completion_output, args.started_output) if path]
     if len(paths) != len(set(paths)):
         parser.error("input, output, error and completion paths must be separate")
     try:
@@ -50,6 +56,7 @@ def main() -> int:
             copy_assets(project, asset_root, args.output)
         elif args.asset_root:
             verify_assets(project, asset_root)
+        write_started(args.started_output)
         payload = run_project(project) if args.command == "run" else project.model_dump(mode="json")
         write_result(args.output, payload)
         if args.completion_output:

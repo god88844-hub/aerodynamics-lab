@@ -1,0 +1,9 @@
+{
+  "recipe_type": "box_1",
+  "name": "Constrained rigid-body example",
+  "width_m": 0.2,
+  "height_m": 0.1,
+  "depth_m": 0.02,
+  "material_density_kg_m3": 500,
+  "mesh_deflection_m": 0.00025
+}

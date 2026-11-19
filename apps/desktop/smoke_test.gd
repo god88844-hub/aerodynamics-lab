@@ -24,20 +24,31 @@ func _run() -> void:
 	var component_tree: Tree = desktop.get("components")
 	component_tree.get_root().get_first_child().select(0)
 	desktop.call("_select_component")
+	desktop.get("project")["experiment"]["parameters"] = {"duration_s": 30.0}
 	desktop.call("_run_experiment")
 	var cancelled_pid: int = desktop.get("job_pid")
+	var startup_deadline: int = Time.get_ticks_msec() + 20000
+	while not FileAccess.file_exists(desktop.get("job_started")) and Time.get_ticks_msec() < startup_deadline:
+		await process_frame
+	var started: Variant = JSON.parse_string(FileAccess.get_file_as_string(desktop.get("job_started")))
+	if not started is Dictionary or not _worker_alive(int(started.get("worker_pid", -1))):
+		push_error("Cancellation check did not reach an active Python worker")
+		quit(25)
+		return
+	var actual_worker_pid: int = int(started["worker_pid"])
 	desktop.call("_cancel_job")
 	if desktop.get("job_pid") != -1 or desktop.get("project").is_empty():
 		push_error("Cancelling a worker lost the current project")
 		quit(8)
 		return
 	var cancel_deadline: int = Time.get_ticks_msec() + 5000
-	while cancelled_pid > 0 and OS.is_process_running(cancelled_pid) and Time.get_ticks_msec() < cancel_deadline:
+	while (OS.is_process_running(cancelled_pid) or _worker_alive(actual_worker_pid)) and Time.get_ticks_msec() < cancel_deadline:
 		await process_frame
-	if cancelled_pid > 0 and OS.is_process_running(cancelled_pid):
-		push_error("Cancelled worker is still running")
+	if OS.is_process_running(cancelled_pid) or _worker_alive(actual_worker_pid):
+		push_error("Cancelled launcher or actual Python worker is still running")
 		quit(9)
 		return
+	print("Cancellation verified for launcher %d and actual worker %d" % [cancelled_pid, actual_worker_pid])
 	var properties: Dictionary = core.mass_properties([
 		{"mass_kg": 2.0, "position_m": [0.0, 0.0, -1.0]},
 		{"mass_kg": 1.0, "position_m": [3.0, 0.0, 2.0]}])
@@ -121,6 +132,54 @@ func _run() -> void:
 			push_error("CAD shape was incorrectly accepted as a qualified flight model")
 			quit(15)
 			return
+		# Exercise the actual editor controls, rebuild, torque worker and CoG replay.
+		desktop.call("_open_body_editor")
+		desktop.get("body_dialog").hide()
+		desktop.call("_rebuild_body")
+		if not await _wait_for_job(desktop):
+			quit(16)
+			return
+		desktop.call("_run_cad_torque")
+		if not await _wait_for_job(desktop):
+			quit(17)
+			return
+		var first_run: Dictionary = desktop.get("result")
+		if first_run.get("experiment_kind") != "cad_torque_1" or first_run["result"]["status"] != "completed":
+			push_error("Desktop did not run the exact geometry through the rigid-body backend")
+			quit(18)
+			return
+		var first_speed: float = first_run["result"]["telemetry"]["omega_body_rad_s"][-1][2]
+		desktop.call("_seek", 1.0)
+		var cad_aircraft: Node3D = desktop.get("aircraft")
+		var center: Vector3 = desktop.call("_scene_position", first_run["mass_properties"]["center_of_mass_m"])
+		if cad_aircraft.to_global(center).length() > 1e-5:
+			push_error("CAD replay rotated the body around its datum instead of its CoG")
+			quit(19)
+			return
+		desktop.get("body_fields")["width_m"].value = 0.3
+		desktop.call("_rebuild_body")
+		if not await _wait_for_job(desktop):
+			quit(20)
+			return
+		desktop.call("_run_cad_torque")
+		if not await _wait_for_job(desktop):
+			quit(21)
+			return
+		var edited_run: Dictionary = desktop.get("result")
+		if edited_run["result"]["telemetry"]["omega_body_rad_s"][-1][2] >= first_speed:
+			push_error("Widening the body did not reduce spin-up under the same torque")
+			quit(22)
+			return
+		desktop.get("density_enabled").button_pressed = false
+		desktop.call("_rebuild_body")
+		if not await _wait_for_job(desktop):
+			quit(23)
+			return
+		desktop.call("_run_cad_torque")
+		if not await _wait_for_job(desktop) or desktop.get("result")["result"]["status"] != "inconclusive":
+			push_error("Unknown material density was incorrectly treated as a known rigid body")
+			quit(24)
+			return
 	print("Desktop/native/worker smoke checks passed. Physical validation remains pending.")
 	quit(0)
 
@@ -141,3 +200,18 @@ func _wait_for_job(desktop: Control) -> bool:
 		push_error("Desktop accepted an existing output without this job's completion receipt")
 		return false
 	return true
+
+
+func _worker_alive(pid: int) -> bool:
+	if pid <= 0:
+		return false
+	if OS.get_name() != "Windows":
+		return OS.is_process_running(pid)
+	# Godot's Windows API tracks only processes it created directly. The venv
+	# interpreter is a descendant, so inspect it through the OS process inventory.
+	var output: Array = []
+	var code: int = OS.execute("tasklist", ["/FI", "PID eq %d" % pid, "/FO", "CSV", "/NH"], output, true, false)
+	if code != 0:
+		push_error("Could not inspect the actual worker process")
+		return true  # never pass cancellation on an unavailable process inventory
+	return not output.is_empty() and str(output[0]).contains('"%d"' % pid)

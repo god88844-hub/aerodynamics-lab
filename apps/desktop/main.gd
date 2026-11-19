@@ -18,6 +18,7 @@ var job_action: String = ""
 var job_output: String = ""
 var job_error: String = ""
 var job_completion: String = ""
+var job_started: String = ""
 var job_started_ms: int = 0
 var playing: bool = false
 var replay_time: float = 0.0
@@ -30,6 +31,12 @@ var project_asset_root: String = ""
 var job_asset_root: String = ""
 var scope_label: Label
 var view_center: Vector3 = Vector3.ZERO
+var body_dialog: AcceptDialog
+var body_fields: Dictionary = {}
+var density_enabled: CheckButton
+var torque_z: SpinBox
+var torque_duration: SpinBox
+var torque_step: SpinBox
 
 
 func repository_root() -> String:
@@ -92,6 +99,8 @@ func _build_interface() -> void:
 	_add_button(toolbar, "Build blade example", func():
 		_start_job("build-blade", repository_root().path_join("data/cad/blade-example.json")))
 	_add_button(toolbar, "Build blade recipe", _open_blade_recipe)
+	_add_button(toolbar, "New / edit test body", _open_body_editor)
+	_add_button(toolbar, "Run applied-torque experiment", _run_cad_torque)
 	var split: HSplitContainer = HSplitContainer.new()
 	split.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	layout.add_child(split)
@@ -109,6 +118,13 @@ func _build_interface() -> void:
 	metrics_label = Label.new()
 	metrics_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	inspector.add_child(metrics_label)
+	var torque_title: Label = Label.new()
+	torque_title.text = "Rigid-body experiment (no flight forces)"
+	inspector.add_child(torque_title)
+	torque_z = _numeric_field(inspector, "Body Z torque (N·m)", -1, 1, 0.001, 0.001)
+	torque_z.step = 0.0001
+	torque_duration = _numeric_field(inspector, "Duration (s)", 0.01, 10, 0.01, 1.0)
+	torque_step = _numeric_field(inspector, "Integration step (s)", 0.0001, 0.05, 0.0001, 0.005)
 	var viewport_container: SubViewportContainer = SubViewportContainer.new()
 	viewport_container.stretch = true
 	viewport_container.size_flags_horizontal = Control.SIZE_EXPAND_FILL
@@ -165,7 +181,85 @@ func _build_interface() -> void:
 	file_dialog.access = FileDialog.ACCESS_FILESYSTEM
 	file_dialog.filters = PackedStringArray(["*.json ; Engineering project"])
 	add_child(file_dialog)
+	body_dialog = AcceptDialog.new()
+	body_dialog.title = "Constrained test body"
+	body_dialog.ok_button_text = "Rebuild exact geometry"
+	var body_form: VBoxContainer = VBoxContainer.new()
+	body_dialog.add_child(body_form)
+	var explanation: Label = Label.new()
+	explanation.text = "Dimensions drive a solved rectangular sketch and extrusion.\nDensity is an assumption; physical validation remains pending."
+	body_form.add_child(explanation)
+	body_fields["width_m"] = _numeric_field(body_form, "Width (m)", 0.001, 5, 0.001, 0.2)
+	body_fields["height_m"] = _numeric_field(body_form, "Height (m)", 0.001, 5, 0.001, 0.1)
+	body_fields["depth_m"] = _numeric_field(body_form, "Depth (m)", 0.001, 5, 0.001, 0.02)
+	density_enabled = CheckButton.new()
+	density_enabled.text = "Assume a homogeneous material density"
+	density_enabled.button_pressed = true
+	body_form.add_child(density_enabled)
+	body_fields["material_density_kg_m3"] = _numeric_field(body_form, "Density (kg/m³)", 0.001, 100000, 1, 500)
+	body_dialog.confirmed.connect(_rebuild_body)
+	add_child(body_dialog)
 	_update_camera()
+
+
+func _numeric_field(parent: Node, title: String, minimum: float, maximum: float, increment: float, initial: float) -> SpinBox:
+	var row: HBoxContainer = HBoxContainer.new()
+	parent.add_child(row)
+	var label: Label = Label.new()
+	label.text = title
+	label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	row.add_child(label)
+	var field: SpinBox = SpinBox.new()
+	field.min_value = minimum
+	field.max_value = maximum
+	field.step = increment
+	field.value = initial
+	field.custom_minimum_size.x = 120
+	row.add_child(field)
+	return field
+
+
+func _body_recipe() -> Dictionary:
+	if project.is_empty():
+		return {}
+	for asset in project.get("assets", []):
+		if asset["id"] == "body_recipe":
+			var metadata: Variant = JSON.parse_string(FileAccess.get_file_as_string(project_asset_root.path_join(asset["path"])))
+			if metadata is Dictionary and metadata.get("recipe_type") == "box_1":
+				return metadata["recipe"]
+	return {}
+
+
+func _open_body_editor() -> void:
+	if job_pid > 0:
+		return
+	var recipe: Dictionary = _body_recipe()
+	if not recipe.is_empty():
+		for key in body_fields:
+			if recipe.get(key) != null:
+				body_fields[key].value = float(recipe[key])
+		density_enabled.button_pressed = recipe.get("material_density_kg_m3") != null
+	body_dialog.popup_centered(Vector2i(540, 350))
+
+
+func _rebuild_body() -> void:
+	if job_pid > 0:
+		return
+	var recipe: Dictionary = {"recipe_type": "box_1", "name": "Constrained test body"}
+	for key in body_fields:
+		recipe[key] = body_fields[key].value
+	if not density_enabled.button_pressed:
+		recipe["material_density_kg_m3"] = null
+	var path: String = _write_payload(recipe)
+	_start_job("build-body", path)
+
+
+func _run_cad_torque() -> void:
+	if project.is_empty() or job_pid > 0:
+		return
+	var request: Dictionary = {"project": project, "experiment": {
+		"torque_body_nm": [0.0, 0.0, torque_z.value], "duration_s": torque_duration.value, "step_s": torque_step.value}}
+	_start_job("cad-torque", _write_payload(request))
 
 
 func _viewport_input(event: InputEvent) -> void:
@@ -434,12 +528,16 @@ func _connect_dialog(action: Callable) -> void:
 
 
 func _write_job_input() -> String:
-	var path: String = ProjectSettings.globalize_path("user://project-input.json")
+	return _write_payload(project)
+
+
+func _write_payload(payload: Dictionary) -> String:
+	var path: String = ProjectSettings.globalize_path("user://input-%s-%s.json" % [OS.get_process_id(), Time.get_ticks_usec()])
 	var file: FileAccess = FileAccess.open(path, FileAccess.WRITE)
 	if file == null:
 		status_label.text = "Cannot write the experiment input"
 		return ""
-	file.store_string(JSON.stringify(project))
+	file.store_string(JSON.stringify(payload))
 	file.close()
 	return path
 
@@ -455,10 +553,11 @@ func _start_job(action: String, input_path: String, output_path: String = "") ->
 		return
 	job_action = action
 	job_started_ms = Time.get_ticks_msec()
-	var stem: String = "user://job-%s" % Time.get_ticks_usec()
+	var stem: String = "user://job-%s-%s" % [OS.get_process_id(), Time.get_ticks_usec()]
 	job_output = output_path if not output_path.is_empty() else ProjectSettings.globalize_path(stem + ".json")
 	job_error = ProjectSettings.globalize_path(stem + "-error.json")
 	job_completion = ProjectSettings.globalize_path(stem + "-complete.json")
+	job_started = ProjectSettings.globalize_path(stem + "-started.json")
 	var arguments: PackedStringArray = [
 		repository_root().path_join("scripts/lab_project.py"), action, input_path, job_output,
 		"--error-output", job_error, "--completion-output", job_completion]
@@ -466,12 +565,17 @@ func _start_job(action: String, input_path: String, output_path: String = "") ->
 	if action == "validate" or action == "package":
 		arguments.append_array(["--asset-root", job_asset_root])
 	var interpreter: String = python_command()
-	if action == "build-blade":
+	if action == "build-blade" or action == "build-body":
 		arguments = [repository_root().path_join("scripts/lab_cad.py"), input_path, job_output,
 			"--error-output", job_error, "--completion-output", job_completion]
+	if action == "cad-torque":
+		arguments = [repository_root().path_join("scripts/lab_cad_analysis.py"), input_path, job_output,
+			"--asset-root", project_asset_root, "--error-output", job_error, "--completion-output", job_completion]
+	if action == "build-blade" or action == "build-body" or action == "cad-torque":
 		var cad_python: String = OS.get_environment("LAB_CAD_PYTHON")
 		if not cad_python.is_empty():
 			interpreter = cad_python
+	arguments.append_array(["--started-output", job_started])
 	job_pid = OS.create_process(interpreter, arguments, false)
 	status_label.text = "Running %s…" % action if job_pid > 0 else "Cannot start the configured Python worker"
 
@@ -479,7 +583,15 @@ func _start_job(action: String, input_path: String, output_path: String = "") ->
 func _cancel_job() -> void:
 	if job_pid > 0:
 		if OS.is_process_running(job_pid):
-			OS.kill(job_pid)
+			if OS.get_name() == "Windows":
+				# The Windows venv launcher starts a child interpreter.
+				var output: Array = []
+				var stopped: int = OS.execute("taskkill", ["/PID", str(job_pid), "/T", "/F"], output, true, false)
+				if stopped != 0 and OS.is_process_running(job_pid):
+					status_label.text = "Worker termination failed. The job is still tracked."
+					return
+			else:
+				OS.kill(job_pid)
 		job_pid = -1
 		status_label.text = "Job cancelled. The current project is available."
 
@@ -494,26 +606,35 @@ func _process(delta: float) -> void:
 			var output: Variant = JSON.parse_string(FileAccess.get_file_as_string(job_output))
 			if not output is Dictionary:
 				status_label.text = "Worker returned invalid JSON"
-			elif job_action == "run":
+			elif job_action == "run" or job_action == "cad-torque":
 				result = output
 				replay_time = 0.0
+				playing = false
+				timeline.set_value_no_signal(0.0)
+				if job_action == "cad-torque":
+					_show_cad_properties(output["mass_properties"])
 				var telemetry: Variant = result.get("result", {}).get("telemetry")
 				if telemetry is Dictionary and telemetry.get("t", []).size() > 0:
 					timeline.max_value = float(telemetry["t"][-1])
-				status_label.text = "Reference run %s · %.2f seconds · physical validation pending" % [
+					_seek(0)
+					status_label.text = "Experiment %s · %.2f seconds · physical validation pending" % [
 					result.get("result", {}).get("status", "failed"),
 					(Time.get_ticks_msec() - job_started_ms) / 1000.0]
+				else:
+					status_label.text = "Inconclusive: " + str(result.get("result", {}).get("reason", "No trajectory returned"))
 			else:
 				var next_project: Dictionary
 				var next_root: String
-				if job_action == "build-blade":
+				if job_action == "build-blade" or job_action == "build-body":
 					next_project = output["project"]
 					next_root = str(output["project_path"]).get_base_dir()
 				else:
 					next_project = output
 					next_root = job_output.get_base_dir() if job_action == "package" else job_asset_root
 				if _adopt_project(next_project, next_root):
-					status_label.text = "Blade geometry built. Physical validation pending." if job_action == "build-blade" else "Project opened. Document and asset checks passed."
+					status_label.text = "Geometry rebuilt. Physical validation pending." if job_action.begins_with("build-") else "Project opened. Document and asset checks passed."
+					if output.has("geometry"):
+						_show_cad_properties(output["geometry"]["mass_properties"])
 		else:
 			status_label.text = "Worker ended without a result. Check LAB_PYTHON and backend dependencies."
 	if playing and not result.is_empty():
@@ -535,6 +656,17 @@ func _completed_output() -> bool:
 		return false
 	var receipt: Variant = JSON.parse_string(FileAccess.get_file_as_string(job_completion))
 	return receipt is Dictionary and receipt.get("output_sha256") == FileAccess.get_sha256(job_output)
+
+
+func _show_cad_properties(properties: Dictionary) -> void:
+	if properties.get("mass_kg") == null:
+		metrics_label.text = "Uniform density missing.\nMass and inertia are unknown."
+	else:
+		var tensor: Array = properties["inertia_about_cog_kg_m2"]
+		var center: Array = properties["center_of_mass_m"]
+		metrics_label.text = "Uniform-density estimate\nMass %.6f kg\nCoG [%.4f, %.4f, %.4f] m\nCentral inertia diagonal\n[%.7f, %.7f, %.7f] kg·m²" % [
+			properties["mass_kg"], center[0], center[1], center[2], tensor[0][0], tensor[1][1], tensor[2][2]]
+	scope_label.text = "Rigid-body mathematics · assumed uniform density · physical validation pending"
 
 
 func _seek(time_s: float) -> void:
@@ -562,9 +694,12 @@ func _seek(time_s: float) -> void:
 		var rotation0: Quaternion = Quaternion(float(q0[1]), float(q0[3]), -float(q0[2]), float(q0[0]))
 		var rotation1: Quaternion = Quaternion(float(q1[1]), float(q1[3]), -float(q1[2]), float(q1[0]))
 		aircraft.quaternion = rotation0.slerp(rotation1, fraction)
+	if result.get("experiment_kind") == "cad_torque_1":
+		# The rigid-body state is at its CoG; the CAD mesh retains its original datum.
+		aircraft.position -= aircraft.quaternion * _scene_position(result["mass_properties"]["center_of_mass_m"])
 	_update_camera()
 
 
 func _exit_tree() -> void:
 	if job_pid > 0 and OS.is_process_running(job_pid):
-		OS.kill(job_pid)
+		_cancel_job()
