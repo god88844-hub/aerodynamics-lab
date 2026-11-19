@@ -35,6 +35,8 @@ The application starts the existing Python project worker as a separate process.
 
 The native library combines supplied part masses and coordinates using double precision. Rendered markers represent component positions. Source geometry, calibrated component behavior and validation limits remain recorded in the project/backend inputs.
 
+New project runs capture Python model/component file hashes, the component data, the dependency-lock hash and numerical package/platform versions. The record supports reproducing the selected reference backend.
+
 The legacy backend explicitly refuses changed environment settings and generic assembly documents. Other family identities are available for project authoring while their physical backends are implemented. The worker reports failed operations separately from saved projects.
 
 Godot and godot-cpp use the MIT license. The extension build copies the bindings' full license notice into its output directory. Source archive URLs and checksums are pinned in the build definitions.

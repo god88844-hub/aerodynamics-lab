@@ -25,7 +25,8 @@ jobs:
         with:
           python-version: "3.11"
       - name: Install backend dependencies
-        run: pip install --require-hashes --only-binary=:all: -r apps/api/requirements.lock
+        run: |
+          pip install --require-hashes --only-binary=:all: -r apps/api/requirements.lock
       - name: Download pinned Godot
         run: |
           curl --fail --location --output godot.zip https://github.com/godotengine/godot/releases/download/4.7.2-stable/Godot_v4.7.2-stable_linux.x86_64.zip

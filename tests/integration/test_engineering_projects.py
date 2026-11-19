@@ -40,6 +40,8 @@ def test_legacy_import_round_trip_and_real_solver(legacy):
     assert report["result"]["status"] == "completed"
     assert report["project_sha256"] == sha256(restored.canonical_bytes()).hexdigest()
     assert report["physical_validation_status"] == "unvalidated"
+    assert report["model_environment"]["package_versions"]["numpy"]
+    assert "packages/physics/scenarios/runner.py" in report["model_environment"]["files_sha256"]
     assert report["result"]["telemetry"]["t"]
 
 

@@ -4,6 +4,7 @@ from hashlib import sha256
 
 from aeroforge_schemas.project import EngineeringProject, Environment, LegacyMultirotorVehicle
 from app.services.simulation_service import run_simulation
+from app.services.run_provenance import capture_provenance
 
 
 def run_project(project: EngineeringProject) -> dict:
@@ -25,6 +26,7 @@ def run_project(project: EngineeringProject) -> dict:
         "project": project.model_dump(mode="json"),
         "project_sha256": sha256(project.canonical_bytes()).hexdigest(),
         "backend_id": "legacy_python",
+        "model_environment": capture_provenance(),
         "physical_validation_status": "unvalidated",
         "inputs": inputs,
         "result": report,
