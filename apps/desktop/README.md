@@ -35,7 +35,7 @@ The application starts the existing Python project worker as a separate process.
 
 The native library combines supplied part masses and coordinates using double precision. Rendered markers represent component positions. Source geometry, calibrated component behavior and validation limits remain recorded in the project/backend inputs.
 
-New project runs capture Python model/component file hashes, the component data, the dependency-lock hash and numerical package/platform versions. The record supports reproducing the selected reference backend.
+New project runs freeze their input document and capture Python model/component file hashes, the component data, the dependency-lock hash and numerical package/platform versions. A changed model environment during execution causes a refusal. The record supports reproducing the selected reference backend.
 
 The legacy backend explicitly refuses changed environment settings and generic assembly documents. Other family identities are available for project authoring while their physical backends are implemented. The worker reports failed operations separately from saved projects.
 

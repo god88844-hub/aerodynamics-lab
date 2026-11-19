@@ -14,6 +14,7 @@ from pydantic import ValidationError
 from aeroforge_schemas.project import EngineeringProject, import_legacy_project
 from app.main import app
 from app.services.project_service import run_project
+from app.services import project_service
 
 ROOT = Path(__file__).resolve().parents[2]
 
@@ -96,6 +97,22 @@ def test_nondefault_environment_is_stored_and_explicitly_refused(legacy):
     assert restored.environment.wind_world_m_s == (4.0, 0.0, 0.0)
     with pytest.raises(ValueError, match="fixed default environment"):
         run_project(restored)
+
+
+def test_run_freezes_caller_inputs_and_refuses_environment_changes(legacy, monkeypatch):
+    project = import_legacy_project(legacy)
+    original_name = project.name
+    def mutate_caller(*args):
+        project.name = "concurrent edit"
+        return {"status": "completed"}, {}
+    monkeypatch.setattr(project_service, "run_simulation", mutate_caller)
+    report = run_project(project)
+    assert report["project"]["name"] == original_name
+    assert project.name == "concurrent edit"
+    hashes = iter([{"sha256": "a" * 64}, {"sha256": "b" * 64}])
+    monkeypatch.setattr(project_service, "capture_provenance", lambda: next(hashes))
+    with pytest.raises(ValueError, match="changed during the run"):
+        run_project(project)
 
 
 @pytest.mark.parametrize("path", ["../part.step", "/part.step", "C:/part.step", "part\\file.step"])
