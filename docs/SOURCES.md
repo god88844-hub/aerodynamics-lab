@@ -1,0 +1,68 @@
+# Aerodynamics Lab source and evidence library
+
+Checked **19 November 2026**. The machine-readable [registry](../data/research/registry.json) caches primary-source findings, licensing scope, hardware/channels, acquisition instructions and gaps for every approved phase. The project remains Apache-2.0; external code, data and documents retain their own terms.
+
+## What is actually cached
+
+Research records and URLs are cached in the registry. Original provider bytes are a separate fact:
+
+- **In this repository:** the existing [Quadplane BATT.csv](../data/benchmarks/public/quadplane_2022/BATT.csv), its attribution/manifest, an existing UIUC static propeller file, source receipts and campaign artifacts. The Quadplane file is the small redistributable raw sample: CC BY 4.0, 1,442 rows, **no per-row timestamps**. It cannot support an independent time integral or transient replay. [Original release/license](https://github.com/AdamDony/quadplane-px4-flight-data/tree/122ceb2cf3913725eef5cd9171a9779220c63335).
+- **Outside this repository:** 33 files in the sibling `../source-physical` directory were read and hashed, totaling **1,191,354,752 bytes**. NASA Edge, selected M100, NanoBench, UIUC axial, Kotarski and NeuroBEM source files all match their existing committed SHA-256 pins. These files are available on this workstation, but are **not shipped by cloning this repository**.
+- **Reproducibility artifacts:** 48 existing repository campaign/source/receipt artifacts were hashed. The registry stores their actual paths, sizes and SHA-256 values, plus external-file pin comparisons. Matching a prior pin establishes byte identity to that pin; it does not independently authenticate the issuer, instrument calibration or physical model accuracy.
+- **Cited only:** other tools, reports and future datasets below. A public landing page, a preview, a download endpoint, a historical source receipt and a local original are distinct acquisition states. No new dataset originals were downloaded or added by this source-library task.
+
+Older source-inventory prose may describe an earlier acquisition attempt. Preserve that history; use the dated registry custody audit to determine current local availability. Existing campaign conclusions retain their stated limits.
+
+## Phase 0: shared foundation across all drone types
+
+Phase 0 includes multirotor, fixed-wing, helicopter and VTOL drones; full built-in CAD; electrical systems; interactive and offline analysis; plain engineering terrain; rain/wet operation and snow/icing; learning; autonomy; validation and release evidence. Requirement IDs are **FND, CAD, ELEC, WORLD, WEATHER, AIRCRAFT, ANALYSIS, LEARN, AUTO, VALIDATION, RELEASE**. Source availability is not completion of those requirements.
+
+| Area | Primary sources and reuse | Boundary |
+|---|---|---|
+| Credibility | [NASA-STD-7009B](https://standards.nasa.gov/sites/default/files/standards/NASA/B/1/NASA-STD-7009B-Final-3-5-2024.pdf) | Intended use, verification/validation domains, uncertainty, sensitivity and data pedigree; no universal fidelity percentage. |
+| Installed app | [Godot/MIT](https://godotengine.org/license/), [GDExtension](https://docs.godotengine.org/en/stable/engine_details/engine_api/gdextension/index.html), [precision](https://docs.godotengine.org/en/stable/tutorials/physics/large_world_coordinates.html), [Tauri workers](https://v2.tauri.app/develop/sidecar/) | Prototype and measure before migrating the existing UI. Double-precision state and worker threads need explicit boundaries. [Unreal](https://www.unrealengine.com/eula/unreal) is proprietary/source-available with distribution and license-combination restrictions. |
+| Full CAD | [OCCT](https://www.occt3d.com/dev/doc/overview/html/index.html), [CadQuery](https://github.com/CadQuery/cadquery), [FreeCAD](https://github.com/FreeCAD/FreeCAD), [OpenCascade.js](https://github.com/donalffons/opencascade.js) | Exact geometry, sketch/history, drawings and parametric recipes require distinct responsibilities. OCCT/LGPL terms persist through wrappers; display triangles are not a volume mesh. |
+| Offline analysis | [Gmsh](https://gmsh.info/), [SU2](https://github.com/su2code/SU2), [CalculiX](https://www.dhondt.de/) | Optional meshing/CFD/structures adapters, with independent licenses, convergence and measurement requirements. Preserve useful verified Python models; replace only demonstrated bottlenecks. |
+| Flight stack/plant | [ArduPilot frames](https://ardupilot.org/dev/docs/using-sitl-for-ardupilot-testing.html), [JSON backend](https://ardupilot.org/dev/docs/sitl-with-JSON.html), [PX4](https://docs.px4.io/main/en/simulation/), [JSBSim](https://github.com/JSBSim-Team/jsbsim) | Frame-specific plants support broad reuse. SITL and HIL test integration; their simulated observations do not replace physical measurements. One authoritative plant per run. |
+| World/weather | [Gazebo physics](https://gazebosim.org/api/sim/8/physics.html), [WindEffects](https://gazebosim.org/api/sim/8/classgz_1_1sim_1_1systems_1_1WindEffects.html) | Simple wind-force approximations and visual precipitation do not establish aerodynamic or electrical weather effects. |
+| ETH autonomy | [RotorS](https://github.com/ethz-asl/rotors_simulator), [EuRoC](https://projects.asl.ethz.ch/datasets/euroc-mav/) | RotorS package-specific licenses/legacy dependencies need review. EuRoC is measured visual-inertial/pose evidence; its current Research Collection item license/access remains pending here. It does not provide complete powertrain validation. |
+| UZH autonomy | [Agilicious](https://github.com/uzh-rpg/agilicious), [current linked agreement](https://rpg.ifi.uzh.ch/docs/Agilicious_LICENSE_AGREEMENT_ACADEMIC_USE.pdf) | The linked 2023 agreement restricts use to internal academic noncommercial purposes and third-party redistribution requires permission. Do not bundle it based on the older paper's open-source description. |
+
+### Physical evidence candidates and existing campaigns
+
+| Source | Hardware and observations | Access/limits |
+|---|---|---|
+| [UIUC propellers](https://m-selig.ae.illinois.edu/props/propDB.html) | Named propeller, RPM, advance ratio, thrust/shaft-power coefficients | Existing static file in repo; six selected axial files externally byte-verified. Explicit raw redistribution terms were not established on reviewed propeller pages. |
+| [UIUC airfoils](https://m-selig.ae.illinois.edu/pd.html) | Named airfoil/test specimen, Reynolds number, lift/drag polars | Cited-only ASCII candidates. Provider explicitly applies [GPLv2 and attribution/manifesto conditions](https://m-selig.ae.illinois.edu/pd/gpl.html). Do not assume early constant `Cm` columns are measured pitching moment. |
+| [Oxford battery](https://ora.ox.ac.uk/objects/uuid:03ba4b01-cfed-46d3-9b1a-7d4a7bdf6fac) | Eight Kokam SLPB533459H4 740 mAh cells at 40°C; voltage/charge/temperature, separate first-cycle current | Cited only; ODbL/DbCL. Cell characterization does not validate an arbitrary high-C pack. |
+| [NASA Edge ground experiment](https://ntrs.nasa.gov/citations/20190025952) | Restrained Edge 540 powertrain; LLF20V/LLF20C on 200 Hz clock | Original archive externally verified. [Existing campaign](campaigns/M21_21_25_NASA_EDGE_PACK.md) retains anomalous readings, absent pack serial/calibration evidence and inconclusive envelope. Archive reuse terms remain pending. |
+| [CMU M100](https://doi.org/10.1184/R1/12683453.v1) | DJI M100/3510/620D/1345; synchronized bus V/I, wind and state exports | CC BY 4.0. Selected publisher-processed archive/metadata externally verified; logger-native ROS bags were not acquired by this audit. [Campaign](campaigns/M26_45_49_M100_MISSION_ENERGY.md). |
+| [NanoBench](https://github.com/syediu/nanobench/tree/934a1ab92c458cad99c9278a5cb63bf68af6e56c) | Instrumented 40.85 g Crazyflie CF_01; Vicon, IMU, PWM, voltage | BSD-3-Clause. Five CSV/YAML pairs and documentation externally verified. PWM is not measured RPM; voltage is forward-filled; EKF is Vicon-aided. [Campaign](campaigns/M26_40_44_NANOBENCH_VERTICAL.md). |
+| [NeuroBEM](https://rpg.ifi.uzh.ch/NeuroBEM.html) | Custom quadrotor; processed motion, motor speeds and voltage | Eight selected processed records externally verified; full release not verified. Data reuse terms pending. Filtered acceleration, mass discrepancy and axis conventions remain explicit. [Campaign](campaigns/M24_12_16_NEUROBEM_FORCE.md). |
+| [Kotarski Setup 3](https://doi.org/10.7910/DVN/J5L2P4) | P80 100Kv family/Alpha 80A/G30x10.5; thrust, torque, RPM, V/I | Three CC0 source CSVs externally verified. Revision/installation equivalence and measurement uncertainty remain unresolved. [Campaign](campaigns/M22_KOTARSKI_SETUP3_BENCHMARK.md). |
+| [UH-60A Airloads](https://ntrs.nasa.gov/citations/20200003148) | Full-scale helicopter blade/control loads and aircraft state | Public report endpoint verified; cited only. Full electronic database access not verified. Selected counters and hover biases do not validate small helicopter drones. |
+| [NASA LA-8](https://ntrs.nasa.gov/citations/20205003178) | Tandem tilt-wing tunnel forces/moments across configurations | Public report endpoint verified; cited only. Electronic raw/full-flight transition data not acquired. Exact propeller/test-entry identity matters; LA-9 not qualified. |
+| [Rain experiment](https://ntrs.nasa.gov/citations/19870016564) | Three airfoils, Re ≈310,000, extreme simulated rain; measured dry/wet lift/drag | Public report reviewed; cited only, no raw electronic archive established. Any digitization is derived data with extraction uncertainty. |
+| [NACA 23012 icing](https://ntrs.nasa.gov/citations/20160005836) | IRT ice shapes and ONERA F1 section aerodynamic measurements | Public report endpoint verified; cited only. Electronic data explicitly require NASA approval. Does not cover rotating-rotor icing/shedding, snow ingestion or wet electrical systems. |
+
+## Later phases: references retained, implementation deferred
+
+| Phase | Reusable primary references | Required additional evidence |
+|---|---|---|
+| **1 — Bioinspired uncrewed flight** | [PigeonBot II](https://datadryad.org/dataset/doi:10.5061/dryad.zkh1893h5) measured tunnel trials/CAD; [AVONET](https://figshare.com/s/b990722d72a26b5bfead) morphology; [calibrated CT inertia](https://datadryad.org/dataset/doi:10.5061/dryad.xsj3tx9gp) | Geometry-specific morphing, actuator, structural, fatigue and flight measurements. Dryad data are CC0; AVONET is CC BY 4.0 and includes inferred values. |
+| **2 — Human/crewed flight** | [OpenVSP/VSPAERO](https://github.com/OpenVSP/OpenVSP), UH-60A, airfoil/structure references | Retain **60 kg pilot** as a scenario assumption; include apparatus mass. AVONET does not measure wing mass and bird ratios are not universal human design laws. Full system/biomechanical evidence remains pending. OpenVSP NOSA 1.3 obligations require a separate license boundary. |
+| **3 — Jets/high-speed flight** | [NASA NACA 0012](https://tmbwg.github.io/turbmodels/naca0012_val.html), [RAE 2822](https://www.grc.nasa.gov/www/wind/valid/raetaf/raetaf.html), [Rotor 37](https://tmbwg.github.io/turbmodels/Other_exp_Data/rotor37_exp.html), [NASA CEA](https://github.com/nasa/cea) | Distinguish measured experiments from CFD reference outputs. Compressor-rig performance is not complete engine thrust. Heating, flutter, transients and supersonic/hypersonic configuration evidence remain pending. |
+| **4 — Rockets** | [RocketPy](https://github.com/RocketPy-Team/RocketPy), [Bella Lui filtered flight CSV](https://raw.githubusercontent.com/RocketPy-Team/RocketPy/master/data/rockets/EPFL_Bella_Lui/bella_lui_flight_data_filtered.csv), [OpenRocket](https://github.com/openrocket/openrocket), CEA | RocketPy code MIT; OpenRocket GPLv3-or-later; contributed data require separate review. CEA/trajectory predictions are not measured thrust. Configuration-specific combustion, cooling, mass change, recovery and full-flight evidence remain pending. |
+
+All later-phase originals remain cited-only in this library. Small file previews and provider manifests establish useful acquisition pointers, not complete future datasets.
+
+## Reuse and acquisition rules
+
+1. Start from the registry instead of repeating broad research. Refresh a source when its version/terms change, its link fails, or the proposed geometry/regime needs different evidence.
+2. Before acquiring data, inspect the exact version, file IDs, raw-data rights, hardware/configuration, sensors, clocks and calibration. A paper's license does not automatically cover its raw data or software.
+3. Preserve original bytes, README/license and provider manifest. Record acquisition date, size, SHA-256, provider checksum and every transformation. Store large originals externally and keep portable receipts; do not put workstation-only paths into production defaults.
+4. Freeze whole-experiment calibration/holdout roles and acceptance criteria. Report measured, derived and simulated channels separately. Unknown uncertainty or missing evidence remains pending/inconclusive.
+5. Preserve shared contracts for units/frames/clocks; parametric/display/analysis geometry; materials/mass/inertia; actuators/energy/thermal; weather; asynchronous solver jobs; and evidence provenance. Interactive and offline runs consume the same versioned project definition.
+6. Future geometry-specific experiments cannot be completely cached now. No source entry grants flightworthiness, manufacturing release, or universal physical equivalence.
+
+The registry records the exact SHA-256 verification scope; no campaign re-evaluation was performed by this documentation task.

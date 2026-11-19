@@ -1,0 +1,2595 @@
+{
+  "schema_version": "1.0",
+  "product": "Aerodynamics Lab",
+  "repository": "https://github.com/god88844-hub/aerodynamics-lab",
+  "checked_at": "2026-11-19",
+  "project_license": "Apache-2.0; external works retain their own licenses",
+  "phase0_requirement_ids": [
+    "FND",
+    "CAD",
+    "ELEC",
+    "WORLD",
+    "WEATHER",
+    "AIRCRAFT",
+    "ANALYSIS",
+    "LEARN",
+    "AUTO",
+    "VALIDATION",
+    "RELEASE"
+  ],
+  "phases": [
+    {
+      "id": 0,
+      "title": "Shared drone foundation",
+      "scope": "All drone types, full built-in CAD, interactive and offline analysis, electrical systems, plain engineering terrain, rain/wet operation and snow/icing, autonomy and evidence; missing experiments remain pending."
+    },
+    {
+      "id": 1,
+      "title": "Bioinspired uncrewed flight",
+      "status": "future_planned"
+    },
+    {
+      "id": 2,
+      "title": "Human and crewed aircraft",
+      "status": "future_planned",
+      "scenario": "60 kg pilot is an explicit scenario assumption, not total flying mass or a biological scaling law."
+    },
+    {
+      "id": 3,
+      "title": "Jets and high-speed flight",
+      "status": "future_planned"
+    },
+    {
+      "id": 4,
+      "title": "Rockets",
+      "status": "future_planned"
+    }
+  ],
+  "status_semantics": {
+    "research_record_cached": "This registry caches source findings/URLs, not original provider bytes.",
+    "public_primary_source_reviewed": "Provider documentation/metadata was read; neither acquisition nor model validity is implied.",
+    "external_local_originals_verified": "Listed files outside this Git worktree were read and match existing committed SHA-256 pins on checked_at.",
+    "original_bytes_in_repository": "Existing source file is named in repository_paths and hashed in local_custody; not an assertion that all upstream data are bundled.",
+    "cited_only": "No original dataset/source-code bytes cached by this source-library task.",
+    "approval_required": "Public report access does not grant restricted electronic data access.",
+    "physical_validation": "No entry grants new physical acceptance, manufacturing approval or flightworthiness."
+  },
+  "cache_policy": {
+    "scope": "Persist source cards and custody metadata now. Reuse checked sources; refresh when versions/terms change, links fail, or a new geometry/regime needs evidence.",
+    "before_acquisition": [
+      "select exact version/file IDs and hardware/configuration",
+      "inspect raw-data terms separately from article and software licenses",
+      "preserve original bytes and license/README",
+      "record source URL, acquisition date, byte count, SHA-256, provider checksum and transformations",
+      "freeze whole-experiment calibration/holdout roles before using new observations"
+    ],
+    "no_complete_future_cache": "Future geometry-specific measurements cannot be completely acquired in advance. Large/restricted archives and new experiments remain explicitly pending.",
+    "sample_policy": "Existing CC-BY-4.0 Quadplane BATT.csv supplies a small raw telemetry sample. No new dataset bytes were added; rights-unresolved UIUC/NASA/NeuroBEM originals were not recopied."
+  },
+  "shared_contracts": [
+    "SI units and explicit frames/time bases",
+    "parametric geometry/history versus display versus analysis meshes",
+    "component and articulated assembly identities/materials/mass/inertia",
+    "actuator, energy/thermal and changing-mass interfaces",
+    "environment and weather fields with provenance and validation envelopes",
+    "one authoritative plant and simulation clock per run",
+    "interactive/offline solver jobs using the same versioned project snapshot",
+    "uncertainty, independent holdouts, measured/derived/simulated channel labels and immutable evidence receipts"
+  ],
+  "entries": [
+    {
+      "id": "nasa_7009",
+      "title": "NASA-STD-7009B models and simulations",
+      "phases": [
+        0,
+        1,
+        2,
+        3,
+        4
+      ],
+      "requirements": [
+        "FND",
+        "ANALYSIS",
+        "LEARN",
+        "VALIDATION",
+        "RELEASE"
+      ],
+      "kind": "standard",
+      "checked_at": "2026-11-19",
+      "urls": [
+        "https://standards.nasa.gov/sites/default/files/standards/NASA/B/1/NASA-STD-7009B-Final-3-5-2024.pdf"
+      ],
+      "license": {
+        "identifier": "NASA-public-standard",
+        "scope": "2024-03-05 public standard",
+        "terms_url": "https://standards.nasa.gov/standard/NASA/NASA-STD-7009",
+        "redistribution": "Use source citation; no software license implied"
+      },
+      "hardware": [],
+      "channels": [
+        "intended use",
+        "verification and validation domains",
+        "data pedigree",
+        "uncertainty and sensitivity"
+      ],
+      "uncertainty_and_gaps": [
+        "No universal accuracy percentage or certification of Aerodynamics Lab; acceptance must be decision-specific."
+      ],
+      "access": {
+        "provider_status": "public_primary_source_reviewed",
+        "research_record_cached": true,
+        "original_bytes_in_repository": false,
+        "external_local_originals_verified": false,
+        "acquisition": "cited_only; select a version, inspect exact terms and manifest before downloading"
+      },
+      "integration": "planned_reference_or_adapter; no new validation acceptance"
+    },
+    {
+      "id": "godot",
+      "title": "Godot native application and GDExtension",
+      "phases": [
+        0,
+        1,
+        2,
+        3,
+        4
+      ],
+      "requirements": [
+        "FND",
+        "WORLD",
+        "LEARN",
+        "RELEASE"
+      ],
+      "kind": "software",
+      "checked_at": "2026-11-19",
+      "urls": [
+        "https://godotengine.org/download/windows/",
+        "https://docs.godotengine.org/en/stable/engine_details/engine_api/gdextension/index.html",
+        "https://docs.godotengine.org/en/stable/tutorials/physics/large_world_coordinates.html",
+        "https://docs.godotengine.org/en/stable/tutorials/performance/thread_safe_apis.html"
+      ],
+      "license": {
+        "identifier": "MIT",
+        "scope": "engine; dependencies retain their own notices",
+        "terms_url": "https://godotengine.org/license/",
+        "redistribution": "Retain copyright/license and dependency notices"
+      },
+      "hardware": [
+        "Windows x86_64 target; GPU and RAM must be benchmarked"
+      ],
+      "channels": [
+        "native 3D/UI",
+        "C++ shared-library interface"
+      ],
+      "uncertainty_and_gaps": [
+        "4.7.2 was listed by the provider on check date; pin an actual build before packaging.",
+        "Default vector components are 32-bit; double builds require matching editor/export/extension builds.",
+        "Active scene tree is not thread-safe; renderer precision is separate from authoritative numerical state."
+      ],
+      "access": {
+        "provider_status": "public_primary_source_reviewed",
+        "research_record_cached": true,
+        "original_bytes_in_repository": false,
+        "external_local_originals_verified": false,
+        "acquisition": "cited_only; select a version, inspect exact terms and manifest before downloading"
+      },
+      "integration": "planned_reference_or_adapter; no new validation acceptance"
+    },
+    {
+      "id": "desktop_alternatives",
+      "title": "Tauri reuse and Unreal comparison",
+      "phases": [
+        0,
+        1,
+        2,
+        3,
+        4
+      ],
+      "requirements": [
+        "FND",
+        "RELEASE"
+      ],
+      "kind": "software_comparison",
+      "checked_at": "2026-11-19",
+      "urls": [
+        "https://v2.tauri.app/develop/sidecar/",
+        "https://v2.tauri.app/start/prerequisites/",
+        "https://v2.tauri.app/concept/architecture/",
+        "https://www.unrealengine.com/eula/unreal"
+      ],
+      "license": {
+        "identifier": "MIXED",
+        "scope": "Tauri MIT OR Apache-2.0; Unreal proprietary/source-available EULA",
+        "terms_url": "https://www.unrealengine.com/eula/unreal",
+        "redistribution": "Unreal Engine Tools distribution, royalty/seat and license-combination terms require explicit review"
+      },
+      "hardware": [
+        "Windows WebView2 for Tauri"
+      ],
+      "channels": [
+        "existing React/Three UI reuse",
+        "bundled local worker process"
+      ],
+      "uncertainty_and_gaps": [
+        "No shell migration or performance benefit is established by source review; prototype on the actual machine.",
+        "Unreal source access does not permit unrestricted redistribution or automatic combination with GPL data/code."
+      ],
+      "access": {
+        "provider_status": "public_primary_source_reviewed",
+        "research_record_cached": true,
+        "original_bytes_in_repository": false,
+        "external_local_originals_verified": false,
+        "acquisition": "cited_only; select a version, inspect exact terms and manifest before downloading"
+      },
+      "integration": "planned_reference_or_adapter; no new validation acceptance"
+    },
+    {
+      "id": "occt",
+      "title": "Open CASCADE exact geometry kernel",
+      "phases": [
+        0,
+        1,
+        2,
+        3,
+        4
+      ],
+      "requirements": [
+        "FND",
+        "CAD",
+        "ANALYSIS",
+        "RELEASE"
+      ],
+      "kind": "software",
+      "checked_at": "2026-11-19",
+      "urls": [
+        "https://www.occt3d.com/dev/doc/overview/html/index.html",
+        "https://www.occt3d.com/dev/doc/overview/html/occt_user_guides__modeling_algos.html",
+        "https://www.occt3d.com/dev/doc/overview/html/occt_user_guides__mesh.html"
+      ],
+      "license": {
+        "identifier": "LGPL-2.1-only WITH OCCT-exception",
+        "scope": "selected OCCT release and bundled dependencies",
+        "terms_url": "https://github.com/Open-Cascade-SAS/OCCT",
+        "redistribution": "Retain notices, corresponding source/build arrangements and library replacement rights as applicable"
+      },
+      "hardware": [],
+      "channels": [
+        "exact curves/surfaces/BRep solids",
+        "Boolean/loft operations",
+        "surface tessellation"
+      ],
+      "uncertainty_and_gaps": [
+        "A kernel does not supply the entire sketch/history/drawing UI.",
+        "Display tessellation is not a CFD volume mesh; valid geometry is not validated aerodynamics."
+      ],
+      "access": {
+        "provider_status": "public_primary_source_reviewed",
+        "research_record_cached": true,
+        "original_bytes_in_repository": false,
+        "external_local_originals_verified": false,
+        "acquisition": "cited_only; select a version, inspect exact terms and manifest before downloading"
+      },
+      "integration": "planned_reference_or_adapter; no new validation acceptance"
+    },
+    {
+      "id": "cad_frontends",
+      "title": "CadQuery, FreeCAD and OpenCascade.js reuse",
+      "phases": [
+        0,
+        1,
+        2,
+        3,
+        4
+      ],
+      "requirements": [
+        "CAD",
+        "FND",
+        "RELEASE"
+      ],
+      "kind": "software",
+      "checked_at": "2026-11-19",
+      "urls": [
+        "https://github.com/CadQuery/cadquery",
+        "https://cadquery.readthedocs.io/en/latest/importexport.html",
+        "https://github.com/FreeCAD/FreeCAD",
+        "https://github.com/donalffons/opencascade.js"
+      ],
+      "license": {
+        "identifier": "MIXED",
+        "scope": "CadQuery Apache-2.0; FreeCAD repository LGPL-2.1; OpenCascade.js LGPL-2.1; OCP/OCCT and modules retain separate terms",
+        "terms_url": "https://github.com/CadQuery/cadquery/blob/master/LICENSE",
+        "redistribution": "Review selected modules/dependencies; do not relabel them Apache-2.0"
+      },
+      "hardware": [],
+      "channels": [
+        "headless parametric recipes",
+        "constrained sketches and drawings",
+        "browser WASM CAD"
+      ],
+      "uncertainty_and_gaps": [
+        "STEP/glTF/STL exchange does not preserve the complete parametric recipe.",
+        "Benchmark representative blade/solid rebuilds and drawing export before choosing the execution boundary."
+      ],
+      "access": {
+        "provider_status": "public_primary_source_reviewed",
+        "research_record_cached": true,
+        "original_bytes_in_repository": false,
+        "external_local_originals_verified": false,
+        "acquisition": "cited_only; select a version, inspect exact terms and manifest before downloading"
+      },
+      "integration": "planned_reference_or_adapter; no new validation acceptance"
+    },
+    {
+      "id": "offline_solvers",
+      "title": "Gmsh, SU2 and CalculiX offline adapters",
+      "phases": [
+        0,
+        1,
+        2,
+        3,
+        4
+      ],
+      "requirements": [
+        "CAD",
+        "ANALYSIS",
+        "RELEASE"
+      ],
+      "kind": "software",
+      "checked_at": "2026-11-19",
+      "urls": [
+        "https://gmsh.info/",
+        "https://github.com/su2code/SU2",
+        "https://www.dhondt.de/"
+      ],
+      "license": {
+        "identifier": "MIXED",
+        "scope": "Gmsh GPL-2.0-or-later with exception; SU2 LGPL-2.1; CalculiX GPLv2",
+        "terms_url": "https://gmsh.info/#Licensing",
+        "redistribution": "Preserve each tool/dependency license; process boundaries do not waive obligations"
+      },
+      "hardware": [],
+      "channels": [
+        "volume meshing",
+        "CFD coefficient studies",
+        "structural analysis"
+      ],
+      "uncertainty_and_gaps": [
+        "Need mesh convergence, boundary conditions, materials, calibration and independent measurements for the selected geometry.",
+        "Run asynchronously; no universal geometry-to-flight validation."
+      ],
+      "access": {
+        "provider_status": "public_primary_source_reviewed",
+        "research_record_cached": true,
+        "original_bytes_in_repository": false,
+        "external_local_originals_verified": false,
+        "acquisition": "cited_only; select a version, inspect exact terms and manifest before downloading"
+      },
+      "integration": "planned_reference_or_adapter; no new validation acceptance"
+    },
+    {
+      "id": "ardupilot",
+      "title": "ArduPilot SITL and JSON physics backend",
+      "phases": [
+        0,
+        1,
+        2
+      ],
+      "requirements": [
+        "AIRCRAFT",
+        "AUTO",
+        "WORLD",
+        "VALIDATION"
+      ],
+      "kind": "software_simulation",
+      "checked_at": "2026-11-19",
+      "urls": [
+        "https://ardupilot.org/dev/docs/using-sitl-for-ardupilot-testing.html",
+        "https://ardupilot.org/dev/docs/sitl-with-JSON.html",
+        "https://ardupilot.org/dev/docs/sim-on-hardware.html"
+      ],
+      "license": {
+        "identifier": "GPL-3.0",
+        "scope": "ArduPilot software and selected dependencies",
+        "terms_url": "https://ardupilot.org/dev/docs/license-gplv3.html",
+        "redistribution": "Retain GPL obligations; review packaging independently of project Apache-2.0"
+      },
+      "hardware": [
+        "plane, multirotor, heli, compound/dual heli, QuadPlane, tilt and tailsitter frames"
+      ],
+      "channels": [
+        "actuator commands",
+        "simulated vehicle and sensor state"
+      ],
+      "uncertainty_and_gaps": [
+        "Frame selection determines the plant; generic frame names do not validate custom geometry.",
+        "SITL/board simulation exercise software/hardware integration, not independent physical measurements."
+      ],
+      "access": {
+        "provider_status": "public_primary_source_reviewed",
+        "research_record_cached": true,
+        "original_bytes_in_repository": false,
+        "external_local_originals_verified": false,
+        "acquisition": "cited_only; select a version, inspect exact terms and manifest before downloading"
+      },
+      "integration": "planned_reference_or_adapter; no new validation acceptance"
+    },
+    {
+      "id": "px4_gazebo",
+      "title": "PX4 and Gazebo worlds/sensors",
+      "phases": [
+        0,
+        1,
+        2
+      ],
+      "requirements": [
+        "AIRCRAFT",
+        "AUTO",
+        "WORLD",
+        "WEATHER",
+        "VALIDATION"
+      ],
+      "kind": "software_simulation",
+      "checked_at": "2026-11-19",
+      "urls": [
+        "https://docs.px4.io/main/en/simulation/",
+        "https://docs.px4.io/main/en/simulation/hitl",
+        "https://gazebosim.org/api/sim/8/physics.html",
+        "https://gazebosim.org/api/sim/8/classgz_1_1sim_1_1systems_1_1WindEffects.html",
+        "https://github.com/gazebosim/gz-sim"
+      ],
+      "license": {
+        "identifier": "MIXED",
+        "scope": "PX4 BSD-3-Clause; Gazebo Sim Apache-2.0; model assets/dependencies separate",
+        "terms_url": "https://github.com/PX4/PX4-Autopilot/blob/main/LICENSE",
+        "redistribution": "Retain notices and inspect model asset licenses"
+      },
+      "hardware": [],
+      "channels": [
+        "flight-stack simulation",
+        "world/collision/sensors",
+        "approximate wind effects"
+      ],
+      "uncertainty_and_gaps": [
+        "New PX4 projects should use current Gazebo; Classic/HIL support is community-maintained and must be version/board tested.",
+        "Gazebo WindEffects is a simple model with approximate forces, not resolved weather/airflow.",
+        "Use one authoritative plant/integrator per run."
+      ],
+      "access": {
+        "provider_status": "public_primary_source_reviewed",
+        "research_record_cached": true,
+        "original_bytes_in_repository": false,
+        "external_local_originals_verified": false,
+        "acquisition": "cited_only; select a version, inspect exact terms and manifest before downloading"
+      },
+      "integration": "planned_reference_or_adapter; no new validation acceptance"
+    },
+    {
+      "id": "jsbsim",
+      "title": "JSBSim flight-dynamics adapter",
+      "phases": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "requirements": [
+        "AIRCRAFT",
+        "ANALYSIS",
+        "VALIDATION"
+      ],
+      "kind": "software",
+      "checked_at": "2026-11-19",
+      "urls": [
+        "https://jsbsim-team.github.io/jsbsim-reference-manual/",
+        "https://github.com/JSBSim-Team/jsbsim"
+      ],
+      "license": {
+        "identifier": "LGPL-2.1",
+        "scope": "library; aircraft data require separate inspection",
+        "terms_url": "https://github.com/JSBSim-Team/jsbsim",
+        "redistribution": "Retain license and applicable library distribution obligations"
+      },
+      "hardware": [],
+      "channels": [
+        "data-driven six-degree-of-freedom flight dynamics"
+      ],
+      "uncertainty_and_gaps": [
+        "Coefficient tables need provenance and validation; arbitrary geometry is not automatically parameterized."
+      ],
+      "access": {
+        "provider_status": "public_primary_source_reviewed",
+        "research_record_cached": true,
+        "original_bytes_in_repository": false,
+        "external_local_originals_verified": false,
+        "acquisition": "cited_only; select a version, inspect exact terms and manifest before downloading"
+      },
+      "integration": "planned_reference_or_adapter; no new validation acceptance"
+    },
+    {
+      "id": "eth_rotors",
+      "title": "ETH ASL RotorS simulator",
+      "phases": [
+        0,
+        1
+      ],
+      "requirements": [
+        "AUTO",
+        "WORLD",
+        "LEARN"
+      ],
+      "kind": "software_simulation",
+      "checked_at": "2026-11-19",
+      "urls": [
+        "https://github.com/ethz-asl/rotors_simulator",
+        "https://raw.githubusercontent.com/ethz-asl/rotors_simulator/master/rotors_gazebo/package.xml"
+      ],
+      "license": {
+        "identifier": "PACKAGE-REVIEW-REQUIRED",
+        "scope": "rotors_gazebo declares ASL 2.0; not a verified blanket license for every package",
+        "terms_url": "https://raw.githubusercontent.com/ethz-asl/rotors_simulator/master/rotors_gazebo/package.xml",
+        "redistribution": "Review selected source headers, dependencies and legacy Gazebo/ROS compatibility"
+      },
+      "hardware": [
+        "simulated UAVs"
+      ],
+      "channels": [
+        "simulated state/sensors/control"
+      ],
+      "uncertainty_and_gaps": [
+        "Software-generated observations are not experimental flight data.",
+        "Legacy integration is a candidate, not a new required dependency."
+      ],
+      "access": {
+        "provider_status": "public_primary_source_reviewed",
+        "research_record_cached": true,
+        "original_bytes_in_repository": false,
+        "external_local_originals_verified": false,
+        "acquisition": "cited_only; select a version, inspect exact terms and manifest before downloading"
+      },
+      "integration": "planned_reference_or_adapter; no new validation acceptance"
+    },
+    {
+      "id": "eth_euroc",
+      "title": "ETH EuRoC MAV visual-inertial dataset",
+      "phases": [
+        0,
+        1
+      ],
+      "requirements": [
+        "AUTO",
+        "LEARN",
+        "VALIDATION"
+      ],
+      "kind": "measured_flight_perception",
+      "checked_at": "2026-11-19",
+      "urls": [
+        "https://projects.asl.ethz.ch/datasets/euroc-mav/",
+        "https://doi.org/10.3929/ethz-b-000690084"
+      ],
+      "license": {
+        "identifier": "ITEM-TERMS-PENDING",
+        "scope": "provider page reviewed; Research Collection item returned 403 in this session",
+        "terms_url": "https://doi.org/10.3929/ethz-b-000690084",
+        "redistribution": "Inspect current item license before copying originals"
+      },
+      "hardware": [
+        "micro aerial vehicle",
+        "stereo camera/IMU",
+        "Vicon/Leica reference systems"
+      ],
+      "channels": [
+        "stereo 20 FPS",
+        "IMU 200 Hz",
+        "pose/position/structure reference",
+        "camera-IMU calibration"
+      ],
+      "uncertainty_and_gaps": [
+        "Synchronization/reference accuracy has documented limitations; no complete powertrain measurements on the reviewed page.",
+        "Perception/estimation evidence does not establish propulsion/endurance accuracy."
+      ],
+      "access": {
+        "provider_status": "provider_description_reviewed; original_collection_access_not_verified",
+        "research_record_cached": true,
+        "original_bytes_in_repository": false,
+        "external_local_originals_verified": false,
+        "acquisition": "Follow ETH Research Collection DOI; inspect file manifest and license, then acquire selected sequences."
+      },
+      "integration": "planned_reference_or_adapter; no new validation acceptance"
+    },
+    {
+      "id": "agilicious",
+      "title": "UZH Agilicious autonomy reference",
+      "phases": [
+        0,
+        1
+      ],
+      "requirements": [
+        "AUTO",
+        "LEARN"
+      ],
+      "kind": "restricted_software_reference",
+      "checked_at": "2026-11-19",
+      "urls": [
+        "https://github.com/uzh-rpg/agilicious",
+        "https://rpg.ifi.uzh.ch/docs/Agilicious_LICENSE_AGREEMENT_ACADEMIC_USE.pdf"
+      ],
+      "license": {
+        "identifier": "LicenseRef-UZH-Academic-Noncommercial-2023",
+        "scope": "current README-linked agreement dated 2023-02-14",
+        "terms_url": "https://rpg.ifi.uzh.ch/docs/Agilicious_LICENSE_AGREEMENT_ACADEMIC_USE.pdf",
+        "redistribution": "Internal academic noncommercial use; third-party distribution requires written permission"
+      },
+      "hardware": [
+        "agile quadrotor research platform"
+      ],
+      "channels": [
+        "controller/estimator/simulator interfaces"
+      ],
+      "uncertainty_and_gaps": [
+        "Do not infer unrestricted GPL reuse from the older paper's open-source description.",
+        "Current source access uses a collaboration request; excluded from bundled dependencies unless terms change or permission is obtained."
+      ],
+      "access": {
+        "provider_status": "public_documentation; code_access_and_redistribution_restricted",
+        "research_record_cached": true,
+        "original_bytes_in_repository": false,
+        "external_local_originals_verified": false,
+        "acquisition": "Cite interface ideas only; do not download/repackage restricted software without applicable permission."
+      },
+      "integration": "planned_reference_or_adapter; no new validation acceptance"
+    },
+    {
+      "id": "uiuc_propellers",
+      "title": "UIUC APC propeller measurements",
+      "phases": [
+        0,
+        1,
+        2
+      ],
+      "requirements": [
+        "ELEC",
+        "AIRCRAFT",
+        "ANALYSIS",
+        "VALIDATION"
+      ],
+      "kind": "measured_wind_tunnel_component",
+      "checked_at": "2026-11-19",
+      "urls": [
+        "https://m-selig.ae.illinois.edu/props/propDB.html",
+        "https://m-selig.ae.illinois.edu/props/volume-1/propDB-volume-1.html"
+      ],
+      "license": {
+        "identifier": "TERMS-REVIEW-REQUIRED",
+        "scope": "reviewed propeller pages provide attribution; explicit redistribution grant not established",
+        "terms_url": "https://m-selig.ae.illinois.edu/props/propDB.html",
+        "redistribution": "Existing legacy source copy remains documented; do not add new redistribution on assumed rights"
+      },
+      "hardware": [
+        "APC Thin Electric 10x5; test-specific identity"
+      ],
+      "channels": [
+        "RPM",
+        "advance ratio",
+        "thrust coefficient",
+        "shaft-power coefficient",
+        "efficiency"
+      ],
+      "uncertainty_and_gaps": [
+        "Static/axial component observations do not validate an assembled aircraft.",
+        "Apply volume-specific measurement uncertainty and tested inflow/RPM limits."
+      ],
+      "access": {
+        "provider_status": "public_primary_source_reviewed",
+        "research_record_cached": true,
+        "original_bytes_in_repository": true,
+        "external_local_originals_verified": true,
+        "acquisition": "Existing static source is in data/benchmarks/uiuc; six axial originals beside repository match campaign pins. Resolve raw redistribution terms before bundling more."
+      },
+      "integration": "planned_reference_or_adapter; no new validation acceptance",
+      "repository_paths": [
+        "data/benchmarks/uiuc/apce_10x5_static_pg0819.txt",
+        "docs/campaigns/m24_uiuc_axial_sweeps_freeze.json",
+        "docs/campaigns/m24_uiuc_axial_sweeps_results.json"
+      ],
+      "external_source_id": "uiuc_propellers"
+    },
+    {
+      "id": "uiuc_airfoils",
+      "title": "UIUC low-Reynolds-number airfoil measurements",
+      "phases": [
+        0,
+        1,
+        2
+      ],
+      "requirements": [
+        "AIRCRAFT",
+        "ANALYSIS",
+        "VALIDATION",
+        "LEARN"
+      ],
+      "kind": "measured_wind_tunnel_section",
+      "checked_at": "2026-11-19",
+      "urls": [
+        "https://m-selig.ae.illinois.edu/pd.html",
+        "https://m-selig.ae.illinois.edu/uiuc_lsat.html",
+        "https://m-selig.ae.illinois.edu/pd/pub/lsat/vol1/A18.LFT",
+        "https://m-selig.ae.illinois.edu/pd/pub/lsat/vol1/A18.DRG"
+      ],
+      "license": {
+        "identifier": "GPL-2.0",
+        "scope": "airfoil performance data plus provider attribution/manifesto requirements",
+        "terms_url": "https://m-selig.ae.illinois.edu/pd/gpl.html",
+        "redistribution": "Include required license/copyright/manifesto; retain recipients' redistribution rights and provider conditions"
+      },
+      "hardware": [
+        "named airfoil/test specimen; A18 clean files previewed"
+      ],
+      "channels": [
+        "Reynolds number",
+        "angle of attack",
+        "lift/drag coefficients"
+      ],
+      "uncertainty_and_gaps": [
+        "Early-volume constant Cm columns are not proof of measured pitching moment; use volume methods.",
+        "Section polars are not full-aircraft or flight validation."
+      ],
+      "access": {
+        "provider_status": "individual_ASCII_files_previewed; no_local_copy",
+        "research_record_cached": true,
+        "original_bytes_in_repository": false,
+        "external_local_originals_verified": false,
+        "acquisition": "Select airfoil and matching Re/transition regime; retain volume methods, GPL text, copyright and manifesto."
+      },
+      "integration": "planned_reference_or_adapter; no new validation acceptance"
+    },
+    {
+      "id": "oxford_battery",
+      "title": "Oxford Battery Degradation Dataset 1",
+      "phases": [
+        0,
+        1,
+        2
+      ],
+      "requirements": [
+        "ELEC",
+        "ANALYSIS",
+        "VALIDATION"
+      ],
+      "kind": "measured_laboratory_cell",
+      "checked_at": "2026-11-19",
+      "urls": [
+        "https://ora.ox.ac.uk/objects/uuid:03ba4b01-cfed-46d3-9b1a-7d4a7bdf6fac",
+        "https://ora.ox.ac.uk/objects/uuid:03ba4b01-cfed-46d3-9b1a-7d4a7bdf6fac/files/m43cc05e7c5f1245f4895d9dbd495e52f"
+      ],
+      "license": {
+        "identifier": "ODbL-1.0 AND DbCL-1.0",
+        "scope": "database and individual contents as described in official README",
+        "terms_url": "https://ora.ox.ac.uk/objects/uuid:03ba4b01-cfed-46d3-9b1a-7d4a7bdf6fac",
+        "redistribution": "Preserve source terms/attribution; database derivatives require applicable ODbL handling"
+      },
+      "hardware": [
+        "8 Kokam SLPB533459H4 740 mAh cells",
+        "Bio-Logic MPG-205",
+        "40 C chamber"
+      ],
+      "channels": [
+        "time",
+        "voltage",
+        "charge",
+        "temperature",
+        "current in separate first-cycle example"
+      ],
+      "uncertainty_and_gaps": [
+        "Main archive has periodic characterization, not every full dynamic cycle.",
+        "No calibration certificate/numerical uncertainty budget in reviewed README; no arbitrary drone-pack validation."
+      ],
+      "access": {
+        "provider_status": "public_primary_source_reviewed",
+        "research_record_cached": true,
+        "original_bytes_in_repository": false,
+        "external_local_originals_verified": false,
+        "acquisition": "cited_only; select a version, inspect exact terms and manifest before downloading"
+      },
+      "integration": "planned_reference_or_adapter; no new validation acceptance"
+    },
+    {
+      "id": "nasa_edge",
+      "title": "NASA Edge 540/HIRF pack ground recordings",
+      "phases": [
+        0,
+        1,
+        2
+      ],
+      "requirements": [
+        "ELEC",
+        "ANALYSIS",
+        "VALIDATION"
+      ],
+      "kind": "measured_restrained_vehicle_ground",
+      "checked_at": "2026-11-19",
+      "urls": [
+        "https://www.nasa.gov/intelligent-systems-division/discovery-and-systems-health/pcoe/pcoe-data-set-repository/",
+        "https://ntrs.nasa.gov/citations/20190025952",
+        "https://phm-datasets.s3.amazonaws.com/NASA/15.+HIRF+Battery+Data+Set.zip"
+      ],
+      "license": {
+        "identifier": "ARCHIVE-TERMS-PENDING",
+        "scope": "research paper and source archive must be assessed separately",
+        "terms_url": "https://www.nasa.gov/intelligent-systems-division/discovery-and-systems-health/pcoe/pcoe-data-set-repository/",
+        "redistribution": "Do not bundle the archive until exact archive reuse terms are established"
+      },
+      "hardware": [
+        "Edge 540 ground chamber setup; two pairs of series-connected packs"
+      ],
+      "channels": [
+        "LLF20V",
+        "LLF20C",
+        "200 Hz time series"
+      ],
+      "uncertainty_and_gaps": [
+        "Ground powertrain experiment, not free flight.",
+        "Pack serials/calibration certificates absent; HIRF38 anomalous negative mean voltage retained; envelope remains inconclusive.",
+        "Voltage sum channels are not independent corroboration."
+      ],
+      "access": {
+        "provider_status": "public_primary_source_reviewed",
+        "research_record_cached": true,
+        "original_bytes_in_repository": false,
+        "external_local_originals_verified": true,
+        "acquisition": "Original publisher.zip exists outside repo and matches recorded SHA-256; use existing benchmark script, without treating a receipt as physical validation."
+      },
+      "integration": "planned_reference_or_adapter; no new validation acceptance",
+      "repository_paths": [
+        "docs/campaigns/M21_21_25_NASA_EDGE_PACK.md",
+        "docs/campaigns/m21_edge_pack_freeze.json",
+        "docs/campaigns/m21_edge_pack_results.json"
+      ],
+      "external_source_id": "nasa_edge"
+    },
+    {
+      "id": "cmu_m100",
+      "title": "CMU Matrice 100 flight and energy dataset",
+      "phases": [
+        0,
+        1,
+        2
+      ],
+      "requirements": [
+        "AIRCRAFT",
+        "ELEC",
+        "WORLD",
+        "ANALYSIS",
+        "VALIDATION"
+      ],
+      "kind": "measured_flight_publisher_processed",
+      "checked_at": "2026-11-19",
+      "urls": [
+        "https://doi.org/10.1184/R1/12683453.v1",
+        "https://pmc.ncbi.nlm.nih.gov/articles/PMC8213793/",
+        "https://api.figshare.com/v2/articles/12683453"
+      ],
+      "license": {
+        "identifier": "CC-BY-4.0",
+        "scope": "released dataset; acquisition code separately BSD",
+        "terms_url": "https://api.figshare.com/v2/articles/12683453",
+        "redistribution": "Retain authors, DOI, license and modification notices"
+      },
+      "hardware": [
+        "DJI Matrice 100",
+        "3510 350Kv motors",
+        "620D ESCs",
+        "1345 propellers",
+        "Mauch PL-200"
+      ],
+      "channels": [
+        "bus V/I",
+        "wind",
+        "pose",
+        "velocity/rates/acceleration",
+        "approximately 5 Hz synchronized exports"
+      ],
+      "uncertainty_and_gaps": [
+        "Public processed CSV archive is distinct from logger-native ROS bags; only selected published files are verified locally.",
+        "Wind-magnitude bias, manufacturer uncertainty and missing component serials/aging remain.",
+        "Metadata/paper recording subcounts differ; reconcile manifest."
+      ],
+      "access": {
+        "provider_status": "public_primary_source_reviewed",
+        "research_record_cached": true,
+        "original_bytes_in_repository": false,
+        "external_local_originals_verified": true,
+        "acquisition": "Use Figshare file IDs 26385070, 26385034 and 26405786; all three local files match committed pins. Native ROS bag archive not acquired by this audit."
+      },
+      "integration": "planned_reference_or_adapter; no new validation acceptance",
+      "repository_paths": [
+        "docs/campaigns/M26_45_49_M100_MISSION_ENERGY.md",
+        "docs/campaigns/m26_m100_mission_energy_freeze.json",
+        "docs/campaigns/m26_m100_mission_energy_results.json"
+      ],
+      "external_source_id": "cmu_m100"
+    },
+    {
+      "id": "nanobench",
+      "title": "NanoBench instrumented Crazyflie flights",
+      "phases": [
+        0,
+        1
+      ],
+      "requirements": [
+        "AIRCRAFT",
+        "ELEC",
+        "AUTO",
+        "VALIDATION"
+      ],
+      "kind": "measured_flight",
+      "checked_at": "2026-11-19",
+      "urls": [
+        "https://github.com/syediu/nanobench/tree/934a1ab92c458cad99c9278a5cb63bf68af6e56c",
+        "https://arxiv.org/abs/2603.09908v2"
+      ],
+      "license": {
+        "identifier": "BSD-3-Clause",
+        "scope": "author dataset and code release at pinned commit",
+        "terms_url": "https://github.com/syediu/nanobench/blob/934a1ab92c458cad99c9278a5cb63bf68af6e56c/LICENSE",
+        "redistribution": "Retain BSD attribution/disclaimer"
+      },
+      "hardware": [
+        "Crazyflie 2.1 CF_01",
+        "instrumented mass 40.85 g",
+        "pinned metadata firmware 2025.12.1"
+      ],
+      "channels": [
+        "100 Hz Vicon/IMU/PWM/controller/estimator",
+        "10 Hz battery voltage"
+      ],
+      "uncertainty_and_gaps": [
+        "PWM is a command, not measured RPM; voltage is forward-filled; battery current absent.",
+        "EKF is Vicon-aided; learned-model rollout benchmark output is simulated.",
+        "Five selected flights and paired metadata are locally verified; not the entire 172-flight release."
+      ],
+      "access": {
+        "provider_status": "public_primary_source_reviewed",
+        "research_record_cached": true,
+        "original_bytes_in_repository": false,
+        "external_local_originals_verified": true,
+        "acquisition": "Reuse pinned receipt for exact five CSV/YAML pairs and LICENSE/README; keep whole-flight splits."
+      },
+      "integration": "planned_reference_or_adapter; no new validation acceptance",
+      "repository_paths": [
+        "data/benchmarks/flight/nanobench_source_receipt.json",
+        "docs/campaigns/m26_nanobench_vertical_freeze.json",
+        "docs/campaigns/m26_nanobench_vertical_results.json"
+      ],
+      "external_source_id": "nanobench"
+    },
+    {
+      "id": "quadplane_2022",
+      "title": "Quadplane PX4 BATT telemetry sample",
+      "phases": [
+        0
+      ],
+      "requirements": [
+        "ELEC",
+        "AIRCRAFT",
+        "LEARN",
+        "VALIDATION"
+      ],
+      "kind": "reported_measured_flight",
+      "checked_at": "2026-11-19",
+      "urls": [
+        "https://github.com/AdamDony/quadplane-px4-flight-data/tree/122ceb2cf3913725eef5cd9171a9779220c63335"
+      ],
+      "license": {
+        "identifier": "CC-BY-4.0",
+        "scope": "pinned upstream source file and license; existing local attribution retained",
+        "terms_url": "https://github.com/AdamDony/quadplane-px4-flight-data/blob/122ceb2cf3913725eef5cd9171a9779220c63335/LICENSE",
+        "redistribution": "Retain creators, upstream commit, data dictionary and attribution when redistributing"
+      },
+      "hardware": [
+        "hybrid quadplane VTOL; exact pack/serial unverified"
+      ],
+      "channels": [
+        "filtered voltage/current",
+        "discharged mAh",
+        "remaining-capacity estimates",
+        "warning flag"
+      ],
+      "uncertainty_and_gaps": [
+        "1442 rows; no per-row timestamp.",
+        "Cannot independently integrate current over time or validate transient synchronization.",
+        "Controller-derived charge estimates are not independent calibrated measurements."
+      ],
+      "access": {
+        "provider_status": "public_primary_source_reviewed",
+        "research_record_cached": true,
+        "original_bytes_in_repository": true,
+        "external_local_originals_verified": false,
+        "acquisition": "Existing BATT.csv is the small redistributable source sample; preserve its adjacent manifest/README. No new raw sample is needed."
+      },
+      "integration": "planned_reference_or_adapter; no new validation acceptance",
+      "repository_paths": [
+        "data/benchmarks/public/quadplane_2022/BATT.csv",
+        "data/benchmarks/public/quadplane_2022/manifest.json",
+        "data/benchmarks/public/quadplane_2022/README.md"
+      ]
+    },
+    {
+      "id": "neurobem",
+      "title": "UZH NeuroBEM agile-flight dynamics",
+      "phases": [
+        0,
+        1
+      ],
+      "requirements": [
+        "AIRCRAFT",
+        "AUTO",
+        "ANALYSIS",
+        "VALIDATION"
+      ],
+      "kind": "measured_flight_processed",
+      "checked_at": "2026-11-19",
+      "urls": [
+        "https://rpg.ifi.uzh.ch/NeuroBEM.html",
+        "https://rpg.ifi.uzh.ch/neuro_bem/Readme.html",
+        "https://download.ifi.uzh.ch/rpg/NeuroBEM/"
+      ],
+      "license": {
+        "identifier": "DATA-TERMS-PENDING",
+        "scope": "do not transfer Agilicious software or derivative-analysis licenses to NeuroBEM measurements",
+        "terms_url": "https://rpg.ifi.uzh.ch/NeuroBEM.html",
+        "redistribution": "Keep existing originals external; confirm redistribution terms before copying into repo"
+      },
+      "hardware": [
+        "custom Armattan Chameleon quadrotor",
+        "Betaflight",
+        "Vicon hangar"
+      ],
+      "channels": [
+        "400 Hz processed motion",
+        "motor speed",
+        "battery voltage"
+      ],
+      "uncertainty_and_gaps": [
+        "Filtered/derived acceleration is not direct force measurement; dropouts trimmed.",
+        "Paper mass 752 g versus archive README 772 g; existing comparison uses specific force.",
+        "Eight benchmark records locally match pins; full release not verified."
+      ],
+      "access": {
+        "provider_status": "public_primary_source_reviewed",
+        "research_record_cached": true,
+        "original_bytes_in_repository": false,
+        "external_local_originals_verified": true,
+        "acquisition": "Retain selected processed CSVs externally and use source-specific campaign splits/axis conventions."
+      },
+      "integration": "planned_reference_or_adapter; no new validation acceptance",
+      "repository_paths": [
+        "docs/campaigns/M24_12_16_NEUROBEM_FORCE.md",
+        "docs/campaigns/m24_neurobem_force_freeze.json",
+        "docs/campaigns/m24_neurobem_force_results.json"
+      ],
+      "external_source_id": "neurobem"
+    },
+    {
+      "id": "kotarski_setup3",
+      "title": "Kotarski Setup 3 propulsion bench",
+      "phases": [
+        0
+      ],
+      "requirements": [
+        "ELEC",
+        "AIRCRAFT",
+        "ANALYSIS",
+        "VALIDATION"
+      ],
+      "kind": "measured_static_bench",
+      "checked_at": "2026-11-19",
+      "urls": [
+        "https://doi.org/10.3390/aerospace10060528",
+        "https://doi.org/10.7910/DVN/J5L2P4"
+      ],
+      "license": {
+        "identifier": "CC0-1.0",
+        "scope": "Dataverse release 1.0 as recorded in admitted source campaign",
+        "terms_url": "https://dataverse.harvard.edu/api/datasets/:persistentId/?persistentId=doi:10.7910/DVN/J5L2P4",
+        "redistribution": "Keep attribution/provenance; verify release before additional redistribution"
+      },
+      "hardware": [
+        "P80 100Kv family label",
+        "Alpha 80A ESC",
+        "G30x10.5",
+        "RCbenchmark 1780"
+      ],
+      "channels": [
+        "PWM",
+        "thrust",
+        "torque",
+        "RPM",
+        "voltage",
+        "current"
+      ],
+      "uncertainty_and_gaps": [
+        "P80 label does not authenticate P80 III revision/serial or aircraft installation.",
+        "Repeated readings in a sweep are not independent experiments; no independent uncertainty budget.",
+        "Static conditional comparison does not establish heating or transient response."
+      ],
+      "access": {
+        "provider_status": "public_primary_source_reviewed",
+        "research_record_cached": true,
+        "original_bytes_in_repository": false,
+        "external_local_originals_verified": true,
+        "acquisition": "Three local source CSVs match pinned hashes, byte counts and publisher file IDs; calibration/held-out sweep remains explicit."
+      },
+      "integration": "planned_reference_or_adapter; no new validation acceptance",
+      "repository_paths": [
+        "docs/campaigns/M22_KOTARSKI_SETUP3_BENCHMARK.md",
+        "docs/campaigns/m22_kotarski_setup3_freeze.json",
+        "docs/campaigns/m22_kotarski_setup3_holdout.json"
+      ],
+      "external_source_id": "kotarski_setup3"
+    },
+    {
+      "id": "uh60_airloads",
+      "title": "NASA UH-60A Airloads/hover references",
+      "phases": [
+        0,
+        2
+      ],
+      "requirements": [
+        "AIRCRAFT",
+        "ANALYSIS",
+        "VALIDATION"
+      ],
+      "kind": "measured_full_scale_flight_and_hover",
+      "checked_at": "2026-11-19",
+      "urls": [
+        "https://rotorcraft.arc.nasa.gov/Research/Programs/uh_60_program.html",
+        "https://ntrs.nasa.gov/citations/20200003148",
+        "https://rotorcraft.arc.nasa.gov/Research/Programs/UH-60%20pdfs/1999-02.pdf",
+        "https://rotorcraft.arc.nasa.gov/Research/Programs/UH-60%20pdfs/2001-01.pdf"
+      ],
+      "license": {
+        "identifier": "NASA-Public-Use-Permitted",
+        "scope": "Counter 9505 report; not an unrestricted grant for entire electronic database",
+        "terms_url": "https://ntrs.nasa.gov/citations/20200003148",
+        "redistribution": "Inspect exact data access/terms separately"
+      },
+      "hardware": [
+        "full-scale UH-60A"
+      ],
+      "channels": [
+        "blade pressure/loads/motion",
+        "control loads",
+        "aircraft state",
+        "hover power/thrust references"
+      ],
+      "uncertainty_and_gaps": [
+        "Public report download verified; no report bytes or full flight database cached here.",
+        "Historic database access requires approval; current anonymous machine-readable access not verified.",
+        "Configuration effects and 4-5% systemic power-measurement biases prevent unqualified comparisons to small drones."
+      ],
+      "access": {
+        "provider_status": "public_report_endpoint_verified; full_database_access_pending",
+        "research_record_cached": true,
+        "original_bytes_in_repository": false,
+        "external_local_originals_verified": false,
+        "acquisition": "Select exact counter/configuration; acquire report and request electronic database access if required."
+      },
+      "integration": "planned_reference_or_adapter; no new validation acceptance"
+    },
+    {
+      "id": "la8",
+      "title": "NASA LA-8 VTOL transition tunnel references",
+      "phases": [
+        0,
+        2
+      ],
+      "requirements": [
+        "AIRCRAFT",
+        "ANALYSIS",
+        "VALIDATION"
+      ],
+      "kind": "measured_wind_tunnel_vehicle",
+      "checked_at": "2026-11-19",
+      "urls": [
+        "https://ntrs.nasa.gov/citations/20205003178",
+        "https://ntrs.nasa.gov/citations/20210014010"
+      ],
+      "license": {
+        "identifier": "NASA-Public-Use-Permitted",
+        "scope": "public NASA tunnel reports",
+        "terms_url": "https://ntrs.nasa.gov/citations/20205003178",
+        "redistribution": "No separate raw archive reuse grant verified"
+      },
+      "hardware": [
+        "LA-8 tandem tilt-wing distributed electric propulsion",
+        "test-entry-specific configuration"
+      ],
+      "channels": [
+        "forces/moments and aerodynamic coefficients",
+        "isolated high-incidence propeller measurements"
+      ],
+      "uncertainty_and_gaps": [
+        "Report download endpoint verified; raw CSV/full free-flight transition archive not acquired.",
+        "Do not mix powered results from different propeller configurations; LA-9 source not qualified."
+      ],
+      "access": {
+        "provider_status": "public_report_endpoint_verified; raw_archive_not_established",
+        "research_record_cached": true,
+        "original_bytes_in_repository": false,
+        "external_local_originals_verified": false,
+        "acquisition": "Reconstruct exact geometry, test entry, balance calibration and conditions; obtain electronic tables if needed."
+      },
+      "integration": "planned_reference_or_adapter; no new validation acceptance"
+    },
+    {
+      "id": "rain_low_re",
+      "title": "MIT/NASA low-Reynolds-number rain experiments",
+      "phases": [
+        0,
+        1,
+        2
+      ],
+      "requirements": [
+        "WEATHER",
+        "AIRCRAFT",
+        "ANALYSIS",
+        "VALIDATION"
+      ],
+      "kind": "measured_rain_wind_tunnel_section",
+      "checked_at": "2026-11-19",
+      "urls": [
+        "https://ntrs.nasa.gov/citations/19870016564"
+      ],
+      "license": {
+        "identifier": "NASA-Public-Use-Permitted",
+        "scope": "NASA-hosted contractor report metadata",
+        "terms_url": "https://ntrs.nasa.gov/citations/19870016564",
+        "redistribution": "Report rights do not establish a separate raw archive license"
+      },
+      "hardware": [
+        "Wortmann FX67-K170",
+        "NACA 0012",
+        "NACA 64-210"
+      ],
+      "channels": [
+        "dry/wet lift and drag",
+        "Re approximately 310000",
+        "approximately 1000 mm/h simulated extreme rain"
+      ],
+      "uncertainty_and_gaps": [
+        "105-page public report reviewed; no separate original digital force archive found.",
+        "Digitization adds extraction uncertainty; responses depend on airfoil, coating and AoA.",
+        "Does not validate drone electrical water ingress, sensor degradation, or ordinary-rain flight."
+      ],
+      "access": {
+        "provider_status": "public_report_previewed; raw_electronic_data_not_established",
+        "research_record_cached": true,
+        "original_bytes_in_repository": false,
+        "external_local_originals_verified": false,
+        "acquisition": "Acquire report and document any curve digitization as derived data; no universal rain penalty."
+      },
+      "integration": "planned_reference_or_adapter; no new validation acceptance"
+    },
+    {
+      "id": "icing_naca23012",
+      "title": "NASA/ONERA/UIUC NACA 23012 icing benchmark",
+      "phases": [
+        0,
+        1,
+        2
+      ],
+      "requirements": [
+        "WEATHER",
+        "AIRCRAFT",
+        "ANALYSIS",
+        "VALIDATION"
+      ],
+      "kind": "measured_icing_and_wind_tunnel_section",
+      "checked_at": "2026-11-19",
+      "urls": [
+        "https://ntrs.nasa.gov/citations/20160005836"
+      ],
+      "license": {
+        "identifier": "NASA-Public-Use-Permitted",
+        "scope": "public report; electronic data require formal NASA approval",
+        "terms_url": "https://ntrs.nasa.gov/citations/20160005836",
+        "redistribution": "Report access is not electronic dataset approval"
+      },
+      "hardware": [
+        "18-inch and 72-inch chord NACA 23012",
+        "NASA IRT",
+        "ONERA F1"
+      ],
+      "channels": [
+        "ice shape/tracings/depth",
+        "conditions",
+        "pressure/force/wake measurements"
+      ],
+      "uncertainty_and_gaps": [
+        "Public report endpoint verified; large report and electronic data not cached.",
+        "No rotating-propeller ice shedding, snow ingestion/accumulation, water ingress or complete flight validation."
+      ],
+      "access": {
+        "provider_status": "public_report_endpoint_verified; electronic_data_approval_required",
+        "research_record_cached": true,
+        "original_bytes_in_repository": false,
+        "external_local_originals_verified": false,
+        "acquisition": "Use report first; request electronic records through applicable NASA approval before acquiring."
+      },
+      "integration": "planned_reference_or_adapter; no new validation acceptance"
+    },
+    {
+      "id": "pigeonbot",
+      "title": "PigeonBot II morphing-wing experiments",
+      "phases": [
+        1
+      ],
+      "requirements": [
+        "CAD",
+        "AIRCRAFT",
+        "AUTO",
+        "VALIDATION"
+      ],
+      "kind": "measured_robot_wind_tunnel",
+      "checked_at": "2026-11-19",
+      "urls": [
+        "https://datadryad.org/dataset/doi:10.5061/dryad.zkh1893h5"
+      ],
+      "license": {
+        "identifier": "CC0-1.0",
+        "scope": "Dryad dataset; retain research attribution",
+        "terms_url": "https://datadryad.org/publication_policy",
+        "redistribution": "Data reuse permitted; separately review any non-data software"
+      },
+      "hardware": [
+        "PigeonBot II biohybrid morphing wing/tail"
+      ],
+      "channels": [
+        "STEP geometry",
+        "81 morph/AoA/control variants",
+        "attitude",
+        "servo",
+        "airspeed",
+        "IMU",
+        "turbulence response"
+      ],
+      "uncertainty_and_gaps": [
+        "Dataset file manifest/README reviewed; 366 MB archive not downloaded.",
+        "Tunnel virtual-flight observations are physical experiments, not a complete free-flight telemetry release."
+      ],
+      "access": {
+        "provider_status": "public_primary_source_reviewed",
+        "research_record_cached": true,
+        "original_bytes_in_repository": false,
+        "external_local_originals_verified": false,
+        "acquisition": "cited_only; select a version, inspect exact terms and manifest before downloading"
+      },
+      "integration": "planned_reference_or_adapter; no new validation acceptance"
+    },
+    {
+      "id": "avonet",
+      "title": "AVONET bird morphological traits",
+      "phases": [
+        1,
+        2
+      ],
+      "requirements": [
+        "AIRCRAFT",
+        "LEARN",
+        "VALIDATION"
+      ],
+      "kind": "biological_measurements_and_inferred_traits",
+      "checked_at": "2026-11-19",
+      "urls": [
+        "https://figshare.com/s/b990722d72a26b5bfead",
+        "https://onlinelibrary.wiley.com/doi/10.1111/ele.13898"
+      ],
+      "license": {
+        "identifier": "CC-BY-4.0",
+        "scope": "author dataset release",
+        "terms_url": "https://figshare.com/s/b990722d72a26b5bfead",
+        "redistribution": "Retain authors, version, attribution and modifications"
+      },
+      "hardware": [
+        "bird specimens and species-level summaries"
+      ],
+      "channels": [
+        "body mass",
+        "wing/secondary/tail lengths",
+        "hand-wing index",
+        "other morphology"
+      ],
+      "uncertainty_and_gaps": [
+        "Wing mass is not measured in AVONET; some traits/body masses are inferred.",
+        "Do not turn species/body ratios into universal human-wing design laws."
+      ],
+      "access": {
+        "provider_status": "public_primary_source_reviewed",
+        "research_record_cached": true,
+        "original_bytes_in_repository": false,
+        "external_local_originals_verified": false,
+        "acquisition": "cited_only; select a version, inspect exact terms and manifest before downloading"
+      },
+      "integration": "planned_reference_or_adapter; no new validation acceptance"
+    },
+    {
+      "id": "avian_inertia",
+      "title": "Calibrated-CT avian inertia dataset",
+      "phases": [
+        1,
+        2
+      ],
+      "requirements": [
+        "AIRCRAFT",
+        "ANALYSIS",
+        "VALIDATION"
+      ],
+      "kind": "biological_calibrated_ct_measurements",
+      "checked_at": "2026-11-19",
+      "urls": [
+        "https://datadryad.org/dataset/doi:10.5061/dryad.xsj3tx9gp"
+      ],
+      "license": {
+        "identifier": "CC0-1.0",
+        "scope": "Dryad data",
+        "terms_url": "https://datadryad.org/publication_policy",
+        "redistribution": "Retain scholarly attribution"
+      },
+      "hardware": [
+        "scanned birds of prey"
+      ],
+      "channels": [
+        "segment mass distribution",
+        "center of mass",
+        "inertia",
+        "calibration files"
+      ],
+      "uncertainty_and_gaps": [
+        "419 MB manifest reviewed; no data acquired.",
+        "Measurements apply to tested specimens, not a universal bird or human apparatus."
+      ],
+      "access": {
+        "provider_status": "public_primary_source_reviewed",
+        "research_record_cached": true,
+        "original_bytes_in_repository": false,
+        "external_local_originals_verified": false,
+        "acquisition": "cited_only; select a version, inspect exact terms and manifest before downloading"
+      },
+      "integration": "planned_reference_or_adapter; no new validation acceptance"
+    },
+    {
+      "id": "openvsp",
+      "title": "OpenVSP/VSPAERO optional aircraft design adapter",
+      "phases": [
+        1,
+        2,
+        3
+      ],
+      "requirements": [
+        "CAD",
+        "AIRCRAFT",
+        "ANALYSIS",
+        "RELEASE"
+      ],
+      "kind": "software",
+      "checked_at": "2026-11-19",
+      "urls": [
+        "https://github.com/OpenVSP/OpenVSP",
+        "https://github.com/OpenVSP/OpenVSP/blob/main/LICENSE"
+      ],
+      "license": {
+        "identifier": "NASA-1.3",
+        "scope": "OpenVSP NOSA 1.3; selected solver/dependencies need version review",
+        "terms_url": "https://github.com/OpenVSP/OpenVSP/blob/main/LICENSE",
+        "redistribution": "Preserve NOSA-covered components, modification/source obligations and original-creation representation"
+      },
+      "hardware": [],
+      "channels": [
+        "parametric aircraft geometry",
+        "aerodynamic analysis"
+      ],
+      "uncertainty_and_gaps": [
+        "Optional adapter only; no replacement of existing CAD/project core or validated Python on assertion.",
+        "Analysis assumptions need regime-specific tests; not evidence of piloted-flight readiness."
+      ],
+      "access": {
+        "provider_status": "public_primary_source_reviewed",
+        "research_record_cached": true,
+        "original_bytes_in_repository": false,
+        "external_local_originals_verified": false,
+        "acquisition": "cited_only; select a version, inspect exact terms and manifest before downloading"
+      },
+      "integration": "planned_reference_or_adapter; no new validation acceptance"
+    },
+    {
+      "id": "nasa_cfd",
+      "title": "NASA TMR/NPARC aircraft CFD benchmarks",
+      "phases": [
+        2,
+        3
+      ],
+      "requirements": [
+        "ANALYSIS",
+        "VALIDATION"
+      ],
+      "kind": "mixed_experimental_and_numerical_benchmarks",
+      "checked_at": "2026-11-19",
+      "urls": [
+        "https://www.nasa.gov/nasa-turbulence-modeling-resource/",
+        "https://tmbwg.github.io/turbmodels/naca0012_val.html",
+        "https://www.grc.nasa.gov/www/wind/valid/raetaf/raetaf.html"
+      ],
+      "license": {
+        "identifier": "PER-FILE-TERMS-PENDING",
+        "scope": "NASA-hosted case pages include third-party/digitized experimental sources and separate numerical results",
+        "terms_url": "https://tmbwg.github.io/turbmodels/naca0012_val.html",
+        "redistribution": "Verify rights/provenance of selected files; no blanket license assigned"
+      },
+      "hardware": [
+        "NACA 0012 airfoil",
+        "RAE 2822 transonic airfoil"
+      ],
+      "channels": [
+        "experimental force/pressure/boundary-layer comparisons",
+        "grids",
+        "separate CFD reference outputs"
+      ],
+      "uncertainty_and_gaps": [
+        "NACA0012 includes digitized approximations and near-stall/2D limits; no measured skin-friction validation in that case.",
+        "RAE2822 source case M0.725/Re6.5 million is not a supersonic/hypersonic complete-flight benchmark."
+      ],
+      "access": {
+        "provider_status": "public_primary_source_reviewed",
+        "research_record_cached": true,
+        "original_bytes_in_repository": false,
+        "external_local_originals_verified": false,
+        "acquisition": "cited_only; select a version, inspect exact terms and manifest before downloading"
+      },
+      "integration": "planned_reference_or_adapter; no new validation acceptance"
+    },
+    {
+      "id": "rotor37",
+      "title": "NASA Rotor 37 compressor-rig benchmark",
+      "phases": [
+        3
+      ],
+      "requirements": [
+        "ANALYSIS",
+        "VALIDATION"
+      ],
+      "kind": "measured_propulsion_component_rig",
+      "checked_at": "2026-11-19",
+      "urls": [
+        "https://tmbwg.github.io/turbmodels/Other_exp_Data/rotor37_exp.html",
+        "https://www.nasa.gov/reference/turbulence-modeling-resource-large-files/"
+      ],
+      "license": {
+        "identifier": "PER-FILE-TERMS-PENDING",
+        "scope": "NASA-hosted experimental spreadsheet, geometry, README and reports",
+        "terms_url": "https://tmbwg.github.io/turbmodels/Other_exp_Data/rotor37_exp.html",
+        "redistribution": "Inspect archive terms before redistribution"
+      },
+      "hardware": [
+        "transonic axial compressor Rotor 37 at 100% speed"
+      ],
+      "channels": [
+        "operating conditions",
+        "rotor performance",
+        "exit profiles",
+        "geometry"
+      ],
+      "uncertainty_and_gaps": [
+        "Archive pointer verified; archive not acquired.",
+        "Component compressor data are not measured complete jet-engine thrust, transients or durability."
+      ],
+      "access": {
+        "provider_status": "public_primary_source_reviewed",
+        "research_record_cached": true,
+        "original_bytes_in_repository": false,
+        "external_local_originals_verified": false,
+        "acquisition": "cited_only; select a version, inspect exact terms and manifest before downloading"
+      },
+      "integration": "planned_reference_or_adapter; no new validation acceptance"
+    },
+    {
+      "id": "cea",
+      "title": "NASA Chemical Equilibrium with Applications",
+      "phases": [
+        3,
+        4
+      ],
+      "requirements": [
+        "ELEC",
+        "ANALYSIS",
+        "VALIDATION",
+        "RELEASE"
+      ],
+      "kind": "software_calculated_thermochemistry",
+      "checked_at": "2026-11-19",
+      "urls": [
+        "https://github.com/nasa/cea",
+        "https://github.com/nasa/cea/blob/main/LICENSE.txt"
+      ],
+      "license": {
+        "identifier": "Apache-2.0",
+        "scope": "current public NASA repository; verify selected release/dependencies",
+        "terms_url": "https://github.com/nasa/cea/blob/main/LICENSE.txt",
+        "redistribution": "Retain Apache notices and modified-file notices"
+      },
+      "hardware": [],
+      "channels": [
+        "equilibrium species",
+        "thermodynamic/transport properties",
+        "calculated rocket/shock performance"
+      ],
+      "uncertainty_and_gaps": [
+        "Calculated idealized performance is not measured thrust or validated combustion/cooling.",
+        "Need configuration-specific experimental propulsion/thermal evidence."
+      ],
+      "access": {
+        "provider_status": "public_primary_source_reviewed",
+        "research_record_cached": true,
+        "original_bytes_in_repository": false,
+        "external_local_originals_verified": false,
+        "acquisition": "cited_only; select a version, inspect exact terms and manifest before downloading"
+      },
+      "integration": "planned_reference_or_adapter; no new validation acceptance"
+    },
+    {
+      "id": "rocketpy",
+      "title": "RocketPy trajectory adapter and experimental references",
+      "phases": [
+        4
+      ],
+      "requirements": [
+        "AIRCRAFT",
+        "WORLD",
+        "ANALYSIS",
+        "VALIDATION"
+      ],
+      "kind": "software_and_measured_filtered_flight",
+      "checked_at": "2026-11-19",
+      "urls": [
+        "https://github.com/RocketPy-Team/RocketPy",
+        "https://raw.githubusercontent.com/RocketPy-Team/RocketPy/master/data/rockets/EPFL_Bella_Lui/bella_lui_flight_data_filtered.csv"
+      ],
+      "license": {
+        "identifier": "MIT",
+        "scope": "RocketPy software; check contributed flight-file permissions separately",
+        "terms_url": "https://github.com/RocketPy-Team/RocketPy",
+        "redistribution": "Do not infer all third-party raw data rights from the code license"
+      },
+      "hardware": [
+        "EPFL Bella Lui and Notre Dame reference rockets"
+      ],
+      "channels": [
+        "variable-mass 6DoF calculations",
+        "filtered approximate-time/altitude/velocity flight CSV"
+      ],
+      "uncertainty_and_gaps": [
+        "Flight CSV previewed but not cached.",
+        "Filtered/derived values and calibration must be reviewed; no launch-vehicle/orbital/crewed qualification."
+      ],
+      "access": {
+        "provider_status": "public_primary_source_reviewed",
+        "research_record_cached": true,
+        "original_bytes_in_repository": false,
+        "external_local_originals_verified": false,
+        "acquisition": "cited_only; select a version, inspect exact terms and manifest before downloading"
+      },
+      "integration": "planned_reference_or_adapter; no new validation acceptance"
+    },
+    {
+      "id": "openrocket",
+      "title": "OpenRocket model-rocket design/simulation adapter",
+      "phases": [
+        4
+      ],
+      "requirements": [
+        "CAD",
+        "AIRCRAFT",
+        "ANALYSIS",
+        "RELEASE"
+      ],
+      "kind": "software_simulation",
+      "checked_at": "2026-11-19",
+      "urls": [
+        "https://github.com/openrocket/openrocket",
+        "https://raw.githubusercontent.com/openrocket/openrocket/unstable/LICENSE.TXT"
+      ],
+      "license": {
+        "identifier": "GPL-3.0-or-later",
+        "scope": "program with section-7 permission for packaging non-compilable data; data keep their own terms",
+        "terms_url": "https://raw.githubusercontent.com/openrocket/openrocket/unstable/LICENSE.TXT",
+        "redistribution": "Retain GPL and inspect version-specific packaging terms"
+      },
+      "hardware": [],
+      "channels": [
+        "model-rocket design",
+        "trajectory",
+        "motor-curve import"
+      ],
+      "uncertainty_and_gaps": [
+        "Simulation exports are not measured motor thrust or flight observations.",
+        "Reusable adapter does not establish full-scale rocket accuracy."
+      ],
+      "access": {
+        "provider_status": "public_primary_source_reviewed",
+        "research_record_cached": true,
+        "original_bytes_in_repository": false,
+        "external_local_originals_verified": false,
+        "acquisition": "cited_only; select a version, inspect exact terms and manifest before downloading"
+      },
+      "integration": "planned_reference_or_adapter; no new validation acceptance"
+    }
+  ],
+  "local_custody": {
+    "checked_at": "2026-11-19",
+    "scope": "Actual bytes read on 2026-11-19. A matching committed pin proves byte identity to that pin, not issuer authenticity or physical validation.",
+    "external_source_root": "../source-physical",
+    "external_root_is_not_in_repository": true,
+    "repository_artifacts": [
+      {
+        "path": "docs/campaigns/m21_edge_pack_freeze.json",
+        "kind": "committed_campaign_artifact",
+        "exists": true,
+        "bytes": 1072,
+        "sha256": "622ac9fac7c18264d0d7d91431fa117314aa730c3ba8eb5dc82751303cee6d4e",
+        "expected_sha256": null,
+        "matches_recorded_sha256": null
+      },
+      {
+        "path": "docs/campaigns/m21_edge_pack_results.json",
+        "kind": "committed_campaign_artifact",
+        "exists": true,
+        "bytes": 37571,
+        "sha256": "f6c0b67cf0e64c3cb2449b0e75f43f3247f8cf34bc6a309a9f735f2c01becec8",
+        "expected_sha256": null,
+        "matches_recorded_sha256": null
+      },
+      {
+        "path": "docs/campaigns/m21_melasta_pulse_freeze.json",
+        "kind": "committed_campaign_artifact",
+        "exists": true,
+        "bytes": 516,
+        "sha256": "50dfe3f81798443309910ad4dbb91ee9acd9912d71ab1fe9ef2defbb8af6acbd",
+        "expected_sha256": null,
+        "matches_recorded_sha256": null
+      },
+      {
+        "path": "docs/campaigns/m21_melasta_pulse_results.json",
+        "kind": "committed_campaign_artifact",
+        "exists": true,
+        "bytes": 8849,
+        "sha256": "509fbc5b23b2c8bb48066fc4262777db5fa5e403b694db26faaad8c84002d4fd",
+        "expected_sha256": null,
+        "matches_recorded_sha256": null
+      },
+      {
+        "path": "docs/campaigns/m21_sit_cutoff_forecast_results.json",
+        "kind": "committed_campaign_artifact",
+        "exists": true,
+        "bytes": 2326,
+        "sha256": "a60033f635cd52f28afad6e7319f950b0a2873b1a6b77108d61a6e9435ab6aea",
+        "expected_sha256": null,
+        "matches_recorded_sha256": null
+      },
+      {
+        "path": "docs/campaigns/m21_sit_module_electrothermal_results.json",
+        "kind": "committed_campaign_artifact",
+        "exists": true,
+        "bytes": 8997,
+        "sha256": "9fb2bd0016cfe970b735f2e528046b188c8dd9e9c40188331ad37f8efa50c050",
+        "expected_sha256": null,
+        "matches_recorded_sha256": null
+      },
+      {
+        "path": "docs/campaigns/m21_vtc6_freeze.json",
+        "kind": "committed_campaign_artifact",
+        "exists": true,
+        "bytes": 2865,
+        "sha256": "3fad543f79411e4733208caa196130ea28aa458413745c59f87523114ee90d03",
+        "expected_sha256": null,
+        "matches_recorded_sha256": null
+      },
+      {
+        "path": "docs/campaigns/m21_vtc6_holdout.json",
+        "kind": "committed_campaign_artifact",
+        "exists": true,
+        "bytes": 20891,
+        "sha256": "9431ec5f2ba5bbe46abd6c9e0e20838138cf5d416078fee415b23d520c209839",
+        "expected_sha256": null,
+        "matches_recorded_sha256": null
+      },
+      {
+        "path": "docs/campaigns/m22_gemfan_bench_freeze.json",
+        "kind": "committed_campaign_artifact",
+        "exists": true,
+        "bytes": 2153,
+        "sha256": "8ca3ea8fe05d355ee5f495f28cdb8a8a39aca4f76292e574360f957b71f3d390",
+        "expected_sha256": null,
+        "matches_recorded_sha256": null
+      },
+      {
+        "path": "docs/campaigns/m22_gemfan_bench_results.json",
+        "kind": "committed_campaign_artifact",
+        "exists": true,
+        "bytes": 3441,
+        "sha256": "34f2d4fd7d60bf625f198421e0033838c2855928bedad494bb22de84fa439fa5",
+        "expected_sha256": null,
+        "matches_recorded_sha256": null
+      },
+      {
+        "path": "docs/campaigns/m22_gemfan_bench_sources.json",
+        "kind": "committed_campaign_artifact",
+        "exists": true,
+        "bytes": 3329,
+        "sha256": "0a5f2ae5e3478a3276bad8fb1f3c5c2616a4b66c14b9b49bc2fa51dd9013adf2",
+        "expected_sha256": null,
+        "matches_recorded_sha256": null
+      },
+      {
+        "path": "docs/campaigns/m22_gemfan_transients_freeze.json",
+        "kind": "committed_campaign_artifact",
+        "exists": true,
+        "bytes": 1162,
+        "sha256": "dc33789d7cab7679b3c4d9d9362745bda069cfdab5f93de66560de05f0329441",
+        "expected_sha256": null,
+        "matches_recorded_sha256": null
+      },
+      {
+        "path": "docs/campaigns/m22_gemfan_transients_results.json",
+        "kind": "committed_campaign_artifact",
+        "exists": true,
+        "bytes": 948,
+        "sha256": "2f0a56f8566c2f478bcfc0cc19d3551120b2b7cdfa16c7c144386020e9bf5f35",
+        "expected_sha256": null,
+        "matches_recorded_sha256": null
+      },
+      {
+        "path": "docs/campaigns/m22_gemfan_transients_sources.json",
+        "kind": "committed_campaign_artifact",
+        "exists": true,
+        "bytes": 821,
+        "sha256": "f12d1fcbd9f47dd5e14d26060c69e1fff315dcd993a979144c9dd14021d4112d",
+        "expected_sha256": null,
+        "matches_recorded_sha256": null
+      },
+      {
+        "path": "docs/campaigns/m22_kotarski_setup3_freeze.json",
+        "kind": "committed_campaign_artifact",
+        "exists": true,
+        "bytes": 13400,
+        "sha256": "b83b58f6558bd31db8646c56418069fa449a9437ee2bbb3611b441cc6d40bb92",
+        "expected_sha256": null,
+        "matches_recorded_sha256": null
+      },
+      {
+        "path": "docs/campaigns/m22_kotarski_setup3_holdout.json",
+        "kind": "committed_campaign_artifact",
+        "exists": true,
+        "bytes": 17152,
+        "sha256": "3715f681fc5a4e2fb3ddf7d4c095e33c7a58d6a783bd2987aaf6b4ab22987cf5",
+        "expected_sha256": null,
+        "matches_recorded_sha256": null
+      },
+      {
+        "path": "docs/campaigns/m23_dronepropa_altitude_freeze.json",
+        "kind": "committed_campaign_artifact",
+        "exists": true,
+        "bytes": 415,
+        "sha256": "b1f7fcce4f1bd6a8991f9d809f053f4b58d4e4ec238cf32b0bb8617bc77bb456",
+        "expected_sha256": null,
+        "matches_recorded_sha256": null
+      },
+      {
+        "path": "docs/campaigns/m23_dronepropa_altitude_results.json",
+        "kind": "committed_campaign_artifact",
+        "exists": true,
+        "bytes": 2820,
+        "sha256": "cc86a605125af341c345954f6c81d726fe5b9c2e1329621027f1b2fbd8f18de2",
+        "expected_sha256": null,
+        "matches_recorded_sha256": null
+      },
+      {
+        "path": "docs/campaigns/m23_dronepropa_altitude_sources.json",
+        "kind": "committed_campaign_artifact",
+        "exists": true,
+        "bytes": 2122,
+        "sha256": "02cafc0c3ec1ca94fee9a791d0361b5271a24d18f39082e0121d8f96685211a4",
+        "expected_sha256": null,
+        "matches_recorded_sha256": null
+      },
+      {
+        "path": "docs/campaigns/m24_modera_vertical_force_freeze.json",
+        "kind": "committed_campaign_artifact",
+        "exists": true,
+        "bytes": 900,
+        "sha256": "0a6154a73244a287c58b8ddd3f2769685bce073f63e6a706285ee0facac905b8",
+        "expected_sha256": null,
+        "matches_recorded_sha256": null
+      },
+      {
+        "path": "docs/campaigns/m24_modera_vertical_force_results.json",
+        "kind": "committed_campaign_artifact",
+        "exists": true,
+        "bytes": 17511,
+        "sha256": "362dba6d6074e1fb4b381aa1b9b0734b5e0caed0e13d25fd0066b476e89bf858",
+        "expected_sha256": null,
+        "matches_recorded_sha256": null
+      },
+      {
+        "path": "docs/campaigns/m24_neurobem_force_freeze.json",
+        "kind": "committed_campaign_artifact",
+        "exists": true,
+        "bytes": 1107,
+        "sha256": "f8d13360edf803f14e6a4f4d1f2b6bb32ecb60d0e7e3e61f8d2cd834000cc3a5",
+        "expected_sha256": null,
+        "matches_recorded_sha256": null
+      },
+      {
+        "path": "docs/campaigns/m24_neurobem_force_results.json",
+        "kind": "committed_campaign_artifact",
+        "exists": true,
+        "bytes": 15590,
+        "sha256": "67d338c753c79911e1b26ae137905b331cd443d437ee2031c3d219f4d5dc1fbc",
+        "expected_sha256": null,
+        "matches_recorded_sha256": null
+      },
+      {
+        "path": "docs/campaigns/m24_uiuc_axial_sweeps_freeze.json",
+        "kind": "committed_campaign_artifact",
+        "exists": true,
+        "bytes": 1411,
+        "sha256": "c84b4e89dd6f305f1966d5a742f6197a7dd6b71bc988ae41e688cf4cf3271f98",
+        "expected_sha256": null,
+        "matches_recorded_sha256": null
+      },
+      {
+        "path": "docs/campaigns/m24_uiuc_axial_sweeps_results.json",
+        "kind": "committed_campaign_artifact",
+        "exists": true,
+        "bytes": 5765,
+        "sha256": "ae945a2b5e5a44d5954a9f566df64f52a4d016d4a222a85842a4172b1bb2475f",
+        "expected_sha256": null,
+        "matches_recorded_sha256": null
+      },
+      {
+        "path": "docs/campaigns/m25_column_compression_results.json",
+        "kind": "committed_campaign_artifact",
+        "exists": true,
+        "bytes": 2283,
+        "sha256": "50b0d6c8573abb257c113ca3d22d140dbb11e3dce30ba633fb9549b6e118a8a4",
+        "expected_sha256": null,
+        "matches_recorded_sha256": null
+      },
+      {
+        "path": "docs/campaigns/m25_repod_arm_response_freeze.json",
+        "kind": "committed_campaign_artifact",
+        "exists": true,
+        "bytes": 1108,
+        "sha256": "d6ee2626e8a516c665ec406a18e250fcd61fa8f35c0109fef7ef25f279a85a30",
+        "expected_sha256": null,
+        "matches_recorded_sha256": null
+      },
+      {
+        "path": "docs/campaigns/m25_repod_arm_response_results.json",
+        "kind": "committed_campaign_artifact",
+        "exists": true,
+        "bytes": 17874,
+        "sha256": "108250d4109e328b02e8d64564f6e41e94ec8c18539497bd9dc3e81b5338f6b9",
+        "expected_sha256": null,
+        "matches_recorded_sha256": null
+      },
+      {
+        "path": "docs/campaigns/m25_uav_fd_esc_power_freeze.json",
+        "kind": "committed_campaign_artifact",
+        "exists": true,
+        "bytes": 3366,
+        "sha256": "768efe35b015352c2f4d0471571164f363193c31471af5013a2b954d957cdce6",
+        "expected_sha256": null,
+        "matches_recorded_sha256": null
+      },
+      {
+        "path": "docs/campaigns/m25_uav_fd_esc_power_results.json",
+        "kind": "committed_campaign_artifact",
+        "exists": true,
+        "bytes": 4767,
+        "sha256": "d80381e87aba693f48be1ae0345e70f12903e53e52f7111f3323bbeda711f557",
+        "expected_sha256": null,
+        "matches_recorded_sha256": null
+      },
+      {
+        "path": "docs/campaigns/m25_uav_fd_rotor_order_freeze.json",
+        "kind": "committed_campaign_artifact",
+        "exists": true,
+        "bytes": 1417,
+        "sha256": "861c3396d56d9e9782eab610bd9ff9f08095327c24fb9ac9b6b75f0e665a0d30",
+        "expected_sha256": null,
+        "matches_recorded_sha256": null
+      },
+      {
+        "path": "docs/campaigns/m25_uav_fd_rotor_order_results.json",
+        "kind": "committed_campaign_artifact",
+        "exists": true,
+        "bytes": 2801,
+        "sha256": "e68071cf47cbd6bcb32199bd00304aa54652b6547fdfb9f8ff61fec422ceb86f",
+        "expected_sha256": null,
+        "matches_recorded_sha256": null
+      },
+      {
+        "path": "docs/campaigns/m26_m100_mission_energy_freeze.json",
+        "kind": "committed_campaign_artifact",
+        "exists": true,
+        "bytes": 5240,
+        "sha256": "b897fe9e3dae956a1be366ebf78794405735cffd68af0ca77d96cbdfcdb68364",
+        "expected_sha256": null,
+        "matches_recorded_sha256": null
+      },
+      {
+        "path": "docs/campaigns/m26_m100_mission_energy_results.json",
+        "kind": "committed_campaign_artifact",
+        "exists": true,
+        "bytes": 16689,
+        "sha256": "39b538bd2169c76a6390120709c36171caeae28705582b5121657704998eb99d",
+        "expected_sha256": null,
+        "matches_recorded_sha256": null
+      },
+      {
+        "path": "docs/campaigns/m26_nanobench_vertical_freeze.json",
+        "kind": "committed_campaign_artifact",
+        "exists": true,
+        "bytes": 991,
+        "sha256": "612cf94f30344d0524202f6a038e3b7288706fbae5790388b2b3f0b9d302dd87",
+        "expected_sha256": null,
+        "matches_recorded_sha256": null
+      },
+      {
+        "path": "docs/campaigns/m26_nanobench_vertical_results.json",
+        "kind": "committed_campaign_artifact",
+        "exists": true,
+        "bytes": 139161,
+        "sha256": "b86121378face701c96bc7ce11ee6d82e88ab7e17dd31800aa82c0af7ac121ec",
+        "expected_sha256": null,
+        "matches_recorded_sha256": null
+      },
+      {
+        "path": "docs/campaigns/m26_qdrone_voltage_freeze.json",
+        "kind": "committed_campaign_artifact",
+        "exists": true,
+        "bytes": 443,
+        "sha256": "32ed228b472f7e30b23f2e11cd790f243f0dbf86ee3d1568a367341623f7781f",
+        "expected_sha256": null,
+        "matches_recorded_sha256": null
+      },
+      {
+        "path": "docs/campaigns/m26_qdrone_voltage_results.json",
+        "kind": "committed_campaign_artifact",
+        "exists": true,
+        "bytes": 2484,
+        "sha256": "5493646f837b0bd0c31fbd6fd36959750d210e133f9c27cb3e5bda59e9199229",
+        "expected_sha256": null,
+        "matches_recorded_sha256": null
+      },
+      {
+        "path": "docs/campaigns/m26_qdrone_voltage_sources.json",
+        "kind": "committed_campaign_artifact",
+        "exists": true,
+        "bytes": 2434,
+        "sha256": "ca5294649b78432d107b04dfb1b5c54d92199a38b46a9e46c86ef9bb7ca78755",
+        "expected_sha256": null,
+        "matches_recorded_sha256": null
+      },
+      {
+        "path": "docs/campaigns/m27_dronepropa_transfer_freeze.json",
+        "kind": "committed_campaign_artifact",
+        "exists": true,
+        "bytes": 349,
+        "sha256": "7aed10f6203468f87aaeecdc593cc7fc33435e0537546922f9cbdeba281fa410",
+        "expected_sha256": null,
+        "matches_recorded_sha256": null
+      },
+      {
+        "path": "docs/campaigns/m27_dronepropa_transfer_results.json",
+        "kind": "committed_campaign_artifact",
+        "exists": true,
+        "bytes": 5277,
+        "sha256": "88d91f7ffbda1ac27d51cb89c8ab1af02f993ffe3f1fc26c10b2f8a3947983cb",
+        "expected_sha256": null,
+        "matches_recorded_sha256": null
+      },
+      {
+        "path": "docs/campaigns/m27_dronepropa_transfer_sources.json",
+        "kind": "committed_campaign_artifact",
+        "exists": true,
+        "bytes": 1727,
+        "sha256": "b931346c6db2a23ffc330bd050b2d2768fb3fb2fdae963d6e1300fead13654df",
+        "expected_sha256": null,
+        "matches_recorded_sha256": null
+      },
+      {
+        "path": "data/benchmarks/public/quadplane_2022/BATT.csv",
+        "kind": "repository_source_or_receipt",
+        "exists": true,
+        "bytes": 121674,
+        "sha256": "c11308567ed9e6f4e28ef1e8046176fa9d0f4d63327e3ed8ad521c7f1ae85272",
+        "expected_sha256": null,
+        "matches_recorded_sha256": null
+      },
+      {
+        "path": "data/benchmarks/public/quadplane_2022/manifest.json",
+        "kind": "repository_source_or_receipt",
+        "exists": true,
+        "bytes": 2623,
+        "sha256": "520e4b198ebe8bfd843fece59b31febcea56aae202adf05cc40a7b65df17e6c5",
+        "expected_sha256": null,
+        "matches_recorded_sha256": null
+      },
+      {
+        "path": "data/benchmarks/public/quadplane_2022/README.md",
+        "kind": "repository_source_or_receipt",
+        "exists": true,
+        "bytes": 2337,
+        "sha256": "3a810f4d4cbe3b2109a6cf87eb2084dd362c9915e88fd848ca1a6c2fae596e0b",
+        "expected_sha256": null,
+        "matches_recorded_sha256": null
+      },
+      {
+        "path": "data/benchmarks/uiuc/apce_10x5_static_pg0819.txt",
+        "kind": "repository_source_or_receipt",
+        "exists": true,
+        "bytes": 404,
+        "sha256": "ad264f14abc824ff633b289cc45a011a0cb285e6cc74179f067f5a0db24c69ba",
+        "expected_sha256": null,
+        "matches_recorded_sha256": null
+      },
+      {
+        "path": "data/benchmarks/public/g30_2025/bench_table_5.json",
+        "kind": "repository_source_or_receipt",
+        "exists": true,
+        "bytes": 3826,
+        "sha256": "f872a149791e051612e0c90fe558c7aaa0ca7c0147f151d370f79e64c245d6e4",
+        "expected_sha256": null,
+        "matches_recorded_sha256": null
+      },
+      {
+        "path": "data/benchmarks/flight/nanobench_source_receipt.json",
+        "kind": "repository_source_or_receipt",
+        "exists": true,
+        "bytes": 4232,
+        "sha256": "c3a978829a4f4133e4c75f6d1422b2308afcbb1a7be3d81ce86babb0f420a666",
+        "expected_sha256": null,
+        "matches_recorded_sha256": null
+      }
+    ],
+    "external_files": [
+      {
+        "path": "../source-physical/CMU-M100-flights.zip",
+        "kind": "external_publisher_processed_or_metadata",
+        "exists": true,
+        "bytes": 41274360,
+        "sha256": "98f65a1ab54a8b618c169fdf49311a53ff1fefed86fdc3f440d6a0166ce49fb1",
+        "expected_sha256": "98f65a1ab54a8b618c169fdf49311a53ff1fefed86fdc3f440d6a0166ce49fb1",
+        "matches_recorded_sha256": true,
+        "source_id": "cmu_m100",
+        "expected_bytes": 41274360,
+        "provider_file_id": 26385070,
+        "matches_recorded_bytes": true
+      },
+      {
+        "path": "../source-physical/CMU-M100-parameters.csv",
+        "kind": "external_publisher_processed_or_metadata",
+        "exists": true,
+        "bytes": 7867,
+        "sha256": "568dffaed11a4d335ef4f8a932b342c836907af2f4aa54da9b4a0e2ffef2108a",
+        "expected_sha256": "568dffaed11a4d335ef4f8a932b342c836907af2f4aa54da9b4a0e2ffef2108a",
+        "matches_recorded_sha256": true,
+        "source_id": "cmu_m100",
+        "expected_bytes": 7867,
+        "provider_file_id": 26385034,
+        "matches_recorded_bytes": true
+      },
+      {
+        "path": "../source-physical/CMU-M100-README.txt",
+        "kind": "external_publisher_processed_or_metadata",
+        "exists": true,
+        "bytes": 25101,
+        "sha256": "8601dd211d6c297c5411992dc34923bdb98b72cdc287517ed18e479f0e9540fd",
+        "expected_sha256": "8601dd211d6c297c5411992dc34923bdb98b72cdc287517ed18e479f0e9540fd",
+        "matches_recorded_sha256": true,
+        "source_id": "cmu_m100",
+        "expected_bytes": 25101,
+        "provider_file_id": 26405786,
+        "matches_recorded_bytes": true
+      },
+      {
+        "path": "../source-physical/NanoBench/LICENSE",
+        "kind": "external_publisher_record",
+        "exists": true,
+        "bytes": 1517,
+        "sha256": "69901188c51f2f874baf81666074a9e8dfbeb581592a068ad60a10dd43a5de59",
+        "expected_sha256": "69901188c51f2f874baf81666074a9e8dfbeb581592a068ad60a10dd43a5de59",
+        "matches_recorded_sha256": true,
+        "source_id": "nanobench",
+        "expected_bytes": 1517,
+        "upstream_path": "LICENSE",
+        "upstream_commit": "934a1ab92c458cad99c9278a5cb63bf68af6e56c",
+        "matches_recorded_bytes": true
+      },
+      {
+        "path": "../source-physical/NanoBench/README.md",
+        "kind": "external_publisher_record",
+        "exists": true,
+        "bytes": 18341,
+        "sha256": "dcdadfbc306d9218905e08e5710e1bd23f22522aa3d5d3d318821214404f8197",
+        "expected_sha256": "dcdadfbc306d9218905e08e5710e1bd23f22522aa3d5d3d318821214404f8197",
+        "matches_recorded_sha256": true,
+        "source_id": "nanobench",
+        "expected_bytes": 18341,
+        "upstream_path": "README.md",
+        "upstream_commit": "934a1ab92c458cad99c9278a5cb63bf68af6e56c",
+        "matches_recorded_bytes": true
+      },
+      {
+        "path": "../source-physical/NanoBench/A1b_multisine_sysid_rep1.csv",
+        "kind": "external_publisher_record",
+        "exists": true,
+        "bytes": 4852929,
+        "sha256": "fa4bc4d57cd9ad7b0e2f862e2e3adec7d10ba27bf2b28f11c26ad779cc519c1d",
+        "expected_sha256": "fa4bc4d57cd9ad7b0e2f862e2e3adec7d10ba27bf2b28f11c26ad779cc519c1d",
+        "matches_recorded_sha256": true,
+        "source_id": "nanobench",
+        "expected_bytes": 4852929,
+        "upstream_path": "datasets/dataset/A1b_multisine_sysid_rep1.csv",
+        "upstream_commit": "934a1ab92c458cad99c9278a5cb63bf68af6e56c",
+        "matches_recorded_bytes": true
+      },
+      {
+        "path": "../source-physical/NanoBench/A1b_multisine_sysid_rep1_metadata.yaml",
+        "kind": "external_publisher_record",
+        "exists": true,
+        "bytes": 683,
+        "sha256": "26468128c8e01c9b19e22ac2d4f5f532e489a4027420c5b51e1da94468160781",
+        "expected_sha256": "26468128c8e01c9b19e22ac2d4f5f532e489a4027420c5b51e1da94468160781",
+        "matches_recorded_sha256": true,
+        "source_id": "nanobench",
+        "expected_bytes": 683,
+        "upstream_path": "datasets/dataset/A1b_multisine_sysid_rep1_metadata.yaml",
+        "upstream_commit": "934a1ab92c458cad99c9278a5cb63bf68af6e56c",
+        "matches_recorded_bytes": true
+      },
+      {
+        "path": "../source-physical/NanoBench/A1b_multisine_sysid_rep2.csv",
+        "kind": "external_publisher_record",
+        "exists": true,
+        "bytes": 4840979,
+        "sha256": "39d7e4fc8deeec12e5e871715d8392be573a646525f4aadb9ab963a0474485d9",
+        "expected_sha256": "39d7e4fc8deeec12e5e871715d8392be573a646525f4aadb9ab963a0474485d9",
+        "matches_recorded_sha256": true,
+        "source_id": "nanobench",
+        "expected_bytes": 4840979,
+        "upstream_path": "datasets/dataset/A1b_multisine_sysid_rep2.csv",
+        "upstream_commit": "934a1ab92c458cad99c9278a5cb63bf68af6e56c",
+        "matches_recorded_bytes": true
+      },
+      {
+        "path": "../source-physical/NanoBench/A1b_multisine_sysid_rep2_metadata.yaml",
+        "kind": "external_publisher_record",
+        "exists": true,
+        "bytes": 684,
+        "sha256": "b9beca13aece2d0bf78fbf7546f97701f231d3d98666d8f757986ec3fefaed09",
+        "expected_sha256": "b9beca13aece2d0bf78fbf7546f97701f231d3d98666d8f757986ec3fefaed09",
+        "matches_recorded_sha256": true,
+        "source_id": "nanobench",
+        "expected_bytes": 684,
+        "upstream_path": "datasets/dataset/A1b_multisine_sysid_rep2_metadata.yaml",
+        "upstream_commit": "934a1ab92c458cad99c9278a5cb63bf68af6e56c",
+        "matches_recorded_bytes": true
+      },
+      {
+        "path": "../source-physical/NanoBench/B12_staircase_climb_rep1.csv",
+        "kind": "external_publisher_record",
+        "exists": true,
+        "bytes": 4875894,
+        "sha256": "a800921b4d08dd0eb5fa8f1ec23daef738ac5abec03f4235cc5b9d2cfb9f1eb2",
+        "expected_sha256": "a800921b4d08dd0eb5fa8f1ec23daef738ac5abec03f4235cc5b9d2cfb9f1eb2",
+        "matches_recorded_sha256": true,
+        "source_id": "nanobench",
+        "expected_bytes": 4875894,
+        "upstream_path": "datasets/dataset/B12_staircase_climb_rep1.csv",
+        "upstream_commit": "934a1ab92c458cad99c9278a5cb63bf68af6e56c",
+        "matches_recorded_bytes": true
+      },
+      {
+        "path": "../source-physical/NanoBench/B12_staircase_climb_rep1_metadata.yaml",
+        "kind": "external_publisher_record",
+        "exists": true,
+        "bytes": 609,
+        "sha256": "2414efe967ac005a29f96f7bfc03340d3629a4a1b7f46e0b468658d92b4db513",
+        "expected_sha256": "2414efe967ac005a29f96f7bfc03340d3629a4a1b7f46e0b468658d92b4db513",
+        "matches_recorded_sha256": true,
+        "source_id": "nanobench",
+        "expected_bytes": 609,
+        "upstream_path": "datasets/dataset/B12_staircase_climb_rep1_metadata.yaml",
+        "upstream_commit": "934a1ab92c458cad99c9278a5cb63bf68af6e56c",
+        "matches_recorded_bytes": true
+      },
+      {
+        "path": "../source-physical/NanoBench/B2_circle_medium_rep1.csv",
+        "kind": "external_publisher_record",
+        "exists": true,
+        "bytes": 1818870,
+        "sha256": "5f8f254531d3e367eb30f437d7d7b5d4a6a401b8576a5a0196428d97c909aa76",
+        "expected_sha256": "5f8f254531d3e367eb30f437d7d7b5d4a6a401b8576a5a0196428d97c909aa76",
+        "matches_recorded_sha256": true,
+        "source_id": "nanobench",
+        "expected_bytes": 1818870,
+        "upstream_path": "datasets/dataset/B2_circle_medium_rep1.csv",
+        "upstream_commit": "934a1ab92c458cad99c9278a5cb63bf68af6e56c",
+        "matches_recorded_bytes": true
+      },
+      {
+        "path": "../source-physical/NanoBench/B2_circle_medium_rep1_metadata.yaml",
+        "kind": "external_publisher_record",
+        "exists": true,
+        "bytes": 548,
+        "sha256": "4ec03bc07caf087106b80623ea15d84c09b058a15ad4f7ca791d931d5f724077",
+        "expected_sha256": "4ec03bc07caf087106b80623ea15d84c09b058a15ad4f7ca791d931d5f724077",
+        "matches_recorded_sha256": true,
+        "source_id": "nanobench",
+        "expected_bytes": 548,
+        "upstream_path": "datasets/dataset/B2_circle_medium_rep1_metadata.yaml",
+        "upstream_commit": "934a1ab92c458cad99c9278a5cb63bf68af6e56c",
+        "matches_recorded_bytes": true
+      },
+      {
+        "path": "../source-physical/NanoBench/B2_circle_medium_rep2.csv",
+        "kind": "external_publisher_record",
+        "exists": true,
+        "bytes": 2830853,
+        "sha256": "fc5579b60c791bf9045779c09d480fb81baef99d618a9197475e03afa1a52098",
+        "expected_sha256": "fc5579b60c791bf9045779c09d480fb81baef99d618a9197475e03afa1a52098",
+        "matches_recorded_sha256": true,
+        "source_id": "nanobench",
+        "expected_bytes": 2830853,
+        "upstream_path": "datasets/dataset/B2_circle_medium_rep2.csv",
+        "upstream_commit": "934a1ab92c458cad99c9278a5cb63bf68af6e56c",
+        "matches_recorded_bytes": true
+      },
+      {
+        "path": "../source-physical/NanoBench/B2_circle_medium_rep2_metadata.yaml",
+        "kind": "external_publisher_record",
+        "exists": true,
+        "bytes": 547,
+        "sha256": "ef560fd445196a593901f95e9bd1c973e04dbb69bdc092a46c23ce095d579d00",
+        "expected_sha256": "ef560fd445196a593901f95e9bd1c973e04dbb69bdc092a46c23ce095d579d00",
+        "matches_recorded_sha256": true,
+        "source_id": "nanobench",
+        "expected_bytes": 547,
+        "upstream_path": "datasets/dataset/B2_circle_medium_rep2_metadata.yaml",
+        "upstream_commit": "934a1ab92c458cad99c9278a5cb63bf68af6e56c",
+        "matches_recorded_bytes": true
+      },
+      {
+        "path": "../source-physical/NASA-HIRF/publisher.zip",
+        "kind": "external_publisher_archive",
+        "exists": true,
+        "bytes": 1088895795,
+        "sha256": "f6ca7b1eeaed8b75da92479a778bbef9253997a572cc20ab480f872a9ee3a9b0",
+        "expected_sha256": "f6ca7b1eeaed8b75da92479a778bbef9253997a572cc20ab480f872a9ee3a9b0",
+        "matches_recorded_sha256": true,
+        "source_id": "nasa_edge",
+        "matches_recorded_bytes": null
+      },
+      {
+        "path": "../source-physical/UIUC-APCE-10x5-axial/apce_10x5_pg0820_4005.txt",
+        "kind": "external_publisher_record",
+        "exists": true,
+        "bytes": 544,
+        "sha256": "088add9d07eae933fb0098c187c980427e5f21525239791095e0dbb4ce2780ee",
+        "expected_sha256": "088add9d07eae933fb0098c187c980427e5f21525239791095e0dbb4ce2780ee",
+        "matches_recorded_sha256": true,
+        "source_id": "uiuc_propellers",
+        "matches_recorded_bytes": null
+      },
+      {
+        "path": "../source-physical/UIUC-APCE-10x5-axial/apce_10x5_kt0825_6707.txt",
+        "kind": "external_publisher_record",
+        "exists": true,
+        "bytes": 574,
+        "sha256": "5ca121ee2ee1f69809cbaeb20601a12c43f7040b8e7bce9e2eda1c1a21723e73",
+        "expected_sha256": "5ca121ee2ee1f69809cbaeb20601a12c43f7040b8e7bce9e2eda1c1a21723e73",
+        "matches_recorded_sha256": true,
+        "source_id": "uiuc_propellers",
+        "matches_recorded_bytes": null
+      },
+      {
+        "path": "../source-physical/UIUC-APCE-10x5-axial/apce_10x5_kt0826_6710.txt",
+        "kind": "external_publisher_record",
+        "exists": true,
+        "bytes": 544,
+        "sha256": "ac7bef0903f53c227883c68b3e44867242ae00beb27ab6c27a7d8b76ac30b8e3",
+        "expected_sha256": "ac7bef0903f53c227883c68b3e44867242ae00beb27ab6c27a7d8b76ac30b8e3",
+        "matches_recorded_sha256": true,
+        "source_id": "uiuc_propellers",
+        "matches_recorded_bytes": null
+      },
+      {
+        "path": "../source-physical/UIUC-APCE-10x5-axial/apce_10x5_kt0821_5000.txt",
+        "kind": "external_publisher_record",
+        "exists": true,
+        "bytes": 574,
+        "sha256": "3df32a75d9b09452a6cd22f4853a7ce4c09b51e412fda3c6bea247dd7ce09c61",
+        "expected_sha256": "3df32a75d9b09452a6cd22f4853a7ce4c09b51e412fda3c6bea247dd7ce09c61",
+        "matches_recorded_sha256": true,
+        "source_id": "uiuc_propellers",
+        "matches_recorded_bytes": null
+      },
+      {
+        "path": "../source-physical/UIUC-APCE-10x5-axial/apce_10x5_kt0823_6005.txt",
+        "kind": "external_publisher_record",
+        "exists": true,
+        "bytes": 574,
+        "sha256": "1db2ff99dc611079a5aa91f73ed13fb48a1ebe6874b294789e0872b9756c41e6",
+        "expected_sha256": "1db2ff99dc611079a5aa91f73ed13fb48a1ebe6874b294789e0872b9756c41e6",
+        "matches_recorded_sha256": true,
+        "source_id": "uiuc_propellers",
+        "matches_recorded_bytes": null
+      },
+      {
+        "path": "../source-physical/UIUC-APCE-10x5-axial/apce_10x5_kt0824_6018.txt",
+        "kind": "external_publisher_record",
+        "exists": true,
+        "bytes": 450,
+        "sha256": "9f8a6f9c8775a8cf2334b7b8a6f75b9c4ebbd0ad7474da4938de05557c0278bb",
+        "expected_sha256": "9f8a6f9c8775a8cf2334b7b8a6f75b9c4ebbd0ad7474da4938de05557c0278bb",
+        "matches_recorded_sha256": true,
+        "source_id": "uiuc_propellers",
+        "matches_recorded_bytes": null
+      },
+      {
+        "path": "../source-physical/Kotarski-2023/setup3_measurement_3.8V.csv",
+        "kind": "external_publisher_record",
+        "exists": true,
+        "bytes": 15940,
+        "sha256": "31ae880d06637e8780b64a6b34e6fbc0828d5618f2a9a65bf4c1c6c5fab515bd",
+        "expected_sha256": "31ae880d06637e8780b64a6b34e6fbc0828d5618f2a9a65bf4c1c6c5fab515bd",
+        "matches_recorded_sha256": true,
+        "source_id": "kotarski_setup3",
+        "provider_file_id": 6940261,
+        "expected_bytes": 15940,
+        "matches_recorded_bytes": true
+      },
+      {
+        "path": "../source-physical/Kotarski-2023/setup3_measurement_4.0V.csv",
+        "kind": "external_publisher_record",
+        "exists": true,
+        "bytes": 15839,
+        "sha256": "9d90497f5e13d5e0e449b04fc0850a167027caebcf0db9eb0f2f25448dd53feb",
+        "expected_sha256": "9d90497f5e13d5e0e449b04fc0850a167027caebcf0db9eb0f2f25448dd53feb",
+        "matches_recorded_sha256": true,
+        "source_id": "kotarski_setup3",
+        "provider_file_id": 6940259,
+        "expected_bytes": 15839,
+        "matches_recorded_bytes": true
+      },
+      {
+        "path": "../source-physical/Kotarski-2023/setup3_measurement_4.2V.csv",
+        "kind": "external_publisher_record",
+        "exists": true,
+        "bytes": 15872,
+        "sha256": "a59b8bb83226aa6f0108bd6fe5c6c40399e687b9f1d6fde349a2276694ec3ef8",
+        "expected_sha256": "a59b8bb83226aa6f0108bd6fe5c6c40399e687b9f1d6fde349a2276694ec3ef8",
+        "matches_recorded_sha256": true,
+        "source_id": "kotarski_setup3",
+        "provider_file_id": 6940266,
+        "expected_bytes": 15872,
+        "matches_recorded_bytes": true
+      },
+      {
+        "path": "../source-physical/UZH-NeuroBEM/merged_2021-02-18-16-43-54_seg_1.csv",
+        "kind": "external_publisher_processed_record",
+        "exists": true,
+        "bytes": 193467,
+        "sha256": "df27ef788eb5e4b8e3ebb15883abeac6d2b0cd84b923a711b95af5cadf71a85d",
+        "expected_sha256": "df27ef788eb5e4b8e3ebb15883abeac6d2b0cd84b923a711b95af5cadf71a85d",
+        "matches_recorded_sha256": true,
+        "source_id": "neurobem",
+        "matches_recorded_bytes": null
+      },
+      {
+        "path": "../source-physical/UZH-NeuroBEM/merged_2021-02-18-16-43-54_seg_2.csv",
+        "kind": "external_publisher_processed_record",
+        "exists": true,
+        "bytes": 483543,
+        "sha256": "ffeb6c73673a6b44eb209db5401c764e015e5b7586a67621e6f715ef0c563d38",
+        "expected_sha256": "ffeb6c73673a6b44eb209db5401c764e015e5b7586a67621e6f715ef0c563d38",
+        "matches_recorded_sha256": true,
+        "source_id": "neurobem",
+        "matches_recorded_bytes": null
+      },
+      {
+        "path": "../source-physical/UZH-NeuroBEM/merged_2021-02-18-16-43-54_seg_3.csv",
+        "kind": "external_publisher_processed_record",
+        "exists": true,
+        "bytes": 3880951,
+        "sha256": "f6014c66a28434c3c780e34466eb19383f3d85984e62775cce7e6be859d2ceda",
+        "expected_sha256": "f6014c66a28434c3c780e34466eb19383f3d85984e62775cce7e6be859d2ceda",
+        "matches_recorded_sha256": true,
+        "source_id": "neurobem",
+        "matches_recorded_bytes": null
+      },
+      {
+        "path": "../source-physical/UZH-NeuroBEM/merged_2021-02-18-16-43-54_seg_4.csv",
+        "kind": "external_publisher_processed_record",
+        "exists": true,
+        "bytes": 381654,
+        "sha256": "7042b45bfb6cf779c276a3fa329d12487a8d891662df575c3f980e59b0056242",
+        "expected_sha256": "7042b45bfb6cf779c276a3fa329d12487a8d891662df575c3f980e59b0056242",
+        "matches_recorded_sha256": true,
+        "source_id": "neurobem",
+        "matches_recorded_bytes": null
+      },
+      {
+        "path": "../source-physical/UZH-NeuroBEM/merged_2021-02-18-17-20-37_seg_1.csv",
+        "kind": "external_publisher_processed_record",
+        "exists": true,
+        "bytes": 11505199,
+        "sha256": "3b0efacd9890dcc32ed80d7acc6516d9e484f1744582000e7f88936039b366a9",
+        "expected_sha256": "3b0efacd9890dcc32ed80d7acc6516d9e484f1744582000e7f88936039b366a9",
+        "matches_recorded_sha256": true,
+        "source_id": "neurobem",
+        "matches_recorded_bytes": null
+      },
+      {
+        "path": "../source-physical/UZH-NeuroBEM/merged_2021-02-23-10-52-00_seg_1.csv",
+        "kind": "external_publisher_processed_record",
+        "exists": true,
+        "bytes": 2261316,
+        "sha256": "d3c7a080ef0efdd4fb9c8f11318116ad72a3842ad21d90d668b1ee5b7188062a",
+        "expected_sha256": "d3c7a080ef0efdd4fb9c8f11318116ad72a3842ad21d90d668b1ee5b7188062a",
+        "matches_recorded_sha256": true,
+        "source_id": "neurobem",
+        "matches_recorded_bytes": null
+      },
+      {
+        "path": "../source-physical/UZH-NeuroBEM/merged_2021-02-23-10-52-00_seg_2.csv",
+        "kind": "external_publisher_processed_record",
+        "exists": true,
+        "bytes": 10776693,
+        "sha256": "49ce15e4075eb7ec78020e9edef7e9c6bfa134bc98a5cff0c32623ccc302146a",
+        "expected_sha256": "49ce15e4075eb7ec78020e9edef7e9c6bfa134bc98a5cff0c32623ccc302146a",
+        "matches_recorded_sha256": true,
+        "source_id": "neurobem",
+        "matches_recorded_bytes": null
+      },
+      {
+        "path": "../source-physical/UZH-NeuroBEM/merged_2021-02-23-14-24-07_seg_1.csv",
+        "kind": "external_publisher_processed_record",
+        "exists": true,
+        "bytes": 12375441,
+        "sha256": "b0ea486cfe39b96b89a7671792763b712809a2594c9d1f37ba880f356f2228c7",
+        "expected_sha256": "b0ea486cfe39b96b89a7671792763b712809a2594c9d1f37ba880f356f2228c7",
+        "matches_recorded_sha256": true,
+        "source_id": "neurobem",
+        "matches_recorded_bytes": null
+      }
+    ],
+    "summary": {
+      "repository_artifacts_hashed": 48,
+      "external_files_hashed": 33,
+      "all_external_pins_match": true,
+      "external_bytes_hashed": 1191354752
+    }
+  },
+  "coverage_gaps": [
+    "complete matching fixed-wing/helicopter/VTOL flight and transition validation",
+    "electrical water ingress, wet motors/props and sensor degradation",
+    "snow accumulation/ingestion, rotor icing/shedding and complete adverse-weather flight",
+    "geometry-specific structural/fatigue/material/joint measurements",
+    "human apparatus biomechanics, control authority and full system evidence",
+    "supersonic/hypersonic thermal/aeroelastic and complete jet-engine tests",
+    "rocket thrust/combustion/cooling/recovery and scale-specific full-flight evidence"
+  ],
+  "legacy_note": "Existing data/benchmarks/public_sources.json and campaign prose include older acquisition statuses. Use this dated local-custody audit for actual current file presence; retain original campaign bounds. No original report was rewritten."
+}

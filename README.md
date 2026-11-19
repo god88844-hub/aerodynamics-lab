@@ -1,7 +1,14 @@
-# AeroForge
+# Aerodynamics Lab
 
-Physics-based drone simulation lab — a modular digital-twin laboratory for
-multi-rotor UAVs with verification & validation (V&V) built into every result.
+An open-source engineering laboratory for learning, designing, inventing and
+testing flying machines in a physics-driven 3D world.
+
+The approved Phase 0 includes a Godot desktop application, full CAD, all four
+drone families, engineering test worlds, weather, guided learning and advanced
+autonomy. The currently implemented application is the existing multirotor
+web/API foundation. Follow the [product specification](docs/PRODUCT_SPEC.md),
+[complete roadmap](docs/ROADMAP.md), [acceptance ledger](docs/ACCEPTANCE.md) and
+[research library](docs/SOURCES.md) for current status and builder handoff.
 
 ## Mission
 
@@ -10,9 +17,9 @@ multi-rotor UAVs with verification & validation (V&V) built into every result.
    quantified uncertainty, a credibility rating, and explicit caveats
    (philosophy of NASA-STD-7009 and ASME V&V 10). We never claim a design
    "flies" unless the model has demonstrated accuracy in that regime.
-2. **Secondary:** multi-rotor drones only in v1 (quadcopters first). The system
-   is structured so fixed-wing, VTOL, etc. can be added later as plugins, but
-   they are **not** implemented now.
+2. **Phase 0:** complete the shared desktop foundation and supported
+   multirotor, fixed-wing, helicopter and VTOL drone workflows. The four
+   families have separate implementation and measured validation requirements.
 
 ## Hard principles (enforced in code, not aspirational)
 
