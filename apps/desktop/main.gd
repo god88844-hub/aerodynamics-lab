@@ -18,6 +18,7 @@ var job_action: String = ""
 var job_output: String = ""
 var job_error: String = ""
 var job_completion: String = ""
+var job_started: String = ""
 var job_started_ms: int = 0
 var playing: bool = false
 var replay_time: float = 0.0
@@ -556,6 +557,7 @@ func _start_job(action: String, input_path: String, output_path: String = "") ->
 	job_output = output_path if not output_path.is_empty() else ProjectSettings.globalize_path(stem + ".json")
 	job_error = ProjectSettings.globalize_path(stem + "-error.json")
 	job_completion = ProjectSettings.globalize_path(stem + "-complete.json")
+	job_started = ProjectSettings.globalize_path(stem + "-started.json")
 	var arguments: PackedStringArray = [
 		repository_root().path_join("scripts/lab_project.py"), action, input_path, job_output,
 		"--error-output", job_error, "--completion-output", job_completion]
@@ -573,6 +575,7 @@ func _start_job(action: String, input_path: String, output_path: String = "") ->
 		var cad_python: String = OS.get_environment("LAB_CAD_PYTHON")
 		if not cad_python.is_empty():
 			interpreter = cad_python
+	arguments.append_array(["--started-output", job_started])
 	job_pid = OS.create_process(interpreter, arguments, false)
 	status_label.text = "Running %s…" % action if job_pid > 0 else "Cannot start the configured Python worker"
 
@@ -580,7 +583,15 @@ func _start_job(action: String, input_path: String, output_path: String = "") ->
 func _cancel_job() -> void:
 	if job_pid > 0:
 		if OS.is_process_running(job_pid):
-			OS.kill(job_pid)
+			if OS.get_name() == "Windows":
+				# The Windows venv launcher starts a child interpreter.
+				var output: Array = []
+				var stopped: int = OS.execute("taskkill", ["/PID", str(job_pid), "/T", "/F"], output, true, false)
+				if stopped != 0 and OS.is_process_running(job_pid):
+					status_label.text = "Worker termination failed. The job is still tracked."
+					return
+			else:
+				OS.kill(job_pid)
 		job_pid = -1
 		status_label.text = "Job cancelled. The current project is available."
 
@@ -652,8 +663,9 @@ func _show_cad_properties(properties: Dictionary) -> void:
 		metrics_label.text = "Uniform density missing.\nMass and inertia are unknown."
 	else:
 		var tensor: Array = properties["inertia_about_cog_kg_m2"]
-		metrics_label.text = "Uniform-density estimate\nMass %.6f kg\nCoG %s m\nCentral inertia diagonal\n[%.7f, %.7f, %.7f] kg·m²" % [
-			properties["mass_kg"], str(properties["center_of_mass_m"]), tensor[0][0], tensor[1][1], tensor[2][2]]
+		var center: Array = properties["center_of_mass_m"]
+		metrics_label.text = "Uniform-density estimate\nMass %.6f kg\nCoG [%.4f, %.4f, %.4f] m\nCentral inertia diagonal\n[%.7f, %.7f, %.7f] kg·m²" % [
+			properties["mass_kg"], center[0], center[1], center[2], tensor[0][0], tensor[1][1], tensor[2][2]]
 	scope_label.text = "Rigid-body mathematics · assumed uniform density · physical validation pending"
 
 
@@ -690,4 +702,4 @@ func _seek(time_s: float) -> void:
 
 func _exit_tree() -> void:
 	if job_pid > 0 and OS.is_process_running(job_pid):
-		OS.kill(job_pid)
+		_cancel_job()

@@ -70,7 +70,18 @@ Invoke-Checked "cmake" @("--build", $buildDirectory, "--parallel", "2")
 Invoke-Checked "ctest" @("--test-dir", $buildDirectory, "--output-on-failure")
 $godot = Join-Path $godotDirectory "Godot_v4.7.2-stable_win64_console.exe"
 $desktopDirectory = Join-Path $repositoryRoot "apps/desktop"
-Invoke-Checked $godot @("--headless", "--path", $desktopDirectory, "--editor", "--import", "--quit")
+# A cold headless editor can crash during GDExtension documentation teardown.
+# Import with a hidden graphical editor; runtime smoke checks remain headless.
+$importLog = Join-Path $cachePath "editor-import.log"
+$importError = Join-Path $cachePath "editor-import-error.log"
+$editor = Start-Process -FilePath $godot -ArgumentList @("--path", ('"{0}"' -f $desktopDirectory),
+    "--rendering-method", "gl_compatibility", "--editor", "--import", "--quit") `
+    -WindowStyle Hidden -Wait -PassThru -RedirectStandardOutput $importLog -RedirectStandardError $importError
+if ($editor.ExitCode -ne 0) {
+    Get-Content -LiteralPath $importLog
+    Get-Content -LiteralPath $importError
+    throw "Godot editor import failed with exit code $($editor.ExitCode)"
+}
 Invoke-Checked $godot @("--headless", "--path", $desktopDirectory, "--script", "smoke_test.gd")
 if ($Launch) {
     Invoke-Checked $godot @("--path", $desktopDirectory)

@@ -24,20 +24,31 @@ func _run() -> void:
 	var component_tree: Tree = desktop.get("components")
 	component_tree.get_root().get_first_child().select(0)
 	desktop.call("_select_component")
+	desktop.get("project")["experiment"]["parameters"] = {"duration_s": 30.0}
 	desktop.call("_run_experiment")
 	var cancelled_pid: int = desktop.get("job_pid")
+	var startup_deadline: int = Time.get_ticks_msec() + 20000
+	while not FileAccess.file_exists(desktop.get("job_started")) and Time.get_ticks_msec() < startup_deadline:
+		await process_frame
+	var started: Variant = JSON.parse_string(FileAccess.get_file_as_string(desktop.get("job_started")))
+	if not started is Dictionary or not _worker_alive(int(started.get("worker_pid", -1))):
+		push_error("Cancellation check did not reach an active Python worker")
+		quit(25)
+		return
+	var actual_worker_pid: int = int(started["worker_pid"])
 	desktop.call("_cancel_job")
 	if desktop.get("job_pid") != -1 or desktop.get("project").is_empty():
 		push_error("Cancelling a worker lost the current project")
 		quit(8)
 		return
 	var cancel_deadline: int = Time.get_ticks_msec() + 5000
-	while cancelled_pid > 0 and OS.is_process_running(cancelled_pid) and Time.get_ticks_msec() < cancel_deadline:
+	while (OS.is_process_running(cancelled_pid) or _worker_alive(actual_worker_pid)) and Time.get_ticks_msec() < cancel_deadline:
 		await process_frame
-	if cancelled_pid > 0 and OS.is_process_running(cancelled_pid):
-		push_error("Cancelled worker is still running")
+	if OS.is_process_running(cancelled_pid) or _worker_alive(actual_worker_pid):
+		push_error("Cancelled launcher or actual Python worker is still running")
 		quit(9)
 		return
+	print("Cancellation verified for launcher %d and actual worker %d" % [cancelled_pid, actual_worker_pid])
 	var properties: Dictionary = core.mass_properties([
 		{"mass_kg": 2.0, "position_m": [0.0, 0.0, -1.0]},
 		{"mass_kg": 1.0, "position_m": [3.0, 0.0, 2.0]}])
@@ -189,3 +200,18 @@ func _wait_for_job(desktop: Control) -> bool:
 		push_error("Desktop accepted an existing output without this job's completion receipt")
 		return false
 	return true
+
+
+func _worker_alive(pid: int) -> bool:
+	if pid <= 0:
+		return false
+	if OS.get_name() != "Windows":
+		return OS.is_process_running(pid)
+	# Godot's Windows API tracks only processes it created directly. The venv
+	# interpreter is a descendant, so inspect it through the OS process inventory.
+	var output: Array = []
+	var code: int = OS.execute("tasklist", ["/FI", "PID eq %d" % pid, "/FO", "CSV", "/NH"], output, true, false)
+	if code != 0:
+		push_error("Could not inspect the actual worker process")
+		return true  # never pass cancellation on an unavailable process inventory
+	return not output.is_empty() and str(output[0]).contains('"%d"' % pid)

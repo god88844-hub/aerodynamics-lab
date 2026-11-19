@@ -10,7 +10,7 @@ sys.path[:0] = [str(ROOT / "apps/api"), str(ROOT / "packages"), str(ROOT / "pack
 
 from aeroforge_schemas.cad import CadTorqueRequest  # noqa: E402
 from geometry.cad_dynamics import run_cad_torque  # noqa: E402
-from lab_project import write_result  # noqa: E402
+from lab_project import write_result, write_started  # noqa: E402
 
 
 def main() -> int:
@@ -20,15 +20,17 @@ def main() -> int:
     parser.add_argument("--asset-root", type=Path, required=True)
     parser.add_argument("--error-output", type=Path)
     parser.add_argument("--completion-output", type=Path)
+    parser.add_argument("--started-output", type=Path)
     args = parser.parse_args()
-    paths = [path.resolve() for path in (args.input, args.output, args.error_output, args.completion_output) if path]
+    paths = [path.resolve() for path in (args.input, args.output, args.error_output, args.completion_output, args.started_output) if path]
     if len(paths) != len(set(paths)):
         parser.error("input, output, error and completion paths must be separate")
     try:
         request = CadTorqueRequest.model_validate_json(args.input.read_bytes())
         asset_paths = {(args.asset_root / asset.path).resolve() for asset in request.project.assets}
-        if any(path.resolve() in asset_paths for path in (args.output, args.error_output, args.completion_output) if path):
+        if any(path.resolve() in asset_paths for path in (args.output, args.error_output, args.completion_output, args.started_output) if path):
             parser.error("Output paths must not replace a project asset")
+        write_started(args.started_output)
         result = run_cad_torque(request, args.asset_root)
         write_result(args.output, result)
         if args.completion_output:

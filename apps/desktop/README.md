@@ -6,13 +6,15 @@ The CAD worker builds a sample or user-supplied blade recipe into a valid Open C
 
 ## Windows
 
-Install Python 3.11, CMake, Ninja and a C++20 compiler in the developer environment. From the repository root, run the following.
+Install Python 3.11, CMake, Ninja and a C++20 compiler in the developer environment. Close running desktop instances before rebuilding the native extension. From the repository root, run the following.
 
 ```powershell
 .\scripts\build_desktop.ps1 -Launch
 ```
 
 The script downloads pinned Godot 4.7.2 and godot-cpp source archives, checks SHA-256, creates a local Python environment with the locked API and CAD dependencies, builds the extension and runs integration checks before launching. CAD uses prebuilt pinned binary wheels. Downloaded tools and build state live in the checkout's ignored desktop cache. An existing Python environment containing `requirements-cad.lock` can be supplied through `-PythonPath`.
+
+Windows editor import runs with a hidden Compatibility-renderer window and retains its exit-code gate. A fresh headless editor import reproduced an access violation during this prototype work; the hidden graphical cold import completed successfully. Runtime integration checks still run headless. The project configuration targets the pinned 4.7 application; the native bindings retain the tested 4.5 extension API.
 
 ## Linux
 
@@ -35,7 +37,9 @@ Linux editor import uses a virtual X display with Xvfb. Godot's upstream headles
 
 ## Model and job behavior
 
-The application starts the existing Python project worker as a separate process. It requires a per-job completion receipt matching the output hash, so an old saved file cannot stand in for a successful worker. It can terminate that process through Cancel job or on application exit. Reference replay interpolates stored position and attitude. Display coordinates map engineering `(x, y, z)` to Godot `(x, z, -y)`.
+The application starts the existing Python project worker as a separate process. It requires a per-job completion receipt matching the output hash, so an old saved file cannot stand in for a successful worker. Cancel job and application exit stop the launched Windows process tree, including the virtual-environment child interpreter. Current Linux workers run as a single direct process. Future detached solver groups need their own supervised lifetime contract. Reference replay interpolates stored position and attitude. Display coordinates map engineering `(x, y, z)` to Godot `(x, z, -y)`.
+
+Workers publish an optional atomic startup receipt with the actual interpreter PID. The cancellation smoke waits for an active worker and checks both it and the launcher after cancellation. Windows process inspection uses the system inventory because Godot's process tracker covers directly created processes. [Windows process-tree termination](https://learn.microsoft.com/en-us/windows-server/administration/windows-commands/taskkill).
 
 The native library combines supplied part masses and coordinates using double precision. Rendered markers represent component positions. Source geometry, calibrated component behavior and validation limits remain recorded in the project/backend inputs.
 

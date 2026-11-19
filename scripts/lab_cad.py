@@ -11,7 +11,7 @@ sys.path[:0] = [str(ROOT / "apps/api"), str(ROOT / "packages"), str(ROOT / "pack
 
 from aeroforge_schemas.cad import BladeRecipe, BoxRecipe  # noqa: E402
 from geometry.cad_backend import build_blade_project, build_box_project  # noqa: E402
-from lab_project import write_result  # noqa: E402
+from lab_project import write_result, write_started  # noqa: E402
 
 
 def main() -> int:
@@ -20,16 +20,20 @@ def main() -> int:
     parser.add_argument("output", type=Path)
     parser.add_argument("--error-output", type=Path)
     parser.add_argument("--completion-output", type=Path)
+    parser.add_argument("--started-output", type=Path)
     args = parser.parse_args()
     paths = [args.input.resolve(), args.output.resolve()]
     if args.error_output:
         paths.append(args.error_output.resolve())
     if args.completion_output:
         paths.append(args.completion_output.resolve())
+    if args.started_output:
+        paths.append(args.started_output.resolve())
     if len(paths) != len(set(paths)):
         parser.error("input, output, error and completion paths must be separate")
     try:
         raw = json.loads(args.input.read_bytes())
+        write_started(args.started_output)
         directory = args.output.parent / (args.output.stem + "-cad")
         result = (build_box_project(BoxRecipe.model_validate(raw), directory)
                   if raw.get("recipe_type") == "box_1"
