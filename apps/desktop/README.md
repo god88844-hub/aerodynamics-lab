@@ -35,7 +35,7 @@ Linux editor import uses a virtual X display with Xvfb. Godot's upstream headles
 
 ## Model and job behavior
 
-The application starts the existing Python project worker as a separate process. It polls atomic output files and can terminate that process through Cancel job or on application exit. Reference replay interpolates stored position and attitude. Display coordinates map engineering `(x, y, z)` to Godot `(x, z, -y)`.
+The application starts the existing Python project worker as a separate process. It requires a per-job completion receipt matching the output hash, so an old saved file cannot stand in for a successful worker. It can terminate that process through Cancel job or on application exit. Reference replay interpolates stored position and attitude. Display coordinates map engineering `(x, y, z)` to Godot `(x, z, -y)`.
 
 The native library combines supplied part masses and coordinates using double precision. Rendered markers represent component positions. Source geometry, calibrated component behavior and validation limits remain recorded in the project/backend inputs.
 

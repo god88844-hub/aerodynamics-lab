@@ -1,6 +1,7 @@
 """Import, validate or simulate an Aerodynamics Lab project from a file."""
 
 import argparse
+from hashlib import sha256
 import json
 import os
 from pathlib import Path
@@ -35,12 +36,12 @@ def main() -> int:
     parser.add_argument("input", type=Path)
     parser.add_argument("output", type=Path)
     parser.add_argument("--error-output", type=Path)
+    parser.add_argument("--completion-output", type=Path)
     parser.add_argument("--asset-root", type=Path)
     args = parser.parse_args()
-    if args.input.resolve() == args.output.resolve():
-        parser.error("choose an output path separate from the input project")
-    if args.error_output and args.error_output.resolve() in (args.input.resolve(), args.output.resolve()):
-        parser.error("choose a separate error output path")
+    paths = [path.resolve() for path in (args.input, args.output, args.error_output, args.completion_output) if path]
+    if len(paths) != len(set(paths)):
+        parser.error("input, output, error and completion paths must be separate")
     try:
         raw = json.loads(args.input.read_text(encoding="utf-8"))
         project = import_legacy_project(raw) if args.command == "import-legacy" else EngineeringProject.model_validate(raw)
@@ -51,6 +52,8 @@ def main() -> int:
             verify_assets(project, asset_root)
         payload = run_project(project) if args.command == "run" else project.model_dump(mode="json")
         write_result(args.output, payload)
+        if args.completion_output:
+            write_result(args.completion_output, {"output_sha256": sha256(args.output.read_bytes()).hexdigest()})
     except (ValueError, OSError) as error:
         print(str(error), file=sys.stderr)
         if args.error_output:

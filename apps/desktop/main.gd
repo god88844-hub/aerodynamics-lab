@@ -17,6 +17,7 @@ var job_pid: int = -1
 var job_action: String = ""
 var job_output: String = ""
 var job_error: String = ""
+var job_completion: String = ""
 var job_started_ms: int = 0
 var playing: bool = false
 var replay_time: float = 0.0
@@ -457,16 +458,17 @@ func _start_job(action: String, input_path: String, output_path: String = "") ->
 	var stem: String = "user://job-%s" % Time.get_ticks_usec()
 	job_output = output_path if not output_path.is_empty() else ProjectSettings.globalize_path(stem + ".json")
 	job_error = ProjectSettings.globalize_path(stem + "-error.json")
+	job_completion = ProjectSettings.globalize_path(stem + "-complete.json")
 	var arguments: PackedStringArray = [
 		repository_root().path_join("scripts/lab_project.py"), action, input_path, job_output,
-		"--error-output", job_error]
+		"--error-output", job_error, "--completion-output", job_completion]
 	job_asset_root = project_asset_root if action == "package" else input_path.get_base_dir()
 	if action == "validate" or action == "package":
 		arguments.append_array(["--asset-root", job_asset_root])
 	var interpreter: String = python_command()
 	if action == "build-blade":
 		arguments = [repository_root().path_join("scripts/lab_cad.py"), input_path, job_output,
-			"--error-output", job_error]
+			"--error-output", job_error, "--completion-output", job_completion]
 		var cad_python: String = OS.get_environment("LAB_CAD_PYTHON")
 		if not cad_python.is_empty():
 			interpreter = cad_python
@@ -488,7 +490,7 @@ func _process(delta: float) -> void:
 		if FileAccess.file_exists(job_error):
 			var error: Variant = JSON.parse_string(FileAccess.get_file_as_string(job_error))
 			status_label.text = "Worker refused the operation. " + str(error.get("error", "Invalid result"))
-		elif FileAccess.file_exists(job_output):
+		elif _completed_output():
 			var output: Variant = JSON.parse_string(FileAccess.get_file_as_string(job_output))
 			if not output is Dictionary:
 				status_label.text = "Worker returned invalid JSON"
@@ -526,6 +528,13 @@ func _process(delta: float) -> void:
 			await RenderingServer.frame_post_draw
 			get_viewport().get_texture().get_image().save_png(capture_path)
 			get_tree().quit()
+
+
+func _completed_output() -> bool:
+	if not FileAccess.file_exists(job_output) or not FileAccess.file_exists(job_completion):
+		return false
+	var receipt: Variant = JSON.parse_string(FileAccess.get_file_as_string(job_completion))
+	return receipt is Dictionary and receipt.get("output_sha256") == FileAccess.get_sha256(job_output)
 
 
 func _seek(time_s: float) -> void:

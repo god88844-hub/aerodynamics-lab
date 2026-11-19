@@ -148,11 +148,21 @@ def test_cli_import_validate_and_run_without_changing_source(tmp_path, legacy):
     assert invoke("validate", checked, checked).returncode != 0
     assert checked.read_bytes() == before
     error_path = tmp_path / "error.json"
+    completion_path = tmp_path / "complete.json"
+    completed = subprocess.run([sys.executable, script, "validate", str(project_path), str(checked),
+                                "--completion-output", str(completion_path)],
+                               capture_output=True, text=True, timeout=45)
+    assert completed.returncode == 0, completed.stderr
+    from hashlib import sha256
+    assert json.loads(completion_path.read_text(encoding="utf-8"))["output_sha256"] == sha256(checked.read_bytes()).hexdigest()
+    completion_path.unlink()
     document["environment"]["rain_mm_h"] = 5
     project_path.write_text(json.dumps(document), encoding="utf-8")
     previous_result = result.read_bytes()
     failed = subprocess.run([sys.executable, script, "run", str(project_path), str(result),
-                             "--error-output", str(error_path)], capture_output=True, text=True, timeout=45)
+                             "--error-output", str(error_path), "--completion-output", str(completion_path)],
+                            capture_output=True, text=True, timeout=45)
     assert failed.returncode == 2
     assert "fixed default environment" in json.loads(error_path.read_text(encoding="utf-8"))["error"]
     assert result.read_bytes() == previous_result
+    assert not completion_path.exists()

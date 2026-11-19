@@ -129,7 +129,15 @@ func _wait_for_job(desktop: Control) -> bool:
 	var deadline: int = Time.get_ticks_msec() + 60000
 	while desktop.get("job_pid") > 0 and Time.get_ticks_msec() < deadline:
 		await process_frame
-	if desktop.get("job_pid") > 0 or FileAccess.file_exists(desktop.get("job_error")):
+	if desktop.get("job_pid") > 0 or FileAccess.file_exists(desktop.get("job_error")) or not desktop.call("_completed_output"):
 		push_error("CAD integration job failed: " + str(desktop.get("status_label").text))
+		return false
+	# An old saved document cannot stand in for a completion receipt from this job.
+	var receipt_path: String = desktop.get("job_completion")
+	desktop.set("job_completion", receipt_path + "-missing")
+	var accepted_without_receipt: bool = desktop.call("_completed_output")
+	desktop.set("job_completion", receipt_path)
+	if accepted_without_receipt:
+		push_error("Desktop accepted an existing output without this job's completion receipt")
 		return false
 	return true
