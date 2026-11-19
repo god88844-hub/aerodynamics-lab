@@ -11,7 +11,7 @@ VERIFY = runpy.run_path(str(ROOT / "scripts/verify_release_ci.py"))
 
 @pytest.fixture
 def published_run():
-    repository = {"full_name": "god88844-hub/aeroforge"}
+    repository = {"full_name": "god88844-hub/aerodynamics-lab"}
     run = {"id": 200, "head_sha": "a" * 40, "repository": repository,
            "head_repository": repository, "head_branch": "main", "event": "push",
            "path": VERIFY["WORKFLOW"], "run_attempt": 2, "status": "completed", "conclusion": "success"}
@@ -25,9 +25,9 @@ def published_run():
 def test_official_main_run_identity_is_bound_to_the_frozen_commit(published_run):
     run, _, _ = published_run
     matches = VERIFY["matches_run"]
-    assert matches(run, "god88844-hub/aeroforge", "a" * 40, 200)
-    assert not matches({**run, "event": "pull_request"}, "god88844-hub/aeroforge", "a" * 40, 200)
-    assert not matches(run, "god88844-hub/aeroforge", "b" * 40, 200)
+    assert matches(run, "god88844-hub/aerodynamics-lab", "a" * 40, 200)
+    assert not matches({**run, "event": "pull_request"}, "god88844-hub/aerodynamics-lab", "a" * 40, 200)
+    assert not matches(run, "god88844-hub/aerodynamics-lab", "b" * 40, 200)
 
 
 def test_full_verification_requires_every_packaged_and_audit_step(published_run):

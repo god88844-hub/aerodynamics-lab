@@ -32,7 +32,7 @@ test('packaged UI edits a design, runs the solver, and reloads saved data after 
     new URL(response.url()).pathname === '/api/designs/reference',
   )
   await page.goto('/')
-  await expect(page.getByRole('heading', { name: 'AeroForge', exact: true })).toBeVisible()
+  await expect(page.getByRole('heading', { name: 'Aerodynamics Lab', exact: true })).toBeVisible()
   await expect(page.getByText(/^API v/)).toBeVisible()
   const reference = await referenceResponse
   expect(reference.ok()).toBeTruthy()

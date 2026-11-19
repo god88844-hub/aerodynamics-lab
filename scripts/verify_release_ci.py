@@ -116,7 +116,7 @@ def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("commit", help="Full frozen main commit SHA")
     parser.add_argument("run_id", type=int, help="GitHub Actions run ID for that main push")
-    parser.add_argument("--repository", default="god88844-hub/aeroforge")
+    parser.add_argument("--repository", default="god88844-hub/aerodynamics-lab")
     args = parser.parse_args()
     if not re.fullmatch(r"[0-9a-f]{40}", args.commit) or args.run_id < 1:
         parser.error("supply a lowercase 40-character SHA and a positive run ID")

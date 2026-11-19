@@ -9,6 +9,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.persistence.database import init_db
+from app.routes import projects
 from app.routes import source_pinned_holdouts, rotor_tolerance, rotor_clearance, combined_metal, hil_tracking_quality, components, designs, flight_evidence, health, hil_evidence, propulsion_evidence, simulations
 
 
@@ -19,10 +20,10 @@ async def lifespan(app: FastAPI):
 
 
 app = FastAPI(
-    title="AeroForge API",
+    title="Aerodynamics Lab API",
     version="0.1.0",
     description=(
-        "Backend for the AeroForge physics-based drone simulation lab. "
+        "Backend for the Aerodynamics Lab engineering simulation platform. "
         "Every simulation result is reported with best estimate, uncertainty, "
         "credibility rating, and explicit caveats (NASA-STD-7009 / ASME V&V 10)."
     ),
@@ -38,6 +39,7 @@ app.add_middleware(
 )
 
 app.include_router(health.router, prefix="/api")
+app.include_router(projects.router, prefix="/api")
 app.include_router(components.router, prefix="/api")
 app.include_router(designs.router, prefix="/api")
 app.include_router(simulations.router, prefix="/api")

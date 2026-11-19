@@ -67,7 +67,7 @@ export default function App() {
   return (
     <div className="flex h-screen flex-col bg-slate-950 text-slate-200">
       <header className="flex items-center gap-3 border-b border-slate-800 px-4 py-2">
-        <h1 className="text-lg font-semibold tracking-tight">AeroForge</h1>
+        <h1 className="text-lg font-semibold tracking-tight">Aerodynamics Lab</h1>
         <span className="text-xs text-slate-500">
           physics-based drone simulation lab · multi-rotor v1
         </span>
