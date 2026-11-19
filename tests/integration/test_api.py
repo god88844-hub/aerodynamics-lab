@@ -262,6 +262,7 @@ def test_static_hover_saves_esc_failure_without_endurance(client, design_payload
 
 
 def test_saved_run_inputs_survive_design_edits(client, design_payload):
+    import json
     from hashlib import sha256
 
     original = {**design_payload, "name": "original frozen test"}
@@ -282,6 +283,13 @@ def test_saved_run_inputs_survive_design_edits(client, design_payload):
     assert frozen.json()["design"] == created["snapshot"]
     assert frozen.json()["scenario"] == "hover-ideal"
     assert frozen.json()["requested_parameters"] == {"duration_s": "0.02"}
+    environment = frozen.json()["model_environment"]
+    fingerprint = environment.pop("sha256")
+    canonical = json.dumps(environment, sort_keys=True, separators=(",", ":"), allow_nan=False)
+    assert sha256(canonical.encode()).hexdigest() == fingerprint
+    assert "packages/physics/scenarios/runner.py" in environment["files_sha256"]
+    assert environment["component_data"]["data/components/controllers/generic_esc_20a.json"]["max_continuous_current_a"] == 20
+    assert environment["package_versions"]["numpy"]
     assert frozen.json()["effective_parameters"] == {
         "duration_s": 0.02, "dt_s": 0.002, "solver": "rk4",
     }

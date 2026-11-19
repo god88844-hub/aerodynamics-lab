@@ -13,7 +13,7 @@ export function NumberField({ label, value, onChange, step = 0.01, min, max, uni
   return (
     <label className="flex items-center justify-between gap-2 text-xs">
       <span className="text-slate-400">
-        {label} {unit && <span className="text-slate-600">[{unit}]</span>}
+        {label} {unit && <span className="text-slate-400">[{unit}]</span>}
       </span>
       <input
         type="number"

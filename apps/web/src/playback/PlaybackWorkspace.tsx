@@ -62,7 +62,7 @@ export function PlaybackWorkspace({ design, cog, principalAxes, result }: {
           <div className="flex flex-wrap items-center gap-2">
             <button type="button" onClick={onPlayPause}
               aria-label={playing ? 'Pause playback' : 'Play flight replay'}
-              className="rounded bg-cyan-700 px-3 py-1 text-xs font-semibold text-white hover:bg-cyan-600">
+              className="rounded bg-cyan-700 px-3 py-1 text-xs font-semibold text-white hover:bg-cyan-800">
               {playing ? 'Ⅱ Pause' : '▶ Play'}
             </button>
             <button type="button" onClick={() => { setPlaying(false); setElapsed(0) }}
@@ -88,7 +88,7 @@ export function PlaybackWorkspace({ design, cog, principalAxes, result }: {
             value={Math.min(elapsed, duration)}
             onChange={(e) => { setPlaying(false); setElapsed(Number(e.target.value)) }}
             className="block w-full accent-cyan-400" />
-          <p className="text-[10px] text-slate-500">
+          <p className="text-[10px] text-slate-400">
             Replay interpolates stored solver samples; animation frames are not new physics calculations.
             {pose && !pose.attitude_world_wxyz ? ' Attitude not available in this run.' : ''}
           </p>

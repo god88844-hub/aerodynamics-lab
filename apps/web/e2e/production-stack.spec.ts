@@ -9,7 +9,7 @@ const run = promisify(execFile)
 const root = fileURLToPath(new URL('../../../', import.meta.url))
 
 function compose(...args: string[]) {
-  return run('docker', ['compose', '--project-name', 'aeroforge-e2e', ...args], {
+  return run('docker', ['compose', '--project-name', process.env.AEROFORGE_TEST_PROJECT ?? 'aeroforge-e2e', ...args], {
     cwd: root,
     timeout: 65_000,
   })

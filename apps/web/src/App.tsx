@@ -38,7 +38,7 @@ function ApiStatus() {
     refetchInterval: 15000,
     retry: 1,
   })
-  if (health.isLoading) return <span className="text-xs text-slate-500">API…</span>
+  if (health.isLoading) return <span className="text-xs text-slate-400">API…</span>
   if (health.isError || !health.data) return <span className="text-xs text-rose-400">API offline</span>
   return (
     <span className="flex items-center gap-1 text-xs text-emerald-500">
@@ -66,9 +66,13 @@ export default function App() {
 
   return (
     <div className="flex h-screen flex-col bg-slate-950 text-slate-200">
+      <nav aria-label="Workspace shortcuts" className="sr-only focus-within:not-sr-only">
+        <a href="#design-controls" className="p-2">Skip to design controls</a>
+        <a href="#results-evidence" className="p-2">Skip to results and evidence</a>
+      </nav>
       <header className="flex items-center gap-3 border-b border-slate-800 px-4 py-2">
         <h1 className="text-lg font-semibold tracking-tight">AeroForge</h1>
-        <span className="text-xs text-slate-500">
+        <span className="text-xs text-slate-400">
           physics-based drone simulation lab · multi-rotor v1
         </span>
         <div className="ml-auto">
@@ -76,7 +80,8 @@ export default function App() {
         </div>
       </header>
       <main className="flex min-h-0 flex-1">
-        <aside className="w-80 shrink-0 overflow-y-auto border-r border-slate-800">
+        <aside id="design-controls" tabIndex={-1} aria-label="Design and simulation" className="w-80 shrink-0 overflow-y-auto border-r border-slate-800">
+          <h2 className="sr-only">Design and simulation</h2>
           <ComponentInspector />
           <div className="border-t border-slate-800"><DesignPanel /></div>
           <div className="border-t border-slate-800">
@@ -101,10 +106,11 @@ export default function App() {
             <PropulsionEvidencePanel design={design} />
           </div>
         </aside>
-        <section className="relative min-w-0 flex-1">
+        <section aria-label="Aircraft view" className="relative min-w-0 flex-1">
           <PlaybackWorkspace design={design} cog={cog} principalAxes={principalAxes} result={result} />
         </section>
-        <aside className="w-96 shrink-0 overflow-y-auto border-l border-slate-800">
+        <aside id="results-evidence" tabIndex={-1} aria-label="Results and evidence" className="w-96 shrink-0 overflow-y-auto border-l border-slate-800">
+          <h2 className="sr-only">Results and evidence</h2>
           <ResultsPanel result={result} />
           <div className="border-t border-slate-800"><FlightEvidencePanel result={result} /></div>
           <div className="border-t border-slate-800"><PublicEvidencePanel /></div>

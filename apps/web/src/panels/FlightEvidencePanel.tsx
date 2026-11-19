@@ -274,7 +274,7 @@ export function FlightEvidencePanel({ result }: { result: SimulationResult | nul
                   })}
                 </tbody>
               </table>
-              <p className="break-all font-mono text-[9px] text-slate-500">
+              <p className="break-all font-mono text-[9px] text-slate-400">
                 Saved prediction SHA-256: {report.stored_prediction_sha256}
               </p>
               <p className="text-[10px] text-amber-300">

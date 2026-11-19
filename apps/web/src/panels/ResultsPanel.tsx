@@ -6,10 +6,10 @@ import type { SimulationResult } from '../types/api'
 function Metric({ label, value, unit }: { label: string; value: string | number | null; unit?: string }) {
   return (
     <div className="rounded border border-slate-800 bg-slate-900/60 px-2 py-1.5">
-      <div className="text-[10px] uppercase tracking-wide text-slate-500">{label}</div>
+      <div className="text-[10px] uppercase tracking-wide text-slate-400">{label}</div>
       <div className="font-mono text-sm text-slate-100">
         {value === null || value === undefined ? '—' : value}
-        {value != null && unit && <span className="ml-1 text-[10px] text-slate-500">{unit}</span>}
+        {value != null && unit && <span className="ml-1 text-[10px] text-slate-400">{unit}</span>}
       </div>
     </div>
   )
@@ -23,7 +23,7 @@ function fmt(v: number | null | undefined, digits = 2): string | null {
 export function ResultsPanel({ result }: { result: SimulationResult | null }) {
   if (result === null) {
     return (
-      <div className="p-4 text-xs text-slate-500">
+      <div className="p-4 text-xs text-slate-400">
         No simulation yet — pick a scenario and press ▶ Simulate.
       </div>
     )
@@ -119,7 +119,7 @@ function ScenarioResults({ result, scenario }: { result: SimulationResult; scena
         </div>
         {result.benchmarks && (
           <div className="mt-3 space-y-1">
-            <h4 className="text-[10px] uppercase tracking-wide text-slate-500">benchmarks</h4>
+            <h4 className="text-[10px] uppercase tracking-wide text-slate-400">benchmarks</h4>
             {result.benchmarks.map((b) => (
               <p key={b.name} className="text-xs">
                 <span className={b.status === 'pass' ? 'text-emerald-500' : b.status === 'fail' ? 'text-rose-400' : 'text-sky-400'}>
@@ -245,9 +245,9 @@ function TrustSection({ result }: { result: SimulationResult }) {
             <div key={key} className="text-xs">
               <span className="text-slate-400">{key}: </span>
               <span className="text-slate-200">{entry.status ?? ''}</span>
-              {entry.caveat && <p className="pl-3 text-[10px] text-slate-500">{entry.caveat}</p>}
-              {entry.evidence && <p className="pl-3 text-[10px] text-slate-500">{entry.evidence}</p>}
-              {entry.notes && <p className="pl-3 text-[10px] text-slate-500">{entry.notes}</p>}
+              {entry.caveat && <p className="pl-3 text-[10px] text-slate-400">{entry.caveat}</p>}
+              {entry.evidence && <p className="pl-3 text-[10px] text-slate-400">{entry.evidence}</p>}
+              {entry.notes && <p className="pl-3 text-[10px] text-slate-400">{entry.notes}</p>}
             </div>
           )
         })}

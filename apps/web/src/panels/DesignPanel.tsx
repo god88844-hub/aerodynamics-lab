@@ -171,7 +171,7 @@ export function DesignPanel() {
               onChange={setBatteryMass} />
           </>
         ) : (
-          <p className="text-xs text-slate-500">no battery part in this design</p>
+          <p className="text-xs text-slate-400">no battery part in this design</p>
         )}
       </section>
 
@@ -230,7 +230,7 @@ export function DesignPanel() {
                     setPlateDimensions(next)
                   }} />
               ))}
-            <p className="text-[10px] text-slate-500">
+            <p className="text-[10px] text-slate-400">
               Tube outside diameter controls the rendered arm thickness. Plate geometry
               does not change the existing measured frame mass or inertia.
             </p>
@@ -255,7 +255,7 @@ export function DesignPanel() {
               </div>
             ))}
             {(design.frame.mount_points ?? []).length === 0 && (
-              <p className="text-xs text-slate-500">
+              <p className="text-xs text-slate-400">
                 Select a battery or payload in the 3D component inspector,
                 then create a mount at its CoG.
               </p>
@@ -263,7 +263,7 @@ export function DesignPanel() {
           </div>
         )}
         {!design.frame && (
-          <p className="text-xs text-slate-500">no frame — structural monitor skipped (flagged)</p>
+          <p className="text-xs text-slate-400">no frame — structural monitor skipped (flagged)</p>
         )}
       </section>
 
@@ -282,7 +282,7 @@ export function DesignPanel() {
                 [{issue.severity.toUpperCase()}] {issue.message}
               </p>
             ))}
-        <p className="text-[10px] text-slate-500">
+        <p className="text-[10px] text-slate-400">
           Preliminary dimension/data checks only. No CAD collision solving,
           rotor-interaction CFD, structural certification or flight-worthiness verdict.
         </p>

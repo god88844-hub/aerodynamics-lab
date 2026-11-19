@@ -10,6 +10,7 @@ from physics.integration.runtime_limit import (
     SimulationTimeLimit, SimulationWorkLimit, check_time_limit, time_limit,
 )
 from physics.scenarios import service
+from app.services.run_provenance import capture_provenance
 
 SCENARIOS = ("hover-ideal", "hover-static", "hover-hold", "flight")
 SIMULATION_STEP_LIMITS = {"hover-ideal": 20_000, "hover-static": 2_000, "hover-hold": 10_000}
@@ -54,6 +55,7 @@ def run_simulation(design_snapshot: dict, scenario: str, params: dict | None = N
     inputs = {
         "schema_version": 1,
         "physics_version": physics_version,
+        "model_environment": capture_provenance(),
         "design": design.model_dump(mode="json"),
         "scenario": scenario,
         "requested_parameters": params,

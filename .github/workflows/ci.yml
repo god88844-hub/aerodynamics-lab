@@ -78,6 +78,17 @@ jobs:
       - name: Verify browser, proxy, solver, and stored data
         working-directory: apps/web
         run: npm run test:e2e
+      - name: Verify API responsiveness under load
+        run: python scripts/check_api_load.py --output outputs/api-load.json
+      - name: Preserve application acceptance results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: application-acceptance
+          path: |
+            outputs/api-load.json
+            apps/web/test-results/
+          if-no-files-found: ignore
       - name: Verify authenticated HTTPS deployment
         run: |
           if ! command -v htpasswd >/dev/null; then

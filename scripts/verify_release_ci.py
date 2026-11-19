@@ -18,7 +18,11 @@ AUDIT_STEP = "Audit all frontend dependencies (including development tools)"
 REQUIRED = {
     "python-tests": ("Audit locked backend dependencies", "Run pytest (physics, integration, regression)"),
     "web-build": (AUDIT_STEP, "Typecheck + build", "Unit tests"),
-    "packaged-app": ("Verify browser, proxy, solver, and stored data", "Verify authenticated HTTPS deployment"),
+    "packaged-app": (
+        "Verify browser, proxy, solver, and stored data",
+        "Verify API responsiveness under load",
+        "Verify authenticated HTTPS deployment",
+    ),
 }
 
 

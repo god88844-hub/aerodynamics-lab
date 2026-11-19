@@ -58,7 +58,7 @@ export function ComponentInspector() {
             className="rounded border border-slate-700 px-2 py-1 text-xs disabled:opacity-40">↷</button>
         </div>
       </div>
-      <p className="text-[10px] text-slate-500">
+      <p className="text-[10px] text-slate-400">
         Select a component here or click its marker in the 3D view.
         Coordinates locate part centers of gravity (m).
       </p>
@@ -81,7 +81,7 @@ export function ComponentInspector() {
             <option value={0.1}>100 mm</option>
           </select>
         </label>
-        <p className="text-[10px] text-slate-500">
+        <p className="text-[10px] text-slate-400">
           Dragging commits one undoable design edit on release. Rotor/ESC/frame parts
           stay locked to preserve coupled physics assumptions.
         </p>
@@ -154,7 +154,7 @@ export function ComponentInspector() {
                       </label>
                     )
                   })}
-                  <p className="text-[10px] text-slate-500">
+                  <p className="text-[10px] text-slate-400">
                     Declared dimensions; physics estimates own-CoG inertia assuming
                     uniform mass density. The entered mass remains unchanged.
                   </p>
@@ -225,7 +225,7 @@ export function ComponentInspector() {
         <p className="font-mono text-sm text-yellow-300" data-testid="component-distance">
           {distance === null ? 'Choose two components' : `${distance.toFixed(3)} m center-to-center`}
         </p>
-        <p className="text-[10px] text-slate-500">
+        <p className="text-[10px] text-slate-400">
           Parts without declared dimensions remain point masses or schematic meshes.
           Primitive dimensions support approximate inertia and conservative bounding-box
           interference warnings, not certified CAD clearance or aerodynamics.

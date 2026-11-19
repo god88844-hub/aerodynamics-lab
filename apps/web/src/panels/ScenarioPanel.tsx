@@ -53,7 +53,7 @@ export function ScenarioPanel() {
         </p>
       )}
       <button
-        className="w-full rounded bg-cyan-600 px-3 py-2 text-sm font-semibold text-white hover:bg-cyan-500 disabled:opacity-50"
+        className="w-full rounded bg-cyan-700 px-3 py-2 text-sm font-semibold text-white hover:bg-cyan-800 disabled:opacity-50"
         onClick={() => void onSimulate()}
         disabled={running}
       >
@@ -64,7 +64,7 @@ export function ScenarioPanel() {
           {error ?? (simulate.error as Error).message}
         </p>
       )}
-      <p className="text-[10px] leading-relaxed text-slate-600">
+      <p className="text-[10px] leading-relaxed text-slate-400">
         Each run stores a copy of its design and solver settings for later download.
       </p>
     </div>

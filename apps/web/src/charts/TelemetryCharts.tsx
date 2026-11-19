@@ -53,7 +53,7 @@ const AXIS = { stroke: '#475569', fontSize: 10 }
 export function TelemetryCharts({ result }: { result: SimulationResult | null }) {
   if (result?.telemetry == null || result.telemetry.t.length === 0) {
     return (
-      <p className="p-3 text-xs text-slate-500">
+      <p className="p-3 text-xs text-slate-400">
         charts appear after a simulation run
       </p>
     )
