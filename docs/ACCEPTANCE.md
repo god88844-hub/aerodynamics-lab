@@ -17,7 +17,7 @@ Implementation states are planned, partial, implemented and software-verified. S
 | Requirement | Implementation baseline | Scientific baseline | Next acceptance evidence |
 | --- | --- | --- | --- |
 | FND | Project document 1.0, four-family assembly representation, legacy import, normalization API, headless reference runner and initial Godot/C++/Python desktop integration | Unvalidated product foundation | Local project/backend tests and native/desktop smoke checks pass. Constrained CAD, blade generation and representative performance acceptance remain pending under #100. |
-| CAD | Primitive editing, mounts, clearance, revisions and placement DXF | Analytical screening | Exact geometry/history, drawings, assemblies and engineering round trips. |
+| CAD | Primitive editing plus bounded exact blade loft, constrained rectangle demonstration, STEP round trip, automatic display LOD and asset-portable project | Analytical screening; new blade unvalidated | Full sketch/history UI, drawings, assemblies, geometry-to-physics bridge and representative hardware benchmarks. |
 | ELEC | Powertrain/battery models and limit checks | Separate measured comparisons | Installed component behavior, uncertainty, dynamics and failure tests. |
 | WORLD | Fixed scenarios, core uniform relative-wind drag | Analytical screening | Normal UI/API environment/mission authoring, contact and reproducibility. |
 | WEATHER | Partial dry-air model | Separate limited source references | Atmosphere, rain/wet/snow/icing models and applicable held-out measurements. |
@@ -48,4 +48,4 @@ Exercise project migration and round trips, units/frames, geometry and mass prop
 
 Use the normal editor/API/headless entry points for acceptance. CI verifies software and deployment. The physical ledger records experiment-backed claims separately.
 
-Hardware tier support follows [the compatibility matrix and resource/LOD contract](HARDWARE_AND_FIDELITY.md). The initial Windows prototype run is one machine observation. Tier 1/2/3 performance, adaptive LOD, remote scheduling and enforced worker budgets remain unaccepted until their recorded checks pass.
+Hardware tier support follows [the compatibility matrix and resource/LOD contract](HARDWARE_AND_FIDELITY.md). The initial Windows prototype run is one machine observation. Tier 1/2/3 performance, large-assembly adaptive detail/residency, remote scheduling and enforced worker budgets remain unaccepted until their recorded checks pass.

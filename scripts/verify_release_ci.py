@@ -16,7 +16,8 @@ from urllib.request import HTTPRedirectHandler, Request, build_opener
 WORKFLOW = ".github/workflows/ci.yml"
 AUDIT_STEP = "Audit all frontend dependencies (including development tools)"
 REQUIRED = {
-    "desktop-foundation": ("Build native engineering core", "Run native and desktop integration checks"),
+    "desktop-foundation": ("Audit locked CAD worker dependencies", "Verify CAD geometry and portable assets",
+                           "Build native engineering core", "Run native and desktop integration checks"),
     "python-tests": ("Audit locked backend dependencies", "Run pytest (physics, integration, regression)"),
     "web-build": (AUDIT_STEP, "Typecheck + build", "Unit tests"),
     "packaged-app": ("Verify browser, proxy, solver, and stored data", "Verify authenticated HTTPS deployment"),

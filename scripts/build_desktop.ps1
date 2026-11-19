@@ -53,10 +53,13 @@ if ($PythonPath -eq "") {
     }
     $PythonPath = Join-Path $pythonDirectory "Scripts/python.exe"
     Invoke-Checked $PythonPath @("-m", "pip", "install", "--require-hashes", "--only-binary=:all:",
-        "-r", (Join-Path $repositoryRoot "apps/api/requirements.lock"))
+        "-r", (Join-Path $repositoryRoot "apps/desktop/requirements-cad.lock"))
 }
 $PythonPath = (Resolve-Path -LiteralPath $PythonPath).Path
 $env:LAB_PYTHON = $PythonPath
+$env:LAB_CAD_PYTHON = $PythonPath
+$env:LAB_TEST_CAD = "1"
+Invoke-Checked $PythonPath @("-c", "import cadquery")
 $sourceDirectory = Join-Path $repositoryRoot "packages/engineering-core"
 $buildDirectory = Join-Path $cachePath "native"
 $bindingsSource = Join-Path $bindingsDirectory "godot-cpp-$bindingsCommit"

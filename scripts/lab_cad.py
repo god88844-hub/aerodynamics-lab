@@ -1,0 +1,42 @@
+"""Build a new blade CAD project from a declared recipe."""
+
+import argparse
+import json
+from pathlib import Path
+import sys
+
+ROOT = Path(__file__).resolve().parents[1]
+sys.path[:0] = [str(ROOT / "apps/api"), str(ROOT / "packages"), str(ROOT / "packages/shared-schemas")]
+
+from aeroforge_schemas.cad import BladeRecipe  # noqa: E402
+from geometry.cad_backend import build_blade_project  # noqa: E402
+from lab_project import write_result  # noqa: E402
+
+
+def main() -> int:
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("input", type=Path)
+    parser.add_argument("output", type=Path)
+    parser.add_argument("--error-output", type=Path)
+    args = parser.parse_args()
+    paths = [args.input.resolve(), args.output.resolve()]
+    if args.error_output:
+        paths.append(args.error_output.resolve())
+    if len(paths) != len(set(paths)):
+        parser.error("input, output and error paths must be separate")
+    try:
+        recipe = BladeRecipe.model_validate_json(args.input.read_bytes())
+        directory = args.output.parent / (args.output.stem + "-cad")
+        result = build_blade_project(recipe, directory)
+        write_result(args.output, result)
+    except Exception as error:
+        # Native geometry/constraint failures must reach the desktop as failed jobs.
+        if args.error_output:
+            write_result(args.error_output, {"status": "failed", "error": str(error)})
+        print(str(error), file=sys.stderr)
+        return 2
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

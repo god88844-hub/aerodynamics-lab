@@ -1,0 +1,2 @@
+-r ../api/requirements.txt
+cadquery==2.8.0

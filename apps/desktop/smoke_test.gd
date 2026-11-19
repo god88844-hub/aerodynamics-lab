@@ -84,5 +84,52 @@ func _run() -> void:
 		push_error("Native mass differs from the imported project")
 		quit(6)
 		return
+	if OS.get_environment("LAB_TEST_CAD") == "1":
+		desktop.call("_start_job", "build-blade", root.path_join("data/cad/blade-example.json"))
+		if not await _wait_for_job(desktop):
+			quit(10)
+			return
+		var cad_project: Dictionary = desktop.get("project")
+		var meshes: Array[Node] = desktop.get("aircraft").find_children("*", "MeshInstance3D", true, false)
+		if cad_project["vehicle"]["format"] != "assembly_1" or meshes.size() != 1:
+			push_error("CAD worker did not load an actual blade mesh")
+			quit(11)
+			return
+		var blade: MeshInstance3D = meshes[0] as MeshInstance3D
+		if blade.mesh.get_surface_count() != 1 or blade.get_meta("display_lod_count", 0) < 1:
+			push_error("CAD display has no generated automatic LOD")
+			quit(12)
+			return
+		var package_dir: String = ProjectSettings.globalize_path("user://package-%s" % Time.get_ticks_usec())
+		DirAccess.make_dir_recursive_absolute(package_dir)
+		var packaged: String = package_dir.path_join("project.json")
+		desktop.call("_start_job", "package", desktop.call("_write_job_input"), packaged)
+		if not await _wait_for_job(desktop) or desktop.get("project_asset_root") != package_dir:
+			push_error("CAD project could not be saved with its geometry assets")
+			quit(13)
+			return
+		desktop.call("_start_job", "validate", packaged)
+		if not await _wait_for_job(desktop):
+			quit(14)
+			return
+		var cad_input: String = desktop.call("_write_job_input")
+		var refused: Array = []
+		var refused_code: int = OS.execute(python, PackedStringArray([
+			root.path_join("scripts/lab_project.py"), "run", cad_input,
+			package_dir.path_join("unsupported-run.json")]), refused, true, false)
+		if refused_code == 0 or FileAccess.file_exists(package_dir.path_join("unsupported-run.json")):
+			push_error("CAD shape was incorrectly accepted as a qualified flight model")
+			quit(15)
+			return
 	print("Desktop/native/worker smoke checks passed. Physical validation remains pending.")
 	quit(0)
+
+
+func _wait_for_job(desktop: Control) -> bool:
+	var deadline: int = Time.get_ticks_msec() + 60000
+	while desktop.get("job_pid") > 0 and Time.get_ticks_msec() < deadline:
+		await process_frame
+	if desktop.get("job_pid") > 0 or FileAccess.file_exists(desktop.get("job_error")):
+		push_error("CAD integration job failed: " + str(desktop.get("status_label").text))
+		return false
+	return true
