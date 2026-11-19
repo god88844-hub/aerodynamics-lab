@@ -1,0 +1,9 @@
+[configuration]
+entry_symbol = "lab_library_init"
+compatibility_minimum = "4.5"
+
+[libraries]
+windows.debug.x86_64 = "res://bin/lab_engineering.dll"
+windows.release.x86_64 = "res://bin/lab_engineering.dll"
+linux.debug.x86_64 = "res://bin/liblab_engineering.so"
+linux.release.x86_64 = "res://bin/liblab_engineering.so"

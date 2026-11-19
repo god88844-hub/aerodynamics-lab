@@ -10,6 +10,10 @@ web/API foundation. Follow the [product specification](docs/PRODUCT_SPEC.md),
 [complete roadmap](docs/ROADMAP.md), [acceptance ledger](docs/ACCEPTANCE.md) and
 [research library](docs/SOURCES.md) for current status and builder handoff.
 
+The first [desktop foundation prototype](apps/desktop/README.md) exercises the
+Godot/C++/Python integration. Its constrained CAD, blade and full performance
+acceptance work remains tracked in desktop issue #100.
+
 ## Mission
 
 1. **Primary:** simulation evidence must be as reliable as physical testing
