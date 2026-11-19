@@ -631,7 +631,11 @@ func _process(delta: float) -> void:
 				else:
 					next_project = output
 					next_root = job_output.get_base_dir() if job_action == "package" else job_asset_root
-				if _adopt_project(next_project, next_root):
+				if job_action == "package" and next_project == project:
+					# Saving verified copies does not change the experiment's inputs.
+					project_asset_root = next_root
+					status_label.text = "Project saved. Geometry asset checks passed."
+				elif _adopt_project(next_project, next_root):
 					status_label.text = "Geometry rebuilt. Physical validation pending." if job_action.begins_with("build-") else "Project opened. Document and asset checks passed."
 					if output.has("geometry"):
 						_show_cad_properties(output["geometry"]["mass_properties"])

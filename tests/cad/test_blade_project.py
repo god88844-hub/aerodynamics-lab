@@ -22,22 +22,24 @@ def test_constrained_geometry_blade_step_mesh_and_portable_project(tmp_path):
     built = build_blade_project(recipe, tmp_path / "blade")
     project_path = Path(built["project_path"])
     project = EngineeringProject.model_validate_json(project_path.read_bytes())
+    paths = {asset.id: project_path.parent / asset.path for asset in project.assets}
     verify_assets(project, project_path.parent)
-    exact = cq.importers.importStep(str(project_path.parent / "assets/blade.step")).val()
+    exact = cq.importers.importStep(str(paths["blade_exact"])).val()
     assert exact.isValid() and len(exact.Solids()) == 1
     assert exact.Volume() * 1e-9 == pytest.approx(built["geometry"]["volume_m3"], rel=1e-7)
     assert exact.BoundingBox().xlen / 1000 == pytest.approx(0.19, abs=1e-6)
     assert built["geometry"]["uniform_density_mass_estimate_kg"] is None
     assert built["geometry"]["physical_validation_status"] == "unvalidated"
     assert built["geometry"]["constraint_check"]["area_m2"] == pytest.approx(0.045 * 0.018, rel=1e-7)
-    mesh = json.loads((project_path.parent / "assets/blade.mesh.json").read_text(encoding="utf-8"))
+    mesh = json.loads(paths["blade_mesh"].read_text(encoding="utf-8"))
     assert mesh["units"] == "m" and mesh["triangles"]
     assert max(vertex[0] for vertex in mesh["vertices_m"]) == pytest.approx(0.22, abs=1e-6)
     destination = tmp_path / "copy"
     destination.mkdir()
     copy_assets(project, project_path.parent, destination / "project.json")
     verify_assets(project, destination)
-    assert (destination / "assets/blade.step").read_bytes() == (project_path.parent / "assets/blade.step").read_bytes()
+    exact_relative = next(asset.path for asset in project.assets if asset.id == "blade_exact")
+    assert (destination / exact_relative).read_bytes() == paths["blade_exact"].read_bytes()
     with pytest.raises(ValueError, match="no implemented simulation backend"):
         run_project(project)
 

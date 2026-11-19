@@ -149,6 +149,12 @@ func _run() -> void:
 			quit(18)
 			return
 		var first_speed: float = first_run["result"]["telemetry"]["omega_body_rad_s"][-1][2]
+		var first_saved: String = package_dir.path_join("body-v1.json")
+		desktop.call("_start_job", "package", desktop.call("_write_job_input"), first_saved)
+		if not await _wait_for_job(desktop) or desktop.get("result").is_empty():
+			push_error("Saving the project lost the current experiment preview")
+			quit(26)
+			return
 		desktop.call("_seek", 1.0)
 		var cad_aircraft: Node3D = desktop.get("aircraft")
 		var center: Vector3 = desktop.call("_scene_position", first_run["mass_properties"]["center_of_mass_m"])
@@ -169,6 +175,21 @@ func _run() -> void:
 		if edited_run["result"]["telemetry"]["omega_body_rad_s"][-1][2] >= first_speed:
 			push_error("Widening the body did not reduce spin-up under the same torque")
 			quit(22)
+			return
+		var second_saved: String = package_dir.path_join("body-v2.json")
+		desktop.call("_start_job", "package", desktop.call("_write_job_input"), second_saved)
+		if not await _wait_for_job(desktop):
+			push_error("Edited geometry could not be saved beside the prior project version")
+			quit(27)
+			return
+		desktop.call("_start_job", "validate", first_saved)
+		if not await _wait_for_job(desktop):
+			quit(28)
+			return
+		desktop.call("_run_cad_torque")
+		if not await _wait_for_job(desktop) or not is_equal_approx(desktop.get("result")["result"]["telemetry"]["omega_body_rad_s"][-1][2], first_speed):
+			push_error("Saving an edited version changed the earlier version's physical inputs")
+			quit(29)
 			return
 		desktop.get("density_enabled").button_pressed = false
 		desktop.call("_rebuild_body")

@@ -6,6 +6,8 @@
 
 In the desktop, choose **New / edit test body**. Width and height constrain an actual rectangular sketch; depth extrudes the solved face. Optional homogeneous density is an explicit assumption. Rebuild produces a new project and exact/display/recipe assets. This is a bounded parametric-body editor; a general sketch/history editor remains open.
 
+Generated exact/display/recipe assets use paths containing their actual SHA-256. Edited projects can therefore be saved in the same folder as earlier named project versions without replacing their assets. Packaging still refuses conflicting bytes at an existing path, and older flat-path projects remain readable. Tests save two actual geometry versions through the normal package worker, reopen the first after saving the second and reproduce its original torque response. This is immutable asset preservation; a full feature/revision history interface and storage garbage collection remain future work.
+
 Choose the applied body-Z torque, duration and integration step, then **Run applied-torque experiment**. The worker reads and hashes the project assets once, imports the frozen STEP bytes and recomputes mass, centre of mass and the full central inertia tensor. Stored mass-property caches do not drive the physics. A single placed/rotated solid is supported; multiple-body assemblies and arbitrary recipe adapters are refused.
 
 The existing Python `RigidBody` and RK4 modules integrate the response. This experiment starts at rest at the CoG, with constant body-frame torque and gravity disabled. Aerodynamics, motors, flight control, contact, structural failure and thermal effects are outside this experiment. The ordinary flight-run command still refuses a generic CAD project.
