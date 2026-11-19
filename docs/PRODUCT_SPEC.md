@@ -28,7 +28,7 @@ An implemented visual effect, an implemented physical model and an independently
 
 ## Product boundaries
 
-The first installation is a Windows desktop application. Ordinary projects and experiments run locally. Heavy analyses can run more slowly locally or use an explicitly configured remote worker. Engineering test environments take priority over cinematic scenery.
+The first installation is a Windows desktop application. Design for baseline laptops, dedicated-GPU desktops and workstation/remote workers through [hardware profiles and fidelity levels](HARDWARE_AND_FIDELITY.md). Ordinary projects and experiments run locally within measured resource budgets. Heavy analyses use capped local workers or explicitly configured remote execution. Engineering test environments take priority over cinematic scenery.
 
 Invention Lab remains the separate electronics, chip, processor and quantum-design product. Aerodynamics Lab owns flight-system electrical integration. A future component exchange can carry identity, units, behavior, limits, assumptions, uncertainty, model version and evidence between the products.
 
@@ -39,10 +39,10 @@ Phase 0 is the implementation focus. The complete expansion roadmap appears in [
 1. Use Godot as the desktop scene, interaction and application shell. Use typed GDScript for application behavior.
 2. Use independent C++20 libraries for exact CAD and demonstrated performance-critical computation. Integrate through GDExtension and headless interfaces.
 3. Retain Python for existing models, data ingestion, calibration, optimization and research. Migrate a numerical path after profiling and agreement tests establish the benefit.
-4. Use Open CASCADE for exact geometry. Reuse qualified FreeCAD sketch and drawing capabilities behind application interfaces. Preserve each dependency's license obligations.
+4. Use Open CASCADE for exact geometry. Qualify constrained-sketch and drawing integrations behind application interfaces before choosing FreeCAD solver reuse or another implementation. Preserve each dependency's license obligations.
 5. Use ArduPilot as the initial broad autopilot adapter and add applicable PX4 integrations. Each run has one authoritative vehicle-state integrator.
 6. Use double-precision engineering state, explicit units and coordinate transforms. Rendering and simulation clocks operate independently.
-7. Keep detailed analysis in cancellable workers. Publish the inputs, backend versions, convergence and evidence associated with each result.
+7. Keep detailed analysis in cancellable workers with explicit resource admission and local/remote execution contracts. Publish the inputs, backend versions, convergence and evidence associated with each result.
 8. Preserve legacy design snapshots, component identities and stored reports through explicit adapters and migrations.
 
 ## Foundation interfaces
@@ -63,7 +63,7 @@ Headless callers run `python scripts/lab_project.py import-legacy source.json pr
 
 ## Prototype gate
 
-Before a full interface migration, demonstrate project save/reopen, constrained geometry, blade generation, selection, reference simulation playback and analysis cancellation on the recorded Windows baseline. Record installation, startup, memory, input responsiveness and recovery. The initial representative editing target is 30 FPS, with scene complexity and renderer settings published alongside results.
+Before a full interface migration, demonstrate project save/reopen, constrained geometry, blade generation, selection, reference simulation playback and analysis cancellation. Use the [hardware acceptance matrix](HARDWARE_AND_FIDELITY.md) instead of treating one laptop as the product limit. Record installation, startup, memory, input responsiveness and recovery. The initial representative editing target is 30 FPS on a published 200-part assembly, with renderer settings and frame-time distributions alongside results. Automatic display LOD is required across tiers and cannot alter engineering inputs.
 
 Godot, OCCT and numerical backends require pinned compatible versions. Benchmark failure is recorded with a diagnosis and reviewed correction before expanding the migration.
 

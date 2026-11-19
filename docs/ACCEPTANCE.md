@@ -47,3 +47,5 @@ Independent review and required measurements remain open when the available publ
 Exercise project migration and round trips, units/frames, geometry and mass properties, analytical physics, conservation where applicable, convergence, per-component limits, frozen-run reproduction, cancellation/recovery, accessibility, security and installation. Preserve npm audit and backend audit requirements.
 
 Use the normal editor/API/headless entry points for acceptance. CI verifies software and deployment. The physical ledger records experiment-backed claims separately.
+
+Hardware tier support follows [the compatibility matrix and resource/LOD contract](HARDWARE_AND_FIDELITY.md). The initial Windows prototype run is one machine observation. Tier 1/2/3 performance, adaptive LOD, remote scheduling and enforced worker budgets remain unaccepted until their recorded checks pass.

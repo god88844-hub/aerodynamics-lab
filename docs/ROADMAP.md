@@ -6,6 +6,8 @@ The approved scope is defined in [PRODUCT_SPEC.md](PRODUCT_SPEC.md). Only Phase 
 
 Build the shared foundation before expanding individual aircraft families. Each package has an issue, requirements, dependencies and observable acceptance evidence.
 
+Ship the packages through the [0A–0D vertical slices and hardware/fidelity contracts](HARDWARE_AND_FIDELITY.md). These preserve the full Phase 0 scope while providing complete design/run/comparison loops earlier. Hardware tiers describe measured delivery targets; fidelity levels describe selected engineering models.
+
 | Package | Dependencies | Deliverable and exit evidence |
 | --- | --- | --- |
 | Foundation and identity | Audited baseline | Renamed repository, preserved history and unfinished work, published specifications, stable versioned project contracts and regression-tested legacy import. |
