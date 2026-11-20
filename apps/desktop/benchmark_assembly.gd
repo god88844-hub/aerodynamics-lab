@@ -183,7 +183,11 @@ func _run() -> void:
 		return
 	desktop.call("_run_experiment")
 	report["active_legacy_cancel"] = await _measure_cancel()
-	var passed: bool = report["viewport_target_met"] and cad_ok and report["active_legacy_cancel"]["project_preserved"]
+	var legacy_cancel: Dictionary = report["active_legacy_cancel"]
+	var cad_cancel: Dictionary = report.get("active_cad_cancel", {})
+	var passed: bool = report["viewport_target_met"] and cad_ok
+	for cancellation in [legacy_cancel, cad_cancel]:
+		passed = passed and cancellation.get("project_preserved", false) and not cancellation.get("completion_published", true) and float(cancellation.get("application_cancel_return_s", 999)) <= 5.0
 	if interactive:
 		passed = passed and report["interactive_input_verified"] and focused_frames == frames
 	_finish(0 if passed else 2)
