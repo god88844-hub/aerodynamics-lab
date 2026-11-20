@@ -47,3 +47,11 @@ After building the desktop and configuring `LAB_PYTHON` and `LAB_CAD_PYTHON`, ru
 ```
 
 An optional `--context=C:/absolute/context.json` adds externally recorded CPU/GPU/driver/RAM/power-mode and launch visibility. Use the same source/dependency pins and preserve all cold/warm observations. These programmatic-control timings include a rendered frame; they do not measure human input delivery, 200-part viewport FPS, process memory, cold clone/download/build time or other hardware tiers. The [hardware compatibility matrix](../HARDWARE_AND_FIDELITY.md), memory admission and calibrated physical evidence remain open.
+
+### Recorded Windows observation
+
+The [complete five-sample receipt](measurements/reusable-worker-d72ecc0655.json) identifies source commit `d72ecc065574fef84cce7e9df4cf68b7080cf6e4` and the benchmark's SHA-256. It ran on 20 November 2026 with an Intel Core Ultra 7 155U, 16,636,305,408 bytes of usable system RAM, Intel integrated graphics driver 32.0.101.6790 and Balanced power mode. Godot 4.7.2 used its OpenGL compatibility renderer in a hidden graphical window; other desktop processes were uncontrolled.
+
+Cold build/analysis/frame completion took **2.982644 s**. The five warm cycles took **0.743254, 0.710364, 0.742806, 0.710012 and 0.743739 s** (median 0.742806 s, maximum 0.743739 s). Every warm sample met the predeclared 2 s threshold. Independent mass/spin-up checks passed and verified worker shutdown took 0.658197 s. This narrow local observation leaves representative assembly, memory and hardware-tier acceptance pending; physical validation remains unvalidated.
+
+The initial benchmark exposed density input snapping: the prior control mapped the intended 500 kg/m³ to 500.001 because its minimum and increment were misaligned. The control now preserves 500 exactly. Both benchmark and desktop smoke retain the original analytical tolerances and check the expected 0.2 kg default-body mass.
