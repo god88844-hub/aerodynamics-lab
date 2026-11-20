@@ -1,0 +1,11 @@
+# Local CAD resource admission and sampled limits
+
+Package 2 (#100), with shared job-contract work for #110. Contract `local_cad_resources_1` declares memory bytes, controlled workspace bytes and per-job wall time. It extends the existing local worker request with an optional versioned resource object; omitted values receive the documented default. This does not add a remote executor or change any physical model.
+
+The initial default is a **1 GiB process-tree resident allowance, 256 MiB controlled workspace and 60 s per job**. These are explicit prototype policy allowances, not universal resource estimates or proof that an arbitrary CAD job fits. The earlier measured case used about 584 MiB of sampled worker resident memory. Other geometry and backends require their own observations.
+
+Admission retains the requested memory/workspace allowances. It requires available memory for their remaining growth plus **max(1 GiB, one eighth of observed physical RAM)** for desktop/OS/iGPU/other-work headroom, and remaining workspace growth plus 64 MiB disk headroom. Already resident warm-engine memory is accounted once. Operator wall-time constraints may lower the effective wall time and are recorded. Invalid/nonfinite values and unsupported fields fail. Capacity observation failure cannot produce admission.
+
+Windows capacity uses [GlobalMemoryStatusEx](https://learn.microsoft.com/en-us/windows/win32/api/sysinfoapi/nf-sysinfoapi-globalmemorystatusex); Linux uses `/proc/meminfo` MemAvailable. Disk capacity uses [Python disk_usage](https://docs.python.org/3.11/library/shutil.html#shutil.disk_usage). These are volatile snapshots, not atomic reservations across application instances. The reserve formula is a conservative policy buffer, not a measured guarantee of OS/iGPU needs.
+
+The limits use sampled process-tree resident memory and controlled workspace occupancy. Shared pages can be counted more than once and short-lived peaks/children can be missed. They are **not OS hard memory or disk quotas**. CPU/GPU enforcement, global admission reservations, remote scheduling and hardware-tier acceptance remain pending. Numerical tolerances, exact geometry and engineering inputs must never be silently reduced to fit a budget. Physical validation remains separate.

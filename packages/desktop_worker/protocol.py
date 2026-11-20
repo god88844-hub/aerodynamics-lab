@@ -6,6 +6,7 @@ from pydantic import Field, JsonValue, model_validator
 
 from aeroforge_schemas.cad import BladeRecipe, BoxRecipe, CadTorqueRequest
 from aeroforge_schemas.project import ProjectModel
+from desktop_worker.resources import ResourceBudget
 
 PROTOCOL = "desktop_worker_1"
 MAX_REQUEST_BYTES = 16 * 1024 * 1024
@@ -18,9 +19,11 @@ class WorkerRequest(ProjectModel):
     operation: Literal["build-body", "build-blade", "cad-torque"]
     payload: dict[str, JsonValue]
     asset_root: str | None = Field(default=None, min_length=1, max_length=4096)
+    resources: dict[str, JsonValue] = Field(default_factory=lambda: ResourceBudget().document())
 
     @model_validator(mode="after")
     def supported_payload(self):
+        self.resources = ResourceBudget.from_dict(self.resources).document()
         models = {"build-body": BoxRecipe, "build-blade": BladeRecipe, "cad-torque": CadTorqueRequest}
         self.payload = models[self.operation].model_validate(self.payload).model_dump(mode="json")
         if self.operation == "cad-torque" and self.asset_root is None:

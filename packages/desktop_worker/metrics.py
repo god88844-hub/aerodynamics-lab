@@ -79,11 +79,12 @@ def resident_memory(process: ProcessRef) -> dict:
 
 
 class ProcessTreeObserver:
-    def __init__(self, root_pid: int):
+    def __init__(self, root_pid: int, *, retain_samples: bool = True):
         self.root_pid = root_pid
         self.processes = {root_pid: ProcessRef(root_pid)}
         self.started = time.monotonic()
         self.samples = []
+        self.retain_samples = retain_samples
 
     def sample(self):
         start = time.monotonic()
@@ -96,6 +97,9 @@ class ProcessTreeObserver:
             for pid in new:
                 try:
                     ref = ProcessRef(pid)
+                    if int(ref.birth) < int(self.processes[inventory[pid]].birth):
+                        ref.close()  # an older orphan cannot belong to a reused parent PID
+                        continue
                     self.processes[pid] = ref
                     if ref.alive():
                         alive.add(pid)
@@ -114,7 +118,8 @@ class ProcessTreeObserver:
         sample = {"elapsed_s": time.monotonic() - self.started, "processes": records,
                   "worker_resident_bytes": sum(p["resident_bytes"] for p in records if not p["desktop"]),
                   "observer_s": time.monotonic() - start}
-        self.samples.append(sample)
+        if self.retain_samples:
+            self.samples.append(sample)
         return sample
 
     def report(self, desktop_pid=None):
