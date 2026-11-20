@@ -15,3 +15,4 @@ packages/desktop_worker/protocol.py text eol=lf
 scripts/lab_contract.py text eol=lf
 docs/prototypes/measurements/qualification-20261120/** -text
 docs/prototypes/QUALIFICATION_GATE.md -text
+docs/prototypes/measurements/foundation-20261120/** -text
