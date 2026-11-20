@@ -1,0 +1,16 @@
+{
+  "status": "INTERRUPTED_INCOMPLETE_NOT_INSTALL_TIME",
+  "archive_created_utc": "2026-11-20T15:25:22.4432932Z",
+  "archive_last_write_utc": "2026-11-20T15:48:59.5392219Z",
+  "observed_file_lifetime_s": 1417.0959287,
+  "diagnostic_probe": "curl HTTP206, 781312 of 1048576 bytes in 20.121947 s; 38829 bytes/s; timed out",
+  "partial_godot_archive_bytes": 40317376,
+  "partial_archive_sha256": "faf07bdc5d6c7ff0fd40200ec792dcc909342feb9ad11833e8cf6e4946c6b58c",
+  "expected_complete_archive_bytes": 86013866,
+  "source_sha": "b57721cc22c5b220d513126820340bd9cd6e8906",
+  "incomplete_archive_executed": false,
+  "complete_install_time_s": null,
+  "timer_limitation": "Process interrupt did not emit its final stopwatch receipt; file timestamps describe the partial transfer, not exact total install duration",
+  "expected_complete_sha256": "731980f9608d61333e5baf54a2ef17210acc7a538446c0cb9969f002aca1e953",
+  "reason": "Online transfer remained very slow; continued full dependency/native installation using identical SHA-verified local tool archives in a fresh worktree"
+}

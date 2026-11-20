@@ -1,0 +1,33 @@
+{
+  "software_ci_verified": true,
+  "repository": "god88844-hub/aerodynamics-lab",
+  "commit_sha": "a4992b55e9131c2d1cc4cc936f7f74e8e3ca5b9b",
+  "run_id": 44762469082,
+  "attempt": 1,
+  "run_url": "https://github.com/god88844-hub/aerodynamics-lab/actions/runs/44762469082",
+  "workflow_sha256": "04b20bd89895e1f1e4f62e092f0c2c4aad88075c87c759766fc4b5d97c727697",
+  "required_jobs": {
+    "desktop-foundation": {
+      "id": 136378281580,
+      "url": "https://github.com/god88844-hub/aerodynamics-lab/actions/runs/44762469082/job/136378281580",
+      "conclusion": "success"
+    },
+    "python-tests": {
+      "id": 136378281523,
+      "url": "https://github.com/god88844-hub/aerodynamics-lab/actions/runs/44762469082/job/136378281523",
+      "conclusion": "success"
+    },
+    "web-build": {
+      "id": 136378281528,
+      "url": "https://github.com/god88844-hub/aerodynamics-lab/actions/runs/44762469082/job/136378281528",
+      "conclusion": "success"
+    },
+    "packaged-app": {
+      "id": 136378281502,
+      "url": "https://github.com/god88844-hub/aerodynamics-lab/actions/runs/44762469082/job/136378281502",
+      "conclusion": "success"
+    }
+  },
+  "blockers": [],
+  "physical_acceptance": "requires_separate_measured_evidence_and_review"
+}

@@ -1,0 +1,42 @@
+{
+  "run_id": 44766812125,
+  "run_url": "https://github.com/god88844-hub/aerodynamics-lab/actions/runs/44766812125",
+  "job_id": 136393624761,
+  "pr_head_sha": "5a7d1fc456ec32ead6aa9557808d190cda53ce44",
+  "checked_out_sha": "a36443bd7c59fcc7e7e666804d6af54499cac413",
+  "pr_head_and_checkout_tree": "9725548fb23d1d2700201d9a4a8612afb4a1cab2",
+  "tree_equality_verified": true,
+  "checkout_commit": {
+    "parents": [
+      {
+        "html_url": "https://github.com/god88844-hub/aerodynamics-lab/commit/a4992b55e9131c2d1cc4cc936f7f74e8e3ca5b9b",
+        "sha": "a4992b55e9131c2d1cc4cc936f7f74e8e3ca5b9b",
+        "url": "https://api.github.com/repos/god88844-hub/aerodynamics-lab/git/commits/a4992b55e9131c2d1cc4cc936f7f74e8e3ca5b9b"
+      },
+      {
+        "html_url": "https://github.com/god88844-hub/aerodynamics-lab/commit/5a7d1fc456ec32ead6aa9557808d190cda53ce44",
+        "sha": "5a7d1fc456ec32ead6aa9557808d190cda53ce44",
+        "url": "https://api.github.com/repos/god88844-hub/aerodynamics-lab/git/commits/5a7d1fc456ec32ead6aa9557808d190cda53ce44"
+      }
+    ],
+    "sha": "a36443bd7c59fcc7e7e666804d6af54499cac413",
+    "tree": {
+      "sha": "9725548fb23d1d2700201d9a4a8612afb4a1cab2",
+      "url": "https://api.github.com/repos/god88844-hub/aerodynamics-lab/git/trees/9725548fb23d1d2700201d9a4a8612afb4a1cab2"
+    }
+  },
+  "receipt": {
+    "active_worker_pid": 7488,
+    "cancel_cli_return_ns": 304627100,
+    "cleanup_verified": true,
+    "completion_published": false,
+    "method": "normal Godot stop CLI; perf_counter_ns around subprocess.run; 100 ms pre-action resident sampling",
+    "owned_resident_reclaimed_percent": 100,
+    "platform": "win32",
+    "post_cancel_owned_resident_bytes": 0,
+    "pre_cancel_owned_resident_bytes": 387375104,
+    "previous_result_preserved": true,
+    "scope": "CI host process tree, not local graphical timing or system/GPU physical RAM",
+    "source_sha": "a36443bd7c59fcc7e7e666804d6af54499cac413"
+  }
+}

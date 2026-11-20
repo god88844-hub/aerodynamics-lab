@@ -13,3 +13,5 @@ packages/shared-schemas/aeroforge_schemas/cad.py text eol=lf
 packages/desktop_worker/resources.py text eol=lf
 packages/desktop_worker/protocol.py text eol=lf
 scripts/lab_contract.py text eol=lf
+docs/prototypes/measurements/qualification-20261120/** -text
+docs/prototypes/QUALIFICATION_GATE.md -text

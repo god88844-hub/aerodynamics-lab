@@ -1,0 +1,17 @@
+{
+  "os": {
+    "Caption": "Microsoft Windows 11 Home Single Language",
+    "Version": "10.0.26300",
+    "BuildNumber": "26300"
+  },
+  "gpu": {
+    "Name": "Intel(R) Graphics",
+    "DriverVersion": "32.0.101.6790"
+  },
+  "power": "Power Scheme GUID: 381b4222-f694-41f0-9685-ff5bb260df2e  (Balanced)",
+  "other_workload": "No concurrent downloads; other desktop applications uncontrolled",
+  "startup_cache": "Fresh graphical process from newly installed offline-bundled Python/native runtime; previous bootstrap smoke and startup observation have run; OS/file caches uncontrolled",
+  "cpu": "Intel(R) Core(TM) Ultra 7 155U",
+  "native_dll_sha256": "97248c12f068e865f1f5a707f2244e9b8755a1b61eea5ffa5c3d13cb27fa265f",
+  "installation_receipt_sha256": "c2d268db6abcdb2cfe8603a7e7ca1386c5760f3e937077343e006c2257c3006c"
+}
