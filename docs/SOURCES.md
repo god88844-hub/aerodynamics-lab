@@ -8,7 +8,7 @@ The [20 November workstation snapshot](../data/research/custody-20261120.json) h
 
 All 20 inspected campaigns, including their historically named calibration/holdout partitions, are **DEVELOPMENT** under policy 1.0.0. No confirmatory campaign or physical acceptance is granted. Unacquired planned sources retain null hashes. Dataset-specific rights remain separate from article/code licenses; unresolved rights remain unresolved. MODERA explicitly excludes operational/safety-critical/decision-making use. No new original bytes are redistributed here.
 
-Verify metadata/content: `python scripts/reconcile_registry.py --check`. To repeat the local custody audit where originals exist: `python scripts/reconcile_registry.py --audit-local`, then inspect the dated snapshot and registry diff. Historical calibration/holdout values are preserved in the index and linked artifacts; never relabel them blind under a new policy.
+Verify metadata/content: `python scripts/reconcile_registry.py --check`. To verify existing custody after relocation: `python scripts/reconcile_registry.py --verify-local`. The old `--audit-local` spelling is a read-only compatibility alias; historical snapshots are never overwritten. New acquisitions require a new dated custody record. Current local originals are under `data/local/source-physical/` inside [WORKSPACE](WORKSPACE.md); the dated snapshot retains its original historical paths. Historical calibration/holdout values are preserved in the index and linked artifacts; never relabel them blind under a new policy.
 
 ## Earlier 19 November custody snapshot
 

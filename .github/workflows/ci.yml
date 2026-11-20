@@ -91,6 +91,11 @@ jobs:
           python -m venv "$RUNNER_TEMP/aeroforge-audit"
           "$RUNNER_TEMP/aeroforge-audit/bin/pip" install pip-audit==2.10.1
           "$RUNNER_TEMP/aeroforge-audit/bin/python" -m pip_audit -r apps/api/requirements.lock --disable-pip --no-deps
+      - name: Verify master plan, source registry and frozen contracts
+        run: |
+          python scripts/check_master_plan.py --check
+          python scripts/reconcile_registry.py --check
+          python scripts/export_contracts.py --check
       - name: Run pytest (physics, integration, regression)
         run: pytest
 

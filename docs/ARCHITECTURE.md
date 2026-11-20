@@ -1,6 +1,6 @@
 # Desktop architecture and legacy boundary
 
-Decision locked for Steps 0–3 on 20 November 2026. Current implementation focus is WP1–WP3 contracts and prototype qualification. WP7 detailed analysis, WP8 weather and WP9 autonomy have no authorization for new implementation before those contracts and the prototype gate are locked.
+The standalone Godot 3D application is the primary product. Foundation qualification passed and is complete. The current stage is the full [master software plan](MASTER_PLAN.md), pending owner approval of PR #126 and `v0.0-plan-locked`. After approval, execute the numbered Phase 0 dependencies; there is no new qualification stage before normal feature work.
 
 ## Authoritative execution path
 
@@ -34,6 +34,6 @@ The original checkpoint has 21 changed paths. Before provenance reconciliation, 
 
 The exact path dispositions and Git blob identities are recorded in [LEGACY_WIP_MANIFEST](LEGACY_WIP_MANIFEST.md).
 
-## Stop condition
+## Planning lock and execution boundary
 
-Execute archive/architecture, provenance, contract/resource completion, then visible/cold-build/cancellation qualification in that order. Publish a formal gate report and **stop for owner sign-off** before full WP3 CAD expansion or M21/M24/M25/M26 model fixes. Numeric agreement, a working schema and green CI do not establish physical validation.
+Leave PR #126 open for owner review. Merge/tag and Slice 0A begin only after approval (P0A-004); the first software task is P0A-005. CAD, detailed analysis, weather and autonomy follow their master-plan prerequisites. Phases 1–4 remain interfaces/registries only until their entry gates. Scientific acceptance still requires independent matching measurements and qualified review; green CI and a plan tag do not grant it.

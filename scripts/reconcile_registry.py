@@ -1,6 +1,7 @@
 """Build/check the canonical source index without changing legacy runtime catalogs.
 
---audit-local records workstation custody only; normal CI never requires external data.
+--verify-local checks dated custody at the workspace-local data root; CI requires no originals.
+Historical custody is immutable; register a new dated record for new acquisitions.
 Repository text hashes explicitly use LF-normalized bytes; originals use exact bytes.
 """
 from __future__ import annotations
@@ -159,32 +160,35 @@ def validate(value):
         raise ValueError("Reconcile the complete 20-campaign baseline before changing its count")
 
 
-def audit_local(root=ROOT):
-    folder = root.parent / "source-physical"
+def verify_local(root=ROOT):
+    """Verify the dated custody records at the current workspace-local data root."""
+    folder = (root / "data/local/source-physical").resolve()
     if not folder.is_dir():
-        raise ValueError("External source directory unavailable; do not fabricate custody")
-    files = []
-    for path in sorted(folder.rglob("*")):
-        if not path.is_file():
-            continue
+        raise ValueError("Workspace-local source data unavailable; do not fabricate custody")
+    snapshot = read(root, CUSTODY)
+    for record in snapshot["files"]:
+        relative = record["path"].removeprefix("../source-physical/")
+        path = (folder / relative).resolve()
+        if not path.is_relative_to(folder):
+            raise ValueError("Source custody path escapes the local dataset root")
         digest = sha256()
         with path.open("rb") as stream:
             for block in iter(lambda: stream.read(8 * 1024 * 1024), b""):
                 digest.update(block)
-        files.append({"path": "../source-physical/" + path.relative_to(folder).as_posix(),
-                      "bytes": path.stat().st_size, "sha256": digest.hexdigest(),
-                      "classification": "LOCAL_FILE_NOT_AUTOMATICALLY_PUBLISHER_ORIGINAL",
-                      "identity_rule": "Only a match to a documented original pin plus provenance identifies source bytes; derived fits/outputs remain derived"})
-    (root / CUSTODY).write_text(json.dumps({"checked_at": "2026-11-20", "scope": "All files present in workstation source directory; includes derived files, not all are original evidence", "files": files}, indent=2) + "\n", encoding="utf-8")
+        if path.stat().st_size != record["bytes"] or digest.hexdigest() != record["sha256"]:
+            raise ValueError("Source custody mismatch: " + relative)
+    print(f"Verified {len(snapshot['files'])} historical source-directory files at data/local/source-physical; dated receipts unchanged")
 
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--check", action="store_true")
-    parser.add_argument("--audit-local", action="store_true")
+    parser.add_argument("--verify-local", action="store_true")
+    parser.add_argument("--audit-local", action="store_true", help="Deprecated read-only alias of --verify-local; never overwrites historical custody")
     args = parser.parse_args()
-    if args.audit_local:
-        audit_local()
+    if args.audit_local or args.verify_local:
+        verify_local()
+        args.check = True
     result = generated()
     validate(result)
     if args.check:

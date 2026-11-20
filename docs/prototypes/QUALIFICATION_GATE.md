@@ -1,9 +1,7 @@
-# Prototype gate status
+# Completed foundation qualification
 
-**PASS for the recorded local 16 GB prototype with adequate headroom.**
+**PASS for the recorded standalone application on the measured 16 GB machine with adequate headroom. Qualification is complete.** Current work is the full [master software plan](../MASTER_PLAN.md), pending owner approval of PR #126 and `v0.0-plan-locked` before execution.
 
-The [post-fix bundled qualification](QUALIFICATION_GATE_FOLLOWUP.md) passes at source `366777d` with unchanged limits. Read the [original graphical report](QUALIFICATION_GATE_LOCAL.md), [admission diagnosis](ADMISSION_DIAGNOSIS.md), and [preserved initial FAIL](QUALIFICATION_GATE_INITIAL.md). Graphical FPS/cancellation measurements remain bound to their original source; the follow-up does not remeasure them.
+The [post-fix bundled qualification](QUALIFICATION_GATE_FOLLOWUP.md) passed at source `366777d`. The [original graphical report](QUALIFICATION_GATE_LOCAL.md), [admission diagnosis](ADMISSION_DIAGNOSIS.md), [initial failure](QUALIFICATION_GATE_INITIAL.md) and [Windows correction record](FOUNDATION_VERIFICATION.md) remain historical receipts. FPS and cancellation observations stay bound to their recorded source commits.
 
-Later Windows record/retirement regressions, their corrections and final-head verification are tracked in [FOUNDATION_VERIFICATION](FOUNDATION_VERIFICATION.md) and PR #126. The graphical measurement remains bound to its recorded source SHA.
-
-Owner review and broader hardware/physical acceptance remain pending. WP7-WP9, CAD expansion, physics edits, tagging and Slice 0A execution remain held.
+Wider hardware compatibility and physical acceptance remain distinct work in the master plan. Do not restart qualification as a new prerequisite; execute the numbered approved product tasks and preserve these records.

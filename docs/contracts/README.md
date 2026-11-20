@@ -1,7 +1,7 @@
-# WP1–WP3 contract lock proposal
+# WP1–WP3 frozen interface baseline
 
 Bundle `wp1_wp3_1`, 20 November 2026. Machine-checked and content-addressed;
-**owner sign-off pending**. These boundaries permit qualification, not new physics or full CAD expansion.
+The interface baseline is frozen and qualification passed. Current product execution awaits owner plan approval in PR #126 / `v0.0-plan-locked` (P0A-004); afterward follow MASTER_PLAN. Pending-review labels in dated lock receipts remain historical, and scientific acceptance still requires its own review.
 See [architecture](../ARCHITECTURE.md), [prospective tolerances](../VALIDATION_TOLERANCES.md)
 and [local admission limitations](../prototypes/LOCAL_CAD_BUDGETS.md).
 
@@ -54,4 +54,4 @@ The 20 previously inspected campaigns remain development evidence under the new 
 M21–M27 use future preregistered confirmatory whole experiments, joint whole-flight
 uncertainty coverage and independently reviewed, matched conditions. Current physical
 failures remain recorded. No threshold is retrospectively applied as a blind success.
-Stop after the visible/cold-build/cancellation qualification report for owner sign-off.
+Qualification passed. The current approval boundary is PR #126 and `v0.0-plan-locked` (P0A-004); after approval execute P0A-005 onward in MASTER_PLAN. Embedded pending-review labels in historical locks/receipts are not rewritten; new scientific acceptance requires its own authenticated review.

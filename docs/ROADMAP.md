@@ -1,78 +1,41 @@
 # Aerodynamics Lab roadmap
 
-Scope: [PRODUCT_SPEC](PRODUCT_SPEC.md). Current evidence: [ACCEPTANCE_LEDGER](ACCEPTANCE_LEDGER.md). Scientific criteria: [VALIDATION_TOLERANCES](VALIDATION_TOLERANCES.md). Data: [SOURCES](SOURCES.md). Plan dated **20 November 2026**.
+**Full standalone software planning lock — 21 November 2026.** Qualification passed and is complete. The primary product is `apps/desktop/`, the real standalone Godot 3D application; `apps/web/` remains frozen legacy. [PRODUCT_SPEC](PRODUCT_SPEC.md) defines scope and [ARCHITECTURE](ARCHITECTURE.md) defines the shared engineering execution path without a required HTTP server.
 
-## Current authorization
+The complete numbered, checkable task breakdown is **[MASTER_PLAN.md](MASTER_PLAN.md)**, generated from [planning/tasks.json](planning/tasks.json). It contains **150 unique tasks: 118 across Phase 0 and 32 across Phases 1–4**, each with dependencies, responsible actor, exact proof artifact, acceptance conditions and a planned verification target where applicable. The generated master issue and every relevant package/phase issue carry synchronized checklists.
 
-Complete the foundation/spec-lock PR and stop for owner review before tagging `v0.0-spec-lock` or executing Slice 0A. The [local prototype gate](prototypes/QUALIFICATION_GATE.md) passed on the recorded 16 GB machine with adequate headroom. Broader hardware coverage and independent review remain open. **WP7–WP9, CAD expansion and physics edits remain held.** `apps/web` stays frozen under [ARCHITECTURE](ARCHITECTURE.md).
+## Approval and exact next task
 
-## Phase 0 — drone invention laboratory
+[PR #126](https://github.com/god88844-hub/aerodynamics-lab/pull/126) remains open for owner review. Do not merge, tag **`v0.0-plan-locked`**, or begin execution before approval (**P0A-004**). After approval is recorded, start **P0A-005**: reproduce and freeze the M21 cutoff failures. Continue with battery event/sag correction, UIUC signed-thrust diagnosis, M25 fault detection and causal QDrone coupling in that order. The 14 V QDrone line is study-specific; no blanket UIUC sign flip is preapproved.
 
-Deliver multirotor, fixed-wing, helicopter and VTOL drones through sequential vertical slices **0A → 0B → 0C → 0D**. Each slice preserves the preceding design/run/comparison loop and earns its own geometry, physics and physical-evidence envelope. Hardware tiers and physics fidelity remain independent under [HARDWARE_AND_FIDELITY](HARDWARE_AND_FIDELITY.md).
+## Phase 0 slices
 
-| WP / GitHub issue | Scope | Slice progression and dependencies |
-| --- | --- | --- |
-| 1 / [#99](https://github.com/god88844-hub/aerodynamics-lab/issues/99) | Foundation | 0A first: archive, identity, units/frames, project/jobs/evidence contracts; maintain through 0D. |
-| 2 / [#100](https://github.com/god88844-hub/aerodynamics-lab/issues/100) | Desktop | 0A qualified prototype and normal save/edit/run/cancel loop after WP1; extend per slice. |
-| 3 / [#101](https://github.com/god88844-hub/aerodynamics-lab/issues/101) | CAD/assembly | 0A supported multirotor assembly; 0B wing geometry; 0C rotor/mechanisms; 0D complete supported drawings/exchange. Requires WP1–2; expansion held. |
-| 4 / [#102](https://github.com/god88844-hub/aerodynamics-lab/issues/102) | World/experiments | 0A saved environment, commands, seeds, relative wind and reproducible missions after WP1–2; extend through 0D. |
-| 5 / [#103](https://github.com/god88844-hub/aerodynamics-lab/issues/103) | Electronics/physics | 0A resolve audited multirotor failures and couple applicable limits; 0B–0C extend qualified aero/thermal/structural models. Requires declared geometry, data and WP4. |
-| 6 / [#104](https://github.com/god88844-hub/aerodynamics-lab/issues/104) | Four aircraft families | 0A multirotor; 0B fixed wing; 0C helicopter/VTOL. Each requires WP3–5 support and matching measurements. |
-| 7 / [#110](https://github.com/god88844-hub/aerodynamics-lab/issues/110) | Detailed analysis | HOLD. Future 0B interfaces, 0C cancellable qualified workers, 0D complete analysis experience. Requires locked WP1–3, approved gate, WP4–6 and explicit hold release. |
-| 8 / [#105](https://github.com/god88844-hub/aerodynamics-lab/issues/105) | Weather/wet/snow/icing | HOLD. Future 0D coupled effects and per-mechanism measurements after WP4–6. User-entered climate alone does not implement these mechanisms. |
-| 9 / [#106](https://github.com/god88844-hub/aerodynamics-lab/issues/106) | Autonomy/multiple drones | HOLD. Future 0D autopilot/sensor/vision/navigation/swarm experiments after WP4–6; latency, synchronization and hardware evidence required. |
-| 10 / [#107](https://github.com/god88844-hub/aerodynamics-lab/issues/107) | Learning/invention | 0A hypothesis/design/run/compare; 0B–0D guided family experiments and optimization preserving assumptions. Requires a supported loop. |
-| 11 / [#108](https://github.com/god88844-hub/aerodynamics-lab/issues/108) | Validation | Every slice: frozen models, independent measurements, uncertainty and review. Starts with 0A M21–M27. |
-| 12 / [#109](https://github.com/god88844-hub/aerodynamics-lab/issues/109) | QA/release | Every slice: security/reproducibility/recovery; 0D final Phase 0 release after applicable gates. |
+| Slice | Product outcome | Required entry | Software exit | Separate physical exit |
+| --- | --- | --- | --- | --- |
+| 0A | Multirotor CAD/design, environment, missions, corrected coupled physics, learning, evidence and standalone application loop | P0A-004 owner plan approval | P0A-039 | P0A-040 |
+| 0B | Full supported wing geometry/CAD-to-aero and fixed-wing mission loop | P0A-039 | P0B-021 | P0B-022 |
+| 0C | Helicopter and VTOL mechanisms/transitions plus selected detailed analysis and local/remote workers | P0B-021 | P0C-023 | P0C-024 |
+| 0D | Complete supported CAD, weather, autonomy, sensors/swarms, learning, production and release | P0C-023 | P0D-030 | P0D-031; final Phase 0 exit P0D-032 |
 
-### Slice 0A — dependency-ordered backlog
+A software exit permits dependency-ready software in the next slice with physical gaps visible; it does not turn missing measurements into acceptance. Physical exits need actual matching independent evidence and review. Final Phase 0 acceptance and later-phase entry require their explicit scientific/release gates. Any suitable reference hardware may be used, with the model and each measurement campaign matched to that hardware and its conditions.
 
-This is a plan awaiting owner approval, **not authorization to edit physics now**. Use any suitable reference hardware; predictions and measurements must match each campaign's actual configuration and conditions. The 60 kg hexacopter is one study, not a universal mandatory reference.
+The [master plan](MASTER_PLAN.md#work-packages-and-slice-mapping) maps **all 12 work packages** to their slices and issues: WP1 #99, WP2 #100, WP3 #101, WP4 #102, WP5 #103, WP6 #104, WP7 #110, WP8 #105, WP9 #106, WP10 #107, WP11 #108, WP12 #109. Cross-cutting tasks retain one ID even when listed under several packages. WP7 detailed analysis, WP8 advanced weather and WP9 autonomy follow their listed prerequisites; qualification is not reopened.
 
-| Order | Task | Dependency and concrete acceptance evidence |
-| --- | --- | --- |
-| 0A.0 | Review spec-lock: contracts, prototype, tolerances, registry | Owner review before tag/execution; qualified scientific review remains required for confirmatory acceptance. |
-| 0A.1 | Reproduce **M21 cutoff misses**, freeze correction experiment | [SIT module](campaigns/M21_6_10_SIT_MODULE_ELECTROTHERMAL.md) and [cutoff forecast](campaigns/M21_11_15_SIT_CUTOFF_FORECAST.md): 63/63 and 68/68 missed 80 V study crossings. Establish endpoint definitions, voltage/current timing, causal inputs, event bracketing and low-SOC regression cases before changes. These datasets are DEVELOPMENT. |
-| 0A.2 | Investigate **M24 UIUC thrust-sign error** | After 0A.1 baseline/partition controls. Check axes, coefficient definitions, units, near-zero/sign resolution, advance ratio and shaft/electrical power in [UIUC sweeps](campaigns/M24_2_6_UIUC_AXIAL_SWEEPS.md). Cause is unproven; no blanket sign flip. Require signed regime metrics and registered uncertainty. |
-| 0A.3 | Resolve **M25 fault misses and healthy false alarms** | After 0A.1–2 data/metric controls. Reproduce [rotor-order](campaigns/M25_2_6_UAV_FD_ROTOR_ORDER.md) and [ESC power](campaigns/M25_7_11_UAV_FD_ESC_POWER.md); partition whole experiments, report per-class detection deadlines/false alarms, prohibit label lookup and leakage. |
-| 0A.4 | Resolve **M26 QDrone collapse/control coupling** | Requires battery/event and propulsion/actuator/fault support from 0A.1–3. [QDrone transfer](campaigns/M26_50_54_QDRONE_VOLTAGE_TRANSFER.md) uses a **14 V study line**, not a universal hardware cutoff. Couple voltage, available thrust/current and controller demand; forecast without future measurements. |
-| 0A.5 | Qualify component/control/aero/structural envelopes (M21–M25) | Follow [fundamentals](fundamentals/vv_and_pirt.md) and tolerances. Independent compatible battery, motor/ESC/prop, sensor/controller, thermal and structure measurements; qualify each mechanism or retain unsupported verdicts. Acquire experiments when public data lack channels/calibration. |
-| 0A.6 | Freeze complete-flight/joint uncertainty campaigns (M26–M27) | After 0A.4–5. Freeze model and whole-experiment partitions before confirmatory reveal; repeated missions, simultaneous whole-flight channel coverage, numerical error and out-of-envelope rejection. All 20 inspected campaigns stay DEVELOPMENT. |
-| 0A.7 | Integrate supported desktop multirotor invention loop | After approved WP1–3 and adequate model support: edit supported design, configure environment/mission, run/cancel, inspect limits/provenance, save/reopen/reproduce, compare evidence. Unsupported geometry/mechanisms cannot receive success verdicts. |
-| 0A.8 | Review multirotor slice | WP10 learning walkthrough; WP11 independent review; WP12 installation, security, compatibility, performance/recovery. Missing physical evidence keeps gates open. No universal drone-validation claim. |
+## Phases 1–4
 
-### Slices 0B–0D
+| Phase / issue | Scope | Prerequisite / entry | Exit |
+| --- | --- | --- | --- |
+| 1 / #111 | Bio-inspired morphing/flapping/flexible flight | Phase 0 P0D-032 plus owner gate P1-001 | P1-008 |
+| 2 / #112 | Human-scale and crewed engineering | P1-008 plus owner gate P2-001 | P2-008 |
+| 3 / #113 | Jets, compressible/high-speed flight and turbine/thermal coupling | P2-008 plus owner gate P3-001 | P3-008 |
+| 4 / #114 | Rockets, variable mass/staging, orbital/re-entry/recovery models | P3-008 plus owner gate P4-001 | P4-008 |
 
-**0B — fixed wing:** supported wing/airfoil/polar geometry and complete mission loop; qualify aerodynamic envelope, stall limitations and component/control behavior against matching experiments. Detailed solvers stay contract-only until WP7 is explicitly released.
+Each phase has eight concrete checklist tasks covering entry, contracts/sources, implementation, frozen protocols, independent measurements, verification, physical validation/uncertainty and qualified review/release. Until entry is approved, **interfaces and dataset registries only**. Drone results do not automatically validate another flying system. The 60 kg pilot concept remains a later study assumption, including apparatus mass; calculated thermochemistry remains calculated evidence.
 
-**0C — helicopters/VTOL:** independently qualify rotor/control mechanisms and transitions, geometry-dependent loads and supported thermal/structural coupling. Detailed workers require WP7 approval, measured budgets and convergence. Multirotor validation does not automatically transfer.
+## Evidence and completion
 
-**0D — complete supported drone laboratory:** finish weather, autonomy, learning, CAD/drawings and release after explicit hold releases. Qualify each wet/icing/sensor/failure mechanism and operating envelope; publish independent review and limitations.
+Use [ACCEPTANCE_LEDGER](ACCEPTANCE_LEDGER.md), [VALIDATION_TOLERANCES](VALIDATION_TOLERANCES.md), [fundamentals](fundamentals/coordinates_and_units.md), [SOURCES](SOURCES.md) and [hardware/fidelity requirements](HARDWARE_AND_FIDELITY.md). All 20 inspected campaigns remain DEVELOPMENT under the prospective policy. Failure limits, qualified uncertainty, matching hardware and independent review remain required. Owner software-plan approval is not scientific certification.
 
-## Legacy acceptance crosswalk
+**Twelve broad Phase 0 package issues and ten legacy M21–M30 acceptance families remain open.** They overlap the task breakdown; they are not 22 sequential tasks or 150 validated milestones. The master plan includes their exact crosswalk and distinct milestone checklists. Preserve M0–M20 reports as history; M31 expansion is split between Phase 0 drone families and later phases.
 
-| Gate | Slice role |
-| --- | --- |
-| M21 battery | 0A cutoff/sag/endurance; new power systems in 0B–0D. |
-| M22 propulsion | 0A installed motor/ESC/prop response; extend per family. |
-| M23 controls/sensors | 0A timing/actuator/closed-loop response; extend per family/autonomy. |
-| M24 aero/thermal | 0A sign/inflow/thermal envelope; wing/rotor/weather models in 0B–0D. |
-| M25 structures/failure | 0A faults/limits; geometry/joints/fatigue/thermal failures per slice. |
-| M26 full flight | Independent complete missions per slice/family. |
-| M27 uncertainty | Joint whole-flight coverage/discrepancy per slice. |
-| M28 editor/CAD | Incremental supported geometry 0A–0C; complete supported workspace 0D. |
-| M29 production QA | Exact-head checks/security/reproducibility throughout; compatibility/recovery 0D. |
-| M30 release | Supported slice releases first; full Phase 0 only after applicable 0D gates. |
-
-M0–M20 remain history, not proof of M21–M30 acceptance. M31 splits into Phase 0 families and future phases. **12 open package issues and 10 open legacy major acceptance families** are overlapping scopes, not 22 sequential tasks. Current proof and blockers are in the ledger.
-
-## Phases 1–4 — locked future scope
-
-Only interfaces and dataset registries are permitted until Phase 0 acceptance and explicit owner authorization. No implementation:
-
-| Phase / issue | Future scope | Contract/registry preparation only |
-| --- | --- | --- |
-| 1 / #111 | Bio-inspired flight | Morphing/flapping, flexible structures and actuator interfaces; PigeonBot/morphology/inertia registry. |
-| 2 / #112 | Human-scale/crewed | Human loads, redundancy/recovery and independent review requirements. The 60 kg pilot case remains an unvalidated feasibility study. |
-| 3 / #113 | Jets/high speed | Compressibility, turbine, flutter, thermal interfaces; NASA CFD/compressor registry. |
-| 4 / #114 | Rockets/spaceflight | Variable mass/inertia, staging, trajectory/re-entry interfaces; CEA/RocketPy/OpenRocket terms/benchmarks. Calculated thermochemistry remains calculation. |
+For a new builder: open `AGENTS.md`, follow the master task ID, record its exact proof, update the canonical task data, regenerate/sync checklists and commit a completed milestone. Require all five final-head CI jobs and unchanged dependency audits. All local work stays in [the canonical workspace](WORKSPACE.md).
