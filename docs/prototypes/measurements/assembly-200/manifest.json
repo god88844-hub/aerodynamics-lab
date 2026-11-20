@@ -1,0 +1,38 @@
+{
+  "receipt_version": "assembly_observations_1",
+  "physical_validation_status": "unvalidated",
+  "hardware_tier_acceptance": "pending",
+  "files_sha256": {
+    "baseline-viewport.json": "765c9ee5ab3fe034c5c532194290c88ec173679f0fee0df5496bb673ac262b1a",
+    "final-memory.json": "9dc82cb09f48df271f50ef4aa39a21f35b68dcbba0509fdb9259dccd4f083852",
+    "final-viewport.json": "89c59645f7ac6563d408adcc0b7cf46b0ec25080565b976626282fc2e540d544",
+    "fullprecision-viewport.json": "6177cd50fadf88010f3cfbad9c9db71fc301abf6991e3bacf6713e2a60bb6774"
+  },
+  "attempts": [
+    {
+      "source_commit": "befb9a6029f0c3ddb7bb4a79759506ccc7d0309b",
+      "viewport": "baseline-viewport.json",
+      "wrapper_exit_code": 1,
+      "canonical_roundtrip_verified": false,
+      "memory_attribution_valid": false,
+      "reason": "Save/reopen changed source numbers. Initial memory observer counted the console launcher as desktop; those memory summaries are excluded."
+    },
+    {
+      "source_commit": "18ce493696e738590fa249a12da6e6b4318a7695",
+      "viewport": "fullprecision-viewport.json",
+      "wrapper_exit_code": 1,
+      "canonical_roundtrip_verified": false,
+      "reason": "Full-precision output alone still changed the canonical project fingerprint. Viewport success does not qualify the complete run."
+    },
+    {
+      "source_commit": "6f2079fa731a3122f29287cfe95ab692bb3492dd",
+      "viewport": "final-viewport.json",
+      "memory": "final-memory.json",
+      "wrapper_exit_code": 0,
+      "canonical_roundtrip_verified": true,
+      "memory_attribution_valid": true,
+      "source_assets_unchanged_verified": true,
+      "cleanup_verified": true
+    }
+  ]
+}

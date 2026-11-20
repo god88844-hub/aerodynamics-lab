@@ -25,3 +25,21 @@ python scripts/benchmark_desktop_assembly.py --godot C:/absolute/Godot_v4.7.2-st
 ```
 
 The context JSON records CPU/GPU/driver/OS/RAM, power mode and other active-workload information. The sibling `-memory.json` binds the full source commit and observer hashes. Nonzero exit codes preserve failed observations; do not replace an earlier report. CI checks project portability, process measurement and desktop behavior without asserting machine-dependent FPS. Distinct 8 GB/16 GB/integrated/dedicated/remote profiles, installation/cold-build time, editable assembly workflows and physical validation remain separate acceptance work.
+
+## Recorded Windows observation — 20 November 2026
+
+The [receipt manifest](measurements/assembly-200/manifest.json) retains the initial failed save/reopen attempt, the insufficient full-precision-only attempt, and the complete successful observation at source `6f2079fa731a3122f29287cfe95ab692bb3492dd`. The first attempt's launcher-based memory summary is invalid and excluded. Each retained receipt has an exact SHA-256. No acceptance tolerance was loosened.
+
+The successful run used Intel Core Ultra 7 155U / Intel integrated graphics driver 32.0.101.6790, 16,636,305,408 bytes of system RAM and Balanced power mode. Godot 4.7.2 used the compatibility renderer, VSync enabled, a 1280×800 hidden graphical window and a 930×494 engineering viewport. Other desktop processes were uncontrolled.
+
+| Observation | Recorded result |
+| --- | --- |
+| Scene | 200 geometry parts, 200 mesh resources, 185,592 source triangle instances, 314 generated LOD instances |
+| 600-frame camera/selection run | 60.004 mean FPS; p50 16.659 ms, p95 17.070 ms, p99 17.564 ms, maximum 18.344 ms |
+| Import / save / reopen | 3.349184 / 2.532952 / 3.370527 s |
+| Actual desktop OS peak working set | 328,101,888 bytes (312.90 MiB) |
+| Console launcher OS peak working set | 6,766,592 bytes, recorded separately |
+| Peak simultaneous sampled descendant resident sum | 611,876,864 bytes (583.53 MiB), excluding desktop and launcher |
+| Integrity and lifecycle | Original/saved canonical fingerprints agree; source and saved assets verified; worker stop and all observed process cleanup passed |
+
+Both local viewport thresholds passed. Memory includes the declared single-solid worker exercise after the assembly viewport sequence; it does not measure a detailed 200-part solver. Resident sums retain the sampling/shared-page limitations above. This one hidden-window observation earns neither full hardware-tier support nor physical validation. The next gates are visible interaction and additional hardware measurements, resource admission/budgets and cold-build/install evidence. The full assembly editing/physics bridge remains open.

@@ -1,5 +1,7 @@
 # Desktop foundation prototype
 
+The [200-part viewport and memory benchmark](../../docs/prototypes/ASSEMBLY_BENCHMARK.md) publishes a frozen workload, reproduction commands, successful/failed receipts and the remaining hardware acceptance limits. Verified project JSON remains authoritative for saving and analysis; the rendering dictionary is a display representation.
+
 This checkout contains the first Godot desktop shell, a C++ engineering library and a Python project worker. It loads and saves project document 1.0, lists/selects schematic components, computes native mass/CoG and runs/replays the existing reference simulation. Right-drag orbits and the mouse wheel zooms.
 
 The CAD worker builds a sample or user-supplied blade recipe into a valid Open CASCADE solid, STEP, a hash-bound display mesh and a portable project. Procedural display meshes generate automatic Godot LODs. The full prototype acceptance gate in [the product specification](../../docs/PRODUCT_SPEC.md) still requires representative performance and geometry-to-physics acceptance under [desktop issue #100](https://github.com/god88844-hub/aerodynamics-lab/issues/100).

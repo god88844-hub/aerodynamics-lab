@@ -41,3 +41,4 @@ def test_observer_records_current_process_and_owned_child_memory():
             child.kill()
         child.wait(timeout=5)
         observer.close()
+        child.stdout.close()
