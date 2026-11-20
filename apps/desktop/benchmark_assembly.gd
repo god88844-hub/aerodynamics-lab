@@ -28,6 +28,7 @@ func _run() -> void:
 	report["fixture_sha256"] = FileAccess.get_sha256(fixture_path)
 	report["observer_sha256"] = FileAccess.get_sha256(ProjectSettings.globalize_path("res://benchmark_assembly.gd"))
 	report["godot"] = Engine.get_version_info()
+	report["desktop_pid"] = OS.get_process_id()
 	report["os"] = OS.get_name()
 	report["cpu"] = OS.get_processor_name()
 	report["driver"] = Array(OS.get_video_adapter_driver_info())

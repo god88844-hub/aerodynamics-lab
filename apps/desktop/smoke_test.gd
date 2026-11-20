@@ -272,6 +272,12 @@ func _run() -> void:
 		return
 	desktop.get("components").get_root().get_first_child().select(0)
 	desktop.call("_select_component")
+	var assembly_input: String = desktop.call("_write_job_input")
+	var encoded_assembly: Variant = JSON.parse_string(FileAccess.get_file_as_string(assembly_input))
+	if encoded_assembly != desktop.get("project"):
+		push_error("Engineering project coordinates changed during JSON serialization")
+		quit(39)
+		return
 	print("Published 200-part assembly load, selection and LOD checks passed")
 	print("Desktop/native/worker smoke checks passed. Physical validation remains pending.")
 	quit(0)

@@ -543,7 +543,7 @@ func _write_payload(payload: Dictionary) -> String:
 	if file == null:
 		status_label.text = "Cannot write the experiment input"
 		return ""
-	file.store_string(JSON.stringify(payload))
+	file.store_string(JSON.stringify(payload, "", true, true))
 	file.close()
 	return path
 

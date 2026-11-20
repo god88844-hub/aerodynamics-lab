@@ -65,7 +65,12 @@ def main():
             while any(ref.alive() for pid, ref in observer.processes.items() if pid != process.pid) and time.monotonic() < deadline:
                 time.sleep(0.05)
             live = [ref.record() for ref in observer.processes.values() if ref.alive()]
-            measurement = {**observer.report(), "commit_sha": head,
+            data = json.loads(report.read_bytes()) if report.is_file() else {}
+            actual_pid = data.get("desktop_pid")
+            if actual_pid not in observer.processes:
+                failure = failure or "Actual desktop PID was not reported/observed; memory attribution is invalid"
+            measurement = {**observer.report(actual_pid), "commit_sha": head,
+                "memory_attribution_valid": actual_pid in observer.processes,
                 "observer_sha256": sha256(Path(__file__).read_bytes()).hexdigest(),
                 "metrics_module_sha256": sha256((ROOT / "packages/desktop_worker/metrics.py").read_bytes()).hexdigest(),
                 "window_launch": "hidden graphical process on Windows", "external_context": context,

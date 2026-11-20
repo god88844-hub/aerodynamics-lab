@@ -55,7 +55,7 @@ func submit(operation: String, input_path: String, asset_root: String) -> Dictio
 	var job_id: String = _nonce()
 	var packet: Dictionary = {"protocol": PROTOCOL, "session_id": session_id, "job_id": job_id,
 		"operation": operation, "payload": payload, "asset_root": asset_root if operation == "cad-torque" else null}
-	var encoded: PackedByteArray = JSON.stringify(packet).to_utf8_buffer()
+	var encoded: PackedByteArray = JSON.stringify(packet, "", true, true).to_utf8_buffer()
 	if encoded.size() > MAX_REQUEST_BYTES:
 		return {"failure": "CAD request exceeds the 16 MiB protocol limit."}
 	var temporary: String = session_path.path_join(".pending.tmp")

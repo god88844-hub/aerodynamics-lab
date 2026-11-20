@@ -117,11 +117,22 @@ class ProcessTreeObserver:
         self.samples.append(sample)
         return sample
 
-    def report(self):
+    def report(self, desktop_pid=None):
+        desktop_pid = self.root_pid if desktop_pid is None else desktop_pid
+        if desktop_pid not in self.processes:
+            raise ValueError("The actual desktop process was not observed")
+        for sample in self.samples:
+            for process in sample["processes"]:
+                process["desktop"] = process["pid"] == desktop_pid
+                process["launcher"] = process["pid"] == self.root_pid and desktop_pid != self.root_pid
+            sample["worker_resident_bytes"] = sum(p["resident_bytes"] for p in sample["processes"]
+                                                   if not p["desktop"] and not p["launcher"])
         records = [p for sample in self.samples for p in sample["processes"]]
         return {"method": "Windows working set / Linux VmRSS; 100 ms requested sampling",
+            "desktop_pid": desktop_pid, "root_launcher_pid": self.root_pid,
             "limitations": "Resident sums double-count shared pages. Short-lived processes or peaks between samples may be missed. No GPU or unique physical-memory accounting; no OS memory cap.",
             "desktop_os_peak_resident_bytes": max((p["os_peak_resident_bytes"] for p in records if p["desktop"]), default=0),
+            "launcher_os_peak_resident_bytes": max((p["os_peak_resident_bytes"] for p in records if p["launcher"]), default=0),
             "sampled_peak_worker_resident_sum_bytes": max((s["worker_resident_bytes"] for s in self.samples), default=0),
             "sample_count": len(self.samples), "samples": self.samples,
             "observed_processes": [ref.record() for ref in self.processes.values()]}
