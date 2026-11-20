@@ -1,0 +1,1030 @@
+{
+  "environment": {
+    "bootstrap_sha256": "19b246ea5c47116fa344dec5113ba75058872e69ba72371038af12e50b1d4b71",
+    "model": {
+      "cad_lock_sha256": "12fdb4132c62fecd7137230b5a853197692667d143450fbe7ed4eec40daa2ad3",
+      "cadquery_version": "2.8.0",
+      "model": {
+        "component_data": {
+          "data/components/batteries/generic_12s_22000mah.json": {
+            "capacity_ah": 22.0,
+            "cells_series": 12,
+            "chemistry": "LiPo",
+            "cutoff_cell_voltage_v": 3.3,
+            "id": "generic_12s_22000mah",
+            "internal_resistance_ohm": 0.018,
+            "mass_kg": 5.8,
+            "max_discharge_c": 25,
+            "name": "Generic 12S LiPo pack, 22000 mAh (25C class)",
+            "ocv_curve": [
+              {
+                "cell_voltage_v": 3.3,
+                "soc_pct": 0
+              },
+              {
+                "cell_voltage_v": 3.5,
+                "soc_pct": 5
+              },
+              {
+                "cell_voltage_v": 3.75,
+                "soc_pct": 25
+              },
+              {
+                "cell_voltage_v": 3.89,
+                "soc_pct": 50
+              },
+              {
+                "cell_voltage_v": 4.03,
+                "soc_pct": 75
+              },
+              {
+                "cell_voltage_v": 4.2,
+                "soc_pct": 100
+              }
+            ],
+            "schema_version": "0.1",
+            "source": {
+              "estimated": false,
+              "notes": "OCV-SOC shape is generic LiPo chemistry behavior. Capacity (22 Ah), mass (5.8 kg) and internal resistance (18 mOhm pack) are TYPICAL values for a 12S 22 Ah 25C-class pack: flagged estimated with wide uncertainty and must be replaced with the specific pack's datasheet/measurements for credible endurance numbers.",
+              "retrieved": "2026-11-15",
+              "source": "Community-measured LiPo voltage-vs-SOC charts (intofpv.com LiPo voltage quick chart; usedbytes.com measured discharge profile). OCV curve per cell; sag from pack internal resistance handled separately.",
+              "uncertainty_pct": 3.0,
+              "url": "https://intofpv.com/t-lipo-voltage-quick-chart"
+            },
+            "warning_cell_voltage_v": 3.5
+          },
+          "data/components/batteries/generic_6s_lipo_16000mah.json": {
+            "capacity_ah": 16.0,
+            "cells_series": 6,
+            "chemistry": "LiPo",
+            "cutoff_cell_voltage_v": 3.3,
+            "id": "generic_6s_lipo_16000mah",
+            "internal_resistance_ohm": 0.02,
+            "mass_kg": 1.55,
+            "max_discharge_c": 25,
+            "name": "Generic 6S LiPo pack, 16000 mAh (25C class)",
+            "ocv_curve": [
+              {
+                "cell_voltage_v": 3.3,
+                "soc_pct": 0
+              },
+              {
+                "cell_voltage_v": 3.5,
+                "soc_pct": 5
+              },
+              {
+                "cell_voltage_v": 3.75,
+                "soc_pct": 25
+              },
+              {
+                "cell_voltage_v": 3.89,
+                "soc_pct": 50
+              },
+              {
+                "cell_voltage_v": 4.03,
+                "soc_pct": 75
+              },
+              {
+                "cell_voltage_v": 4.2,
+                "soc_pct": 100
+              }
+            ],
+            "schema_version": "0.1",
+            "source": {
+              "estimated": false,
+              "notes": "OCV-SOC shape is generic LiPo chemistry behavior, not a specific pack's datasheet. Capacity, mass and internal resistance (20 mOhm pack) are TYPICAL values for a 16 Ah 6S 25C-class pack: flagged estimated with wide uncertainty and must be replaced with the specific pack's datasheet/measurements for credible endurance numbers.",
+              "retrieved": "2026-11-15",
+              "source": "Community-measured LiPo voltage-vs-SOC charts (intofpv.com LiPo voltage quick chart; usedbytes.com measured discharge profile). OCV curve per cell; sag from pack internal resistance handled separately.",
+              "uncertainty_pct": 3.0,
+              "url": "https://intofpv.com/t-lipo-voltage-quick-chart"
+            },
+            "warning_cell_voltage_v": 3.5
+          },
+          "data/components/controllers/esc_80a_12s.json": {
+            "id": "generic_esc_80a_12s",
+            "mass_kg": 0.15,
+            "max_continuous_current_a": 80.0,
+            "max_voltage_v": 50.4,
+            "name": "Generic 80 A BLDC ESC (12S-capable)",
+            "schema_version": "0.1",
+            "source": {
+              "estimated": true,
+              "notes": "No specific ESC datasheet captured yet; rating is an estimate. Replace with the actual ESC part before any flight-worthiness claim.",
+              "retrieved": "2026-11-15",
+              "source": "Placeholder ESC rating sized with headroom over the P80 III's 60 A peak (180 s) rating",
+              "uncertainty_pct": 20.0
+            }
+          },
+          "data/components/controllers/generic_esc_20a.json": {
+            "id": "generic_esc_20a",
+            "mass_kg": 0.03,
+            "max_continuous_current_a": 20.0,
+            "max_voltage_v": 25.2,
+            "name": "Generic 20 A BLDC ESC (6S-capable)",
+            "schema_version": "0.1",
+            "source": {
+              "estimated": true,
+              "notes": "No specific ESC datasheet captured yet; rating is an estimate. Replace with the actual ESC part (e.g. a sourced T-Motor/Hobbywing ESC) before any flight-worthiness claim.",
+              "retrieved": "2026-11-15",
+              "source": "Placeholder ESC rating sized with headroom over the motor's 14 A max continuous current",
+              "uncertainty_pct": 20.0
+            }
+          },
+          "data/components/materials.json": {
+            "$schema": "aeroforge/materials@0.1",
+            "description": "Structural material properties used by frame stress checks. All values are sourced and carry an explicit uncertainty; a component check that needs a material not listed here must have that material added with a source, or the check must fail closed (report 'unknown property', not 'pass').",
+            "materials": [
+              {
+                "category": "metal",
+                "density_kg_m3": 2700,
+                "id": "alu_6061_t6",
+                "name": "Aluminum 6061-T6",
+                "notes": "Common for machined motor mounts and booms.",
+                "source": "ASM Metals Handbook / MatWeb standard published values (T6 temper)",
+                "ultimate_tensile_strength_pa": 310000000,
+                "uncertainty_pct": 2,
+                "yield_strength_pa": 276000000,
+                "youngs_modulus_pa": 68900000000
+              },
+              {
+                "category": "composite",
+                "density_kg_m3": 1550,
+                "id": "cfrp_quasi_iso",
+                "name": "Quasi-isotropic CFRP laminate (epoxy)",
+                "notes": "Layup-dependent: values represent a typical [0/45/-45/90]s carbon/epoxy laminate. 'yield' is approximate (composites do not yield like metals); used as the allowable strength for frame checks.",
+                "source": "Typical quasi-isotropic laminate properties, Composite Materials Handbook series / manufacturer laminate data sheets",
+                "ultimate_tensile_strength_pa": 550000000,
+                "uncertainty_pct": 20,
+                "yield_strength_pa": 500000000,
+                "youngs_modulus_pa": 45000000000
+              },
+              {
+                "category": "polymer",
+                "density_kg_m3": 1010,
+                "id": "pa12_nylon",
+                "name": "Nylon PA12 (SLS / MJF print)",
+                "notes": "Common for printed motor mounts and camera plates; sensitive to moisture and temperature.",
+                "source": "Typical PA12 powder-bed fusion material datasheets (e.g., HP MJF PA12, EOS PA2200)",
+                "ultimate_tensile_strength_pa": 48000000,
+                "uncertainty_pct": 15,
+                "yield_strength_pa": 45000000,
+                "youngs_modulus_pa": 1650000000
+              },
+              {
+                "category": "polymer",
+                "density_kg_m3": 1240,
+                "id": "pla_fdg",
+                "name": "PLA (FDM print)",
+                "notes": "Prototype-grade; print orientation and infill strongly affect strength (uncertainty does not cover layer-adhesion knockdowns \u2014 flag as 'needs print-specific test data' for load-bearing parts).",
+                "source": "Typical published PLA tensile properties (e.g., MatWeb generic PLA, manufacturer datasheets)",
+                "ultimate_tensile_strength_pa": 60000000,
+                "uncertainty_pct": 25,
+                "yield_strength_pa": 60000000,
+                "youngs_modulus_pa": 3500000000
+              }
+            ],
+            "units": {
+              "density_kg_m3": "kg/m^3",
+              "ultimate_tensile_strength_pa": "Pa",
+              "yield_strength_pa": "Pa",
+              "youngs_modulus_pa": "Pa"
+            }
+          },
+          "data/components/motors/tmotor_mn3508_kv380.json": {
+            "cells_max": 6,
+            "cells_min": 3,
+            "configuration": "12N14P",
+            "id": "tmotor_mn3508_kv380",
+            "idle_current_a": 0.4,
+            "idle_current_voltage_v": 10.0,
+            "internal_resistance_ohm": 0.205,
+            "kv_rpm_per_v": 380,
+            "mass_kg": 0.103,
+            "max_continuous_current_a": 14.0,
+            "max_continuous_duration_s": 180,
+            "max_continuous_power_w": 310.0,
+            "name": "T-Motor MN3508 KV380 (Navigator type)",
+            "schema_version": "0.1",
+            "source": {
+              "estimated": false,
+              "notes": "Load table transcribed from datasheet page 3 ('Load Testing Data'); every row is internally consistent (thrust/power matches published efficiency). Internal resistance 205 mOhm is the manufacturer winding measurement. Datasheet note: temperature refers to motor surface at 100% throttle after 10 min run.",
+              "report_id": "MN.00011",
+              "retrieved": "2026-11-15",
+              "source": "T-Motor official test report MN.00011 (MN3508 KV380): specifications and load-testing data, DC power supply, static bench",
+              "uncertainty_pct": 3.0,
+              "url": "https://modelavia.pro/assets/images/tds_motor/t-mn3508-kv.pdf"
+            },
+            "test_data": [
+              {
+                "current_a": 1.6,
+                "power_w": 23.68,
+                "prop": "T-MOTOR 15*5CF",
+                "rpm": 2600,
+                "source": {
+                  "report_id": "MN.00011",
+                  "source": "T-Motor test report MN.00011, p.3",
+                  "uncertainty_pct": 3.0
+                },
+                "throttle_pct": 50,
+                "thrust_gf": 430,
+                "voltage_v": 14.8
+              },
+              {
+                "current_a": 3.4,
+                "power_w": 50.32,
+                "prop": "T-MOTOR 15*5CF",
+                "rpm": 3400,
+                "source": {
+                  "report_id": "MN.00011",
+                  "source": "T-Motor test report MN.00011, p.3",
+                  "uncertainty_pct": 3.0
+                },
+                "throttle_pct": 65,
+                "thrust_gf": 670,
+                "voltage_v": 14.8
+              },
+              {
+                "current_a": 5.0,
+                "power_w": 74.0,
+                "prop": "T-MOTOR 15*5CF",
+                "rpm": 3800,
+                "source": {
+                  "report_id": "MN.00011",
+                  "source": "T-Motor test report MN.00011, p.3",
+                  "uncertainty_pct": 3.0
+                },
+                "throttle_pct": 75,
+                "thrust_gf": 820,
+                "voltage_v": 14.8
+              },
+              {
+                "current_a": 6.4,
+                "power_w": 94.72,
+                "prop": "T-MOTOR 15*5CF",
+                "rpm": 4200,
+                "source": {
+                  "report_id": "MN.00011",
+                  "source": "T-Motor test report MN.00011, p.3",
+                  "uncertainty_pct": 3.0
+                },
+                "throttle_pct": 85,
+                "thrust_gf": 1000,
+                "voltage_v": 14.8
+              },
+              {
+                "current_a": 7.5,
+                "power_w": 111.0,
+                "prop": "T-MOTOR 15*5CF",
+                "rpm": 4500,
+                "source": {
+                  "report_id": "MN.00011",
+                  "source": "T-Motor test report MN.00011, p.3",
+                  "uncertainty_pct": 3.0
+                },
+                "throttle_pct": 100,
+                "thrust_gf": 1100,
+                "voltage_v": 14.8
+              },
+              {
+                "current_a": 3.6,
+                "power_w": 79.92,
+                "prop": "T-MOTOR 15*5CF",
+                "rpm": 3900,
+                "source": {
+                  "report_id": "MN.00011",
+                  "source": "T-Motor test report MN.00011, p.3",
+                  "uncertainty_pct": 3.0
+                },
+                "throttle_pct": 50,
+                "thrust_gf": 820,
+                "voltage_v": 22.2
+              },
+              {
+                "current_a": 6.1,
+                "power_w": 135.42,
+                "prop": "T-MOTOR 15*5CF",
+                "rpm": 4800,
+                "source": {
+                  "report_id": "MN.00011",
+                  "source": "T-Motor test report MN.00011, p.3",
+                  "uncertainty_pct": 3.0
+                },
+                "throttle_pct": 65,
+                "thrust_gf": 1200,
+                "voltage_v": 22.2
+              },
+              {
+                "current_a": 9.5,
+                "power_w": 210.9,
+                "prop": "T-MOTOR 15*5CF",
+                "rpm": 5300,
+                "source": {
+                  "report_id": "MN.00011",
+                  "source": "T-Motor test report MN.00011, p.3",
+                  "uncertainty_pct": 3.0
+                },
+                "throttle_pct": 75,
+                "thrust_gf": 1500,
+                "voltage_v": 22.2
+              },
+              {
+                "current_a": 11.3,
+                "power_w": 250.86,
+                "prop": "T-MOTOR 15*5CF",
+                "rpm": 5700,
+                "source": {
+                  "report_id": "MN.00011",
+                  "source": "T-Motor test report MN.00011, p.3",
+                  "uncertainty_pct": 3.0
+                },
+                "throttle_pct": 85,
+                "thrust_gf": 1700,
+                "voltage_v": 22.2
+              },
+              {
+                "current_a": 13.3,
+                "power_w": 295.26,
+                "prop": "T-MOTOR 15*5CF",
+                "rpm": 5900,
+                "source": {
+                  "report_id": "MN.00011",
+                  "source": "T-Motor test report MN.00011, p.3",
+                  "uncertainty_pct": 3.0
+                },
+                "throttle_pct": 100,
+                "thrust_gf": 1880,
+                "voltage_v": 22.2
+              },
+              {
+                "current_a": 2.9,
+                "power_w": 64.38,
+                "prop": "T-MOTOR 14*4.8CF",
+                "rpm": 4300,
+                "source": {
+                  "report_id": "MN.00011",
+                  "source": "T-Motor test report MN.00011, p.3",
+                  "uncertainty_pct": 3.0
+                },
+                "throttle_pct": 50,
+                "thrust_gf": 710,
+                "voltage_v": 22.2
+              },
+              {
+                "current_a": 5.3,
+                "power_w": 117.66,
+                "prop": "T-MOTOR 14*4.8CF",
+                "rpm": 5300,
+                "source": {
+                  "report_id": "MN.00011",
+                  "source": "T-Motor test report MN.00011, p.3",
+                  "uncertainty_pct": 3.0
+                },
+                "throttle_pct": 65,
+                "thrust_gf": 1100,
+                "voltage_v": 22.2
+              },
+              {
+                "current_a": 7.5,
+                "power_w": 166.5,
+                "prop": "T-MOTOR 14*4.8CF",
+                "rpm": 5700,
+                "source": {
+                  "report_id": "MN.00011",
+                  "source": "T-Motor test report MN.00011, p.3",
+                  "uncertainty_pct": 3.0
+                },
+                "throttle_pct": 75,
+                "thrust_gf": 1350,
+                "voltage_v": 22.2
+              },
+              {
+                "current_a": 9.8,
+                "power_w": 217.56,
+                "prop": "T-MOTOR 14*4.8CF",
+                "rpm": 6000,
+                "source": {
+                  "report_id": "MN.00011",
+                  "source": "T-Motor test report MN.00011, p.3",
+                  "uncertainty_pct": 3.0
+                },
+                "throttle_pct": 85,
+                "thrust_gf": 1580,
+                "voltage_v": 22.2
+              },
+              {
+                "current_a": 11.5,
+                "power_w": 255.3,
+                "prop": "T-MOTOR 14*4.8CF",
+                "rpm": 6500,
+                "source": {
+                  "report_id": "MN.00011",
+                  "source": "T-Motor test report MN.00011, p.3",
+                  "uncertainty_pct": 3.0
+                },
+                "throttle_pct": 100,
+                "thrust_gf": 1730,
+                "voltage_v": 22.2
+              }
+            ]
+          },
+          "data/components/motors/tmotor_p80iii_kv100.json": {
+            "cells_max": 12,
+            "cells_min": 6,
+            "configuration": "36N42P",
+            "id": "tmotor_p80iii_kv100",
+            "idle_current_a": 1.6,
+            "idle_current_voltage_v": 10.0,
+            "internal_resistance_ohm": 0.048,
+            "kv_rpm_per_v": 100,
+            "mass_kg": 0.649,
+            "max_continuous_current_a": 60.0,
+            "max_continuous_duration_s": 180,
+            "max_continuous_power_w": 2700.0,
+            "name": "T-Motor P80 III KV100 (agricultural UAV motor)",
+            "schema_version": "0.1",
+            "source": {
+              "estimated": false,
+              "notes": "Table transcribed from the published load-testing rows; every row verified internally consistent: thrust/power equals the published efficiency AND power equals V*I at the row's measured voltage. Row voltages sag 47.91 -> 47.15 V across the sweep; normalized to 47.9 V nominal (+/-1.6%, absorbed by dataset uncertainty). Torque column published per row (used for the rotor reaction-torque parameter). Internal resistance 45-51 mOhm published; 48 mOhm midpoint used.",
+              "report_id": "tmotor-p80iii-kv100-page",
+              "retrieved": "2026-11-15",
+              "source": "T-Motor official product page: P80 III (without pin) KV100 \u2014 specifications and load-testing data (DC bench, G30*10.5 CF propeller), static bench",
+              "uncertainty_pct": 3.0,
+              "url": "https://store.tmotor.com/product/P80-v3-without-pin-kv100-p-type.html"
+            },
+            "test_data": [
+              {
+                "current_a": 4.97,
+                "power_w": 238,
+                "prop": "T-MOTOR G30*10.5CF",
+                "rpm": 1719,
+                "source": {
+                  "report_id": "tmotor-p80iii-kv100-page",
+                  "source": "T-Motor P80 III KV100 product page, load testing data",
+                  "uncertainty_pct": 3.0
+                },
+                "throttle_pct": 40,
+                "thrust_gf": 2850,
+                "torque_nm": 0.97,
+                "voltage_measured_v": 47.91,
+                "voltage_v": 47.9
+              },
+              {
+                "current_a": 5.54,
+                "power_w": 265,
+                "prop": "T-MOTOR G30*10.5CF",
+                "rpm": 1783,
+                "source": {
+                  "report_id": "tmotor-p80iii-kv100-page",
+                  "source": "T-Motor P80 III KV100 product page, load testing data",
+                  "uncertainty_pct": 3.0
+                },
+                "throttle_pct": 42,
+                "thrust_gf": 3108,
+                "torque_nm": 1.06,
+                "voltage_measured_v": 47.9,
+                "voltage_v": 47.9
+              },
+              {
+                "current_a": 6.07,
+                "power_w": 291,
+                "prop": "T-MOTOR G30*10.5CF",
+                "rpm": 1849,
+                "source": {
+                  "report_id": "tmotor-p80iii-kv100-page",
+                  "source": "T-Motor P80 III KV100 product page, load testing data",
+                  "uncertainty_pct": 3.0
+                },
+                "throttle_pct": 44,
+                "thrust_gf": 3331,
+                "torque_nm": 1.13,
+                "voltage_measured_v": 47.88,
+                "voltage_v": 47.9
+              },
+              {
+                "current_a": 6.65,
+                "power_w": 318,
+                "prop": "T-MOTOR G30*10.5CF",
+                "rpm": 1913,
+                "source": {
+                  "report_id": "tmotor-p80iii-kv100-page",
+                  "source": "T-Motor P80 III KV100 product page, load testing data",
+                  "uncertainty_pct": 3.0
+                },
+                "throttle_pct": 46,
+                "thrust_gf": 3571,
+                "torque_nm": 1.22,
+                "voltage_measured_v": 47.87,
+                "voltage_v": 47.9
+              },
+              {
+                "current_a": 7.29,
+                "power_w": 349,
+                "prop": "T-MOTOR G30*10.5CF",
+                "rpm": 1981,
+                "source": {
+                  "report_id": "tmotor-p80iii-kv100-page",
+                  "source": "T-Motor P80 III KV100 product page, load testing data",
+                  "uncertainty_pct": 3.0
+                },
+                "throttle_pct": 48,
+                "thrust_gf": 3859,
+                "torque_nm": 1.3,
+                "voltage_measured_v": 47.87,
+                "voltage_v": 47.9
+              },
+              {
+                "current_a": 7.99,
+                "power_w": 382,
+                "prop": "T-MOTOR G30*10.5CF",
+                "rpm": 2040,
+                "source": {
+                  "report_id": "tmotor-p80iii-kv100-page",
+                  "source": "T-Motor P80 III KV100 product page, load testing data",
+                  "uncertainty_pct": 3.0
+                },
+                "throttle_pct": 50,
+                "thrust_gf": 4114,
+                "torque_nm": 1.39,
+                "voltage_measured_v": 47.85,
+                "voltage_v": 47.9
+              },
+              {
+                "current_a": 8.8,
+                "power_w": 421,
+                "prop": "T-MOTOR G30*10.5CF",
+                "rpm": 2125,
+                "source": {
+                  "report_id": "tmotor-p80iii-kv100-page",
+                  "source": "T-Motor P80 III KV100 product page, load testing data",
+                  "uncertainty_pct": 3.0
+                },
+                "throttle_pct": 52,
+                "thrust_gf": 4439,
+                "torque_nm": 1.5,
+                "voltage_measured_v": 47.84,
+                "voltage_v": 47.9
+              },
+              {
+                "current_a": 9.8,
+                "power_w": 468,
+                "prop": "T-MOTOR G30*10.5CF",
+                "rpm": 2204,
+                "source": {
+                  "report_id": "tmotor-p80iii-kv100-page",
+                  "source": "T-Motor P80 III KV100 product page, load testing data",
+                  "uncertainty_pct": 3.0
+                },
+                "throttle_pct": 54,
+                "thrust_gf": 4748,
+                "torque_nm": 1.61,
+                "voltage_measured_v": 47.81,
+                "voltage_v": 47.9
+              },
+              {
+                "current_a": 10.89,
+                "power_w": 520,
+                "prop": "T-MOTOR G30*10.5CF",
+                "rpm": 2292,
+                "source": {
+                  "report_id": "tmotor-p80iii-kv100-page",
+                  "source": "T-Motor P80 III KV100 product page, load testing data",
+                  "uncertainty_pct": 3.0
+                },
+                "throttle_pct": 56,
+                "thrust_gf": 5143,
+                "torque_nm": 1.75,
+                "voltage_measured_v": 47.79,
+                "voltage_v": 47.9
+              },
+              {
+                "current_a": 12.2,
+                "power_w": 582,
+                "prop": "T-MOTOR G30*10.5CF",
+                "rpm": 2386,
+                "source": {
+                  "report_id": "tmotor-p80iii-kv100-page",
+                  "source": "T-Motor P80 III KV100 product page, load testing data",
+                  "uncertainty_pct": 3.0
+                },
+                "throttle_pct": 58,
+                "thrust_gf": 5515,
+                "torque_nm": 1.88,
+                "voltage_measured_v": 47.76,
+                "voltage_v": 47.9
+              },
+              {
+                "current_a": 13.11,
+                "power_w": 626,
+                "prop": "T-MOTOR G30*10.5CF",
+                "rpm": 2459,
+                "source": {
+                  "report_id": "tmotor-p80iii-kv100-page",
+                  "source": "T-Motor P80 III KV100 product page, load testing data",
+                  "uncertainty_pct": 3.0
+                },
+                "throttle_pct": 60,
+                "thrust_gf": 5886,
+                "torque_nm": 1.99,
+                "voltage_measured_v": 47.75,
+                "voltage_v": 47.9
+              },
+              {
+                "current_a": 14.39,
+                "power_w": 687,
+                "prop": "T-MOTOR G30*10.5CF",
+                "rpm": 2531,
+                "source": {
+                  "report_id": "tmotor-p80iii-kv100-page",
+                  "source": "T-Motor P80 III KV100 product page, load testing data",
+                  "uncertainty_pct": 3.0
+                },
+                "throttle_pct": 62,
+                "thrust_gf": 6306,
+                "torque_nm": 2.14,
+                "voltage_measured_v": 47.72,
+                "voltage_v": 47.9
+              },
+              {
+                "current_a": 15.56,
+                "power_w": 742,
+                "prop": "T-MOTOR G30*10.5CF",
+                "rpm": 2610,
+                "source": {
+                  "report_id": "tmotor-p80iii-kv100-page",
+                  "source": "T-Motor P80 III KV100 product page, load testing data",
+                  "uncertainty_pct": 3.0
+                },
+                "throttle_pct": 64,
+                "thrust_gf": 6649,
+                "torque_nm": 2.25,
+                "voltage_measured_v": 47.71,
+                "voltage_v": 47.9
+              },
+              {
+                "current_a": 17.0,
+                "power_w": 810,
+                "prop": "T-MOTOR G30*10.5CF",
+                "rpm": 2683,
+                "source": {
+                  "report_id": "tmotor-p80iii-kv100-page",
+                  "source": "T-Motor P80 III KV100 product page, load testing data",
+                  "uncertainty_pct": 3.0
+                },
+                "throttle_pct": 66,
+                "thrust_gf": 7061,
+                "torque_nm": 2.39,
+                "voltage_measured_v": 47.67,
+                "voltage_v": 47.9
+              },
+              {
+                "current_a": 18.22,
+                "power_w": 868,
+                "prop": "T-MOTOR G30*10.5CF",
+                "rpm": 2755,
+                "source": {
+                  "report_id": "tmotor-p80iii-kv100-page",
+                  "source": "T-Motor P80 III KV100 product page, load testing data",
+                  "uncertainty_pct": 3.0
+                },
+                "throttle_pct": 68,
+                "thrust_gf": 7434,
+                "torque_nm": 2.51,
+                "voltage_measured_v": 47.66,
+                "voltage_v": 47.9
+              },
+              {
+                "current_a": 20.15,
+                "power_w": 960,
+                "prop": "T-MOTOR G30*10.5CF",
+                "rpm": 2836,
+                "source": {
+                  "report_id": "tmotor-p80iii-kv100-page",
+                  "source": "T-Motor P80 III KV100 product page, load testing data",
+                  "uncertainty_pct": 3.0
+                },
+                "throttle_pct": 70,
+                "thrust_gf": 7886,
+                "torque_nm": 2.67,
+                "voltage_measured_v": 47.62,
+                "voltage_v": 47.9
+              },
+              {
+                "current_a": 24.34,
+                "power_w": 1157,
+                "prop": "T-MOTOR G30*10.5CF",
+                "rpm": 3030,
+                "source": {
+                  "report_id": "tmotor-p80iii-kv100-page",
+                  "source": "T-Motor P80 III KV100 product page, load testing data",
+                  "uncertainty_pct": 3.0
+                },
+                "throttle_pct": 76,
+                "thrust_gf": 9074,
+                "torque_nm": 3.07,
+                "voltage_measured_v": 47.54,
+                "voltage_v": 47.9
+              },
+              {
+                "current_a": 29.34,
+                "power_w": 1392,
+                "prop": "T-MOTOR G30*10.5CF",
+                "rpm": 3223,
+                "source": {
+                  "report_id": "tmotor-p80iii-kv100-page",
+                  "source": "T-Motor P80 III KV100 product page, load testing data",
+                  "uncertainty_pct": 3.0
+                },
+                "throttle_pct": 82,
+                "thrust_gf": 10215,
+                "torque_nm": 3.45,
+                "voltage_measured_v": 47.45,
+                "voltage_v": 47.9
+              },
+              {
+                "current_a": 34.75,
+                "power_w": 1646,
+                "prop": "T-MOTOR G30*10.5CF",
+                "rpm": 3397,
+                "source": {
+                  "report_id": "tmotor-p80iii-kv100-page",
+                  "source": "T-Motor P80 III KV100 product page, load testing data",
+                  "uncertainty_pct": 3.0
+                },
+                "throttle_pct": 88,
+                "thrust_gf": 11500,
+                "torque_nm": 3.88,
+                "voltage_measured_v": 47.36,
+                "voltage_v": 47.9
+              },
+              {
+                "current_a": 40.33,
+                "power_w": 1906,
+                "prop": "T-MOTOR G30*10.5CF",
+                "rpm": 3569,
+                "source": {
+                  "report_id": "tmotor-p80iii-kv100-page",
+                  "source": "T-Motor P80 III KV100 product page, load testing data",
+                  "uncertainty_pct": 3.0
+                },
+                "throttle_pct": 94,
+                "thrust_gf": 12603,
+                "torque_nm": 4.28,
+                "voltage_measured_v": 47.26,
+                "voltage_v": 47.9
+              },
+              {
+                "current_a": 46.99,
+                "power_w": 2215,
+                "prop": "T-MOTOR G30*10.5CF",
+                "rpm": 3747,
+                "source": {
+                  "report_id": "tmotor-p80iii-kv100-page",
+                  "source": "T-Motor P80 III KV100 product page, load testing data",
+                  "uncertainty_pct": 3.0
+                },
+                "throttle_pct": 100,
+                "thrust_gf": 14011,
+                "torque_nm": 4.78,
+                "voltage_measured_v": 47.15,
+                "voltage_v": 47.9
+              }
+            ]
+          },
+          "data/components/propellers/tmotor_g30x105_cf.json": {
+            "diameter_in": 30.0,
+            "id": "tmotor_g30x105_cf",
+            "mass_kg": 0.25,
+            "material": "carbon fiber",
+            "motor_test_data_key": "T-MOTOR G30*10.5CF",
+            "name": "T-Motor G30*10.5 CF propeller (30x10.5 inch, carbon fiber)",
+            "pitch_in": 10.5,
+            "schema_version": "0.1",
+            "source": {
+              "estimated": true,
+              "notes": "Prop mass is NOT in the bench table; 250 g is an estimate for a 30-inch CF prop and MUST be replaced with a measured value for mass-critical designs (flagged estimated, uncertainty 30%).",
+              "retrieved": "2026-11-15",
+              "source": "T-Motor G-series propeller product listing (geometry); used in the T-Motor P80 III KV100 load-testing table",
+              "uncertainty_pct": 30.0,
+              "url": "https://store.tmotor.com/product/P80-v3-without-pin-kv100-p-type.html"
+            }
+          },
+          "data/components/propellers/tmotor_p15x5_cf.json": {
+            "diameter_in": 15.0,
+            "id": "tmotor_p15x5_cf",
+            "mass_kg": 0.019,
+            "material": "carbon fiber",
+            "motor_test_data_key": "T-MOTOR 15*5CF",
+            "name": "T-Motor P15*5 CF propeller (15x5 inch, carbon fiber)",
+            "pitch_in": 5.0,
+            "schema_version": "0.1",
+            "source": {
+              "estimated": true,
+              "notes": "Prop mass is NOT in the test report; 19 g is an estimate from the product listing and MUST be replaced with a measured value for any mass-critical design (flagged estimated, uncertainty 30%).",
+              "retrieved": "2026-11-15",
+              "source": "T-Motor P-series propeller product listing (mass and geometry); used in T-Motor test report MN.00011 bench data",
+              "uncertainty_pct": 30.0,
+              "url": "https://store.tmotor.com/"
+            }
+          }
+        },
+        "dependency_lock_sha256": "2d533a2ee61a7d23860e895f45472f2910878db5eda00032412c28ece7b72663",
+        "files_sha256": {
+          "apps/api/app/__init__.py": "eb658fc680b153fe50e524b71e7d49831959e6c478e0d43d55d1fe96fdb0d7e2",
+          "apps/api/app/main.py": "4f63de98c4271b063813d3cbb1589d08819a1ee36ab9b24716fbaff966b3f83f",
+          "apps/api/app/persistence/__init__.py": "deb72ef232764802535d68c4ff73cd69b3cf2ed44dd3f8f68ad7b14240b46270",
+          "apps/api/app/persistence/database.py": "e0812d040c964a3956337292713a0d3dc2230a08e4953ae8f93c2ea13ee81801",
+          "apps/api/app/persistence/design_history.py": "1cdb71fc055f25d3ea019ca8ac02c451c2f3f224723839a6f7415a9a71d58592",
+          "apps/api/app/persistence/models.py": "eac7a79ffbf50fce0f200cab08e984d95ca2ac2c8e3e999f0f87f2f23623a6b1",
+          "apps/api/app/persistence/snapshot.py": "e5d8d033422f0643311c783e5b828db6cd4958ffbe12c59120b41926580058bc",
+          "apps/api/app/routes/__init__.py": "faf1bf87b63a3fa2be823d9649f2410120cc3a1509253127aeed80fea9aaeb8f",
+          "apps/api/app/routes/combined_metal.py": "4bdda60042ff20e1d55bb7ee7f29559f923421f4ac8ccca460c3e1278522ffc7",
+          "apps/api/app/routes/components.py": "0fff43f53d0c4ce3e06bd9b7374a8b4c3430b842fc9551e02407e921c3388c00",
+          "apps/api/app/routes/designs.py": "2dc6ca392849b9fb143bba90fcb4b173aeea9bfd0bdbabebf87f15c3c0583cf4",
+          "apps/api/app/routes/flight_evidence.py": "b3ebc894636ba6e182b931092acd2c16768717e2ab9009e3211c50f00064ffa7",
+          "apps/api/app/routes/health.py": "f29985590bd36626e9dfa56b4c5a0c09d034e8877e79c78ba5fb9f2ee506edb6",
+          "apps/api/app/routes/hil_evidence.py": "ba6980ae6eba28f302f6282576ecfe40769565a4d07a9cc380fa1b3f02d8fdc1",
+          "apps/api/app/routes/hil_tracking_quality.py": "3602f591c8834914208648c4be271057b446846558f8dc11d07bd9d431ac4171",
+          "apps/api/app/routes/projects.py": "7d7143b816b708b264b403a8cb556925020de690ccb4b8535e5bc7d994ea6ee3",
+          "apps/api/app/routes/propulsion_evidence.py": "cceeb6d14e7fcfe0c90b0556766876df8e0343b6821ab91e70f55ac7d60b55f0",
+          "apps/api/app/routes/rotor_clearance.py": "c264bc0d07610e58b6f33fbf53f1907e70edc6c10ddd1b0877deb5229441f73e",
+          "apps/api/app/routes/rotor_tolerance.py": "745cb76ea9b35c65c78e73149c44364be7090aa9eba9b49907ce5a4e08a8d42e",
+          "apps/api/app/routes/simulations.py": "358728accd466f049ff0ef0aecd9b70311b01099f792be9e37a01f406be7c61e",
+          "apps/api/app/routes/source_pinned_holdouts.py": "813c11fa24e9a21627a6818803c80d24900dff17c38cb4b16c5635195ecf5401",
+          "apps/api/app/schemas/__init__.py": "e240e753ce45288576d6d78e026b125780d405e6028beb219fe8cd68d781fb52",
+          "apps/api/app/services/__init__.py": "e63c91839de15fb086f4065921e614dcca52028f98bef7c2aa74255e2bdd1b87",
+          "apps/api/app/services/cad_layout.py": "ba67389e8b75a99877419eb76684e1bfc88965a0f4032442aad62cc7193a752f",
+          "apps/api/app/services/component_service.py": "9e39d417166648f1080988c638294fec22ea24ef620acb2d7e175208c11f27cf",
+          "apps/api/app/services/project_assets.py": "cda52f256c9d14d6994e60cdbe7881fc72eebe4b7ad0d8fc0465bcb3e6437c1f",
+          "apps/api/app/services/project_service.py": "4891d2f5cc7c76179377fe4177a5538c65c80acb8339d9d7431b893af6d60d41",
+          "apps/api/app/services/run_provenance.py": "471f116a4791b93b2beccd3db43defed9c1b6261ee2210aff5d6b4df97127f37",
+          "apps/api/app/services/simulation_service.py": "4a7731c9ae01985b86d341cad4c8c9e55dc9c08bb3e6fd9d18bc5be5c05b765f",
+          "data/components/batteries/generic_12s_22000mah.json": "151745583e3501419cff2cc3ebe0727118bc0b82045821da0a142158ad811963",
+          "data/components/batteries/generic_6s_lipo_16000mah.json": "1a7b1ee9b4f1ad25c35ec1deab8c7ea4075fc6089281c0cf41150779bb8be20d",
+          "data/components/controllers/esc_80a_12s.json": "9e783785469947b20fa76fe1d11eee3c98d87fb75845d76eb618288bfe2a482f",
+          "data/components/controllers/generic_esc_20a.json": "946b64ede674f4d4e3ee1459aea9290b50504c591e4736a81748b7714f75ebd9",
+          "data/components/materials.json": "7301e1aba05c31ca5caf500f06b85e46bdefa18f7c5314fdf214d7425c4d50c3",
+          "data/components/motors/tmotor_mn3508_kv380.json": "1d90557e7cbd40a3a8f2f36cc330b66ee36d025ac87bedd6d85b52428d11ec95",
+          "data/components/motors/tmotor_p80iii_kv100.json": "a4b56dc8327fcf94cbf2350327944f9ac3f5fddb82527e6eb54b138a18799493",
+          "data/components/propellers/tmotor_g30x105_cf.json": "64aea8d78c119a4dc7ab24db19e2ac15a794444878e92e0d5f138ae2a6bd3f86",
+          "data/components/propellers/tmotor_p15x5_cf.json": "a351d8f01493a4bbff8cebc44df68513bd3e74fc42580ec28689bf5fe71acd65",
+          "packages/desktop_worker/__init__.py": "a01ae7534ad83df2f54d8d6430695a8cd70cf444504c885b6d7db1c76f4a5bb3",
+          "packages/desktop_worker/client.py": "241d5cecb10a3368cccaf3c6ae32bd7ff59c7abd55d717b7894eb66a387383b0",
+          "packages/desktop_worker/engine.py": "a6a58311f2db61a079008d522e48d06052c52cbb80aca2e7dbc7ccbac0b11d18",
+          "packages/desktop_worker/governor.py": "fe544d601e27068a3b33c1c85c23a6a2b0141d16609621cc78af2a392274c1f9",
+          "packages/desktop_worker/io.py": "0a46f789100321957200011447035b254d96e25a420f749ee895f69357ad26be",
+          "packages/desktop_worker/metrics.py": "9da373015e1ca77b4903d828128afca8831d0c2f2f9d49136225cd025cc09e58",
+          "packages/desktop_worker/protocol.py": "8becd898671e3e6583a0f02a78958abac799a32168ae32e61fe14b15e2ddd92b",
+          "packages/desktop_worker/resources.py": "5b23ac6bc63521a784cc3a40c6038eb4356c694252d8d349ffcb77df9d05b6dd",
+          "packages/desktop_worker/supervision.py": "f583eb3314fad1c523c858354484e8865e752fd0d29104c2c3eccb585f9611c9",
+          "packages/geometry/__init__.py": "3a773bf954dcf526889eca1d68844a8a7dbd2485b1b985e597a6d8513f7dac39",
+          "packages/geometry/cad_backend.py": "8820a08d5dd984c8347d68a7f4439b5dfaffd1ac29867cbc761b70de818295aa",
+          "packages/geometry/cad_dynamics.py": "40556bcc557df6150f79684f03e44a32b25dc9b6e967a4202e1a46616499669e",
+          "packages/geometry/primitives.py": "1ee5d9f5437c6460b8791e3f82177189c6a522af3cb2e4ac4df295a229f07fc8",
+          "packages/optimization/__init__.py": "6468203244b8bbda6d111307efeb8babaf5e9f1eb4ffe7908e6b2e525b901121",
+          "packages/optimization/batch.py": "0684bc553e1bfe23fef0ee3ad228da62b16a0547cc691522f01a00b26528b329",
+          "packages/physics/__init__.py": "2af809e808da9d9f2dc570f6f628ad75215c67ee1335851e5d4af50fce0aec8c",
+          "packages/physics/aerodynamics/__init__.py": "de2ec25a1c0ebae2b862d9148f88befc994d006bed9d8f59f8c1642ff85b3a30",
+          "packages/physics/aerodynamics/drag.py": "e165b086efce9354ae2ff4a7f37a5e227bef000d4b71e39914bcfd05c750a7ed",
+          "packages/physics/constants.py": "e62c9b9df5b022a0bde517357a459c3e480a1e6201db33152fe643326220eec5",
+          "packages/physics/controller/__init__.py": "76cb1876f86566148c5804c142382743dbd96cb907c08014b67f201c8db2a00e",
+          "packages/physics/controller/attitude.py": "e892af7cce8b787f8789cd885a2c2c12585bebcf8fc9cfbfdcbda6ca20409165",
+          "packages/physics/controller/mixer.py": "90c2179e4f1d2e18d88735ed919456511ee08c190a141abd35c171ae6909e83d",
+          "packages/physics/controller/pid.py": "87201ece684fb3e9b1893cd47d299d9d7c7629a0209d095db6dfc24b759a00b6",
+          "packages/physics/controller/sensors.py": "569d1e484a6756dcf0fcbed6576b152c338ecf5be4958d4323ca24c1abfd3526",
+          "packages/physics/controller/simulation.py": "02bba63d9d727ea22a98da32b1d5382be8682f39e1e4675230010a0465f91ca5",
+          "packages/physics/dynamics/__init__.py": "c3126b92a883c56f084521a8396909ff6ae214a1e2af0b44b683f70ec59bf1b3",
+          "packages/physics/dynamics/design_adapter.py": "0a6db10b4256ea407eb28cdc598e4e22d4dd564e49a97f01a4a70f280fb13aa0",
+          "packages/physics/dynamics/mass_properties.py": "43942cdf17e4372703d7175ac6ed269caa37e9388e5f51080137f52a609e76bd",
+          "packages/physics/dynamics/quadrotor.py": "77a5b5fa724b84036fa8f790a849d74e47b363d636ed159752b88bf1a73f3a14",
+          "packages/physics/dynamics/quaternion.py": "3d38325d28a270bf349e83a97234a6e1222f9c9c0ff2467786e4d54215fdfdbb",
+          "packages/physics/dynamics/rigid_body.py": "f1e57247100678dca00699f9a39d59a4f0a77ab813909f902a4d283508797f5c",
+          "packages/physics/integration/__init__.py": "dc3eb36af2bcb6fb6e6c9cdfa7ef4922357354cadcd481a0ee0ab49f78888950",
+          "packages/physics/integration/rk4.py": "17a5e8fcd7ac6219ce49b42f111383f3750940e989f12adcf998eccc39d3f9a4",
+          "packages/physics/integration/runtime_limit.py": "15bb4f16cb789ca115ac489c77009763719ba08d4a017d5c06f51ee383e2f205",
+          "packages/physics/integration/scipy_solver.py": "72702be4e4f91ddaa7a57f008a75c8157c1fdbfa07561d39b642a00f1e823820",
+          "packages/physics/propulsion/__init__.py": "2ba0cf2a1dc8eaaf02ce76b4545479ba732a7593b9bf0def258f4c0d05b3d8fb",
+          "packages/physics/propulsion/battery.py": "f9b77ee854e779f8689eca263d174cb7f9d7d275c8def23a314b7cade903e452",
+          "packages/physics/propulsion/dataset.py": "b732162ad758365bbc686376073083c1e08739c0a9670d899b72d7a8d50521a3",
+          "packages/physics/propulsion/esc.py": "e0fc0caea73d24dbc5e9445c6f712ec72d4b07cdc693f2958ae6b1022ee42150",
+          "packages/physics/propulsion/loader.py": "e14e1cfd00e57b6da61114b2f091303796f13d4cf17cb1e43aca4b105204817d",
+          "packages/physics/propulsion/powertrain.py": "2cafd074c9defeeee3b7f8ce0c72e624d6ba76e3745ae81172c7923095d8e8a0",
+          "packages/physics/scenarios/__init__.py": "83a83dc69752aa54043483d9afc83c838c914abfe3838adf1708d5f627efd14d",
+          "packages/physics/scenarios/runner.py": "1bb0f21fe44903da567cae02dcb6e09d8df67176c2f2095f50057d81df5d80b7",
+          "packages/physics/scenarios/service.py": "4fedd749f9381728f42e1560e407eb2be32a9f3cce43f7ab169e2416fea946be",
+          "packages/physics/structures/__init__.py": "bec25f5cb389eb60e0b799af5e9a2a4162ce9bf25555aa850e143e302467e878",
+          "packages/physics/structures/advanced.py": "89439384d1f6d27121efb631bc0de59e9e4ba6cc0e4d3dd91fe6763fbbb47926",
+          "packages/physics/structures/beam.py": "2e3d8091a712769b1b497ebd95d23099e657d167986da73928bdf1d6bcf7ca02",
+          "packages/physics/structures/combined_metal.py": "b8c704fb4e914c54588ca3cd9d88b65b23741f965cfb0074e5db38c3aa2af070",
+          "packages/physics/structures/continuous_motion_clearance.py": "df7c79cfb368a3043e4c581df951f20f0a3d6a464f8c9868977ad7824c65b4c3",
+          "packages/physics/structures/continuous_rotor_pair_clearance.py": "f5bc4ec60cb3fa05caf5b0f933dad36c419f9078f4d15006c2c2b71cb7133f4f",
+          "packages/physics/structures/envelope.py": "c9742b36788445fab34c4de8d780777cf1948f1d559beb7c76c64ed97bd1a11d",
+          "packages/physics/structures/materials.py": "1b65beb5ece493b3deb5e04126708c22e5ac8f56fd9322853774c3d4280fbe4f",
+          "packages/physics/structures/obstacle_inventory.py": "676448ac3710e56ada9785061c06eb2991aebab73205d64b5679027b730f60e0",
+          "packages/physics/structures/rotor_clearance.py": "c8e945fc20ecba0b51dbf0c2b15f35870b304e14d357e1f3a6f01d861355f8f0",
+          "packages/physics/structures/rotor_obstacle_clearance.py": "4570578f8a8006387eb3586a77ef888fafa1ab29e5ecbdb04c453bc51423b8e9",
+          "packages/physics/structures/rotor_sphere_clearance.py": "a68a110dc24046b61b0311b587f57c28d5b33249b3c9b7d991c5f9db73701c77",
+          "packages/physics/structures/rotor_tolerance.py": "5ae4316c4616d57987869e5139f05fd7682dc0604f7313d81056900b034ba8ae",
+          "packages/physics/structures/swept_cylinder_clearance.py": "beb4a247a54df529977924a757297f386d805ba39d71fcb07488777fbb7d74bd",
+          "packages/physics/structures/thermal_rotor_clearance.py": "f29aa0a78d7f02b65048cdd44abc506c46ddfef9e754b04cca7f4d49c81684fd",
+          "packages/physics/validation/__init__.py": "7563bb660148777e00e7ee4bef295e314dc579a9ef8995ffa1e937266c9a4db6",
+          "packages/physics/validation/affine_adc_holdout.py": "875ae24fa20d65be724a2faa3ee7a0318a4af5e18a91bf56135b305d6138d313",
+          "packages/physics/validation/battery_campaign.py": "5af24326dfbc5393beaa63a24d778bed6bd049d6373edf4427c430b512186e4e",
+          "packages/physics/validation/battery_evidence.py": "d77bdf22783717de71022ad7c9ec37c37bc874d33ba32c20d8f26a97837cc4b3",
+          "packages/physics/validation/benchmarks.py": "df3fd811c02ff1cef3113a43e102f7f288dc454499edb5e13097c4ac3ba0b74b",
+          "packages/physics/validation/clock_residual_bounds.py": "83c6c9b0834d1cfbb37278ce2afab50711b1f33da7d084695d53d66b8e77a136",
+          "packages/physics/validation/convergence.py": "fdd08ab5269068a0e3dbddb6408686cb727a2e13c292e4337dc2f63b674fc927",
+          "packages/physics/validation/credibility.py": "4e457d9c4dfadbee9720f0bde75a2efb5c6437a199245cd40a4f5ef2db9e7c23",
+          "packages/physics/validation/dataverse_candidate.py": "37a89d31ad60577d81aae9cdeb1c8e26a2572b10345f09aa7dd4cd57579d622d",
+          "packages/physics/validation/decision_coverage.py": "1864158d58e4463d1d34bc3180b6b1f53c1144a05b00add25f1863fb444a7e8a",
+          "packages/physics/validation/decision_hard_margins.py": "bd8bedb69d9dada0e25b83118e2e6dd9c4bbfdda5be632baf549c6950a9a7dc4",
+          "packages/physics/validation/derived_flight_dossier.py": "67908eb81c9d5de109f3fc3f3981b9b155bc0b5122bfead72746acfc849c1161",
+          "packages/physics/validation/derived_hardware_screen.py": "1634409cf574ae3960ade2201db161eff745eb2c58bca38fc09a8d0e3c4fd24a",
+          "packages/physics/validation/derived_holdout_comparison.py": "ceba05761f5d5363fa9fbd1a7d374edf74e5fa0a0e0271a3409b1ec4bddb4d7d",
+          "packages/physics/validation/derived_holdout_coverage.py": "5cd02261c42c4293934436067cf3c5b2c32adf3a1c9b8d4e18df7a8d2d3214f3",
+          "packages/physics/validation/derived_observation_admission.py": "080ce30d09a374a289f103268b2836e814ae0a2fa21e12dcedf033c7120094e5",
+          "packages/physics/validation/direct_virtual_case.py": "e9689251f921774ddc6d906ebe821b1addbae8e9305fa9b096338016550a28de",
+          "packages/physics/validation/discharge_replay.py": "11d834de8a880d5670ba123bd115c09db690207aa4243323e14fbef2e68dc1ff",
+          "packages/physics/validation/external_flight_evidence_gaps.py": "555aa965369d27411294de38182901ed087c517b74601ad6fa0e29a9fca64eb3",
+          "packages/physics/validation/flight_channel_coverage.py": "f29603595f5088a7af75026ae1e6c35ae684c22c593fc7d43b86c50819a5f6fb",
+          "packages/physics/validation/flight_channel_csv.py": "c22897526a82f08469e372152ebf48b89784c9c83810c0b479d635dc285d9f95",
+          "packages/physics/validation/flight_clock_alignment.py": "4de246acdfaf98c30f520a4763642e9ec012d168dd7ac88e03ccb57ada07c6e9",
+          "packages/physics/validation/flight_decision_reports.py": "a7e55c84f9b476282de3c29e616e63fbdfdd187c5bcedd2bfed423b5809dd18b",
+          "packages/physics/validation/flight_derived_csv_replay.py": "7858f0b8fa7f5292a58d95b6d62e676b83ae898dd695c8aadf34648a15a5538a",
+          "packages/physics/validation/flight_envelope_limits.py": "5905e89961b4afcaffe804ae4d3a12d6576c7f90861911e3495fa0366dd01644",
+          "packages/physics/validation/flight_evidence.py": "413558f15cad7dee64e4f75c01556fb618d1b215238157ea6cdeab13ce8ab4b9",
+          "packages/physics/validation/flight_evidence_dossier.py": "3d3855893ed0d0e29229b270bf10ea856f65690043c10280eb43aeada31eeefd",
+          "packages/physics/validation/flight_explicit_csv_conversion.py": "03a7cd7e9c90703563b1513f268c02e49ec008e08950bcce058b4c6958d237f6",
+          "packages/physics/validation/flight_holdout_preflight.py": "10a83f4b74f0860633a3bb719e9a300db63646d6f0937f139b5a743069803186",
+          "packages/physics/validation/flight_inventory_scaffold.py": "19a25a186fd111381ddb89c0cd175dfea8fc8646e124715362c44dd162f07f96",
+          "packages/physics/validation/flight_regime_coverage.py": "987b63d7450d1e2f349cba5680ccd9dc921892f4debc71ad0b6a59a5f5453f6b",
+          "packages/physics/validation/flight_uncertainty_stress.py": "a4f836aba0f87fc1003d26386ae7f1235fe538f97af91dea5d3874f452ec27db",
+          "packages/physics/validation/flight_vendor_csv_inspector.py": "6500eef82d0a426837d5932c470182c7149c12b3cdc2949432639398ce444b48",
+          "packages/physics/validation/frozen_campaign_inputs.py": "c66dc1fd2d1b190013bcbf82afe50b796d2100c2aeeaff4c0257d2cfd75002f4",
+          "packages/physics/validation/frozen_flight_comparison.py": "2368f8953a87533e41ca301f750975fa9e8c4142fbf4ea1f3b7116948f42aea8",
+          "packages/physics/validation/frozen_scenario_coverage.py": "d84cbfbc0e62e1a6e9d12968bde33c78971268484ef02fe54ce877cb9c58be0e",
+          "packages/physics/validation/g30_installation.py": "0bdc398cb2e75c5f916e1a1e467a0ea6ca83e33f5e103f77081a1bdca3634c83",
+          "packages/physics/validation/hil_evidence.py": "fde8bcf5235863f50ddc10e3f01ce2361563c3b60035347ffc316d915cc14dc1",
+          "packages/physics/validation/hil_tracking_quality.py": "61d6a7621c09ab272510e1e6474f0326caa5db0cb7e8b7eec694509782066735",
+          "packages/physics/validation/holdout_intervals.py": "6bd8bc5c8a6773b574623c893c2eee7f2bdfbb2bc801655e93044d20f4a18f57",
+          "packages/physics/validation/m300_energy_holdout.py": "614f9511bb4b04d2daadb38c38710f17e1a29ae94a5f17373489b126c7db41d6",
+          "packages/physics/validation/m300_original_energy.py": "065d3abb301be1e5c703e4f50c50d5b086a3039a49ce248aee21a5d0d4c72338",
+          "packages/physics/validation/native_flight_archive.py": "200eef30cfb34bdef2a8af5e44594a4f9bd702b78f20785278ab9a67856e1158",
+          "packages/physics/validation/original_adc_sources.py": "7ad4fc2ce55e22af233dffe0563f6017678e37f49bf6fd2f2313507a45448127",
+          "packages/physics/validation/original_clock_budgets.py": "283a50239eb0b2226d2a720683fff5d143559d5dea31adc93f89e9dd6bd32462",
+          "packages/physics/validation/preregistration_timeline.py": "1b1b06582bdf34f527e5b72870dc9aaccfc76e55cf2bd8c3ee60f1c8d1047ef2",
+          "packages/physics/validation/propulsion_campaign.py": "9a30cd6e3a674b9876f76f9a91ca9e863116fa37157d49711fb1e686785b0560",
+          "packages/physics/validation/propulsion_evidence.py": "d1f4058b16d7604bfd5d60f7225e348dbe0a6ee155ba75e6b65c8c50415413dd",
+          "packages/physics/validation/provenance_bindings.py": "cbded489bbedb210f4ecc4adaffc2eeaf92cc39b20bc171668a56a0623ca0cff",
+          "packages/physics/validation/public_evidence.py": "07d6677f7a64aa7f6a6e0add8f471ef6b1542f39f2bdf448b349dccc9ff8cbec",
+          "packages/physics/validation/regime_holdout_audit.py": "88887b33ce2c5de5932cc66470d638b990363f7ca8f65eab7123af8528770d32",
+          "packages/physics/validation/release_evidence_ledger.py": "413d3697b99450823dffcf98d09fad0ffe2e83680ffc112ac05de9e0a7511dd1",
+          "packages/physics/validation/release_readiness.py": "70f8706ee789deba7f436b7e0b591d08a97f2b9d1cb947f0deed7467b9567725",
+          "packages/physics/validation/report.py": "3b8e7606403f0ca28dc402946af682d4dc75144ba90308a52c38d191ab518dda",
+          "packages/physics/validation/source_completeness.py": "53b184b3c97b43e8690f209fbbf1a7e84e94beae31581957048b210274838b28",
+          "packages/physics/validation/source_pinned_holdouts.py": "09e7be9c074e37e036419b1aa890a6fb5927c2b463f98b2e3d903eae27afb2b6",
+          "packages/physics/validation/source_thermal_virtual_case.py": "c45cbd3c87b124bbc26c1d9ae316530d3873407eb7656f8475d2e2464052d225",
+          "packages/physics/validation/telemetry_ingestion.py": "91a5de9b26fe6edd93755c661dfc88580aa623cfa9396077d4f6ad880c63b82d",
+          "packages/physics/validation/three_grid_convergence.py": "fbb8ae136e110f8d12f258f97cfc7bd0ed6359a2ea65adce12cbca9b9e8ccff0",
+          "packages/physics/validation/uq.py": "70d38db50df3e10d8fe32a0ecd6c9f38ef7dd2b76c2371c91b7f84ab674e6fd4",
+          "packages/physics/validation/validation_protocol.py": "5b787c8e3e11150824d187bf624c14c6e2ca98f460bf06ec8673c3fbe611c7a0",
+          "packages/physics/validation/zenodo_flight_candidate.py": "19ae3d026ef7797c7079fa84f5948a1525fe862595a306ff855d05244dec540b",
+          "packages/physics/validation/zenodo_m300_exploratory_report.py": "355d7c49b0a1bc5592455d2fa0eb52da810f7323849552cc7aa3cc408f34b45c",
+          "packages/physics/validation/zenodo_m300_suitability.py": "4dd6794cc8b17597b3557f789b0cc637171b1e726175907018e62e85b61e3c74",
+          "packages/physics/validation/zenodo_official_fallback.py": "b9d1a671cbae8fa51f920f5d89a3f88889e01172a3827e09ea99bf9c0323acc8",
+          "packages/physics/validation/zenodo_original_channel_probe.py": "306adb74d29374ededc4d66eeb0b72312fa8c9bcc5047948edd042796c5d5ff5",
+          "packages/physics/validation/zenodo_original_csv_schema.py": "98ed144860b3d46e43809e62b4bbe6e12bfe72a6d10ae97f55cdb9c96f66ee5a",
+          "packages/physics/validation/zenodo_original_download.py": "52b35750ccb8f4ef402f96af42a9e21d80eb2d79bd6c3a84ce40ec146748b190",
+          "packages/physics/validation/zenodo_original_quality.py": "8abbe33d6b0ef52cf126792beda18d630ff8889ebf5776c05f255633c06f54dc",
+          "packages/physics/validation/zenodo_original_time_segments.py": "dfdb3bb637f8e428c87ff4cc2de02cd79a68ddd27abf1fab7187eadedf092f82",
+          "packages/shared-schemas/aeroforge_schemas/__init__.py": "5cc8e382839a5ee5daf03ec7f680d99b7254809559fb25ad2d316f39c561429d",
+          "packages/shared-schemas/aeroforge_schemas/cad.py": "1009eafd48a0b1ac8236af0e48ecd7074dbbde7e64fcd66e7f9ff4904e821a51",
+          "packages/shared-schemas/aeroforge_schemas/component.py": "32d8e69e137c9d6c580ca4ffdd63c89ed8cb5782acc246613f875fee0a49bdc9",
+          "packages/shared-schemas/aeroforge_schemas/design.py": "c9c0c01af136ba0a0035c11c71325cdd9c197722e6c24342b0bab6f2daa2bbf5",
+          "packages/shared-schemas/aeroforge_schemas/foundation.py": "9cdfedcd0460e4fcac64a89fbe76e83f91af52b6af5dcdcceae235fd8f84ac4c",
+          "packages/shared-schemas/aeroforge_schemas/project.py": "3a03ca49871809b9305c664e1e88d043626489bd0f948f899be13f7f59e2f8a1"
+        },
+        "machine": "AMD64",
+        "operating_system": "Windows",
+        "package_versions": {
+          "ezdxf": "1.4.5",
+          "fastapi": "0.164.0",
+          "numpy": "2.4.6",
+          "pydantic": "2.14.3",
+          "scipy": "1.17.1",
+          "sqlalchemy": "2.1.9"
+        },
+        "python_implementation": "CPython",
+        "python_version": "3.11.9",
+        "sha256": "1bf8b2ad068bd9ba2449a86ad69b639c8021b4c8aee842088a0146454e0969f2"
+      },
+      "ocp_version": "7.9.3.1.1"
+    }
+  },
+  "process": {
+    "birth": "134396708895890264",
+    "pid": 24136
+  },
+  "protocol": "desktop_worker_1",
+  "session_id": "f7c165ac4e5f637dabaf7cefe56be209",
+  "worker_pid": 24136
+}

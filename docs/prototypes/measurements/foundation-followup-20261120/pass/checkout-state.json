@@ -1,0 +1,8 @@
+{
+  "path": "apps/desktop/project.godot",
+  "only_changed_path_reported": true,
+  "change": "Godot editor line endings only; normalized content equals Git HEAD",
+  "actual_sha256": "812fb78e64eec7d349c52ef1bfb609fdf4a2d4fe574b1c2f1560c7af16725000",
+  "git_blob_content_sha256": "812fb78e64eec7d349c52ef1bfb609fdf4a2d4fe574b1c2f1560c7af16725000",
+  "normalized_content_equal": true
+}

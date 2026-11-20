@@ -1,0 +1,13 @@
+{
+  "seconds": 128.4918693,
+  "memory_metric": "GlobalMemoryStatusEx ullAvailPhys in admission; PDH available/free/standby counters observed separately",
+  "new_sessions": [
+    "cfa9383d66b20dee43d8c61721286212"
+  ],
+  "completed_utc": "2026-11-20T17:50:54.2777187Z",
+  "source_sha": "67c12f520fe853a38a572e41eaf4d7a709cd4d69",
+  "started_utc": "2026-11-20T17:48:45.7608523Z",
+  "exit_code": 1,
+  "success": false,
+  "limits": "Existing sampled memory/workspace/deadline guards unchanged; no OS hard quota claimed"
+}

@@ -1,0 +1,18 @@
+{
+  "exit_code": 1,
+  "limits": "Existing sampled memory/workspace/deadline guards unchanged; no OS hard quota claimed",
+  "memory_metric": "GlobalMemoryStatusEx ullAvailPhys in admission; PDH available/free/standby counters observed separately",
+  "completed_utc": "2026-11-20T18:06:23.8392858Z",
+  "source_status": [
+    " M apps/desktop/project.godot",
+    " M scripts/qualify_bundled_smoke.ps1"
+  ],
+  "seconds": 103.4610345,
+  "started_utc": "2026-11-20T18:04:40.3304537Z",
+  "source_sha": "67c12f520fe853a38a572e41eaf4d7a709cd4d69",
+  "success": false,
+  "harness_sha256": "4ab2546495a83664c10b311f64c118b26332e6e53d73fa1b941862f122e0f9d5",
+  "new_sessions": [
+    "0ef9261e68a51e1fd793a3ca7fb3f86b"
+  ]
+}

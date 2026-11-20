@@ -21,6 +21,8 @@ Current measured source is `0e3b9b7c36d4f43bceefcabb5f3402d40b870276`: 1800 focu
 
 The original admission correctly refused: total **16636305408**, available **2323255296**, reserve **2079538176**, worker allowance **1073741824** bytes; shortfall **830024704**. Historical free+zero bytes were not logged. No policy reduction was made. Memory/workspace guards are sampled limits, not OS hard quotas; process retirement enforces cancellation/deadlines.
 
+After the Windows control-record corrections, the [post-fix bundled smoke](prototypes/QUALIFICATION_GATE_FOLLOWUP.md) passed at `366777dd45cc6ae6cf751ab7c0c6e085d9e754fe`: full harness 95.0924463 s, bootstrap entry point 93.6484139 s, native build 40.7723507 s, native CTest 1/1 and normal Godot smoke exit 0. Per-job receipts and all five intervening failed attempts are retained. Original visible FPS/latency measurements were not repeated at this source. Current PR head CI is reported in PR #126; the baseline counts above remain historical.
+
 **Review boundary:** keep this PR open. No tag or Slice 0A execution. WP7–WP9, CAD expansion and physics edits remain held despite local PASS.
 
 ## Twelve work packages

@@ -1,0 +1,32 @@
+{
+  "additional_memory_bytes": 1073741824,
+  "additional_workspace_bytes": 268435456,
+  "capacity": {
+    "available_bytes": 3779289088,
+    "disk_free_bytes": 20912357376,
+    "total_bytes": 16636305408
+  },
+  "contract_version": "local_cad_resources_1",
+  "effective": {
+    "contract_version": "local_cad_resources_1",
+    "cpu_limit": null,
+    "execution": "local",
+    "gpu_limit": null,
+    "memory_accounting": "sampled_process_tree_resident_sum",
+    "memory_bytes": 1073741824,
+    "memory_sample_s": 0.1,
+    "os_hard_memory_cap": false,
+    "wall_time_s": 60.0,
+    "workspace_bytes": 268435456
+  },
+  "estimate_basis": "declared bounded CAD allowance; not a validated predictor of arbitrary native jobs",
+  "reasons": [],
+  "requested": {
+    "contract_version": "local_cad_resources_1",
+    "memory_bytes": 1073741824,
+    "wall_time_s": 60.0,
+    "workspace_bytes": 268435456
+  },
+  "reserve_bytes": 2079538176,
+  "status": "admitted"
+}

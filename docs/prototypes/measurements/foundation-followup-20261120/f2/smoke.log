@@ -1,0 +1,7 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+Cancellation verified for launcher 24080 and actual worker 9324
+ERROR: CAD integration job failed: resource_admission_refused: insufficient_memory_headroom
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _wait_for_job (res://smoke_test.gd:319)

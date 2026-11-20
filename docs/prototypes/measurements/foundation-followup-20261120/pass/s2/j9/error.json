@@ -1,0 +1,8 @@
+{
+  "error": "cancelled",
+  "job_id": "a8d24419180f1389681ca1b68d97bc2a",
+  "protocol": "desktop_worker_1",
+  "request_sha256": "969c1de4d9d42d53bebda5228491194b5c95f604f809b25c3c1b01af546db9fd",
+  "session_id": "6466388dcedc59cd4957ff74f7bddbee",
+  "status": "failed"
+}

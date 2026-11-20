@@ -1,0 +1,12 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+Cancellation verified for launcher 14624 and actual worker 9404
+ERROR: CAD integration job failed: Worker refused the operation. resource_admission_refused: insufficient_memory_headroom
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _wait_for_job (res://smoke_test.gd:319)
+ERROR: Unknown material density was incorrectly treated as a known rigid body
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _run (res://smoke_test.gd:216)
+       [1] _wait_for_job (res://smoke_test.gd:320)

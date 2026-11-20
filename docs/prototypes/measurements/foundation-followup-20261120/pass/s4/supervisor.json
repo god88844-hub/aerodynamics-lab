@@ -1,0 +1,13 @@
+{
+  "owner": {
+    "birth": "134396717499438395",
+    "pid": 7300
+  },
+  "process": {
+    "birth": "134396717806823916",
+    "pid": 25540
+  },
+  "protocol": "desktop_worker_1",
+  "session_id": "de8e1183faffe244aa0cc79bbe80530c",
+  "source_sha256": "b75c84451daf4e8c6361ae4ff0d9d3e9d8f08895966012db395003f0cc3a0c49"
+}

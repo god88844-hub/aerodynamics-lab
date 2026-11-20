@@ -1,0 +1,9 @@
+{
+  "job_id": "3078ec6e5cfb5b5cac987fa393bcf168",
+  "output_sha256": "2a3df31b5cdca1abc25275123535bf67919b302d9c3d5f9096b460acbb9d9d31",
+  "protocol": "desktop_worker_1",
+  "request_sha256": "321cbaccf975b2d35609df91c440188c545e50841d882d494d5d657dc8b5ab76",
+  "resource_approval_sha256": "98a1f2779296611152bea9f432d160c507265619c03d2d00865614a3dee05699",
+  "session_id": "f7c165ac4e5f637dabaf7cefe56be209",
+  "worker_pid": 24136
+}

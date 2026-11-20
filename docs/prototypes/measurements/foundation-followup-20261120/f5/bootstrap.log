@@ -1,0 +1,89 @@
+-- Auto-detected 14 CPU cores available for build parallelism.
+-- If not already cached, setting CMAKE_MSVC_RUNTIME_LIBRARY.
+	For more information please read godot-cpp/cmake/windows.cmake
+-- Using all cores. You can override this at configure time by using -j <n> or --parallel <n> in the build command.
+--   eg. cmake --build . -j 7  ...
+-- Using build profile to trim api file
+-- 	BUILD_PROFILE = 'C:/Users/god88/Documents/Codex/2026-11-17/referenced-chatgpt-conversation-this-is-an/work/foundation-spec-lock/packages/engineering-core/godot/build_profile.json'
+-- 	API_SOURCE = 'gdextension/extension_api.json'
+-- GODOTCPP_GDEXTENSION_API_FILE = 'C:/Users/god88/Documents/Codex/2026-11-17/referenced-chatgpt-conversation-this-is-an/work/foundation-spec-lock/.cache/desktop/native/_deps/godot_cpp-build/extension_api.json'
+-- There are 80 Files to generate
+-- Configuring done (1.3s)
+-- Generating done (0.1s)
+-- Build files have been written to: C:/Users/god88/Documents/Codex/2026-11-17/referenced-chatgpt-conversation-this-is-an/work/foundation-spec-lock/.cache/desktop/native
+[0/2] Re-checking globbed directories...
+[1/65] Generating bindings
+Built-in type config: float_64
+[2/65] Building CXX object _deps/godot_cpp-build/CMakeFiles/godot-cpp.dir/src/classes/editor_plugin_registration.cpp.obj
+[3/65] Building CXX object _deps/godot_cpp-build/CMakeFiles/godot-cpp.dir/src/classes/low_level.cpp.obj
+[4/65] Building CXX object _deps/godot_cpp-build/CMakeFiles/godot-cpp.dir/src/classes/wrapped.cpp.obj
+[5/65] Building CXX object _deps/godot_cpp-build/CMakeFiles/godot-cpp.dir/src/core/error_macros.cpp.obj
+[6/65] Building CXX object _deps/godot_cpp-build/CMakeFiles/godot-cpp.dir/src/core/method_bind.cpp.obj
+[7/65] Building CXX object _deps/godot_cpp-build/CMakeFiles/godot-cpp.dir/src/core/class_db.cpp.obj
+[8/65] Building CXX object _deps/godot_cpp-build/CMakeFiles/godot-cpp.dir/src/core/object.cpp.obj
+[9/65] Building CXX object _deps/godot_cpp-build/CMakeFiles/godot-cpp.dir/src/core/print_string.cpp.obj
+[10/65] Building CXX object _deps/godot_cpp-build/CMakeFiles/godot-cpp.dir/src/godot.cpp.obj
+[11/65] Building CXX object _deps/godot_cpp-build/CMakeFiles/godot-cpp.dir/src/variant/aabb.cpp.obj
+[12/65] Building CXX object _deps/godot_cpp-build/CMakeFiles/godot-cpp.dir/src/variant/callable_custom.cpp.obj
+[13/65] Building CXX object _deps/godot_cpp-build/CMakeFiles/godot-cpp.dir/src/variant/basis.cpp.obj
+[14/65] Building CXX object _deps/godot_cpp-build/CMakeFiles/godot-cpp.dir/src/variant/callable_method_pointer.cpp.obj
+[15/65] Building CXX object _deps/godot_cpp-build/CMakeFiles/godot-cpp.dir/src/variant/char_string.cpp.obj
+[16/65] Building CXX object _deps/godot_cpp-build/CMakeFiles/godot-cpp.dir/src/variant/color.cpp.obj
+[17/65] Building CXX object _deps/godot_cpp-build/CMakeFiles/godot-cpp.dir/src/variant/packed_arrays.cpp.obj
+[18/65] Building CXX object _deps/godot_cpp-build/CMakeFiles/godot-cpp.dir/src/variant/plane.cpp.obj
+[19/65] Building CXX object _deps/godot_cpp-build/CMakeFiles/godot-cpp.dir/src/variant/projection.cpp.obj
+[20/65] Building CXX object _deps/godot_cpp-build/CMakeFiles/godot-cpp.dir/src/variant/quaternion.cpp.obj
+[21/65] Building CXX object _deps/godot_cpp-build/CMakeFiles/godot-cpp.dir/src/variant/rect2i.cpp.obj
+[22/65] Building CXX object _deps/godot_cpp-build/CMakeFiles/godot-cpp.dir/src/variant/rect2.cpp.obj
+[23/65] Building CXX object _deps/godot_cpp-build/CMakeFiles/godot-cpp.dir/src/variant/transform3d.cpp.obj
+[24/65] Building CXX object _deps/godot_cpp-build/CMakeFiles/godot-cpp.dir/src/variant/transform2d.cpp.obj
+[25/65] Building CXX object _deps/godot_cpp-build/CMakeFiles/godot-cpp.dir/src/variant/variant_internal.cpp.obj
+[26/65] Building CXX object _deps/godot_cpp-build/CMakeFiles/godot-cpp.dir/src/variant/vector2.cpp.obj
+[27/65] Building CXX object _deps/godot_cpp-build/CMakeFiles/godot-cpp.dir/src/variant/variant.cpp.obj
+[28/65] Building CXX object _deps/godot_cpp-build/CMakeFiles/godot-cpp.dir/src/variant/vector2i.cpp.obj
+[29/65] Building CXX object _deps/godot_cpp-build/CMakeFiles/godot-cpp.dir/src/variant/vector3.cpp.obj
+[30/65] Building CXX object _deps/godot_cpp-build/CMakeFiles/godot-cpp.dir/src/variant/vector3i.cpp.obj
+[31/65] Building CXX object _deps/godot_cpp-build/CMakeFiles/godot-cpp.dir/src/variant/vector4.cpp.obj
+[32/65] Building CXX object _deps/godot_cpp-build/CMakeFiles/godot-cpp.dir/src/variant/vector4i.cpp.obj
+[33/65] Building CXX object _deps/godot_cpp-build/CMakeFiles/godot-cpp.dir/gen/src/variant/string_name.cpp.obj
+[34/65] Building CXX object _deps/godot_cpp-build/CMakeFiles/godot-cpp.dir/gen/src/variant/string.cpp.obj
+[35/65] Building CXX object _deps/godot_cpp-build/CMakeFiles/godot-cpp.dir/gen/src/variant/node_path.cpp.obj
+[36/65] Building CXX object _deps/godot_cpp-build/CMakeFiles/godot-cpp.dir/gen/src/variant/rid.cpp.obj
+[37/65] Building CXX object _deps/godot_cpp-build/CMakeFiles/godot-cpp.dir/gen/src/variant/callable.cpp.obj
+[38/65] Building CXX object _deps/godot_cpp-build/CMakeFiles/godot-cpp.dir/gen/src/variant/signal.cpp.obj
+[39/65] Building CXX object _deps/godot_cpp-build/CMakeFiles/godot-cpp.dir/gen/src/variant/dictionary.cpp.obj
+[40/65] Building CXX object _deps/godot_cpp-build/CMakeFiles/godot-cpp.dir/gen/src/variant/array.cpp.obj
+[41/65] Building CXX object _deps/godot_cpp-build/CMakeFiles/godot-cpp.dir/gen/src/variant/packed_byte_array.cpp.obj
+[42/65] Building CXX object _deps/godot_cpp-build/CMakeFiles/godot-cpp.dir/gen/src/variant/packed_int32_array.cpp.obj
+[43/65] Building CXX object _deps/godot_cpp-build/CMakeFiles/godot-cpp.dir/gen/src/variant/packed_int64_array.cpp.obj
+[44/65] Building CXX object _deps/godot_cpp-build/CMakeFiles/godot-cpp.dir/gen/src/variant/packed_float32_array.cpp.obj
+[45/65] Building CXX object _deps/godot_cpp-build/CMakeFiles/godot-cpp.dir/gen/src/variant/packed_float64_array.cpp.obj
+[46/65] Building CXX object _deps/godot_cpp-build/CMakeFiles/godot-cpp.dir/gen/src/variant/packed_string_array.cpp.obj
+[47/65] Building CXX object _deps/godot_cpp-build/CMakeFiles/godot-cpp.dir/gen/src/variant/packed_vector2_array.cpp.obj
+[48/65] Building CXX object _deps/godot_cpp-build/CMakeFiles/godot-cpp.dir/gen/src/variant/packed_vector3_array.cpp.obj
+[49/65] Building CXX object _deps/godot_cpp-build/CMakeFiles/godot-cpp.dir/gen/src/variant/packed_color_array.cpp.obj
+[50/65] Building CXX object _deps/godot_cpp-build/CMakeFiles/godot-cpp.dir/gen/src/variant/packed_vector4_array.cpp.obj
+[51/65] Building CXX object _deps/godot_cpp-build/CMakeFiles/godot-cpp.dir/gen/src/classes/class_db_singleton.cpp.obj
+[52/65] Building CXX object _deps/godot_cpp-build/CMakeFiles/godot-cpp.dir/gen/src/classes/file_access.cpp.obj
+[53/65] Building CXX object _deps/godot_cpp-build/CMakeFiles/godot-cpp.dir/gen/src/classes/image.cpp.obj
+[54/65] Building CXX object _deps/godot_cpp-build/CMakeFiles/godot-cpp.dir/gen/src/classes/os.cpp.obj
+[55/65] Building CXX object _deps/godot_cpp-build/CMakeFiles/godot-cpp.dir/gen/src/classes/object.cpp.obj
+[56/65] Building CXX object _deps/godot_cpp-build/CMakeFiles/godot-cpp.dir/gen/src/classes/ref_counted.cpp.obj
+[57/65] Building CXX object _deps/godot_cpp-build/CMakeFiles/godot-cpp.dir/gen/src/classes/resource.cpp.obj
+[58/65] Building CXX object _deps/godot_cpp-build/CMakeFiles/godot-cpp.dir/gen/src/classes/semaphore.cpp.obj
+[59/65] Building CXX object _deps/godot_cpp-build/CMakeFiles/godot-cpp.dir/gen/src/classes/worker_thread_pool.cpp.obj
+[60/65] Building CXX object _deps/godot_cpp-build/CMakeFiles/godot-cpp.dir/gen/src/classes/xml_parser.cpp.obj
+[61/65] Building CXX object _deps/godot_cpp-build/CMakeFiles/godot-cpp.dir/gen/src/variant/utility_functions.cpp.obj
+[62/65] Linking CXX static library bin\libgodot-cpp.windows.template_debug.x86_64.a
+[63/65] Building CXX object CMakeFiles/lab_engineering.dir/godot/lab_engineering.cpp.obj
+[64/65] Linking CXX shared library C:\Users\god88\Documents\Codex\2026-11-17\referenced-chatgpt-conversation-this-is-an\work\foundation-spec-lock\apps\desktop\bin\lab_engineering.dll
+Test project C:/Users/god88/Documents/Codex/2026-11-17/referenced-chatgpt-conversation-this-is-an/work/foundation-spec-lock/.cache/desktop/native
+    Start 1: engineering_mass_properties
+1/1 Test #1: engineering_mass_properties ......   Passed    0.02 sec
+
+100% tests passed out of 1
+
+Total Test time (real) =   0.03 sec
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+Cancellation verified for launcher 17704 and actual worker 1428
