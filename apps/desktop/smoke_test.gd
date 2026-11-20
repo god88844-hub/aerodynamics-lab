@@ -150,6 +150,10 @@ func _run() -> void:
 			push_error("Desktop did not run the exact geometry through the rigid-body backend")
 			quit(18)
 			return
+		if absf(float(first_run["mass_properties"]["mass_kg"]) - 0.2) > 1e-7:
+			push_error("Desktop density controls changed the intended 500 kg/m3 body input")
+			quit(36)
+			return
 		var first_speed: float = first_run["result"]["telemetry"]["omega_body_rad_s"][-1][2]
 		var first_saved: String = package_dir.path_join("body-v1.json")
 		desktop.call("_start_job", "package", desktop.call("_write_job_input"), first_saved)

@@ -202,7 +202,7 @@ func _build_interface() -> void:
 	density_enabled.text = "Assume a homogeneous material density"
 	density_enabled.button_pressed = true
 	body_form.add_child(density_enabled)
-	body_fields["material_density_kg_m3"] = _numeric_field(body_form, "Density (kg/m³)", 0.001, 100000, 1, 500)
+	body_fields["material_density_kg_m3"] = _numeric_field(body_form, "Density (kg/m³)", 0.001, 100000, 0.001, 500)
 	body_dialog.confirmed.connect(_rebuild_body)
 	add_child(body_dialog)
 	_update_camera()

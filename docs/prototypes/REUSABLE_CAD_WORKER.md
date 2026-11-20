@@ -34,4 +34,16 @@ CAD builds and applied-torque experiments share the supervised engine. The ordin
 
 Cancel stops the owned reusable session and retains the current project. The next CAD operation creates a new session. Application exit also stops an idle engine. The actual desktop smoke verifies one engine PID across repeated edits/analyses, active numerical-job cancellation, preserved project state, fresh-session recovery and all existing save/reopen checks.
 
-Timing is a separate delivery step. The compatibility matrix, 200-part viewport benchmark, memory admission and calibrated physical evidence remain open under [the acceptance ledger](../ACCEPTANCE.md).
+## Rendered interaction benchmark
+
+`apps/desktop/benchmark_worker.gd` drives the actual desktop controls through a cold CAD cycle and five warm cycles by default. Every cycle rebuilds a single constrained box, runs its one-second torque experiment and waits for the rendered frame. Width alternates between 0.20 and 0.21 m; height is 0.10 m, depth 0.02 m and declared density 500 kg/m³. Torque is 0.001 N·m about body Z and the RK4 step is 0.005 s. Each result must agree with independently calculated mass and principal-axis spin-up, using the same engine PID.
+
+The predeclared warm target is **at most 2 seconds for every recorded warm cycle**. Cold startup remains separately visible. The report includes all samples, separate rebuild/analysis/frame-wait times, median/maximum warm latency, observer/source identity, platform/renderer context and worker cleanup. A failed numerical check, cleanup failure or exceeded warm target returns a nonzero exit code. The tool requires a graphical renderer and a new absolute JSON output path. CI tests correctness and lifecycle without asserting machine-dependent timing.
+
+After building the desktop and configuring `LAB_PYTHON` and `LAB_CAD_PYTHON`, run the pinned Godot executable with:
+
+```text
+--path apps/desktop --rendering-method gl_compatibility --script benchmark_worker.gd -- --report=C:/absolute/new-report.json --samples=5
+```
+
+An optional `--context=C:/absolute/context.json` adds externally recorded CPU/GPU/driver/RAM/power-mode and launch visibility. Use the same source/dependency pins and preserve all cold/warm observations. These programmatic-control timings include a rendered frame; they do not measure human input delivery, 200-part viewport FPS, process memory, cold clone/download/build time or other hardware tiers. The [hardware compatibility matrix](../HARDWARE_AND_FIDELITY.md), memory admission and calibrated physical evidence remain open.
