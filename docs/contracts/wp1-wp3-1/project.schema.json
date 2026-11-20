@@ -1,0 +1,810 @@
+{
+  "$defs": {
+    "AssemblyNode": {
+      "additionalProperties": false,
+      "properties": {
+        "component_reference": {
+          "anyOf": [
+            {
+              "maxLength": 300,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Component Reference"
+        },
+        "geometry_asset_id": {
+          "anyOf": [
+            {
+              "maxLength": 100,
+              "minLength": 1,
+              "pattern": "^[A-Za-z0-9_-]+$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Geometry Asset Id"
+        },
+        "id": {
+          "maxLength": 100,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Id",
+          "type": "string"
+        },
+        "name": {
+          "maxLength": 200,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "orientation_wxyz": {
+          "default": [
+            1.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "maxItems": 4,
+          "minItems": 4,
+          "prefixItems": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "number"
+            },
+            {
+              "type": "number"
+            },
+            {
+              "type": "number"
+            }
+          ],
+          "title": "Orientation Wxyz",
+          "type": "array"
+        },
+        "parent_id": {
+          "anyOf": [
+            {
+              "maxLength": 100,
+              "minLength": 1,
+              "pattern": "^[A-Za-z0-9_-]+$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Parent Id"
+        },
+        "position_m": {
+          "default": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "maxItems": 3,
+          "minItems": 3,
+          "prefixItems": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "number"
+            },
+            {
+              "type": "number"
+            }
+          ],
+          "title": "Position M",
+          "type": "array"
+        }
+      },
+      "required": [
+        "id",
+        "name"
+      ],
+      "title": "AssemblyNode",
+      "type": "object"
+    },
+    "AssemblyVehicle": {
+      "additionalProperties": false,
+      "properties": {
+        "format": {
+          "const": "assembly_1",
+          "default": "assembly_1",
+          "title": "Format",
+          "type": "string"
+        },
+        "nodes": {
+          "items": {
+            "$ref": "#/$defs/AssemblyNode"
+          },
+          "maxItems": 4096,
+          "title": "Nodes",
+          "type": "array"
+        }
+      },
+      "title": "AssemblyVehicle",
+      "type": "object"
+    },
+    "DroneDesign": {
+      "description": "Full design snapshot \u2014 the exact input to a simulation run.",
+      "properties": {
+        "drag_cd_a_m2": {
+          "anyOf": [
+            {
+              "exclusiveMinimum": 0.0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "equivalent airframe drag area [m\u00b2]; omit for no drag model",
+          "title": "Drag Cd A M2"
+        },
+        "frame": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/FrameSpec"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "frame geometry for structural checks; when absent the structure monitor is skipped and flagged in reports"
+        },
+        "name": {
+          "title": "Name",
+          "type": "string"
+        },
+        "notes": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "free-form notes; include data provenance",
+          "title": "Notes"
+        },
+        "parts": {
+          "items": {
+            "$ref": "#/$defs/PartInstance"
+          },
+          "minItems": 1,
+          "title": "Parts",
+          "type": "array"
+        },
+        "powertrain": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/PowertrainConfig"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "sourced powertrain for static/performance analysis; when absent, only ideal-actuator dynamics scenarios can run"
+        },
+        "rotor_torque_per_thrust_n_m_per_n": {
+          "default": 0.0,
+          "description": "uniform rotor reaction torque per unit thrust [N\u00b7m/N]; M1 approximation, per-component values arrive with the propulsion DB (M2)",
+          "minimum": 0.0,
+          "title": "Rotor Torque Per Thrust N M Per N",
+          "type": "number"
+        },
+        "rotors": {
+          "items": {
+            "$ref": "#/$defs/RotorInstance"
+          },
+          "minItems": 1,
+          "title": "Rotors",
+          "type": "array"
+        },
+        "schema_version": {
+          "const": "0.1",
+          "default": "0.1",
+          "title": "Schema Version",
+          "type": "string"
+        }
+      },
+      "required": [
+        "name",
+        "parts",
+        "rotors"
+      ],
+      "title": "DroneDesign",
+      "type": "object"
+    },
+    "Environment": {
+      "additionalProperties": false,
+      "description": "Stored settings. Backend capability checks govern their physical use.",
+      "properties": {
+        "icing_requested": {
+          "default": false,
+          "title": "Icing Requested",
+          "type": "boolean"
+        },
+        "pressure_pa": {
+          "default": 101325.0,
+          "exclusiveMinimum": 0,
+          "title": "Pressure Pa",
+          "type": "number"
+        },
+        "rain_mm_h": {
+          "default": 0.0,
+          "minimum": 0,
+          "title": "Rain Mm H",
+          "type": "number"
+        },
+        "relative_humidity": {
+          "default": 0.0,
+          "maximum": 1,
+          "minimum": 0,
+          "title": "Relative Humidity",
+          "type": "number"
+        },
+        "snow_water_equivalent_mm_h": {
+          "default": 0.0,
+          "minimum": 0,
+          "title": "Snow Water Equivalent Mm H",
+          "type": "number"
+        },
+        "temperature_k": {
+          "default": 288.15,
+          "exclusiveMinimum": 0,
+          "title": "Temperature K",
+          "type": "number"
+        },
+        "terrain_asset_id": {
+          "anyOf": [
+            {
+              "maxLength": 100,
+              "minLength": 1,
+              "pattern": "^[A-Za-z0-9_-]+$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Terrain Asset Id"
+        },
+        "wind_world_m_s": {
+          "default": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "maxItems": 3,
+          "minItems": 3,
+          "prefixItems": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "number"
+            },
+            {
+              "type": "number"
+            }
+          ],
+          "title": "Wind World M S",
+          "type": "array"
+        },
+        "world_frame": {
+          "const": "local_right_handed_z_up",
+          "default": "local_right_handed_z_up",
+          "title": "World Frame",
+          "type": "string"
+        }
+      },
+      "title": "Environment",
+      "type": "object"
+    },
+    "Experiment": {
+      "additionalProperties": false,
+      "properties": {
+        "backend_id": {
+          "default": "unassigned",
+          "enum": [
+            "unassigned",
+            "legacy_python"
+          ],
+          "title": "Backend Id",
+          "type": "string"
+        },
+        "parameters": {
+          "additionalProperties": {
+            "$ref": "#/$defs/JsonValue"
+          },
+          "title": "Parameters",
+          "type": "object"
+        },
+        "scenario": {
+          "default": "hover-ideal",
+          "maxLength": 80,
+          "minLength": 1,
+          "title": "Scenario",
+          "type": "string"
+        },
+        "seed": {
+          "default": 0,
+          "maximum": 4294967295,
+          "minimum": 0,
+          "title": "Seed",
+          "type": "integer"
+        }
+      },
+      "title": "Experiment",
+      "type": "object"
+    },
+    "FrameMount": {
+      "description": "A named frame anchor in body coordinates, not a fastener model.",
+      "properties": {
+        "id": {
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Id",
+          "type": "string"
+        },
+        "position_m": {
+          "maxItems": 3,
+          "minItems": 3,
+          "prefixItems": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "number"
+            },
+            {
+              "type": "number"
+            }
+          ],
+          "title": "Position M",
+          "type": "array"
+        }
+      },
+      "required": [
+        "id",
+        "position_m"
+      ],
+      "title": "FrameMount",
+      "type": "object"
+    },
+    "FrameSpec": {
+      "description": "Structural frame description for arm stress checks.\n\nArms are modeled as cantilever circular tubes from the CoG to each rotor;\nthe material id must exist in data/components/materials.json (fail-closed:\na frame referencing an unknown material cannot pass structural checks).",
+      "properties": {
+        "arm_length_m": {
+          "description": "declared horizontal cantilever span from assumed frame root at body origin [m]. Flight structural checks conservatively use max(declared span, actual planar rotor radius) per rotor",
+          "exclusiveMinimum": 0.0,
+          "title": "Arm Length M",
+          "type": "number"
+        },
+        "material_id": {
+          "title": "Material Id",
+          "type": "string"
+        },
+        "mount_points": {
+          "items": {
+            "$ref": "#/$defs/FrameMount"
+          },
+          "title": "Mount Points",
+          "type": "array"
+        },
+        "plate_dimensions_m": {
+          "anyOf": [
+            {
+              "maxItems": 3,
+              "minItems": 3,
+              "prefixItems": [
+                {
+                  "type": "number"
+                },
+                {
+                  "type": "number"
+                },
+                {
+                  "type": "number"
+                }
+              ],
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "declared visual plate envelope in meters; does not override measured frame mass/inertia",
+          "title": "Plate Dimensions M"
+        },
+        "tube_id_m": {
+          "exclusiveMinimum": 0.0,
+          "title": "Tube Id M",
+          "type": "number"
+        },
+        "tube_od_m": {
+          "exclusiveMinimum": 0.0,
+          "title": "Tube Od M",
+          "type": "number"
+        }
+      },
+      "required": [
+        "arm_length_m",
+        "tube_od_m",
+        "tube_id_m",
+        "material_id"
+      ],
+      "title": "FrameSpec",
+      "type": "object"
+    },
+    "GeometryAsset": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "maxLength": 100,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Id",
+          "type": "string"
+        },
+        "path": {
+          "maxLength": 500,
+          "minLength": 1,
+          "title": "Path",
+          "type": "string"
+        },
+        "role": {
+          "enum": [
+            "exact_geometry",
+            "display_mesh",
+            "drawing",
+            "parametric_source"
+          ],
+          "title": "Role",
+          "type": "string"
+        },
+        "sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Sha256",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "path",
+        "sha256",
+        "role"
+      ],
+      "title": "GeometryAsset",
+      "type": "object"
+    },
+    "JsonValue": {},
+    "LegacyMultirotorVehicle": {
+      "additionalProperties": false,
+      "properties": {
+        "format": {
+          "const": "legacy_multirotor_0.1",
+          "default": "legacy_multirotor_0.1",
+          "title": "Format",
+          "type": "string"
+        },
+        "snapshot": {
+          "$ref": "#/$defs/DroneDesign"
+        }
+      },
+      "required": [
+        "snapshot"
+      ],
+      "title": "LegacyMultirotorVehicle",
+      "type": "object"
+    },
+    "PartInstance": {
+      "description": "A physical part with mass and (optionally) its own inertia.",
+      "properties": {
+        "geometry": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/PrimitiveGeometry"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "optional dimensions for schematic 3D rendering and a uniform-density own-CoG inertia *estimate* when measured inertia is absent"
+        },
+        "inertia_about_own_cog_kg_m2": {
+          "anyOf": [
+            {
+              "items": {
+                "items": {
+                  "type": "number"
+                },
+                "type": "array"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "3x3 symmetric inertia tensor about the part's own CoG [kg\u00b7m\u00b2]; point-mass treatment when omitted",
+          "title": "Inertia About Own Cog Kg M2"
+        },
+        "mass_kg": {
+          "description": "part mass [kg]",
+          "exclusiveMinimum": 0.0,
+          "title": "Mass Kg",
+          "type": "number"
+        },
+        "mount_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "optional frame mount id; attached part CoG position must match mount coordinates",
+          "title": "Mount Id"
+        },
+        "name": {
+          "title": "Name",
+          "type": "string"
+        },
+        "position_m": {
+          "description": "body-frame position of the part's own CoG [m]",
+          "maxItems": 3,
+          "minItems": 3,
+          "prefixItems": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "number"
+            },
+            {
+              "type": "number"
+            }
+          ],
+          "title": "Position M",
+          "type": "array"
+        }
+      },
+      "required": [
+        "name",
+        "mass_kg",
+        "position_m"
+      ],
+      "title": "PartInstance",
+      "type": "object"
+    },
+    "PowertrainConfig": {
+      "description": "Uniform powertrain selection for all rotors (v1 multirotor scope).\n\nComponent ids resolve through the component evidence database\n(data/components/**); every component file is schema-validated and\ncarries its own provenance and uncertainty.",
+      "properties": {
+        "battery_id": {
+          "title": "Battery Id",
+          "type": "string"
+        },
+        "esc_id": {
+          "title": "Esc Id",
+          "type": "string"
+        },
+        "motor_id": {
+          "title": "Motor Id",
+          "type": "string"
+        },
+        "propeller_id": {
+          "title": "Propeller Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "motor_id",
+        "propeller_id",
+        "esc_id",
+        "battery_id"
+      ],
+      "title": "PowertrainConfig",
+      "type": "object"
+    },
+    "PrimitiveGeometry": {
+      "description": "Optional, *declared* uniform-density primitive geometry.\n\ndimensions_m = (x, y, z), aligned to the design body frame. For a solid\ncylinder, x == y == diameter and z is height; cylinder axis is body +z.\nGeometry is not a manufacturer's measured mass or inertia.",
+      "properties": {
+        "dimensions_m": {
+          "maxItems": 3,
+          "minItems": 3,
+          "prefixItems": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "number"
+            },
+            {
+              "type": "number"
+            }
+          ],
+          "title": "Dimensions M",
+          "type": "array"
+        },
+        "shape": {
+          "enum": [
+            "box",
+            "cylinder"
+          ],
+          "title": "Shape",
+          "type": "string"
+        }
+      },
+      "required": [
+        "shape",
+        "dimensions_m"
+      ],
+      "title": "PrimitiveGeometry",
+      "type": "object"
+    },
+    "RotorInstance": {
+      "description": "A rotor (motor + propeller) placement in the design frame.",
+      "properties": {
+        "motor_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "motor component id from the evidence DB",
+          "title": "Motor Id"
+        },
+        "position_m": {
+          "description": "body-frame position of the rotor thrust center [m]",
+          "maxItems": 3,
+          "minItems": 3,
+          "prefixItems": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "number"
+            },
+            {
+              "type": "number"
+            }
+          ],
+          "title": "Position M",
+          "type": "array"
+        },
+        "propeller_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "propeller component id from the evidence DB",
+          "title": "Propeller Id"
+        },
+        "spin_direction": {
+          "default": 1,
+          "description": "sign of the prop's angular momentum about body +z",
+          "enum": [
+            1,
+            -1
+          ],
+          "title": "Spin Direction",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "position_m"
+      ],
+      "title": "RotorInstance",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "aircraft_family": {
+      "enum": [
+        "multirotor",
+        "fixed_wing",
+        "helicopter",
+        "vtol"
+      ],
+      "title": "Aircraft Family",
+      "type": "string"
+    },
+    "assets": {
+      "items": {
+        "$ref": "#/$defs/GeometryAsset"
+      },
+      "maxItems": 4096,
+      "title": "Assets",
+      "type": "array"
+    },
+    "document_version": {
+      "const": "1.0",
+      "default": "1.0",
+      "title": "Document Version",
+      "type": "string"
+    },
+    "environment": {
+      "$ref": "#/$defs/Environment"
+    },
+    "experiment": {
+      "$ref": "#/$defs/Experiment"
+    },
+    "id": {
+      "format": "uuid",
+      "title": "Id",
+      "type": "string"
+    },
+    "name": {
+      "maxLength": 200,
+      "minLength": 1,
+      "title": "Name",
+      "type": "string"
+    },
+    "units": {
+      "const": "SI",
+      "default": "SI",
+      "title": "Units",
+      "type": "string"
+    },
+    "vehicle": {
+      "discriminator": {
+        "mapping": {
+          "assembly_1": "#/$defs/AssemblyVehicle",
+          "legacy_multirotor_0.1": "#/$defs/LegacyMultirotorVehicle"
+        },
+        "propertyName": "format"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/LegacyMultirotorVehicle"
+        },
+        {
+          "$ref": "#/$defs/AssemblyVehicle"
+        }
+      ],
+      "title": "Vehicle"
+    }
+  },
+  "required": [
+    "id",
+    "name",
+    "aircraft_family",
+    "vehicle"
+  ],
+  "title": "EngineeringProject",
+  "type": "object"
+}

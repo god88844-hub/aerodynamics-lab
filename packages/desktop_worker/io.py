@@ -4,6 +4,7 @@ import json
 import os
 from pathlib import Path
 import tempfile
+import time
 
 
 def json_bytes(payload: dict) -> bytes:
@@ -18,7 +19,18 @@ def write_result(destination: Path, payload: dict) -> None:
             stream.write(content)
             stream.flush()
             os.fsync(stream.fileno())
-        os.replace(temporary, destination)
+        # Windows readers may briefly hold a handle without FILE_SHARE_DELETE.
+        # The temporary writer is closed; retry only those sharing/access errors.
+        # A persistent lock still fails, preserving the previous complete record.
+        deadline = time.monotonic() + 0.5
+        while True:
+            try:
+                os.replace(temporary, destination)
+                break
+            except OSError as error:
+                if os.name != "nt" or error.winerror not in (5, 32, 33) or time.monotonic() >= deadline:
+                    raise
+                time.sleep(0.01)
     finally:
         Path(temporary).unlink(missing_ok=True)
 

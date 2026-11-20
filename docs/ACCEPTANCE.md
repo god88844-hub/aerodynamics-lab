@@ -6,7 +6,7 @@ The audited starting commit is `1d841865e61cb76a58f48eae9e107f8ad737fc1e`. [Main
 
 Existing capabilities include the multirotor rigid-body engine, sourced static powertrain, closed-loop scenarios, schematic/primitive editing, saved design revisions, DXF placement exchange, independent-data comparisons, dependency checks, packaged deployment and database recovery. They require additional work to satisfy the expanded product contract.
 
-Pre-existing work in 21 local files is preserved at local commit `a1d7313146b687e78468df9a5b66a3920120092c` on `feature/production-acceptance`. Its accessibility, load and model-provenance changes require review and verification before promotion.
+Pre-existing work in 21 local files is preserved at commit `a1d7313146b687e78468df9a5b66a3920120092c` on the unmerged remote [archive branch](https://github.com/god88844-hub/aerodynamics-lab/tree/archive/aeroforge-wip-2026-11). Two files were already present at the audited baseline; provenance changes in two further paths are promoted with frozen-input regressions. Seventeen paths retain unpromoted changes. The full archive remains intact; unrelated accessibility/load changes are quarantined.
 
 The repository was renamed from `god88844-hub/aeroforge` to `god88844-hub/aerodynamics-lab` with GitHub repository ID `1459120659`. Historical source and experiment identities remain in their original records.
 
@@ -43,6 +43,15 @@ An applicable physical-limit excursion returns FAIL. Missing information, unsupp
 Independent review and required measurements remain open when the available public material cannot establish them. The legacy ten M21–M30 acceptance families remain incomplete until their actual exit evidence exists.
 
 ## Verification
+
+The [WP1–WP3 contract lock proposal](contracts/README.md) includes SI/frames, exact
+geometry, model/solver capabilities, jobs/resources, evidence and a geometry-to-aero
+surface/polar/force interface. Planned BEMT/VLM/CFD execution is refused. The
+[M21–M27 tolerances](VALIDATION_TOLERANCES.md) are prospective and pending owner and
+qualified review. All 20 previously inspected campaigns are development evidence
+under that policy. No scientific gate closes from this contract work. WP7–WP9,
+full WP3 expansion and physics tuning remain on hold through prototype reporting
+and owner sign-off.
 
 Exercise project migration and round trips, units/frames, geometry and mass properties, analytical physics, conservation where applicable, convergence, per-component limits, frozen-run reproduction, cancellation/recovery, accessibility, security and installation. Preserve npm audit and backend audit requirements.
 

@@ -9,6 +9,8 @@ var pid: int = -1
 var session_id: String = ""
 var session_path: String = ""
 var context: Dictionary = {}
+var resources: Dictionary = {"contract_version": "local_cad_resources_1",
+	"memory_bytes": 1073741824, "workspace_bytes": 268435456, "wall_time_s": 60.0}
 
 
 func _init(root: String, interpreter: String) -> void:
@@ -35,8 +37,15 @@ func _start() -> bool:
 	session_path = ProjectSettings.globalize_path("user://cad-workers/" + session_id)
 	if DirAccess.make_dir_recursive_absolute(session_path) != OK:
 		return false
+	var limits_path: String = session_path.path_join("resource-request.json")
+	var limits_file: FileAccess = FileAccess.open(limits_path, FileAccess.WRITE)
+	if limits_file == null:
+		return false
+	limits_file.store_string(JSON.stringify(resources, "", true, true))
+	limits_file.close()
 	pid = OS.create_process(python, [repository.path_join("scripts/lab_worker.py"),
-		"--session", session_path, "--session-id", session_id, "--owner-pid", str(OS.get_process_id())], false)
+		"--session", session_path, "--session-id", session_id, "--owner-pid", str(OS.get_process_id()),
+		"--resources-file", limits_path, "--job-timeout", str(resources["wall_time_s"])], false)
 	return pid > 0
 
 
@@ -55,7 +64,8 @@ func submit(operation: String, input_path: String, asset_root: String) -> Dictio
 		return {"failure": "The CAD worker already has a pending request."}
 	var job_id: String = _nonce()
 	var packet: Dictionary = {"protocol": PROTOCOL, "session_id": session_id, "job_id": job_id,
-		"operation": operation, "asset_root": asset_root if operation == "cad-torque" else null}
+		"operation": operation, "asset_root": asset_root if operation == "cad-torque" else null,
+		"resources": resources}
 	# Keep the verified engineering JSON numbers out of a rendering-parser round trip.
 	# Trusted routing fields follow the payload; the engine validates the full packet.
 	var encoded: PackedByteArray = ('{"payload":' + raw_payload + ',' + JSON.stringify(packet, "", true, true).trim_prefix('{')).to_utf8_buffer()
@@ -87,7 +97,29 @@ func completed_output(completion_path: String) -> bool:
 	for key in ["session_id", "job_id", "request_sha256"]:
 		if receipt.get(key) != context[key]:
 			return false
+	var approval_path: String = completion_path.get_base_dir().path_join("approved.json")
+	if not FileAccess.file_exists(approval_path) or receipt.get("resource_approval_sha256") != FileAccess.get_sha256(approval_path):
+		return false
+	var approval: Variant = JSON.parse_string(FileAccess.get_file_as_string(approval_path))
+	if not approval is Dictionary:
+		return false
+	for key in ["protocol", "session_id", "job_id", "request_sha256", "output_sha256"]:
+		if approval.get(key) != receipt.get(key):
+			return false
 	return receipt.get("output_sha256") == FileAccess.get_sha256(context["output"])
+
+
+func failure_reason() -> String:
+	var retired: Variant = JSON.parse_string(FileAccess.get_file_as_string(session_path.path_join("retired.json"))) if FileAccess.file_exists(session_path.path_join("retired.json")) else null
+	return str(retired.get("reason", "Worker ended without a result.")) if retired is Dictionary else "Worker ended without a result. Check the configured Python dependencies."
+
+
+func set_limits(memory_mib: int, workspace_mib: int, seconds: float) -> bool:
+	if not stop():
+		return false
+	resources = {"contract_version": "local_cad_resources_1", "memory_bytes": memory_mib * 1048576,
+		"workspace_bytes": workspace_mib * 1048576, "wall_time_s": seconds}
+	return true
 
 
 func stop() -> bool:

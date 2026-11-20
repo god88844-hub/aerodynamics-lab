@@ -6,6 +6,7 @@ from pydantic import Field, JsonValue, model_validator
 
 from aeroforge_schemas.cad import BladeRecipe, BoxRecipe, CadTorqueRequest
 from aeroforge_schemas.project import ProjectModel
+from aeroforge_schemas.foundation import ResourceLimits
 from desktop_worker.resources import ResourceBudget
 
 PROTOCOL = "desktop_worker_1"
@@ -23,7 +24,7 @@ class WorkerRequest(ProjectModel):
 
     @model_validator(mode="after")
     def supported_payload(self):
-        self.resources = ResourceBudget.from_dict(self.resources).document()
+        self.resources = ResourceBudget.from_dict(ResourceLimits.model_validate(self.resources).model_dump(mode="json")).document()
         models = {"build-body": BoxRecipe, "build-blade": BladeRecipe, "cad-torque": CadTorqueRequest}
         self.payload = models[self.operation].model_validate(self.payload).model_dump(mode="json")
         if self.operation == "cad-torque" and self.asset_root is None:

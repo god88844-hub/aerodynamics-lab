@@ -1,0 +1,185 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "calibration_record_sha256": {
+      "anyOf": [
+        {
+          "pattern": "^[0-9a-f]{64}$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Calibration Record Sha256"
+    },
+    "contract_version": {
+      "const": "evidence_1",
+      "default": "evidence_1",
+      "title": "Contract Version",
+      "type": "string"
+    },
+    "dataset_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Dataset Sha256",
+      "type": "string"
+    },
+    "experiment_ids": {
+      "items": {
+        "maxLength": 100,
+        "minLength": 1,
+        "pattern": "^[A-Za-z0-9_-]+$",
+        "type": "string"
+      },
+      "maxItems": 10000,
+      "minItems": 1,
+      "title": "Experiment Ids",
+      "type": "array"
+    },
+    "hardware_configuration_sha256": {
+      "anyOf": [
+        {
+          "pattern": "^[0-9a-f]{64}$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Hardware Configuration Sha256"
+    },
+    "license": {
+      "maxLength": 1000,
+      "minLength": 1,
+      "title": "License",
+      "type": "string"
+    },
+    "model_sha256": {
+      "anyOf": [
+        {
+          "pattern": "^[0-9a-f]{64}$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Model Sha256"
+    },
+    "partition_registration_sha256": {
+      "anyOf": [
+        {
+          "pattern": "^[0-9a-f]{64}$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Partition Registration Sha256"
+    },
+    "physical_validation_status": {
+      "const": "unvalidated",
+      "default": "unvalidated",
+      "title": "Physical Validation Status",
+      "type": "string"
+    },
+    "preregistration_attestation_sha256": {
+      "anyOf": [
+        {
+          "pattern": "^[0-9a-f]{64}$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Preregistration Attestation Sha256"
+    },
+    "previously_revealed": {
+      "title": "Previously Revealed",
+      "type": "boolean"
+    },
+    "protocol_sha256": {
+      "anyOf": [
+        {
+          "pattern": "^[0-9a-f]{64}$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Protocol Sha256"
+    },
+    "reviewed_by": {
+      "anyOf": [
+        {
+          "maxLength": 300,
+          "minLength": 1,
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Reviewed By"
+    },
+    "role": {
+      "enum": [
+        "development",
+        "calibration",
+        "confirmatory"
+      ],
+      "title": "Role",
+      "type": "string"
+    },
+    "source_class": {
+      "enum": [
+        "independent_measurement",
+        "manufacturer",
+        "cfd",
+        "synthetic"
+      ],
+      "title": "Source Class",
+      "type": "string"
+    },
+    "source_url": {
+      "maxLength": 2000,
+      "minLength": 1,
+      "title": "Source Url",
+      "type": "string"
+    },
+    "uncertainty_budget_sha256": {
+      "anyOf": [
+        {
+          "pattern": "^[0-9a-f]{64}$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Uncertainty Budget Sha256"
+    }
+  },
+  "required": [
+    "dataset_sha256",
+    "source_url",
+    "license",
+    "source_class",
+    "role",
+    "experiment_ids",
+    "previously_revealed"
+  ],
+  "title": "EvidenceRecord",
+  "type": "object"
+}

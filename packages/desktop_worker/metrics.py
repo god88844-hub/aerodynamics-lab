@@ -99,6 +99,7 @@ class ProcessTreeObserver:
                     ref = ProcessRef(pid)
                     if int(ref.birth) < int(self.processes[inventory[pid]].birth):
                         ref.close()  # an older orphan cannot belong to a reused parent PID
+                        inventory.pop(pid, None)
                         continue
                     self.processes[pid] = ref
                     if ref.alive():

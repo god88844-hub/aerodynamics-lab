@@ -1,0 +1,90 @@
+{
+  "$defs": {
+    "BladeStation": {
+      "additionalProperties": false,
+      "properties": {
+        "chord_m": {
+          "exclusiveMinimum": 0,
+          "title": "Chord M",
+          "type": "number"
+        },
+        "radius_m": {
+          "exclusiveMinimum": 0,
+          "title": "Radius M",
+          "type": "number"
+        },
+        "thickness_to_chord": {
+          "default": 0.12,
+          "exclusiveMinimum": 0,
+          "maximum": 0.4,
+          "title": "Thickness To Chord",
+          "type": "number"
+        },
+        "twist_deg": {
+          "maximum": 89,
+          "minimum": -89,
+          "title": "Twist Deg",
+          "type": "number"
+        }
+      },
+      "required": [
+        "radius_m",
+        "chord_m",
+        "twist_deg"
+      ],
+      "title": "BladeStation",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "material_density_kg_m3": {
+      "anyOf": [
+        {
+          "exclusiveMinimum": 0,
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Material Density Kg M3"
+    },
+    "mesh_deflection_m": {
+      "default": 0.00025,
+      "maximum": 0.01,
+      "minimum": 1e-06,
+      "title": "Mesh Deflection M",
+      "type": "number"
+    },
+    "name": {
+      "default": "Custom blade",
+      "maxLength": 200,
+      "minLength": 1,
+      "title": "Name",
+      "type": "string"
+    },
+    "profile_samples": {
+      "default": 48,
+      "maximum": 128,
+      "minimum": 16,
+      "title": "Profile Samples",
+      "type": "integer"
+    },
+    "stations": {
+      "items": {
+        "$ref": "#/$defs/BladeStation"
+      },
+      "maxItems": 16,
+      "minItems": 2,
+      "title": "Stations",
+      "type": "array"
+    }
+  },
+  "required": [
+    "stations"
+  ],
+  "title": "BladeRecipe",
+  "type": "object"
+}

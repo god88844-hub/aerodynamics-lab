@@ -1,0 +1,42 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "environment_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Environment Sha256",
+      "type": "string"
+    },
+    "model_id": {
+      "maxLength": 100,
+      "minLength": 1,
+      "pattern": "^[A-Za-z0-9_-]+$",
+      "title": "Model Id",
+      "type": "string"
+    },
+    "parameter_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Parameter Sha256",
+      "type": "string"
+    },
+    "source_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Source Sha256",
+      "type": "string"
+    },
+    "version": {
+      "maxLength": 100,
+      "minLength": 1,
+      "title": "Version",
+      "type": "string"
+    }
+  },
+  "required": [
+    "model_id",
+    "version",
+    "source_sha256",
+    "environment_sha256",
+    "parameter_sha256"
+  ],
+  "title": "ModelIdentity",
+  "type": "object"
+}

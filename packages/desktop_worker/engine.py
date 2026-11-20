@@ -9,6 +9,7 @@ import time
 from aeroforge_schemas.cad import BladeRecipe, BoxRecipe, CadTorqueRequest
 from desktop_worker.io import write_result
 from desktop_worker.protocol import MAX_REQUEST_BYTES, PROTOCOL, WorkerRequest
+from desktop_worker.resources import ResourceBudget, admission, capacity_snapshot, workspace_size
 from desktop_worker.supervision import IDENTIFIER, ProcessRef, read_record, source_identity
 from geometry.cad_backend import build_blade_project, build_box_project, constrained_rectangle
 from geometry.cad_dynamics import _identity, run_cad_torque
@@ -20,6 +21,8 @@ def environment_identity() -> dict:
 
 
 def serve(session: Path, session_id: str) -> int:
+    session_admission = read_record(session / "resource-admission.json")
+    budget = ResourceBudget.from_dict(session_admission["requested"])
     if source_identity(Path(__file__).resolve().parents[2]) != read_record(session / "supervisor.json")["source_sha256"]:
         raise ValueError("Source changed while starting the worker engine")
     baseline = environment_identity()
@@ -57,6 +60,15 @@ def serve(session: Path, session_id: str) -> int:
             request = WorkerRequest.model_validate(document)
             if request.session_id != session_id:
                 raise ValueError("Request belongs to a different worker session")
+            if ResourceBudget.from_dict(request.resources) != budget:
+                raise ValueError("Request limits must match the session; restart it to change limits")
+            usage = read_record(session / "resource-usage.json")
+            admitted = admission(budget, capacity_snapshot(session),
+                        resident_bytes=usage["latest_resident_bytes"], workspace_bytes=workspace_size(session),
+                        wall_limit_s=session_admission["effective"]["wall_time_s"])
+            write_result(directory / "resource-admission.json", admitted)
+            if admitted["status"] != "admitted":
+                raise ValueError("resource_admission_refused: " + ", ".join(admitted["reasons"]))
             if environment_identity() != baseline:
                 raise ValueError("Model environment changed; restart the worker before running another job")
             if request.operation == "build-body":
@@ -72,7 +84,19 @@ def serve(session: Path, session_id: str) -> int:
                 raise ValueError("Model environment changed during the worker job")
             output = directory / "result.json"
             write_result(output, result)
-            write_result(directory / "complete.json", {**context, "output_sha256": sha256(output.read_bytes()).hexdigest()})
+            prepared = {**context, "output_sha256": sha256(output.read_bytes()).hexdigest()}
+            write_result(directory / "prepared.json", prepared)
+            # The supervisor remains responsive while native CAD is busy. It checks
+            # current resources before allowing this prepared output to become success.
+            while not (directory / "approved.json").is_file():
+                time.sleep(0.01)
+            approved = read_record(directory / "approved.json")
+            if any(approved.get(key) != prepared[key] for key in ("protocol", "session_id", "job_id", "request_sha256", "output_sha256")):
+                raise ValueError("Resource approval does not match this frozen result")
+            if sha256(output.read_bytes()).hexdigest() != prepared["output_sha256"]:
+                raise ValueError("Prepared output changed before completion")
+            write_result(directory / "complete.json", {**prepared, "resource_approval_sha256":
+                         sha256((directory / "approved.json").read_bytes()).hexdigest()})
         except Exception as error:
             write_result(directory / "error.json", {**context, "status": "failed", "error": str(error)})
             return 2  # conservatively discard native state after any failed request

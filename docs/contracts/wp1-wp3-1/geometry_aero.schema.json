@@ -1,0 +1,406 @@
+{
+  "$defs": {
+    "AeroStation": {
+      "additionalProperties": false,
+      "properties": {
+        "chord_m": {
+          "exclusiveMinimum": 0,
+          "title": "Chord M",
+          "type": "number"
+        },
+        "leading_edge_surface_m": {
+          "maxItems": 3,
+          "minItems": 3,
+          "prefixItems": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "number"
+            },
+            {
+              "type": "number"
+            }
+          ],
+          "title": "Leading Edge Surface M",
+          "type": "array"
+        },
+        "polar_asset_id": {
+          "maxLength": 100,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Polar Asset Id",
+          "type": "string"
+        },
+        "span_or_radius_m": {
+          "minimum": 0,
+          "title": "Span Or Radius M",
+          "type": "number"
+        },
+        "twist_rad": {
+          "title": "Twist Rad",
+          "type": "number"
+        }
+      },
+      "required": [
+        "span_or_radius_m",
+        "chord_m",
+        "twist_rad",
+        "leading_edge_surface_m",
+        "polar_asset_id"
+      ],
+      "title": "AeroStation",
+      "type": "object"
+    },
+    "Frames": {
+      "additionalProperties": false,
+      "properties": {
+        "angles": {
+          "const": "rad",
+          "default": "rad",
+          "title": "Angles",
+          "type": "string"
+        },
+        "body": {
+          "const": "right_handed_x_forward_y_left_z_up",
+          "default": "right_handed_x_forward_y_left_z_up",
+          "title": "Body",
+          "type": "string"
+        },
+        "quaternion": {
+          "const": "wxyz_body_to_world",
+          "default": "wxyz_body_to_world",
+          "title": "Quaternion",
+          "type": "string"
+        },
+        "relative_air_velocity": {
+          "const": "vehicle_minus_air",
+          "default": "vehicle_minus_air",
+          "title": "Relative Air Velocity",
+          "type": "string"
+        },
+        "units": {
+          "const": "SI",
+          "default": "SI",
+          "title": "Units",
+          "type": "string"
+        },
+        "world": {
+          "const": "local_right_handed_z_up",
+          "default": "local_right_handed_z_up",
+          "title": "World",
+          "type": "string"
+        }
+      },
+      "title": "Frames",
+      "type": "object"
+    },
+    "GeometryAsset": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "maxLength": 100,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Id",
+          "type": "string"
+        },
+        "path": {
+          "maxLength": 500,
+          "minLength": 1,
+          "title": "Path",
+          "type": "string"
+        },
+        "role": {
+          "enum": [
+            "exact_geometry",
+            "display_mesh",
+            "drawing",
+            "parametric_source"
+          ],
+          "title": "Role",
+          "type": "string"
+        },
+        "sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Sha256",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "path",
+        "sha256",
+        "role"
+      ],
+      "title": "GeometryAsset",
+      "type": "object"
+    },
+    "PolarEnvelope": {
+      "additionalProperties": false,
+      "properties": {
+        "alpha_max_rad": {
+          "title": "Alpha Max Rad",
+          "type": "number"
+        },
+        "alpha_min_rad": {
+          "title": "Alpha Min Rad",
+          "type": "number"
+        },
+        "mach_max": {
+          "minimum": 0,
+          "title": "Mach Max",
+          "type": "number"
+        },
+        "mach_min": {
+          "minimum": 0,
+          "title": "Mach Min",
+          "type": "number"
+        },
+        "reynolds_max": {
+          "exclusiveMinimum": 0,
+          "title": "Reynolds Max",
+          "type": "number"
+        },
+        "reynolds_min": {
+          "exclusiveMinimum": 0,
+          "title": "Reynolds Min",
+          "type": "number"
+        }
+      },
+      "required": [
+        "reynolds_min",
+        "reynolds_max",
+        "mach_min",
+        "mach_max",
+        "alpha_min_rad",
+        "alpha_max_rad"
+      ],
+      "title": "PolarEnvelope",
+      "type": "object"
+    },
+    "PolarReference": {
+      "additionalProperties": false,
+      "properties": {
+        "asset": {
+          "$ref": "#/$defs/GeometryAsset"
+        },
+        "coefficients": {
+          "const": "cl_cd_cm_dimensionless",
+          "default": "cl_cd_cm_dimensionless",
+          "title": "Coefficients",
+          "type": "string"
+        },
+        "envelope": {
+          "$ref": "#/$defs/PolarEnvelope"
+        },
+        "evidence_sha256": {
+          "anyOf": [
+            {
+              "pattern": "^[0-9a-f]{64}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Evidence Sha256"
+        },
+        "moment_reference": {
+          "const": "quarter_chord",
+          "default": "quarter_chord",
+          "title": "Moment Reference",
+          "type": "string"
+        },
+        "source_class": {
+          "enum": [
+            "independent_measurement",
+            "manufacturer",
+            "cfd",
+            "synthetic"
+          ],
+          "title": "Source Class",
+          "type": "string"
+        }
+      },
+      "required": [
+        "asset",
+        "source_class",
+        "envelope"
+      ],
+      "title": "PolarReference",
+      "type": "object"
+    },
+    "Transform": {
+      "additionalProperties": false,
+      "properties": {
+        "rotation_surface_to_body_wxyz": {
+          "default": [
+            1,
+            0,
+            0,
+            0
+          ],
+          "maxItems": 4,
+          "minItems": 4,
+          "prefixItems": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "number"
+            },
+            {
+              "type": "number"
+            },
+            {
+              "type": "number"
+            }
+          ],
+          "title": "Rotation Surface To Body Wxyz",
+          "type": "array"
+        },
+        "translation_body_m": {
+          "default": [
+            0,
+            0,
+            0
+          ],
+          "maxItems": 3,
+          "minItems": 3,
+          "prefixItems": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "number"
+            },
+            {
+              "type": "number"
+            }
+          ],
+          "title": "Translation Body M",
+          "type": "array"
+        }
+      },
+      "title": "Transform",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "contract_version": {
+      "const": "geometry_aero_1",
+      "default": "geometry_aero_1",
+      "title": "Contract Version",
+      "type": "string"
+    },
+    "execution_backend": {
+      "enum": [
+        "bemt_planned",
+        "vlm_planned",
+        "cfd_planned"
+      ],
+      "title": "Execution Backend",
+      "type": "string"
+    },
+    "frames": {
+      "$ref": "#/$defs/Frames"
+    },
+    "geometry": {
+      "$ref": "#/$defs/GeometryAsset"
+    },
+    "id": {
+      "maxLength": 100,
+      "minLength": 1,
+      "pattern": "^[A-Za-z0-9_-]+$",
+      "title": "Id",
+      "type": "string"
+    },
+    "kind": {
+      "enum": [
+        "lifting_surface",
+        "rotating_blade",
+        "body_surface"
+      ],
+      "title": "Kind",
+      "type": "string"
+    },
+    "moment_datum_body_m": {
+      "maxItems": 3,
+      "minItems": 3,
+      "prefixItems": [
+        {
+          "type": "number"
+        },
+        {
+          "type": "number"
+        },
+        {
+          "type": "number"
+        }
+      ],
+      "title": "Moment Datum Body M",
+      "type": "array"
+    },
+    "physical_validation_status": {
+      "const": "unvalidated",
+      "default": "unvalidated",
+      "title": "Physical Validation Status",
+      "type": "string"
+    },
+    "placement": {
+      "$ref": "#/$defs/Transform"
+    },
+    "polars": {
+      "items": {
+        "$ref": "#/$defs/PolarReference"
+      },
+      "maxItems": 4096,
+      "title": "Polars",
+      "type": "array"
+    },
+    "reference_area_m2": {
+      "exclusiveMinimum": 0,
+      "title": "Reference Area M2",
+      "type": "number"
+    },
+    "reference_chord_m": {
+      "exclusiveMinimum": 0,
+      "title": "Reference Chord M",
+      "type": "number"
+    },
+    "reference_span_m": {
+      "exclusiveMinimum": 0,
+      "title": "Reference Span M",
+      "type": "number"
+    },
+    "stations": {
+      "items": {
+        "$ref": "#/$defs/AeroStation"
+      },
+      "maxItems": 4096,
+      "title": "Stations",
+      "type": "array"
+    },
+    "surface_axes": {
+      "const": "x_chord_forward_y_span_z_up",
+      "default": "x_chord_forward_y_span_z_up",
+      "title": "Surface Axes",
+      "type": "string"
+    }
+  },
+  "required": [
+    "id",
+    "kind",
+    "geometry",
+    "reference_area_m2",
+    "reference_span_m",
+    "reference_chord_m",
+    "moment_datum_body_m",
+    "execution_backend"
+  ],
+  "title": "AeroSurface",
+  "type": "object"
+}

@@ -1,0 +1,34 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "contract_version": {
+      "const": "local_cad_resources_1",
+      "default": "local_cad_resources_1",
+      "title": "Contract Version",
+      "type": "string"
+    },
+    "memory_bytes": {
+      "default": 1073741824,
+      "maximum": 1099511627776,
+      "minimum": 16777216,
+      "title": "Memory Bytes",
+      "type": "integer"
+    },
+    "wall_time_s": {
+      "default": 60,
+      "maximum": 900,
+      "minimum": 0.01,
+      "title": "Wall Time S",
+      "type": "number"
+    },
+    "workspace_bytes": {
+      "default": 268435456,
+      "maximum": 1099511627776,
+      "minimum": 1048576,
+      "title": "Workspace Bytes",
+      "type": "integer"
+    }
+  },
+  "title": "ResourceLimits",
+  "type": "object"
+}

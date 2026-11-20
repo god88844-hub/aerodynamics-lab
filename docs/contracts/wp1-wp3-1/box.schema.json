@@ -1,0 +1,61 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "depth_m": {
+      "default": 0.02,
+      "maximum": 5,
+      "minimum": 0.001,
+      "title": "Depth M",
+      "type": "number"
+    },
+    "height_m": {
+      "default": 0.1,
+      "maximum": 5,
+      "minimum": 0.001,
+      "title": "Height M",
+      "type": "number"
+    },
+    "material_density_kg_m3": {
+      "anyOf": [
+        {
+          "exclusiveMinimum": 0,
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Material Density Kg M3"
+    },
+    "mesh_deflection_m": {
+      "default": 0.00025,
+      "maximum": 0.01,
+      "minimum": 1e-06,
+      "title": "Mesh Deflection M",
+      "type": "number"
+    },
+    "name": {
+      "default": "Constrained test body",
+      "maxLength": 200,
+      "minLength": 1,
+      "title": "Name",
+      "type": "string"
+    },
+    "recipe_type": {
+      "const": "box_1",
+      "default": "box_1",
+      "title": "Recipe Type",
+      "type": "string"
+    },
+    "width_m": {
+      "default": 0.2,
+      "maximum": 5,
+      "minimum": 0.001,
+      "title": "Width M",
+      "type": "number"
+    }
+  },
+  "title": "BoxRecipe",
+  "type": "object"
+}

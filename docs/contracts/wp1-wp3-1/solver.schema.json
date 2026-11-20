@@ -1,0 +1,138 @@
+{
+  "$defs": {
+    "Frames": {
+      "additionalProperties": false,
+      "properties": {
+        "angles": {
+          "const": "rad",
+          "default": "rad",
+          "title": "Angles",
+          "type": "string"
+        },
+        "body": {
+          "const": "right_handed_x_forward_y_left_z_up",
+          "default": "right_handed_x_forward_y_left_z_up",
+          "title": "Body",
+          "type": "string"
+        },
+        "quaternion": {
+          "const": "wxyz_body_to_world",
+          "default": "wxyz_body_to_world",
+          "title": "Quaternion",
+          "type": "string"
+        },
+        "relative_air_velocity": {
+          "const": "vehicle_minus_air",
+          "default": "vehicle_minus_air",
+          "title": "Relative Air Velocity",
+          "type": "string"
+        },
+        "units": {
+          "const": "SI",
+          "default": "SI",
+          "title": "Units",
+          "type": "string"
+        },
+        "world": {
+          "const": "local_right_handed_z_up",
+          "default": "local_right_handed_z_up",
+          "title": "World",
+          "type": "string"
+        }
+      },
+      "title": "Frames",
+      "type": "object"
+    },
+    "ModelIdentity": {
+      "additionalProperties": false,
+      "properties": {
+        "environment_sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Environment Sha256",
+          "type": "string"
+        },
+        "model_id": {
+          "maxLength": 100,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Model Id",
+          "type": "string"
+        },
+        "parameter_sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Parameter Sha256",
+          "type": "string"
+        },
+        "source_sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Source Sha256",
+          "type": "string"
+        },
+        "version": {
+          "maxLength": 100,
+          "minLength": 1,
+          "title": "Version",
+          "type": "string"
+        }
+      },
+      "required": [
+        "model_id",
+        "version",
+        "source_sha256",
+        "environment_sha256",
+        "parameter_sha256"
+      ],
+      "title": "ModelIdentity",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "algorithm": {
+      "enum": [
+        "rk4_fixed_step",
+        "bemt",
+        "vlm",
+        "cfd"
+      ],
+      "title": "Algorithm",
+      "type": "string"
+    },
+    "backend_id": {
+      "enum": [
+        "legacy_python",
+        "cad_torque_1",
+        "bemt_planned",
+        "vlm_planned",
+        "cfd_planned"
+      ],
+      "title": "Backend Id",
+      "type": "string"
+    },
+    "contract_version": {
+      "const": "solver_1",
+      "default": "solver_1",
+      "title": "Contract Version",
+      "type": "string"
+    },
+    "frames": {
+      "$ref": "#/$defs/Frames"
+    },
+    "model": {
+      "$ref": "#/$defs/ModelIdentity"
+    },
+    "step_s": {
+      "exclusiveMinimum": 0,
+      "title": "Step S",
+      "type": "number"
+    }
+  },
+  "required": [
+    "backend_id",
+    "algorithm",
+    "step_s",
+    "model"
+  ],
+  "title": "Solver",
+  "type": "object"
+}

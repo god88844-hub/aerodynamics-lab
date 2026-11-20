@@ -1,0 +1,22 @@
+{
+  "bemt_planned": {
+    "implemented": false,
+    "scope": "surface contract only"
+  },
+  "cad_torque_1": {
+    "implemented": true,
+    "scope": "single exact solid; isolated torque; no flight/aero forces"
+  },
+  "cfd_planned": {
+    "implemented": false,
+    "scope": "surface contract only"
+  },
+  "legacy_python": {
+    "implemented": true,
+    "scope": "legacy multirotor; fixed default atmosphere/seed"
+  },
+  "vlm_planned": {
+    "implemented": false,
+    "scope": "surface contract only"
+  }
+}

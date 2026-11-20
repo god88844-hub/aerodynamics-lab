@@ -3,6 +3,7 @@
 from hashlib import sha256
 
 from aeroforge_schemas.project import EngineeringProject, Environment, LegacyMultirotorVehicle
+from aeroforge_schemas.foundation import require_backend
 from app.services.simulation_service import run_simulation
 from app.services.run_provenance import capture_provenance
 
@@ -12,6 +13,7 @@ def run_project(project: EngineeringProject) -> dict:
     project = EngineeringProject.model_validate_json(project.canonical_bytes())
     if project.experiment.backend_id != "legacy_python":
         raise ValueError("This project has no implemented simulation backend")
+    require_backend(project.experiment.backend_id)
     if not isinstance(project.vehicle, LegacyMultirotorVehicle):
         raise ValueError("The legacy backend requires a legacy multirotor snapshot")
     if project.environment != Environment():
