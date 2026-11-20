@@ -49,6 +49,8 @@ def main():
              creationflags=subprocess.CREATE_NO_WINDOW if os.name == "nt" else 0, start_new_session=os.name != "nt")
         observer = ProcessTreeObserver(process.pid)
         failure = None
+        roundtrip_verified = False
+        assets_verified = False
         try:
             deadline = time.monotonic() + 600
             while process.poll() is None:
@@ -57,6 +59,14 @@ def main():
                     raise TimeoutError("Rendered benchmark exceeded 600 seconds")
                 time.sleep(0.1)
             process.wait(timeout=5)
+            verify_assets(project, fixture.parent)
+            assets_verified = True
+            saved = report.with_name(report.stem + "-saved")
+            reopened = EngineeringProject.model_validate_json((saved / "project.json").read_bytes())
+            verify_assets(reopened, saved)
+            if reopened.fingerprint() != project.fingerprint():
+                raise ValueError("Saved assembly differs from the frozen workload")
+            roundtrip_verified = True
         except Exception as error:
             failure = str(error)
         finally:
@@ -71,26 +81,24 @@ def main():
                 failure = failure or "Actual desktop PID was not reported/observed; memory attribution is invalid"
             measurement = {**observer.report(actual_pid), "commit_sha": head,
                 "memory_attribution_valid": actual_pid in observer.processes,
+                "canonical_roundtrip_verified": roundtrip_verified, "source_assets_unchanged_verified": assets_verified,
                 "observer_sha256": sha256(Path(__file__).read_bytes()).hexdigest(),
                 "metrics_module_sha256": sha256((ROOT / "packages/desktop_worker/metrics.py").read_bytes()).hexdigest(),
                 "window_launch": "hidden graphical process on Windows", "external_context": context,
                 "godot_exit_code": process.poll(), "cleanup_verified": not live, "failure": failure}
+            if not measurement["memory_attribution_valid"]:
+                measurement["desktop_os_peak_resident_bytes"] = None
+                measurement["sampled_peak_worker_resident_sum_bytes"] = None
             for record in live:
                 terminate_record(record, group=record["pid"] == process.pid)
             process.wait(timeout=5)
             observer.close()
             write_result(metrics_path, measurement)
-    verify_assets(project, fixture.parent)
     if report.exists():
         data = json.loads(report.read_bytes())
-        saved = report.with_name(report.stem + "-saved")
-        if (saved / "project.json").exists():
-            reopened = EngineeringProject.model_validate_json((saved / "project.json").read_bytes())
-            verify_assets(reopened, saved)
-            if reopened.fingerprint() != project.fingerprint():
-                raise ValueError("Saved assembly differs from the frozen workload")
         print(json.dumps({"report": str(report), "memory": str(metrics_path), "p95_ms": data.get("p95_ms"),
-                          "viewport_target_met": data.get("viewport_target_met"), "cleanup_verified": not live}))
+                          "viewport_target_met": data.get("viewport_target_met"), "cleanup_verified": not live,
+                          "canonical_roundtrip_verified": roundtrip_verified, "failure": failure}))
     return process.returncode if not failure and not live and report.is_file() else 1
 
 

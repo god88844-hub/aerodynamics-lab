@@ -18,6 +18,8 @@ An external standard-library observer requests 100 ms samples of the desktop and
 
 The application reports its actual PID. The observer attributes desktop memory to that process and excludes the launch wrapper from the remaining descendant sum. Other descendant helpers remain in that conservative worker sum. This distinction matters for the Windows Godot console executable, which can launch a separate graphical process. Missing/unobserved application identity invalidates memory attribution and fails the wrapper. Engineering input publication also enables Godot's full-precision JSON serialization for both one-shot payloads and reusable CAD packets; reduced decimal output must not change the frozen project identity.
 
+The measured save/reopen failure also demonstrated that full-precision output alone does not retain all source numbers through the rendering parser. The desktop therefore holds the verified document text separately from its display dictionary. Unchanged saves and runs publish that text directly, and reusable requests retain original payload JSON. New supported edits produce new verified documents through the engineering worker. An untracked mutation of the display dictionary is refused rather than silently turning rounded display values into authoritative inputs. The Python wrapper checks the original and reopened canonical project fingerprints without a numeric tolerance.
+
 ```text
 python scripts/benchmark_desktop_assembly.py --godot C:/absolute/Godot_v4.7.2-stable_win64_console.exe --report C:/absolute/new-observation.json --frames 600 --context C:/absolute/machine-context.json
 ```

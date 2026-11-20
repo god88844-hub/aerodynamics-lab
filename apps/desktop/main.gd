@@ -1,6 +1,8 @@
 extends Control
 
 var project: Dictionary = {}
+var project_document_json: String = ""
+var project_document_view: Dictionary = {}
 var result: Dictionary = {}
 var engineering: RefCounted
 var components: Tree
@@ -263,9 +265,12 @@ func _rebuild_body() -> void:
 func _run_cad_torque() -> void:
 	if project.is_empty() or job_pid > 0:
 		return
-	var request: Dictionary = {"project": project, "experiment": {
-		"torque_body_nm": [0.0, 0.0, torque_z.value], "duration_s": torque_duration.value, "step_s": torque_step.value}}
-	_start_job("cad-torque", _write_payload(request))
+	var document: String = _frozen_project_json()
+	if document.is_empty():
+		return
+	var experiment: Dictionary = {"torque_body_nm": [0.0, 0.0, torque_z.value],
+		"duration_s": torque_duration.value, "step_s": torque_step.value}
+	_start_job("cad-torque", _write_json_text('{"project":' + document + ',"experiment":' + JSON.stringify(experiment, "", true, true) + '}'))
 
 
 func _viewport_input(event: InputEvent) -> void:
@@ -534,16 +539,38 @@ func _connect_dialog(action: Callable) -> void:
 
 
 func _write_job_input() -> String:
-	return _write_payload(project)
+	var document: String = _frozen_project_json()
+	return _write_json_text(document) if not document.is_empty() else ""
+
+
+func _frozen_project_json() -> String:
+	if project_document_json.is_empty() or project != project_document_view:
+		status_label.text = "Project needs a verified document. Reopen it or rebuild through the editor."
+		return ""
+	return project_document_json
+
+
+func _remember_project_document(path: String) -> void:
+	var document: String = FileAccess.get_file_as_string(path)
+	if JSON.parse_string(document) == project:
+		project_document_json = document
+		project_document_view = project.duplicate(true)
+	else:
+		project_document_json = ""
+		project_document_view = {}
 
 
 func _write_payload(payload: Dictionary) -> String:
+	return _write_json_text(JSON.stringify(payload, "", true, true))
+
+
+func _write_json_text(document: String) -> String:
 	var path: String = ProjectSettings.globalize_path("user://input-%s-%s.json" % [OS.get_process_id(), Time.get_ticks_usec()])
 	var file: FileAccess = FileAccess.open(path, FileAccess.WRITE)
 	if file == null:
 		status_label.text = "Cannot write the experiment input"
 		return ""
-	file.store_string(JSON.stringify(payload, "", true, true))
+	file.store_string(document)
 	file.close()
 	return path
 
@@ -652,8 +679,10 @@ func _process(delta: float) -> void:
 				if job_action == "package" and next_project == project:
 					# Saving verified copies does not change the experiment's inputs.
 					project_asset_root = next_root
+					_remember_project_document(job_output)
 					status_label.text = "Project saved. Geometry asset checks passed."
 				elif _adopt_project(next_project, next_root):
+					_remember_project_document(str(output["project_path"]) if job_action.begins_with("build-") else job_output)
 					status_label.text = "Geometry rebuilt. Physical validation pending." if job_action.begins_with("build-") else "Project opened. Document and asset checks passed."
 					if output.has("geometry"):
 						_show_cad_properties(output["geometry"]["mass_properties"])

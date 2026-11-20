@@ -1,7 +1,6 @@
 """The frozen workload exercises real project/asset entry points without flight claims."""
 
 from collections import Counter
-from hashlib import sha256
 import json
 from pathlib import Path
 
