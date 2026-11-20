@@ -1,0 +1,99 @@
+{
+  "categories": {
+    "arm": 6,
+    "blade": 12,
+    "board": 8,
+    "fastener": 160,
+    "motor": 6,
+    "pack": 6,
+    "plate": 2
+  },
+  "fixture_version": "assembly_200_1",
+  "generator_sha256": "7609158119cf82c0b33b35add583fa4119bfccf56cdb3a3cb4876b8515967eec",
+  "part_count": 200,
+  "physical_validation_status": "unvalidated",
+  "project_sha256": "f89ffd29b1a67b5a0fcad056b882ba56b9cded52b39722e93e474db5e78a7666",
+  "recipes": {
+    "arm": {
+      "depth_m": 0.035,
+      "height_m": 0.035,
+      "material_density_kg_m3": 1600.0,
+      "mesh_deflection_m": 0.00025,
+      "name": "Benchmark arm",
+      "recipe_type": "box_1",
+      "width_m": 0.55
+    },
+    "blade": {
+      "material_density_kg_m3": null,
+      "mesh_deflection_m": 0.00025,
+      "name": "Three-station blade concept",
+      "profile_samples": 48,
+      "stations": [
+        {
+          "chord_m": 0.045,
+          "radius_m": 0.03,
+          "thickness_to_chord": 0.12,
+          "twist_deg": 22.0
+        },
+        {
+          "chord_m": 0.035,
+          "radius_m": 0.12,
+          "thickness_to_chord": 0.12,
+          "twist_deg": 12.0
+        },
+        {
+          "chord_m": 0.018,
+          "radius_m": 0.22,
+          "thickness_to_chord": 0.12,
+          "twist_deg": 6.0
+        }
+      ]
+    },
+    "board": {
+      "depth_m": 0.003,
+      "height_m": 0.025,
+      "material_density_kg_m3": 1850.0,
+      "mesh_deflection_m": 0.00025,
+      "name": "Benchmark board",
+      "recipe_type": "box_1",
+      "width_m": 0.035
+    },
+    "fastener": {
+      "depth_m": 0.014,
+      "height_m": 0.004,
+      "material_density_kg_m3": 7800.0,
+      "mesh_deflection_m": 0.00025,
+      "name": "Benchmark fastener",
+      "recipe_type": "box_1",
+      "width_m": 0.004
+    },
+    "motor": {
+      "depth_m": 0.045,
+      "height_m": 0.055,
+      "material_density_kg_m3": 2700.0,
+      "mesh_deflection_m": 0.00025,
+      "name": "Benchmark motor",
+      "recipe_type": "box_1",
+      "width_m": 0.055
+    },
+    "pack": {
+      "depth_m": 0.035,
+      "height_m": 0.05,
+      "material_density_kg_m3": 2000.0,
+      "mesh_deflection_m": 0.00025,
+      "name": "Benchmark pack",
+      "recipe_type": "box_1",
+      "width_m": 0.1
+    },
+    "plate": {
+      "depth_m": 0.006,
+      "height_m": 0.3,
+      "material_density_kg_m3": 1600.0,
+      "mesh_deflection_m": 0.00025,
+      "name": "Benchmark plate",
+      "recipe_type": "box_1",
+      "width_m": 0.4
+    }
+  },
+  "scope": "Constructed editor workload. Box proxies, assumed materials and placements; no flight, clearance, assembly mass or hardware validation."
+}

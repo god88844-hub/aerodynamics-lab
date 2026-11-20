@@ -1,0 +1,59 @@
+{
+  "adapter_sha256": "8820a08d5dd984c8347d68a7f4439b5dfaffd1ac29867cbc761b70de818295aa",
+  "cad_kernel_length_unit": "mm",
+  "cadquery_version": "2.8.0",
+  "constraint_check": {
+    "area_m2": 0.003024999999996019,
+    "height_m": 0.055,
+    "solver_cost": 3.335707763692365e-17,
+    "width_m": 0.055
+  },
+  "dependency_lock_sha256": "12fdb4132c62fecd7137230b5a853197692667d143450fbe7ed4eec40daa2ad3",
+  "exact_geometry_asset_id": "motor_body_exact",
+  "mass_properties": {
+    "assumption": "homogeneous_uniform_density",
+    "center_of_mass_m": [
+      0.027499999901048965,
+      0.027499999946448576,
+      0.0225
+    ],
+    "frame": "local_right_handed_z_up",
+    "inertia_about_cog_kg_m2": [
+      [
+        0.00015467203124947223,
+        5.11636532843113e-13,
+        0.0
+      ],
+      [
+        5.11636532843113e-13,
+        0.00015467203124959196,
+        0.0
+      ],
+      [
+        0.0,
+        0.0,
+        0.0001853001562492669
+      ]
+    ],
+    "mass_kg": 0.3675374999993227,
+    "material_density_kg_m3": 2700.0,
+    "physical_validation_status": "unvalidated",
+    "volume_m3": 0.00013612499999974916
+  },
+  "ocp_version": "7.9.3.1.1",
+  "physical_validation_status": "unvalidated",
+  "profile": "extruded constrained rectangle",
+  "recipe": {
+    "depth_m": 0.045,
+    "height_m": 0.055,
+    "material_density_kg_m3": 2700.0,
+    "mesh_deflection_m": 0.00025,
+    "name": "Benchmark motor",
+    "recipe_type": "box_1",
+    "width_m": 0.055
+  },
+  "recipe_type": "box_1",
+  "source_length_unit": "m",
+  "uniform_density_mass_estimate_kg": 0.3675374999993227,
+  "volume_m3": 0.00013612499999974916
+}
