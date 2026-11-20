@@ -45,6 +45,9 @@ var last_worker_check_ms: int = 0
 var limits_dialog: AcceptDialog
 var limits_fields: Dictionary = {}
 var limits_status: Label
+var qualification_orbit_left: bool = false
+var qualification_started_usec: int = 0
+var qualification_events: Array = []
 
 
 func repository_root() -> String:
@@ -316,7 +319,12 @@ func _run_cad_torque() -> void:
 
 
 func _viewport_input(event: InputEvent) -> void:
-	if event is InputEventMouseMotion and event.button_mask & MOUSE_BUTTON_MASK_RIGHT:
+	if qualification_orbit_left and qualification_started_usec > 0 and qualification_events.size() < 10000:
+		if event is InputEventMouseMotion:
+			qualification_events.append({"kind": "motion", "usec": Time.get_ticks_usec(), "relative": [event.relative.x, event.relative.y], "buttons": event.button_mask})
+		elif event is InputEventMouseButton:
+			qualification_events.append({"kind": "button", "usec": Time.get_ticks_usec(), "button": event.button_index, "pressed": event.pressed})
+	if event is InputEventMouseMotion and (event.button_mask & MOUSE_BUTTON_MASK_RIGHT or (qualification_orbit_left and event.button_mask & MOUSE_BUTTON_MASK_LEFT)):
 		yaw -= event.relative.x * 0.008
 		elevation = clampf(elevation + event.relative.y * 0.008, 0.05, 1.4)
 		_update_camera()
@@ -343,6 +351,12 @@ func _viewport_input(event: InputEvent) -> void:
 		if event.button_index == MOUSE_BUTTON_WHEEL_DOWN:
 			distance_m *= 1.1
 		_update_camera()
+
+
+func _input(event: InputEvent) -> void:
+	if qualification_orbit_left and event is InputEventKey and event.pressed and event.keycode == KEY_SPACE and qualification_started_usec == 0:
+		qualification_started_usec = Time.get_ticks_usec()
+		qualification_events.clear()
 
 
 func _update_camera() -> void:
