@@ -37,6 +37,9 @@ var density_enabled: CheckButton
 var torque_z: SpinBox
 var torque_duration: SpinBox
 var torque_step: SpinBox
+var cad_worker: RefCounted
+var job_uses_reusable: bool = false
+var last_worker_check_ms: int = 0
 
 
 func repository_root() -> String:
@@ -54,6 +57,9 @@ func _ready() -> void:
 		status_label.text = "Build the native engineering extension before loading a project."
 		return
 	engineering = ClassDB.instantiate("LabEngineering")
+	var cad_python: String = OS.get_environment("LAB_CAD_PYTHON")
+	var worker_script: GDScript = load("res://cad_worker.gd")
+	cad_worker = worker_script.new(repository_root(), cad_python if not cad_python.is_empty() else python_command())
 	var initial_project: String = ""
 	for argument in OS.get_cmdline_user_args():
 		if argument.begins_with("--capture="):
@@ -196,7 +202,7 @@ func _build_interface() -> void:
 	density_enabled.text = "Assume a homogeneous material density"
 	density_enabled.button_pressed = true
 	body_form.add_child(density_enabled)
-	body_fields["material_density_kg_m3"] = _numeric_field(body_form, "Density (kg/m³)", 0.001, 100000, 1, 500)
+	body_fields["material_density_kg_m3"] = _numeric_field(body_form, "Density (kg/m³)", 0.001, 100000, 0.001, 500)
 	body_dialog.confirmed.connect(_rebuild_body)
 	add_child(body_dialog)
 	_update_camera()
@@ -553,6 +559,19 @@ func _start_job(action: String, input_path: String, output_path: String = "") ->
 		return
 	job_action = action
 	job_started_ms = Time.get_ticks_msec()
+	job_uses_reusable = action in ["build-blade", "build-body", "cad-torque"]
+	if job_uses_reusable:
+		var submitted: Dictionary = cad_worker.submit(action, input_path, project_asset_root)
+		if submitted.has("failure"):
+			status_label.text = submitted["failure"]
+			return
+		job_pid = submitted["pid"]
+		job_output = submitted["output"]
+		job_error = submitted["error"]
+		job_completion = submitted["completion"]
+		job_started = submitted["started"]
+		status_label.text = "Running %s in the isolated CAD worker…" % action
+		return
 	var stem: String = "user://job-%s-%s" % [OS.get_process_id(), Time.get_ticks_usec()]
 	job_output = output_path if not output_path.is_empty() else ProjectSettings.globalize_path(stem + ".json")
 	job_error = ProjectSettings.globalize_path(stem + "-error.json")
@@ -564,24 +583,20 @@ func _start_job(action: String, input_path: String, output_path: String = "") ->
 	job_asset_root = project_asset_root if action == "package" else input_path.get_base_dir()
 	if action == "validate" or action == "package":
 		arguments.append_array(["--asset-root", job_asset_root])
-	var interpreter: String = python_command()
-	if action == "build-blade" or action == "build-body":
-		arguments = [repository_root().path_join("scripts/lab_cad.py"), input_path, job_output,
-			"--error-output", job_error, "--completion-output", job_completion]
-	if action == "cad-torque":
-		arguments = [repository_root().path_join("scripts/lab_cad_analysis.py"), input_path, job_output,
-			"--asset-root", project_asset_root, "--error-output", job_error, "--completion-output", job_completion]
-	if action == "build-blade" or action == "build-body" or action == "cad-torque":
-		var cad_python: String = OS.get_environment("LAB_CAD_PYTHON")
-		if not cad_python.is_empty():
-			interpreter = cad_python
 	arguments.append_array(["--started-output", job_started])
-	job_pid = OS.create_process(interpreter, arguments, false)
+	job_pid = OS.create_process(python_command(), arguments, false)
 	status_label.text = "Running %s…" % action if job_pid > 0 else "Cannot start the configured Python worker"
 
 
 func _cancel_job() -> void:
 	if job_pid > 0:
+		if job_uses_reusable:
+			if not cad_worker.stop():
+				status_label.text = "CAD worker cleanup failed. The job is still tracked."
+				return
+			job_pid = -1
+			status_label.text = "Job cancelled. The current project is available."
+			return
 		if OS.is_process_running(job_pid):
 			if OS.get_name() == "Windows":
 				# The Windows venv launcher starts a child interpreter.
@@ -597,7 +612,10 @@ func _cancel_job() -> void:
 
 
 func _process(delta: float) -> void:
-	if job_pid > 0 and not OS.is_process_running(job_pid):
+	var finished: bool = false
+	if job_pid > 0:
+		finished = (FileAccess.file_exists(job_error) or FileAccess.file_exists(job_completion) or cad_worker.has_failed()) if job_uses_reusable else not OS.is_process_running(job_pid)
+	if finished:
 		job_pid = -1
 		if FileAccess.file_exists(job_error):
 			var error: Variant = JSON.parse_string(FileAccess.get_file_as_string(job_error))
@@ -641,6 +659,10 @@ func _process(delta: float) -> void:
 						_show_cad_properties(output["geometry"]["mass_properties"])
 		else:
 			status_label.text = "Worker ended without a result. Check LAB_PYTHON and backend dependencies."
+	if job_pid < 0 and cad_worker != null and cad_worker.get("pid") > 0 and Time.get_ticks_msec() - last_worker_check_ms > 1000:
+		last_worker_check_ms = Time.get_ticks_msec()
+		if cad_worker.has_failed():
+			cad_worker.stop()
 	if playing and not result.is_empty():
 		replay_time = minf(replay_time + delta, timeline.max_value)
 		timeline.set_value_no_signal(replay_time)
@@ -656,6 +678,8 @@ func _process(delta: float) -> void:
 
 
 func _completed_output() -> bool:
+	if job_uses_reusable:
+		return cad_worker.completed_output(job_completion)
 	if not FileAccess.file_exists(job_output) or not FileAccess.file_exists(job_completion):
 		return false
 	var receipt: Variant = JSON.parse_string(FileAccess.get_file_as_string(job_completion))
@@ -707,3 +731,5 @@ func _seek(time_s: float) -> void:
 func _exit_tree() -> void:
 	if job_pid > 0 and OS.is_process_running(job_pid):
 		_cancel_job()
+	if cad_worker != null:
+		cad_worker.stop()

@@ -50,4 +50,8 @@ Use the normal editor/API/headless entry points for acceptance. CI verifies soft
 
 The [CAD mass/dynamics prototype](prototypes/CAD_MASS_DYNAMICS.md) records the supported single-solid geometry-to-rigid-body path, analytical checks and missing-density refusal. Its isolated torque experiment does not qualify flight behavior.
 
+The [reusable CAD worker](prototypes/REUSABLE_CAD_WORKER.md) retains loaded libraries behind a local supervisor, with frozen per-job records, source-change retirement, cancellation and recovery checks. This establishes software lifecycle behavior; hardware-tier performance and resource admission require separate measured evidence.
+
+Its [recorded Windows interaction receipt](prototypes/measurements/reusable-worker-d72ecc0655.json) reports one constrained-body cold cycle at 2.983 s and five warm cycles at 0.710–0.744 s, with analytical checks and cleanup passing. It does not complete representative-assembly or hardware-tier acceptance.
+
 Hardware tier support follows [the compatibility matrix and resource/LOD contract](HARDWARE_AND_FIDELITY.md). The initial Windows prototype run is one machine observation. Tier 1/2/3 performance, large-assembly adaptive detail/residency, remote scheduling and enforced worker budgets remain unaccepted until their recorded checks pass.
