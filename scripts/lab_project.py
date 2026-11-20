@@ -3,10 +3,8 @@
 import argparse
 from hashlib import sha256
 import json
-import os
 from pathlib import Path
 import sys
-import tempfile
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path[:0] = [str(ROOT / "apps/api"), str(ROOT / "packages"), str(ROOT / "packages/shared-schemas")]
@@ -14,25 +12,7 @@ sys.path[:0] = [str(ROOT / "apps/api"), str(ROOT / "packages"), str(ROOT / "pack
 from aeroforge_schemas.project import EngineeringProject, import_legacy_project  # noqa: E402
 from app.services.project_service import run_project  # noqa: E402
 from app.services.project_assets import copy_assets, verify_assets  # noqa: E402
-
-
-def write_result(destination: Path, payload: dict) -> None:
-    """Replace an output atomically after serialization completes."""
-    content = json.dumps(payload, sort_keys=True, indent=2, allow_nan=False) + "\n"
-    descriptor, temporary = tempfile.mkstemp(prefix=".lab-output-", dir=destination.parent)
-    try:
-        with os.fdopen(descriptor, "w", encoding="utf-8", newline="\n") as stream:
-            stream.write(content)
-            stream.flush()
-            os.fsync(stream.fileno())
-        os.replace(temporary, destination)
-    finally:
-        Path(temporary).unlink(missing_ok=True)
-
-
-def write_started(destination: Path | None) -> None:
-    if destination:
-        write_result(destination, {"worker_pid": os.getpid()})
+from desktop_worker.io import write_result, write_started  # noqa: E402
 
 
 def main() -> int:
