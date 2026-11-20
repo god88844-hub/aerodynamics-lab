@@ -1,0 +1,261 @@
+{
+  "$defs": {
+    "Frames": {
+      "additionalProperties": false,
+      "properties": {
+        "angles": {
+          "const": "rad",
+          "default": "rad",
+          "title": "Angles",
+          "type": "string"
+        },
+        "body": {
+          "const": "right_handed_x_forward_y_left_z_up",
+          "default": "right_handed_x_forward_y_left_z_up",
+          "title": "Body",
+          "type": "string"
+        },
+        "quaternion": {
+          "const": "wxyz_body_to_world",
+          "default": "wxyz_body_to_world",
+          "title": "Quaternion",
+          "type": "string"
+        },
+        "relative_air_velocity": {
+          "const": "vehicle_minus_air",
+          "default": "vehicle_minus_air",
+          "title": "Relative Air Velocity",
+          "type": "string"
+        },
+        "units": {
+          "const": "SI",
+          "default": "SI",
+          "title": "Units",
+          "type": "string"
+        },
+        "world": {
+          "const": "local_right_handed_z_up",
+          "default": "local_right_handed_z_up",
+          "title": "World",
+          "type": "string"
+        }
+      },
+      "title": "Frames",
+      "type": "object"
+    },
+    "ModelIdentity": {
+      "additionalProperties": false,
+      "properties": {
+        "environment_sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Environment Sha256",
+          "type": "string"
+        },
+        "model_id": {
+          "maxLength": 100,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Model Id",
+          "type": "string"
+        },
+        "parameter_sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Parameter Sha256",
+          "type": "string"
+        },
+        "source_sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Source Sha256",
+          "type": "string"
+        },
+        "version": {
+          "maxLength": 100,
+          "minLength": 1,
+          "title": "Version",
+          "type": "string"
+        }
+      },
+      "required": [
+        "model_id",
+        "version",
+        "source_sha256",
+        "environment_sha256",
+        "parameter_sha256"
+      ],
+      "title": "ModelIdentity",
+      "type": "object"
+    },
+    "ResourceLimits": {
+      "additionalProperties": false,
+      "properties": {
+        "contract_version": {
+          "const": "local_cad_resources_1",
+          "default": "local_cad_resources_1",
+          "title": "Contract Version",
+          "type": "string"
+        },
+        "memory_bytes": {
+          "default": 1073741824,
+          "maximum": 1099511627776,
+          "minimum": 16777216,
+          "title": "Memory Bytes",
+          "type": "integer"
+        },
+        "wall_time_s": {
+          "default": 60,
+          "maximum": 900,
+          "minimum": 0.01,
+          "title": "Wall Time S",
+          "type": "number"
+        },
+        "workspace_bytes": {
+          "default": 268435456,
+          "maximum": 1099511627776,
+          "minimum": 1048576,
+          "title": "Workspace Bytes",
+          "type": "integer"
+        }
+      },
+      "title": "ResourceLimits",
+      "type": "object"
+    },
+    "Solver": {
+      "additionalProperties": false,
+      "properties": {
+        "algorithm": {
+          "enum": [
+            "rk4_fixed_step",
+            "bemt",
+            "vlm",
+            "cfd"
+          ],
+          "title": "Algorithm",
+          "type": "string"
+        },
+        "backend_id": {
+          "enum": [
+            "legacy_python",
+            "cad_torque_1",
+            "bemt_planned",
+            "vlm_planned",
+            "cfd_planned"
+          ],
+          "title": "Backend Id",
+          "type": "string"
+        },
+        "contract_version": {
+          "const": "solver_1",
+          "default": "solver_1",
+          "title": "Contract Version",
+          "type": "string"
+        },
+        "frames": {
+          "$ref": "#/$defs/Frames"
+        },
+        "model": {
+          "$ref": "#/$defs/ModelIdentity"
+        },
+        "step_s": {
+          "exclusiveMinimum": 0,
+          "title": "Step S",
+          "type": "number"
+        }
+      },
+      "required": [
+        "backend_id",
+        "algorithm",
+        "step_s",
+        "model"
+      ],
+      "title": "Solver",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "contract_version": {
+      "const": "job_1",
+      "default": "job_1",
+      "title": "Contract Version",
+      "type": "string"
+    },
+    "job_id": {
+      "pattern": "^[0-9a-f]{32}$",
+      "title": "Job Id",
+      "type": "string"
+    },
+    "output_sha256": {
+      "anyOf": [
+        {
+          "pattern": "^[0-9a-f]{64}$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Output Sha256"
+    },
+    "reason": {
+      "anyOf": [
+        {
+          "maxLength": 4096,
+          "minLength": 1,
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Reason"
+    },
+    "request_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Request Sha256",
+      "type": "string"
+    },
+    "resource_approval_sha256": {
+      "anyOf": [
+        {
+          "pattern": "^[0-9a-f]{64}$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Resource Approval Sha256"
+    },
+    "resources": {
+      "$ref": "#/$defs/ResourceLimits"
+    },
+    "solver": {
+      "$ref": "#/$defs/Solver"
+    },
+    "state": {
+      "enum": [
+        "created",
+        "admitted",
+        "running",
+        "prepared",
+        "succeeded",
+        "failed",
+        "cancelled"
+      ],
+      "title": "State",
+      "type": "string"
+    }
+  },
+  "required": [
+    "job_id",
+    "state",
+    "request_sha256",
+    "solver",
+    "resources"
+  ],
+  "title": "JobRecord",
+  "type": "object"
+}

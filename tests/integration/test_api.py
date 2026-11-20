@@ -262,6 +262,7 @@ def test_static_hover_saves_esc_failure_without_endurance(client, design_payload
 
 
 def test_saved_run_inputs_survive_design_edits(client, design_payload):
+    import json
     from hashlib import sha256
 
     original = {**design_payload, "name": "original frozen test"}
@@ -282,6 +283,13 @@ def test_saved_run_inputs_survive_design_edits(client, design_payload):
     assert frozen.json()["design"] == created["snapshot"]
     assert frozen.json()["scenario"] == "hover-ideal"
     assert frozen.json()["requested_parameters"] == {"duration_s": "0.02"}
+    environment = frozen.json()["model_environment"]
+    fingerprint = environment.pop("sha256")
+    canonical = json.dumps(environment, sort_keys=True, separators=(",", ":"), allow_nan=False)
+    assert sha256(canonical.encode()).hexdigest() == fingerprint
+    assert "packages/physics/scenarios/runner.py" in environment["files_sha256"]
+    assert environment["component_data"]["data/components/controllers/generic_esc_20a.json"]["max_continuous_current_a"] == 20
+    assert environment["package_versions"]["numpy"]
     assert frozen.json()["effective_parameters"] == {
         "duration_s": 0.02, "dt_s": 0.002, "solver": "rk4",
     }
@@ -296,6 +304,50 @@ def test_saved_run_inputs_survive_design_edits(client, design_payload):
     assert client.get(f"/api/simulations/{run['simulation_id']}").json()["input_sha256"] == run["input_sha256"]
     assert client.delete(f"/api/designs/{design_id}").status_code == 200
     assert client.get(path).status_code == 404
+
+
+def test_saved_api_provenance_changes_with_actual_component_and_replays_frozen_inputs(
+    client, design_payload, tmp_path, monkeypatch,
+):
+    import json
+    import shutil
+    from hashlib import sha256
+    from app.services import run_provenance, simulation_service
+    from physics.scenarios import service
+
+    shutil.copytree(REPO_ROOT / "data/components", tmp_path / "data/components")
+    shutil.copy2(REPO_ROOT / "apps/api/requirements.lock", tmp_path / "requirements.lock")
+    monkeypatch.setattr(run_provenance, "ROOT", tmp_path)
+    monkeypatch.setattr(service, "DEFAULT_DATA_DIR", tmp_path / "data")
+    created = client.post("/api/designs", json={"snapshot": design_payload}).json()
+    path = f"/api/designs/{created['id']}/simulate"
+    request = {"scenario": "hover-static", "params": {"max_duration_s": 0.02, "dt_s": 0.01}}
+    first = client.post(path, json=request).json()
+    assert first["status"] == "completed"
+    frozen_path = f"/api/simulations/{first['simulation_id']}/inputs"
+    frozen_bytes = client.get(frozen_path).content
+    frozen = json.loads(frozen_bytes)
+    replay, replay_inputs = simulation_service.run_simulation(
+        frozen["design"], frozen["scenario"], frozen["requested_parameters"],
+    )
+    canonical = json.dumps(replay_inputs, sort_keys=True, separators=(",", ":"), allow_nan=False).encode()
+    assert sha256(canonical).hexdigest() == first["input_sha256"]
+    assert all(first[key] == value for key, value in replay.items())
+
+    relative = f"data/components/batteries/{design_payload['powertrain']['battery_id']}.json"
+    component = tmp_path / relative
+    changed = json.loads(component.read_bytes())
+    original_resistance = changed["internal_resistance_ohm"]
+    changed["internal_resistance_ohm"] *= 1.1
+    component.write_text(json.dumps(changed), encoding="utf-8")
+    second = client.post(path, json=request).json()
+    assert second["status"] == "completed"
+    later = client.get(f"/api/simulations/{second['simulation_id']}/inputs").json()
+    assert later["model_environment"]["sha256"] != frozen["model_environment"]["sha256"]
+    assert frozen["model_environment"]["component_data"][relative]["internal_resistance_ohm"] == original_resistance
+    assert later["model_environment"]["component_data"][relative]["internal_resistance_ohm"] == original_resistance * 1.1
+    assert client.get(frozen_path).content == frozen_bytes
+    assert client.delete(f"/api/designs/{created['id']}").status_code == 200
 
 
 def test_simulation_failure_is_reported_not_crashing(client):

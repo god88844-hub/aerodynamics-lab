@@ -1,0 +1,68 @@
+{
+  "confidence_level": 0.95,
+  "criteria": {
+    "M21": {
+      "cell_voltage_mae_v": 0.05,
+      "cell_voltage_max_optimism_v": 0.1,
+      "endurance_relative_error": 0.05,
+      "energy_relative_error": 0.05,
+      "late_or_missed_cutoffs_max": 0
+    },
+    "M22": {
+      "sign_resolution_measurement_confidence": 0.95,
+      "sign_resolved_error_count_max": 0,
+      "thrust_torque_current_nmae": 0.05,
+      "thrust_torque_current_nrmse": 0.1
+    },
+    "M23": {
+      "altitude_max_error_m": 0.3,
+      "altitude_rmse_m": 0.1,
+      "attitude_max_error_deg": 5.0,
+      "attitude_rmse_deg": 2.0,
+      "latency_max_error_s": 0.005
+    },
+    "M24": {
+      "acceleration_vector_max_error_m_s2": 1.5,
+      "acceleration_vector_rmse_m_s2": 0.75,
+      "cp_mae": 0.0005,
+      "ct_mae": 0.001,
+      "temperature_mae_k": 2.0,
+      "temperature_max_error_k": 5.0
+    },
+    "M25": {
+      "failure_load_overprediction_beyond_uncertainty_max": 0.0,
+      "failure_load_relative_error": 0.1,
+      "fault_miss_probability_upper": 0.01,
+      "healthy_false_alarm_probability_upper": 0.05,
+      "resonance_frequency_relative_error": 0.05,
+      "zero_false_alarm_example_n": 59,
+      "zero_miss_example_n": 299
+    },
+    "M26": {
+      "altitude_max_error_m": 0.3,
+      "altitude_rmse_m": 0.1,
+      "attitude_max_error_deg": 5.0,
+      "attitude_rmse_deg": 2.0,
+      "energy_relative_error": 0.05,
+      "late_or_missed_critical_events_max": 0,
+      "position_3d_max_error_m": 1.0,
+      "position_3d_rmse_m": 0.25,
+      "vertical_speed_max_error_m_s": 0.5,
+      "vertical_speed_rmse_m_s": 0.2
+    },
+    "M27": {
+      "all_success_example_n": 59,
+      "cohort_rule": "each_registered_hardware_regime_cohort",
+      "confidence_method": "exact_binomial_clopper_pearson",
+      "coverage_unit": "whole_flight_joint_all_critical_outputs_and_times",
+      "joint_coverage_min": 0.95,
+      "maximum_half_width_to_decision_tolerance_ratio": 1.0,
+      "one_sided_lower_confidence_min": 0.95
+    }
+  },
+  "effective_date": "2026-11-20",
+  "historical_campaign_role": "DEVELOPMENT",
+  "policy_version": "1.0.0",
+  "scope": "registered_hardware_regime_decision_only",
+  "status": "PROSPECTIVE_PENDING_OWNER_AND_QUALIFIED_REVIEW"
+}

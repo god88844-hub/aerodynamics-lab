@@ -1,0 +1,32 @@
+{
+  "contract_bundle": "wp1_wp3_1",
+  "files": {
+    "aero_loads.schema.json": "7a69422f7051776a2d3cf08d636cf450e7e11b879583816b8b76420e4fed63fe",
+    "blade.schema.json": "bee6ac2c444ebe4dfe1c8cc7271f768a238122cc644053c89f247808f9db8e7a",
+    "box.schema.json": "b944428331125c46e6be7f63d5201fdce80aea6a1f6e06e5cf39a0551d05d779",
+    "cad_torque.schema.json": "33093c73fcf2ad8dd7bc771f3742a8d4c1d8c620d3b80f16cdf2b65aad649579",
+    "capabilities.json": "4c1f2f80b9148d8a8971b17f7e80200fb035e1077a812885c21a136837efb3b5",
+    "evidence.schema.json": "9d15b55b370e5de8539a48a3a78aa8e15235a9fad7ac10d6fcfe958a0235ddbf",
+    "frames.schema.json": "8987e253d151d13eb8555baa5977187367b28101ec39bc6515227d98b0951a85",
+    "geometry_aero.schema.json": "c49c749b23b4595b32da6e1b22855590af4452fc62f9f615df636697c9efdcfa",
+    "job.schema.json": "a31d852ac8b7871e0792351d804e6f71b8a8f5f2bd14ff58a417aa46dc5615e6",
+    "model.schema.json": "a752146288cf216fa60118d7e1c5e7abc41d0f0c00a7696b5a4f6b83607d4daf",
+    "project.schema.json": "06d8c04a12f2f9e86b75999d9f476582b9446157c15777300689fec5151973d2",
+    "resources.schema.json": "e4aad7ab28243212af4a28afeded054433a440f11c4c6cee606f1cd95c6b3a55",
+    "solver.schema.json": "c4b69dd171893b7c6fe51a87769e52abdfb69eedd9dc970cebeec5e5f304edea",
+    "validation-policy.json": "bd54f082f3f838d091c69928a514ad8dd2fa1be78699a36461aa5d0d39a6d00c",
+    "worker_request.schema.json": "60a8bd8967bf30bfef144959176eb93f6079af1e4b0419dcc90ffe33847c3318"
+  },
+  "owner_signoff": "pending",
+  "policy_status": "PROSPECTIVE_PENDING_OWNER_AND_QUALIFIED_REVIEW",
+  "semantics": "new semantic versions require new lock; never imply physical acceptance",
+  "validation_policy_raw_sha256": "a732dbe33ac601b6e0ebb20ac3b9acaf7293d8bc48d4cf619d38a5cca25b1dcf",
+  "validator_sources": {
+    "packages/desktop_worker/protocol.py": "8becd898671e3e6583a0f02a78958abac799a32168ae32e61fe14b15e2ddd92b",
+    "packages/desktop_worker/resources.py": "5b23ac6bc63521a784cc3a40c6038eb4356c694252d8d349ffcb77df9d05b6dd",
+    "packages/shared-schemas/aeroforge_schemas/cad.py": "1009eafd48a0b1ac8236af0e48ecd7074dbbde7e64fcd66e7f9ff4904e821a51",
+    "packages/shared-schemas/aeroforge_schemas/foundation.py": "9cdfedcd0460e4fcac64a89fbe76e83f91af52b6af5dcdcceae235fd8f84ac4c",
+    "packages/shared-schemas/aeroforge_schemas/project.py": "3a03ca49871809b9305c664e1e88d043626489bd0f948f899be13f7f59e2f8a1",
+    "scripts/lab_contract.py": "47a7e2cf019f0ee52d3c8c140c9f25b2d798defab990aaa3b3551d80294a7f2d"
+  }
+}

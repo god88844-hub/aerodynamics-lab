@@ -11,18 +11,23 @@ from uuid import uuid4
 
 from desktop_worker.io import json_bytes, write_result
 from desktop_worker.supervision import stop_session
+from desktop_worker.resources import ResourceBudget
 
 
 class WorkerClient:
     def __init__(self, root: Path, session_parent: Path, *, python: str = sys.executable,
-                 owner_pid: int | None = None, job_timeout: float = 60, idle_timeout: float = 300):
+                 owner_pid: int | None = None, job_timeout: float = 60, idle_timeout: float = 300,
+                 resources: ResourceBudget | None = None):
         self.session_id = uuid4().hex
         self.session = session_parent.resolve() / self.session_id
         self.session.mkdir(parents=True, mode=0o700)
+        self.resources = resources or ResourceBudget()
+        write_result(self.session / "resource-request.json", self.resources.document())
         self.process = subprocess.Popen([
             python, str(root / "scripts/lab_worker.py"), "--session", str(self.session),
             "--session-id", self.session_id, "--owner-pid", str(owner_pid or os.getpid()),
-            "--job-timeout", str(job_timeout), "--idle-timeout", str(idle_timeout)],
+            "--job-timeout", str(job_timeout), "--idle-timeout", str(idle_timeout),
+            "--resources-file", str(self.session / "resource-request.json")],
             stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL,
             creationflags=subprocess.CREATE_NO_WINDOW if os.name == "nt" else 0)
         self.last_job = None
@@ -36,7 +41,9 @@ class WorkerClient:
                     raise ValueError("Worker readiness belongs to a different session")
                 return ready
             if self.process.poll() is not None:
-                raise RuntimeError("CAD worker failed to start; inspect its session log")
+                retired = self.session / "retired.json"
+                reason = json.loads(retired.read_bytes()).get("reason") if retired.exists() else "inspect its session log"
+                raise RuntimeError("CAD worker failed to start: " + str(reason))
             time.sleep(0.01)
         raise TimeoutError("CAD worker readiness deadline exceeded")
 
@@ -46,6 +53,7 @@ class WorkerClient:
         job_id = uuid4().hex
         packet = {"protocol": "desktop_worker_1", "session_id": self.session_id,
                   "job_id": job_id, "operation": operation, "payload": payload,
+                  "resources": self.resources.document(),
                   "asset_root": str(asset_root.resolve()) if asset_root is not None else None}
         if (self.session / "pending.json").exists():
             raise RuntimeError("The worker already has a queued request")
@@ -69,6 +77,7 @@ class WorkerClient:
                     ("protocol", "desktop_worker_1"), ("session_id", self.session_id),
                     ("job_id", job_id), ("request_sha256", digest), ("output_sha256", sha256(result).hexdigest()))):
                     raise ValueError("Worker completion does not match this session, request and result")
+                verify_approval(self.last_job, receipt)
                 return json.loads(result)
             if (self.session / "retired.json").exists() or self.process.poll() is not None:
                 raise RuntimeError("Worker retired before publishing this job's result")
@@ -87,3 +96,13 @@ class WorkerClient:
 
     def __exit__(self, *args):
         self.close()
+
+
+def verify_approval(directory: Path, receipt: dict) -> None:
+    raw = (directory / "approved.json").read_bytes()
+    approval = json.loads(raw)
+    if receipt.get("resource_approval_sha256") != sha256(raw).hexdigest() or any(
+        approval.get(key) != receipt.get(key)
+        for key in ("protocol", "session_id", "job_id", "request_sha256", "output_sha256")
+    ):
+        raise ValueError("Resource approval does not match this completion")

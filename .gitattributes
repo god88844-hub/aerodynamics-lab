@@ -4,3 +4,12 @@
 # Frozen benchmark files are verified by their exact bytes on every platform.
 data/benchmarks/assembly-200/** -text
 docs/prototypes/measurements/assembly-200/** -text
+docs/contracts/wp1-wp3-1/** -text
+docs/VALIDATION_TOLERANCES.md -text
+# Source hashes in the versioned lock must survive Windows/Linux checkout.
+packages/shared-schemas/aeroforge_schemas/foundation.py text eol=lf
+packages/shared-schemas/aeroforge_schemas/project.py text eol=lf
+packages/shared-schemas/aeroforge_schemas/cad.py text eol=lf
+packages/desktop_worker/resources.py text eol=lf
+packages/desktop_worker/protocol.py text eol=lf
+scripts/lab_contract.py text eol=lf

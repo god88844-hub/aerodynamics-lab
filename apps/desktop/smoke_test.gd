@@ -261,6 +261,25 @@ func _run() -> void:
 			quit(35)
 			return
 		print("CAD engine reuse, active cancellation and fresh-session recovery checks passed")
+		var preserved_project: Dictionary = desktop.get("project").duplicate(true)
+		desktop.get("limits_fields")["memory"].value = 16
+		desktop.call("_apply_limits")
+		desktop.call("_rebuild_body")
+		var refused_deadline: int = Time.get_ticks_msec() + 20000
+		while desktop.get("job_pid") > 0 and Time.get_ticks_msec() < refused_deadline:
+			await process_frame
+		if desktop.get("job_pid") > 0 or desktop.call("_completed_output") or desktop.get("project") != preserved_project or not "memory_budget_exceeded" in str(desktop.get("status_label").text):
+			push_error("Desktop resource refusal lost the project or reported false success")
+			quit(42)
+			return
+		desktop.get("limits_fields")["memory"].value = 1024
+		desktop.call("_apply_limits")
+		desktop.call("_rebuild_body")
+		if not await _wait_for_job(desktop):
+			push_error("Desktop did not recover after restoring worker limits")
+			quit(43)
+			return
+		print("Desktop resource refusal, project preservation and limit recovery checks passed")
 	var assembly_fixture: String = desktop.call("repository_root").path_join("data/benchmarks/assembly-200/project.json")
 	desktop.call("_start_job", "validate", assembly_fixture)
 	if not await _wait_for_job(desktop):

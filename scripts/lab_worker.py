@@ -18,6 +18,7 @@ def main() -> int:
     parser.add_argument("--startup-timeout", type=float, default=30)
     parser.add_argument("--job-timeout", type=float, default=60)
     parser.add_argument("--idle-timeout", type=float, default=300)
+    parser.add_argument("--resources-file", type=Path)
     args = parser.parse_args()
     from desktop_worker.supervision import IDENTIFIER, stop_session, supervise
     if not IDENTIFIER.fullmatch(args.session_id):
@@ -38,8 +39,17 @@ def main() -> int:
             return serve(args.session, args.session_id)
         if args.owner_pid is None:
             parser.error("supervision requires the desktop owner PID")
+        import json
+        resources = None
+        if args.resources_file:
+            with args.resources_file.open("rb") as source:
+                raw = source.read(64 * 1024 + 1)
+            if len(raw) > 64 * 1024:
+                raise ValueError("Resource request exceeds its size limit")
+            resources = json.loads(raw)
         return supervise(args.session, args.session_id, args.owner_pid,
-                         startup_timeout=args.startup_timeout, job_timeout=args.job_timeout, idle_timeout=args.idle_timeout)
+                         startup_timeout=args.startup_timeout, job_timeout=args.job_timeout,
+                         idle_timeout=args.idle_timeout, resources=resources)
     except Exception as error:
         print(str(error), file=sys.stderr)
         return 2

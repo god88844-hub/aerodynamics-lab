@@ -9,6 +9,7 @@ import tempfile
 import numpy as np
 
 from aeroforge_schemas.cad import BladeRecipe, BoxRecipe, CadTorqueRequest
+from aeroforge_schemas.foundation import require_backend
 from aeroforge_schemas.project import AssemblyVehicle, Environment, Experiment
 from app.services.project_assets import asset_bytes
 from app.services.run_provenance import capture_provenance
@@ -77,6 +78,7 @@ def _frozen_solid_properties(request: CadTorqueRequest, asset_root: Path) -> dic
 
 
 def run_cad_torque(request: CadTorqueRequest, asset_root: Path) -> dict:
+    require_backend("cad_torque_1")
     # Freeze caller-owned models, and refuse a changing installed model environment.
     request = CadTorqueRequest.model_validate_json(request.model_dump_json())
     identity = _identity()

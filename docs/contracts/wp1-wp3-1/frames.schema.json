@@ -1,0 +1,43 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "angles": {
+      "const": "rad",
+      "default": "rad",
+      "title": "Angles",
+      "type": "string"
+    },
+    "body": {
+      "const": "right_handed_x_forward_y_left_z_up",
+      "default": "right_handed_x_forward_y_left_z_up",
+      "title": "Body",
+      "type": "string"
+    },
+    "quaternion": {
+      "const": "wxyz_body_to_world",
+      "default": "wxyz_body_to_world",
+      "title": "Quaternion",
+      "type": "string"
+    },
+    "relative_air_velocity": {
+      "const": "vehicle_minus_air",
+      "default": "vehicle_minus_air",
+      "title": "Relative Air Velocity",
+      "type": "string"
+    },
+    "units": {
+      "const": "SI",
+      "default": "SI",
+      "title": "Units",
+      "type": "string"
+    },
+    "world": {
+      "const": "local_right_handed_z_up",
+      "default": "local_right_handed_z_up",
+      "title": "World",
+      "type": "string"
+    }
+  },
+  "title": "Frames",
+  "type": "object"
+}

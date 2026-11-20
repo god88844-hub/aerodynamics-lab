@@ -170,7 +170,12 @@ def stop_session(session: Path, session_id: str) -> None:
 
 
 def supervise(session: Path, session_id: str, owner_pid: int, *, startup_timeout: float = 30,
-              job_timeout: float = 60, idle_timeout: float = 300) -> int:
+              job_timeout: float = 60, idle_timeout: float = 300, resources=None) -> int:
+    from desktop_worker.resources import ResourceBudget, admission, capacity_snapshot
+    from desktop_worker.governor import BudgetGovernor
+
+    budget = ResourceBudget.from_dict(resources or {})
+    job_timeout = min(job_timeout, budget.wall_time_s)
     if not IDENTIFIER.fullmatch(session_id) or session.name != session_id:
         raise ValueError("Invalid worker session ID")
     session.mkdir(parents=True, exist_ok=True)
@@ -199,15 +204,27 @@ def supervise(session: Path, session_id: str, owner_pid: int, *, startup_timeout
     engine_ref = None
     cleaned_up = False
     ready_seen = False
+    governor = None
     try:
+        admitted = admission(budget, capacity_snapshot(session), wall_limit_s=job_timeout)
+        write_result(session / "resource-admission.json", admitted)
+        if admitted["status"] != "admitted":
+            reason = "resource_admission_refused: " + ", ".join(admitted["reasons"])
+            cleaned_up = True  # no engine was launched
+            return 2
+        scratch = session / "scratch"
+        scratch.mkdir()
+        environment = {**os.environ, "TEMP": str(scratch), "TMP": str(scratch), "TMPDIR": str(scratch)}
         with (session / "engine.log").open("wb") as log:
             engine = subprocess.Popen([sys.executable, str(script), "--engine", "--session", str(session),
                                        "--session-id", session_id], stdin=subprocess.DEVNULL,
                                       stdout=log, stderr=subprocess.STDOUT, start_new_session=os.name != "nt",
-                                      creationflags=subprocess.CREATE_NO_WINDOW if os.name == "nt" else 0)
+                                      creationflags=subprocess.CREATE_NO_WINDOW if os.name == "nt" else 0,
+                                      env=environment)
             try:
                 engine_ref = ProcessRef(engine.pid)
                 write_result(session / "engine-launcher.json", {"process": engine_ref.record(), "session_id": session_id})
+                governor = BudgetGovernor(session, budget)
                 while True:
                     now = time.monotonic()
                     if not owner.alive():
@@ -218,6 +235,10 @@ def supervise(session: Path, session_id: str, owner_pid: int, *, startup_timeout
                         break
                     if engine.poll() is not None:
                         reason = "engine_exited"
+                        break
+                    resource_failure = governor.check()
+                    if resource_failure:
+                        reason = resource_failure
                         break
                     if not (session / "ready.json").exists() and now - started > startup_timeout:
                         reason = "startup_timeout"
@@ -235,6 +256,10 @@ def supervise(session: Path, session_id: str, owner_pid: int, *, startup_timeout
                         last_activity = now
                         if now - active_since > job_timeout:
                             reason = "job_timeout"
+                            break
+                        resource_failure = governor.approve(job)
+                        if resource_failure:
+                            reason = resource_failure
                             break
                     else:
                         active_id, active_since = None, None
@@ -263,6 +288,8 @@ def supervise(session: Path, session_id: str, owner_pid: int, *, startup_timeout
     except Exception as error:
         reason = str(error)
     finally:
+        if governor is not None:
+            governor.close()
         if engine_ref is not None:
             engine_ref.close()
         owner.close()

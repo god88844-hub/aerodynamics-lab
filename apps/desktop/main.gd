@@ -42,6 +42,9 @@ var torque_step: SpinBox
 var cad_worker: RefCounted
 var job_uses_reusable: bool = false
 var last_worker_check_ms: int = 0
+var limits_dialog: AcceptDialog
+var limits_fields: Dictionary = {}
+var limits_status: Label
 
 
 func repository_root() -> String:
@@ -109,6 +112,7 @@ func _build_interface() -> void:
 	_add_button(toolbar, "Build blade recipe", _open_blade_recipe)
 	_add_button(toolbar, "New / edit test body", _open_body_editor)
 	_add_button(toolbar, "Run applied-torque experiment", _run_cad_torque)
+	_add_button(toolbar, "Worker limits", _open_limits)
 	var split: HSplitContainer = HSplitContainer.new()
 	split.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	layout.add_child(split)
@@ -207,6 +211,22 @@ func _build_interface() -> void:
 	body_fields["material_density_kg_m3"] = _numeric_field(body_form, "Density (kg/m³)", 0.001, 100000, 0.001, 500)
 	body_dialog.confirmed.connect(_rebuild_body)
 	add_child(body_dialog)
+	limits_dialog = AcceptDialog.new()
+	limits_dialog.title = "Local CAD worker limits"
+	limits_dialog.ok_button_text = "Apply for next session"
+	var limits_form: VBoxContainer = VBoxContainer.new()
+	limits_dialog.add_child(limits_form)
+	var limits_help: Label = Label.new()
+	limits_help.text = "Limits are checked every 0.1 s; brief peaks can exceed them.\nMemory includes the worker process tree. No hard OS quota.\nGeometry and numerical precision are never reduced to fit."
+	limits_form.add_child(limits_help)
+	limits_fields["memory"] = _numeric_field(limits_form, "Memory allowance (MiB)", 16, 65536, 16, 1024)
+	limits_fields["workspace"] = _numeric_field(limits_form, "Workspace allowance (MiB)", 1, 65536, 1, 256)
+	limits_fields["seconds"] = _numeric_field(limits_form, "Maximum job time (s)", 0.01, 900, 0.01, 60)
+	limits_status = Label.new()
+	limits_status.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	limits_form.add_child(limits_status)
+	limits_dialog.confirmed.connect(_apply_limits)
+	add_child(limits_dialog)
 	_update_camera()
 
 
@@ -225,6 +245,28 @@ func _numeric_field(parent: Node, title: String, minimum: float, maximum: float,
 	field.custom_minimum_size.x = 120
 	row.add_child(field)
 	return field
+
+
+func _open_limits() -> void:
+	if job_pid > 0:
+		status_label.text = "Finish or cancel the active job before changing limits."
+		return
+	var admission_path: String = str(cad_worker.get("session_path")).path_join("resource-admission.json")
+	limits_status.text = "No admission decision yet. The next CAD action checks available memory and disk space."
+	if FileAccess.file_exists(admission_path):
+		var admitted: Variant = JSON.parse_string(FileAccess.get_file_as_string(admission_path))
+		if admitted is Dictionary:
+			limits_status.text = "Last session: %s\nRequested: %s\nEffective: %s\nReasons: %s" % [admitted.get("status"), str(admitted.get("requested")), str(admitted.get("effective")), str(admitted.get("reasons"))]
+	limits_dialog.popup_centered(Vector2i(720, 440))
+
+
+func _apply_limits() -> void:
+	if job_pid > 0:
+		return
+	if cad_worker.set_limits(int(limits_fields["memory"].value), int(limits_fields["workspace"].value), float(limits_fields["seconds"].value)):
+		status_label.text = "Worker limits saved for the next CAD session."
+	else:
+		status_label.text = "The old worker could not be stopped; limits were not changed."
 
 
 func _body_recipe() -> Dictionary:
@@ -687,7 +729,7 @@ func _process(delta: float) -> void:
 					if output.has("geometry"):
 						_show_cad_properties(output["geometry"]["mass_properties"])
 		else:
-			status_label.text = "Worker ended without a result. Check LAB_PYTHON and backend dependencies."
+			status_label.text = cad_worker.failure_reason() if job_uses_reusable else "Worker ended without a result. Check LAB_PYTHON and backend dependencies."
 	if job_pid < 0 and cad_worker != null and cad_worker.get("pid") > 0 and Time.get_ticks_msec() - last_worker_check_ms > 1000:
 		last_worker_check_ms = Time.get_ticks_msec()
 		if cad_worker.has_failed():

@@ -1,0 +1,69 @@
+{
+  "$defs": {
+    "JsonValue": {}
+  },
+  "additionalProperties": false,
+  "properties": {
+    "asset_root": {
+      "anyOf": [
+        {
+          "maxLength": 4096,
+          "minLength": 1,
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Asset Root"
+    },
+    "job_id": {
+      "pattern": "^[0-9a-f]{32}$",
+      "title": "Job Id",
+      "type": "string"
+    },
+    "operation": {
+      "enum": [
+        "build-body",
+        "build-blade",
+        "cad-torque"
+      ],
+      "title": "Operation",
+      "type": "string"
+    },
+    "payload": {
+      "additionalProperties": {
+        "$ref": "#/$defs/JsonValue"
+      },
+      "title": "Payload",
+      "type": "object"
+    },
+    "protocol": {
+      "const": "desktop_worker_1",
+      "default": "desktop_worker_1",
+      "title": "Protocol",
+      "type": "string"
+    },
+    "resources": {
+      "additionalProperties": {
+        "$ref": "#/$defs/JsonValue"
+      },
+      "title": "Resources",
+      "type": "object"
+    },
+    "session_id": {
+      "pattern": "^[0-9a-f]{32}$",
+      "title": "Session Id",
+      "type": "string"
+    }
+  },
+  "required": [
+    "session_id",
+    "job_id",
+    "operation",
+    "payload"
+  ],
+  "title": "WorkerRequest",
+  "type": "object"
+}
