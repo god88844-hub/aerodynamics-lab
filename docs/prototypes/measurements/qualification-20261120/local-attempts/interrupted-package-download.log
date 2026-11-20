@@ -1,0 +1,29 @@
+Ignoring contourpy: markers 'python_full_version >= "3.12"' don't match your environment
+Ignoring numpy: markers 'python_full_version >= "3.12"' don't match your environment
+Ignoring scipy: markers 'python_full_version >= "3.12"' don't match your environment
+Ignoring uvloop: markers 'platform_python_implementation != "PyPy" and sys_platform != "cygwin" and sys_platform != "win32"' don't match your environment
+Collecting aiohappyeyeballs==2.7.1 (from -r C:\Users\god88\Documents\Codex\2026-11-17\referenced-chatgpt-conversation-this-is-an\work\prototype-local-install\apps\desktop\requirements-cad.lock (line 3))
+  Downloading aiohappyeyeballs-2.7.1-py3-none-any.whl (15 kB)
+Collecting aiohttp==3.14.5 (from -r C:\Users\god88\Documents\Codex\2026-11-17\referenced-chatgpt-conversation-this-is-an\work\prototype-local-install\apps\desktop\requirements-cad.lock (line 7))
+  Downloading aiohttp-3.14.5-cp311-cp311-win_amd64.whl (512 kB)
+     ------------------------------------- 512.6/512.6 kB 52.8 kB/s eta 0:00:00
+Collecting aiosignal==1.4.0 (from -r C:\Users\god88\Documents\Codex\2026-11-17\referenced-chatgpt-conversation-this-is-an\work\prototype-local-install\apps\desktop\requirements-cad.lock (line 170))
+  Downloading aiosignal-1.4.0-py3-none-any.whl (7.5 kB)
+Collecting alembic==1.20.1 (from -r C:\Users\god88\Documents\Codex\2026-11-17\referenced-chatgpt-conversation-this-is-an\work\prototype-local-install\apps\desktop\requirements-cad.lock (line 174))
+  Downloading alembic-1.20.1-py3-none-any.whl (270 kB)
+     ------------------------------------- 270.4/270.4 kB 39.8 kB/s eta 0:00:00
+Collecting annotated-doc==0.0.7 (from -r C:\Users\god88\Documents\Codex\2026-11-17\referenced-chatgpt-conversation-this-is-an\work\prototype-local-install\apps\desktop\requirements-cad.lock (line 180))
+  Downloading annotated_doc-0.0.7-py3-none-any.whl (5.3 kB)
+Collecting annotated-types==0.8.0 (from -r C:\Users\god88\Documents\Codex\2026-11-17\referenced-chatgpt-conversation-this-is-an\work\prototype-local-install\apps\desktop\requirements-cad.lock (line 186))
+  Downloading annotated_types-0.8.0-py3-none-any.whl (13 kB)
+Collecting anyio==4.16.0 (from -r C:\Users\god88\Documents\Codex\2026-11-17\referenced-chatgpt-conversation-this-is-an\work\prototype-local-install\apps\desktop\requirements-cad.lock (line 192))
+  Downloading anyio-4.16.0-py3-none-any.whl (134 kB)
+     ------------------------------------- 134.5/134.5 kB 26.8 kB/s eta 0:00:00
+Collecting attrs==26.1.0 (from -r C:\Users\god88\Documents\Codex\2026-11-17\referenced-chatgpt-conversation-this-is-an\work\prototype-local-install\apps\desktop\requirements-cad.lock (line 201))
+  Downloading attrs-26.1.0-py3-none-any.whl (67 kB)
+     --------------------------------------- 67.5/67.5 kB 51.7 kB/s eta 0:00:00
+Collecting cadquery==2.8.0 (from -r C:\Users\god88\Documents\Codex\2026-11-17\referenced-chatgpt-conversation-this-is-an\work\prototype-local-install\apps\desktop\requirements-cad.lock (line 205))
+  Downloading cadquery-2.8.0-py3-none-any.whl (201 kB)
+     ------------------------------------- 201.9/201.9 kB 18.3 kB/s eta 0:00:00
+Collecting cadquery-ocp==7.9.3.1.1 (from -r C:\Users\god88\Documents\Codex\2026-11-17\referenced-chatgpt-conversation-this-is-an\work\prototype-local-install\apps\desktop\requirements-cad.lock (line 209))
+  Downloading cadquery_ocp-7.9.3.1.1-cp311-cp311-win_amd64.whl (46.3 MB)

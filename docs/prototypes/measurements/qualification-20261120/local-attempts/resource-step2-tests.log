@@ -1,0 +1,28 @@
+...........F.............                                                [100%]
+================================== FAILURES ===================================
+_____ test_real_workspace_overage_preserves_completed_assets_and_recovers _____
+
+tmp_path = WindowsPath('C:/Users/god88/AppData/Local/Temp/pytest-of-god88/pytest-875/test_real_workspace_overage_pr0')
+
+    def test_real_workspace_overage_preserves_completed_assets_and_recovers(tmp_path):
+        with WorkerClient(ROOT, tmp_path, resources=ResourceBudget(workspace_bytes=MIB)) as client:
+            client.wait_ready()
+            built = client.request("build-body", BoxRecipe().model_dump(mode="json"))
+            previous = client.last_job
+            frozen = (previous / "result.json").read_bytes()
+            receipt = read_record(previous / "complete.json")
+            verify_approval(previous, receipt)
+            # An authentic completion cannot be paired with changed resource approval.
+            approved_path = previous / "approved.json"
+            original_approval = approved_path.read_bytes()
+            approved_path.write_bytes(original_approval + b" ")
+            with pytest.raises(ValueError, match="approval"):
+                verify_approval(previous, receipt)
+            approved_path.write_bytes(original_approval)
+            recipe = json.loads((ROOT / "data/cad/blade-example.json").read_bytes())
+>           with pytest.raises(RuntimeError, match="workspace_budget_exceeded"):
+E           Failed: DID NOT RAISE RuntimeError
+
+tests\cad\test_worker_resources.py:52: Failed
+=========================== short test summary info ===========================
+FAILED tests/cad/test_worker_resources.py::test_real_workspace_overage_preserves_completed_assets_and_recovers

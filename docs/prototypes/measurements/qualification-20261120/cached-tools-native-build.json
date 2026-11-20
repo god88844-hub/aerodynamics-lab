@@ -1,0 +1,87 @@
+{
+  "stages": [
+    {
+      "seconds": 1.0631045,
+      "uri": "https://codeload.github.com/godotengine/godot-cpp/zip/e83fd0904c13356ed1d4c3d09f8bb9132bdc6b77",
+      "sha256": "579af30c5f62c1084edb28216788188227d80a583f0114463699ac4edd22140f",
+      "archive_cached": true,
+      "command": "verified-download-and-extract"
+    },
+    {
+      "seconds": 0.463121,
+      "uri": "https://github.com/godotengine/godot/releases/download/4.7.2-stable/Godot_v4.7.2-stable_win64.exe.zip",
+      "sha256": "731980f9608d61333e5baf54a2ef17210acc7a538446c0cb9969f002aca1e953",
+      "archive_cached": true,
+      "command": "verified-download-and-extract"
+    },
+    {
+      "arguments": [
+        "-c",
+        "import cadquery"
+      ],
+      "seconds": 4.1368318,
+      "exit_code": 0,
+      "command": "C:\\Users\\god88\\Documents\\Codex\\2026-11-17\\referenced-chatgpt-conversation-this-is-an\\work\\cad-worker-env\\Scripts\\python.exe"
+    },
+    {
+      "arguments": [
+        "-S",
+        "C:\\Users\\god88\\Documents\\Codex\\2026-11-17\\referenced-chatgpt-conversation-this-is-an\\work\\prototype-gate-report\\packages\\engineering-core",
+        "-B",
+        "C:\\Users\\god88\\Documents\\Codex\\2026-11-17\\referenced-chatgpt-conversation-this-is-an\\work\\prototype-gate-report\\.cache\\desktop\\native",
+        "-G",
+        "Ninja",
+        "-DCMAKE_BUILD_TYPE=Release",
+        "-DLAB_BUILD_GDEXTENSION=ON",
+        "-DPython3_EXECUTABLE=C:\\Users\\god88\\Documents\\Codex\\2026-11-17\\referenced-chatgpt-conversation-this-is-an\\work\\cad-worker-env\\Scripts\\python.exe",
+        "-DFETCHCONTENT_SOURCE_DIR_GODOT_CPP=C:\\Users\\god88\\Documents\\Codex\\2026-11-17\\referenced-chatgpt-conversation-this-is-an\\work\\prototype-gate-report\\.cache\\desktop\\bindings\\godot-cpp-e83fd0904c13356ed1d4c3d09f8bb9132bdc6b77"
+      ],
+      "seconds": 9.9236483,
+      "exit_code": 0,
+      "command": "cmake"
+    },
+    {
+      "arguments": [
+        "--build",
+        "C:\\Users\\god88\\Documents\\Codex\\2026-11-17\\referenced-chatgpt-conversation-this-is-an\\work\\prototype-gate-report\\.cache\\desktop\\native",
+        "--parallel",
+        "2"
+      ],
+      "seconds": 38.7229639,
+      "exit_code": 0,
+      "command": "cmake"
+    },
+    {
+      "arguments": [
+        "--test-dir",
+        "C:\\Users\\god88\\Documents\\Codex\\2026-11-17\\referenced-chatgpt-conversation-this-is-an\\work\\prototype-gate-report\\.cache\\desktop\\native",
+        "--output-on-failure"
+      ],
+      "seconds": 2.4207499,
+      "exit_code": 0,
+      "command": "ctest"
+    },
+    {
+      "arguments": [
+        "--headless",
+        "--path",
+        "C:\\Users\\god88\\Documents\\Codex\\2026-11-17\\referenced-chatgpt-conversation-this-is-an\\work\\prototype-gate-report\\apps\\desktop",
+        "--script",
+        "smoke_test.gd"
+      ],
+      "seconds": 19.6367773,
+      "exit_code": 10,
+      "command": "C:\\Users\\god88\\Documents\\Codex\\2026-11-17\\referenced-chatgpt-conversation-this-is-an\\work\\prototype-gate-report\\.cache\\desktop\\godot\\Godot_v4.7.2-stable_win64_console.exe"
+    }
+  ],
+  "source_sha": "467039f61d2be56de84152c4f4df0543658a5ff2",
+  "protocol": "windows_empty_app_cache_build_1",
+  "pip_no_cache": "1",
+  "seconds": 84.7724904,
+  "started_utc": "2026-11-20T15:45:04.6522020Z",
+  "cache_path": "C:\\Users\\god88\\Documents\\Codex\\2026-11-17\\referenced-chatgpt-conversation-this-is-an\\work\\prototype-gate-report\\.cache\\desktop",
+  "completed_utc": "2026-11-20T15:46:29.4243884Z",
+  "success": false,
+  "cache_preexisted": true,
+  "scope": "Empty application/dependency/build cache; preinstalled Python/compiler/CMake/Ninja. OS and network caches uncontrolled; not a fresh-boot claim."
+}

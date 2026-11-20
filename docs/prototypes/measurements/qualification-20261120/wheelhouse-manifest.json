@@ -1,0 +1,438 @@
+{
+  "scope": "Unchanged wheel bytes approved by the lock; compatible filename tags reconstructed from WHEEL/METADATA. Pip rechecks hashes offline.",
+  "requirements_sha256": "12fdb4132c62fecd7137230b5a853197692667d143450fbe7ed4eec40daa2ad3",
+  "wheels": [
+    {
+      "file": "Pygments-2.21.0-py3-none-any.whl",
+      "sha256": "2363c69b61c4a97c838da3b130dcd6468f4848992b21a82f2a63ec34377137d9",
+      "source_cache_body": "C:\\Users\\god88\\AppData\\Local\\pip\\cache\\http-v2\\0\\0\\4\\f\\5\\004f51e4cdaa64d7951a6294c47f410a2290cde6415bd52c394181fd.body",
+      "bytes": 1250147
+    },
+    {
+      "file": "SQLAlchemy-2.1.9-cp311-cp311-win_amd64.whl",
+      "sha256": "a5e474bbfdf98c01e17e625954759f6237f0394af18bae7c0bc742151aca507a",
+      "source_cache_body": "C:\\Users\\god88\\AppData\\Local\\pip\\cache\\http-v2\\0\\2\\3\\f\\3\\023f309c9a0a6c91e7fa6ec14c5763be0bb889077fa59167638f30b0.body",
+      "bytes": 2448299
+    },
+    {
+      "file": "multidict-7.2.1-cp311-cp311-win_amd64.whl",
+      "sha256": "a789e3d27fc5665cc0477f10a35a89383313e4c9cf8b5e6af7ea71f039cdcc0e",
+      "source_cache_body": "C:\\Users\\god88\\AppData\\Local\\pip\\cache\\http-v2\\0\\d\\3\\1\\b\\0d31b8ff40a67972aa52a341f82f77cc686949c1cc275159006c3a8a.body",
+      "bytes": 94895
+    },
+    {
+      "file": "httpx-0.28.1-py3-none-any.whl",
+      "sha256": "d909fcccc110f8c7faf814ca82a9a4d816bc5a6dbfea25d6591d6985b8ba59ad",
+      "source_cache_body": "C:\\Users\\god88\\AppData\\Local\\pip\\cache\\http-v2\\1\\4\\a\\a\\f\\14aaf7643dce3f389cfaa2f24beba9e2d02071e4624c02c288b2a440.body",
+      "bytes": 73517
+    },
+    {
+      "file": "httpcore-1.0.9-py3-none-any.whl",
+      "sha256": "2d400746a40668fc9dec9810239072b40b4484b640a8c38fd654a024c7a1bf55",
+      "source_cache_body": "C:\\Users\\god88\\AppData\\Local\\pip\\cache\\http-v2\\1\\6\\0\\d\\3\\160d3e8f69a7eca4743b16bea3eecb80155f94e8435ce6481997004c.body",
+      "bytes": 78784
+    },
+    {
+      "file": "cadquery_ocp_proxy-7.9.3.1.1-py3-none-any.whl",
+      "sha256": "ca4164ec4b54956d9fc3e68c67d555b5486cb963c2f71e18df005ba16b921c91",
+      "source_cache_body": "C:\\Users\\god88\\AppData\\Local\\pip\\cache\\http-v2\\1\\7\\7\\6\\3\\177631f716b1ca6bf4bd5dbd0d1ffa46ea8f67461c8f5d028ee10345.body",
+      "bytes": 3322
+    },
+    {
+      "file": "cadquery-2.8.0-py3-none-any.whl",
+      "sha256": "0acaddf36415551c26c3f8237907980ba86c277e211c32398121c839f719c81f",
+      "source_cache_body": "C:\\Users\\god88\\AppData\\Local\\pip\\cache\\http-v2\\1\\8\\2\\a\\a\\182aa09b24f58f176609ff58452a9c4fe564f66aca6cd3087b519d57.body",
+      "bytes": 201893
+    },
+    {
+      "file": "llvmlite-0.50.0-cp311-cp311-win_amd64.whl",
+      "sha256": "ffe46ef508df226e54b5fe1f7bf11122e5297bcdbb3902cc5b670a429d56ff47",
+      "source_cache_body": "C:\\Users\\god88\\AppData\\Local\\pip\\cache\\http-v2\\1\\8\\c\\f\\6\\18cf6a471d2bbb1327f37c355d39f13f6c90d5320fb66d2933338030.body",
+      "bytes": 41865266
+    },
+    {
+      "file": "msgpack-1.2.4-cp311-cp311-win_amd64.whl",
+      "sha256": "9db832747bd05834530189e564a3fe31e2617547dc1f3a005f835eafc2b8e048",
+      "source_cache_body": "C:\\Users\\god88\\AppData\\Local\\pip\\cache\\http-v2\\1\\8\\f\\1\\6\\18f163b0f470b7918505f71629c687db99ac9b78138e23c9cb914b7c.body",
+      "bytes": 76117
+    },
+    {
+      "file": "propcache-0.5.4-cp311-cp311-win_amd64.whl",
+      "sha256": "e904d4d01f36bd6e197590be1533c44e06058771e0746dd073a8ebb3ef880858",
+      "source_cache_body": "C:\\Users\\god88\\AppData\\Local\\pip\\cache\\http-v2\\1\\9\\a\\a\\c\\19aac1274184b9f95237d29d3ce6769263866fa01f920b0698461efb.body",
+      "bytes": 46268
+    },
+    {
+      "file": "vtk-9.6.2-cp311-cp311-win_amd64.whl",
+      "sha256": "b935949cfc80f1d300d0b0ed8ccab47fb45c337910966de33a486d342e3c7daa",
+      "source_cache_body": "C:\\Users\\god88\\AppData\\Local\\pip\\cache\\http-v2\\1\\c\\1\\0\\d\\1c10dffbbfe7b9fad429b28df64ecd857adc441ac7694831e367f17d.body",
+      "bytes": 81290711
+    },
+    {
+      "file": "pytest-9.2.0-py3-none-any.whl",
+      "sha256": "07acdcf88ec174f907dc01af70bf52d49b014bbab03faeeade31c96b18c2e588",
+      "source_cache_body": "C:\\Users\\god88\\AppData\\Local\\pip\\cache\\http-v2\\2\\5\\6\\0\\3\\25603daf65c6bff9032b0bd6188db919b28c8f70c749b7077d1e2521.body",
+      "bytes": 411776
+    },
+    {
+      "file": "trame_common-1.3.0-py3-none-any.whl",
+      "sha256": "28ce1a1ed41e078a9c55523e6f355e82fd72f1402db1c7a8e127301f351936f8",
+      "source_cache_body": "C:\\Users\\god88\\AppData\\Local\\pip\\cache\\http-v2\\2\\6\\7\\c\\b\\267cb4ed4c1ceea760268a297d4152f08f067b81174d6a79dacffce0.body",
+      "bytes": 36590
+    },
+    {
+      "file": "python_dateutil-4.0.0-py3-none-any.whl",
+      "sha256": "a5e246f79eb80475e691bf93862cead98decd8a498cf53ba0516fcdc0f50dc1c",
+      "source_cache_body": "C:\\Users\\god88\\AppData\\Local\\pip\\cache\\http-v2\\2\\b\\1\\d\\2\\2b1d293c3d18b4323770d2cd4fd26b0d9830fd0996d25d67d5bf7d2c.body",
+      "bytes": 92853
+    },
+    {
+      "file": "annotated_types-0.8.0-py3-none-any.whl",
+      "sha256": "f072f4d804ea359e4eaf198b1af7a8b0943881a87f31bb764f8bf219bb9419e0",
+      "source_cache_body": "C:\\Users\\god88\\AppData\\Local\\pip\\cache\\http-v2\\2\\c\\6\\6\\7\\2c667a763e0bc93c709e83228dd85ed16ae24e13705712670c4e4e72.body",
+      "bytes": 13427
+    },
+    {
+      "file": "multimethod-1.12-py3-none-any.whl",
+      "sha256": "fd0c473c43558908d97cc06e4d68e8f69202f167db46f7b4e4058893e7dbdf60",
+      "source_cache_body": "C:\\Users\\god88\\AppData\\Local\\pip\\cache\\http-v2\\2\\f\\a\\a\\4\\2faa46ce2e2881f3e2eba67cbdda6168c4fa37f483fe9f538f2c10e2.body",
+      "bytes": 10646
+    },
+    {
+      "file": "h11-0.16.0-py3-none-any.whl",
+      "sha256": "63cf8bbe7522de3bf65932fda1d9c2772064ffb3dae62d55932da54b31cb6c86",
+      "source_cache_body": "C:\\Users\\god88\\AppData\\Local\\pip\\cache\\http-v2\\3\\0\\e\\f\\1\\30ef132248ab98ab0a92d2d15ee6957bdad5542ffbb630d3a32f7721.body",
+      "bytes": 37515
+    },
+    {
+      "file": "fonttools-4.68.0-cp311-cp311-win_amd64.whl",
+      "sha256": "35425bba603cf9d72c9f3c173ea6c98632164f3bdfb1ce1a3dcc928979c6ec6d",
+      "source_cache_body": "C:\\Users\\god88\\AppData\\Local\\pip\\cache\\http-v2\\3\\1\\8\\0\\e\\3180e20e2b94138ed746fe8b92199eb083005bc50bc1731e12e740f9.body",
+      "bytes": 1681821
+    },
+    {
+      "file": "certifi-2026.10.23-py3-none-any.whl",
+      "sha256": "e9b54de76e530bb6cf0ccd036787103acb58fd42ba930ea8bf948ddbaa2f61d1",
+      "source_cache_body": "C:\\Users\\god88\\AppData\\Local\\pip\\cache\\http-v2\\3\\4\\1\\7\\0\\341703dbb77865b7fa311cf922015eaa7820372ce966af1c1e1da06b.body",
+      "bytes": 135082
+    },
+    {
+      "file": "casadi-3.8.2-cp311-abi3-win_amd64.whl",
+      "sha256": "337365cf40448d368d12cf0b6561604274f8d2a979ef7c0b672086d64188c221",
+      "source_cache_body": "C:\\Users\\god88\\AppData\\Local\\pip\\cache\\http-v2\\3\\6\\3\\2\\8\\36328acaf418b6bf6631cbb7749d133a90e2aeb5bd73ec933e13a00b.body",
+      "bytes": 60107861
+    },
+    {
+      "file": "trame_server-4.1.2-py3-none-any.whl",
+      "sha256": "99262181d2b74220641f695056d0826edad894692a9dda8c138703c45c7611b7",
+      "source_cache_body": "C:\\Users\\god88\\AppData\\Local\\pip\\cache\\http-v2\\3\\e\\d\\a\\e\\3edaedcb3a4635e1e4cfb7c1feb894326d3b999fdbd11efa9d33cd9d.body",
+      "bytes": 47864
+    },
+    {
+      "file": "ezdxf-1.4.5-cp311-cp311-win_amd64.whl",
+      "sha256": "b5b637c9bdb510e2ed9d49ddd841595dbf98c0181935387c5c9b841ce8418ff1",
+      "source_cache_body": "C:\\Users\\god88\\AppData\\Local\\pip\\cache\\http-v2\\3\\f\\c\\e\\e\\3fceee1e32ad2d3fdd49d3d3d9446f98ba72c1db400eb6b34c8948f7.body",
+      "bytes": 1840194
+    },
+    {
+      "file": "fastapi-0.164.0-py3-none-any.whl",
+      "sha256": "6ec63b74a112a6acc22c87f29bb8cb209002050cfeb4f993b959e6caea65c468",
+      "source_cache_body": "C:\\Users\\god88\\AppData\\Local\\pip\\cache\\http-v2\\4\\1\\9\\e\\0\\419e02e5b4a4a7a7e3005cc9b840f6df07b0ce3f4c53dd273db7c6ae.body",
+      "bytes": 157847
+    },
+    {
+      "file": "aiohappyeyeballs-2.7.1-py3-none-any.whl",
+      "sha256": "9243213661e29250eb41368e5daa826fc017156c3b8a11440826b2e3ed376472",
+      "source_cache_body": "C:\\Users\\god88\\AppData\\Local\\pip\\cache\\http-v2\\4\\4\\3\\9\\8\\443989e76bfd4e0f9f84547685a2ec07eb4699a646841aa52d66132e.body",
+      "bytes": 15038
+    },
+    {
+      "file": "contourpy-1.3.3-cp311-cp311-win_amd64.whl",
+      "sha256": "3519428f6be58431c56581f1694ba8e50626f2dd550af225f82fb5f5814d2a42",
+      "source_cache_body": "C:\\Users\\god88\\AppData\\Local\\pip\\cache\\http-v2\\4\\9\\0\\0\\0\\490002783639d525aea3e03e0a674dfa575c12899931ee8d2b1212c9.body",
+      "bytes": 225234
+    },
+    {
+      "file": "wslink-2.6.0-py3-none-any.whl",
+      "sha256": "6edc7ea67c744094702f98857c9316f4805a44af91f6cc4aca69b782392e73d0",
+      "source_cache_body": "C:\\Users\\god88\\AppData\\Local\\pip\\cache\\http-v2\\4\\d\\5\\5\\c\\4d55c583c7c78bf6eb2043362a4e3ef0263a43c76bba4d5899c19bd6.body",
+      "bytes": 37689
+    },
+    {
+      "file": "frozenlist-1.8.0-cp311-cp311-win_amd64.whl",
+      "sha256": "ac913f8403b36a2c8610bbfd25b8013488533e71e62b4b4adce9c86c8cea905b",
+      "source_cache_body": "C:\\Users\\god88\\AppData\\Local\\pip\\cache\\http-v2\\4\\f\\4\\3\\9\\4f4393b7ebfd1990e935ca076b43b4b336e2d751af94430052af4cb1.body",
+      "bytes": 44064
+    },
+    {
+      "file": "idna-3.20-py3-none-any.whl",
+      "sha256": "ab7ae7122974553370f0bdb919e1a960b2cd1bc1ef0276416d896db81c14582c",
+      "source_cache_body": "C:\\Users\\god88\\AppData\\Local\\pip\\cache\\http-v2\\5\\5\\7\\8\\f\\5578f04015bc72d34ccff0865612606d646694de3865112ddef4292f.body",
+      "bytes": 69583
+    },
+    {
+      "file": "yarl-1.25.1-cp311-cp311-win_amd64.whl",
+      "sha256": "d7306dee25b8a0e737363f347362b875094b4dc4e367311470656ae420fdbf8e",
+      "source_cache_body": "C:\\Users\\god88\\AppData\\Local\\pip\\cache\\http-v2\\5\\7\\1\\8\\5\\571857be917b378e459a12a68a18ae62437d48435567dca4aa191dab.body",
+      "bytes": 102894
+    },
+    {
+      "file": "typing_inspection-0.4.5-py3-none-any.whl",
+      "sha256": "bc210535442b39e1bf2805e0c7a17dfd6a4ace760c84c7f7d16245d23a6b1c39",
+      "source_cache_body": "C:\\Users\\god88\\AppData\\Local\\pip\\cache\\http-v2\\5\\7\\d\\0\\d\\57d0d8617233bca4a09827edb3489d76d18331de139b5523a2c3ee84.body",
+      "bytes": 14874
+    },
+    {
+      "file": "typing_extensions-4.16.0-py3-none-any.whl",
+      "sha256": "481caa481374e813c1b176ada14e97f1f67a4539ce9cfeb3f350d78d6370c2e8",
+      "source_cache_body": "C:\\Users\\god88\\AppData\\Local\\pip\\cache\\http-v2\\5\\d\\e\\7\\4\\5de74aa606aaf8588141cbe765382839ecb0982f091a947770ca6fa8.body",
+      "bytes": 45571
+    },
+    {
+      "file": "nlopt-2.11.0-cp311-cp311-win_amd64.whl",
+      "sha256": "c142be2649e06eae1e00439a953dc3743ba96ec4e73f85070f8286a6bd448e92",
+      "source_cache_body": "C:\\Users\\god88\\AppData\\Local\\pip\\cache\\http-v2\\5\\f\\a\\e\\6\\5fae68c77bf12f0554e8ceccecb4e7b386d4ae81dff3c38413d91e8e.body",
+      "bytes": 572576
+    },
+    {
+      "file": "trame_vuetify-3.3.0-py3-none-any.whl",
+      "sha256": "3a68a8457a439c1f2d456bfa1004091116a4c9988503f594fd44e980222773f2",
+      "source_cache_body": "C:\\Users\\god88\\AppData\\Local\\pip\\cache\\http-v2\\6\\0\\2\\7\\4\\60274625ab3ca36e1b8fd09763fde36be6edea1f24d1aec76a8ad379.body",
+      "bytes": 6794266
+    },
+    {
+      "file": "numpy-2.4.6-cp311-cp311-win_amd64.whl",
+      "sha256": "1e254a00cdf42b1e4d5b3d68d33af63268d41340d8885df2ab6470f2e1500147",
+      "source_cache_body": "C:\\Users\\god88\\AppData\\Local\\pip\\cache\\http-v2\\6\\0\\9\\b\\c\\609bc8f40121469884ce667e14ef9b9a7291ce77ba3467bc8114d957.body",
+      "bytes": 12608406
+    },
+    {
+      "file": "matplotlib-3.11.2-cp311-cp311-win_amd64.whl",
+      "sha256": "a24d5fd36e4f0e742c3851dcd20810e56a95633a342e4bf6cb591c678e8fe61f",
+      "source_cache_body": "C:\\Users\\god88\\AppData\\Local\\pip\\cache\\http-v2\\6\\1\\4\\2\\2\\6142267c0eaf1598f209aa7ec16c76c95feb3e3b3d2f21ca3c70feb7.body",
+      "bytes": 9329982
+    },
+    {
+      "file": "PyYAML-6.0.3-cp311-cp311-win_amd64.whl",
+      "sha256": "9f3bfb4965eb874431221a3ff3fdcddc7e74e3b07799e0e84ca4a0f867d449bf",
+      "source_cache_body": "C:\\Users\\god88\\AppData\\Local\\pip\\cache\\http-v2\\6\\2\\b\\0\\a\\62b0abbe5063eeb1a433c656fce81ef7410f5587ae2d60083bc9d72d.body",
+      "bytes": 158763
+    },
+    {
+      "file": "cycler-0.12.1-py3-none-any.whl",
+      "sha256": "85cef7cff222d8644161529808465972e51340599459b8ac3ccbac5a854e0d30",
+      "source_cache_body": "C:\\Users\\god88\\AppData\\Local\\pip\\cache\\http-v2\\6\\c\\6\\e\\e\\6c6eeaf6757edbde690577822daacaba826c2b12ce67b57b33e8021d.body",
+      "bytes": 8321
+    },
+    {
+      "file": "tzdata-2026.6-py3-none-any.whl",
+      "sha256": "0a10eec6e13ef16b627fabed9a5f2ba61a62b1c67f327305f4e7e412a70b4aec",
+      "source_cache_body": "C:\\Users\\god88\\AppData\\Local\\pip\\cache\\http-v2\\6\\e\\9\\5\\e\\6e95e98189bddf937993f3feb9469906abbc5e11ade1df01509091e4.body",
+      "bytes": 348210
+    },
+    {
+      "file": "runtype-0.5.3-py3-none-any.whl",
+      "sha256": "ea8cc6828217ebfda5c159dce969e832efd865a09d6ad1fc993f5bf5e1a627ee",
+      "source_cache_body": "C:\\Users\\god88\\AppData\\Local\\pip\\cache\\http-v2\\7\\1\\d\\b\\4\\71db475d77e12c51d82cbade9e82d978b63d9656469efe6b9670dce4.body",
+      "bytes": 31944
+    },
+    {
+      "file": "click-8.5.1-py3-none-any.whl",
+      "sha256": "8bb5376d2006950386f8c6427613334a2acadc5f559cb80e638d00b4df957e37",
+      "source_cache_body": "C:\\Users\\god88\\AppData\\Local\\pip\\cache\\http-v2\\8\\c\\3\\0\\2\\8c30266fb32a23bd1c3978dce0bf0c4bd935f24d3e567feb9e2df799.body",
+      "bytes": 126163
+    },
+    {
+      "file": "aiosignal-1.4.0-py3-none-any.whl",
+      "sha256": "053243f8b92b990551949e63930a839ff0cf0b0ebbe0597b0f3fb19e1a0fe82e",
+      "source_cache_body": "C:\\Users\\god88\\AppData\\Local\\pip\\cache\\http-v2\\8\\c\\d\\4\\6\\8cd46de09fab9942ca46d5db7df4d49166a3ba9ae11a8ad0ad906daa.body",
+      "bytes": 7490
+    },
+    {
+      "file": "trame-4.0.0-py3-none-any.whl",
+      "sha256": "e3c8a89f7a209fea7a595bd877301c851cd0db18cc7620f11b08d4d7966e5dcc",
+      "source_cache_body": "C:\\Users\\god88\\AppData\\Local\\pip\\cache\\http-v2\\8\\e\\7\\6\\c\\8e76cd01fe728a5d73004afb7b86a7815cb737dae64d7a674fbd510f.body",
+      "bytes": 27303
+    },
+    {
+      "file": "kiwisolver-1.5.1-cp311-cp311-win_amd64.whl",
+      "sha256": "1a7587dc335f2c0f5bd577fd0540bd16c66006bdb60f759a1059f025e6c4f071",
+      "source_cache_body": "C:\\Users\\god88\\AppData\\Local\\pip\\cache\\http-v2\\9\\3\\3\\3\\5\\93335bcb04e40a9f2f5733fd3634c8a81e2a2db1eb00698382294c55.body",
+      "bytes": 70744
+    },
+    {
+      "file": "python_dotenv-1.2.4-py3-none-any.whl",
+      "sha256": "42269a8a5b3fd54ffa6f3d84b18abed50064717576b4ecf03dc4a55d8aa04fdc",
+      "source_cache_body": "C:\\Users\\god88\\AppData\\Local\\pip\\cache\\http-v2\\9\\3\\d\\a\\c\\93dace751420225e3d2ce6424b2bbede810b5e2811478b2774542624.body",
+      "bytes": 23266
+    },
+    {
+      "file": "alembic-1.20.1-py3-none-any.whl",
+      "sha256": "9970712cfb81ea26c8658d378aaa5b8f6ff9146e5bb111d70497c164016cf598",
+      "source_cache_body": "C:\\Users\\god88\\AppData\\Local\\pip\\cache\\http-v2\\9\\6\\6\\e\\9\\966e9bd43151176cc481b88dc2db1b1481e4c30cac3ab145538a9e79.body",
+      "bytes": 270355
+    },
+    {
+      "file": "trame_client-4.1.4-py3-none-any.whl",
+      "sha256": "6e1d3e20770f5852ac924d8494515700d9906085ecfcb788f0f504ce998be88f",
+      "source_cache_body": "C:\\Users\\god88\\AppData\\Local\\pip\\cache\\http-v2\\9\\a\\0\\1\\0\\9a01005872350f78fbb1a7fd0a6750efbf7ba06780dbe6637d8e6224.body",
+      "bytes": 568271
+    },
+    {
+      "file": "Mako-1.4.3-py3-none-any.whl",
+      "sha256": "723296007c870bfd6b3f0c3230dba7198096e5269297ebf5e4eff9e7ffa39d4f",
+      "source_cache_body": "C:\\Users\\god88\\AppData\\Local\\pip\\cache\\http-v2\\9\\a\\b\\e\\d\\9abeda35e1626e881487d460c38a29cada1a5a363912a41a1d1dd70b.body",
+      "bytes": 80164
+    },
+    {
+      "file": "cadquery_ocp-7.9.3.1.1-cp311-cp311-win_amd64.whl",
+      "sha256": "68f722e3ca804262e5b8f43b7d0249939786efc2f256cc8d2a24c0e057a240df",
+      "source_cache_body": "C:\\Users\\god88\\AppData\\Local\\pip\\cache\\http-v2\\a\\2\\f\\e\\1\\a2fe1078b3068b307a39a177ccaecfc1e03ea5fc24f924896dc13b4c.body",
+      "bytes": 46348083
+    },
+    {
+      "file": "pluggy-1.7.0-py3-none-any.whl",
+      "sha256": "7dd7b0d8832ba3cb632c306926ded123429211b83641b35dc5c41ad2d34f9bec",
+      "source_cache_body": "C:\\Users\\god88\\AppData\\Local\\pip\\cache\\http-v2\\a\\7\\2\\c\\c\\a72cce8e1aca1480f778f44ec8ebe2335486756b4169be34aed313c0.body",
+      "bytes": 27082
+    },
+    {
+      "file": "packaging-26.3-py3-none-any.whl",
+      "sha256": "d7193f7c8e4e93f444fde0262bf90af30e16fa0ad0ad44cb553c87339b23cd1c",
+      "source_cache_body": "C:\\Users\\god88\\AppData\\Local\\pip\\cache\\http-v2\\b\\1\\1\\9\\0\\b11909f451f61fb29636217082b1c638b177c59eac335e0200a136e6.body",
+      "bytes": 129956
+    },
+    {
+      "file": "attrs-26.1.0-py3-none-any.whl",
+      "sha256": "c647aa4a12dfbad9333ca4e71fe62ddc36f4e63b2d260a37a8b83d2f043ac309",
+      "source_cache_body": "C:\\Users\\god88\\AppData\\Local\\pip\\cache\\http-v2\\b\\1\\4\\e\\c\\b14ec1286f8ec83b268f9c52cdccd1001d22496d6e01ba5b4fd8aeb4.body",
+      "bytes": 67548
+    },
+    {
+      "file": "scipy-1.17.1-cp311-cp311-win_amd64.whl",
+      "sha256": "d30e57c72013c2a4fe441c2fcb8e77b14e152ad48b5464858e07e2ad9fbfceff",
+      "source_cache_body": "C:\\Users\\god88\\AppData\\Local\\pip\\cache\\http-v2\\b\\7\\b\\6\\5\\b7b658514ba6aba4a7743367d629231e355d6dd7e8abde82cdcce8f5.body",
+      "bytes": 36607512
+    },
+    {
+      "file": "iniconfig-2.3.1-py3-none-any.whl",
+      "sha256": "9121e2c1fdb355232495be3194c8dfe87ccc2d5dee45947b78e68f499790d7a7",
+      "source_cache_body": "C:\\Users\\god88\\AppData\\Local\\pip\\cache\\http-v2\\b\\8\\e\\6\\d\\b8e6d5935f9ced55635d32bdf46f328b37f77b0474abe35d0a0dbc83.body",
+      "bytes": 7552
+    },
+    {
+      "file": "uvicorn-0.54.0-py3-none-any.whl",
+      "sha256": "505bdb0f318731d45f1f712071fc781a8981f6847a31c902c9f5e652d4f67faf",
+      "source_cache_body": "C:\\Users\\god88\\AppData\\Local\\pip\\cache\\http-v2\\b\\9\\6\\4\\8\\b964843a394e1e6b5e04fedfbf690f73e3cd0811457bf7b6c856cd8b.body",
+      "bytes": 87427
+    },
+    {
+      "file": "watchfiles-1.3.0-cp310-abi3-win_amd64.whl",
+      "sha256": "1acabde19b67e673274e89a04d613b7fb1f122e2c4b8ec9a581e59c149264b61",
+      "source_cache_body": "C:\\Users\\god88\\AppData\\Local\\pip\\cache\\http-v2\\b\\c\\9\\6\\2\\bc962626f0d728a7a1a36c01bb5b069db7a61f816d5af696fb2d71f4.body",
+      "bytes": 290643
+    },
+    {
+      "file": "pydantic_core-2.50.4-cp311-cp311-win_amd64.whl",
+      "sha256": "15bece43a02ad543c621c8305e67dedb5f27d378c5ba741e5a2c36523f8ef37f",
+      "source_cache_body": "C:\\Users\\god88\\AppData\\Local\\pip\\cache\\http-v2\\b\\d\\7\\0\\e\\bd70e5b7cd6b1981856f23838229c9ff8994a5901dd1859dcb5a967c.body",
+      "bytes": 2255970
+    },
+    {
+      "file": "opentelemetry_api-1.45.2-py3-none-any.whl",
+      "sha256": "2cbd737377e710ee740d261c94e93fa0f08e6d037c18f17513cc0a2d94479a34",
+      "source_cache_body": "C:\\Users\\god88\\AppData\\Local\\pip\\cache\\http-v2\\c\\4\\c\\f\\c\\c4cfc1d6497d6f906c0a0d6c6ae321a9d160a1b01380b5f4d4877fbd.body",
+      "bytes": 60335
+    },
+    {
+      "file": "pillow-13.0.0-cp311-cp311-win_amd64.whl",
+      "sha256": "d7710eb676e9bb68965cb045be0d333b4c0d7f9dfbaa7fbf121385b1588683d3",
+      "source_cache_body": "C:\\Users\\god88\\AppData\\Local\\pip\\cache\\http-v2\\c\\9\\d\\3\\2\\c9d32be977cc6048acbd8618aafe66bdecdf3ad563550a8c971b3102.body",
+      "bytes": 7278471
+    },
+    {
+      "file": "websockets-17.4-cp311-cp311-win_amd64.whl",
+      "sha256": "e4beaef2f4796558e738e15ca0b8802e35f419a9fa374a978e41706f43c48b26",
+      "source_cache_body": "C:\\Users\\god88\\AppData\\Local\\pip\\cache\\http-v2\\c\\9\\e\\6\\0\\c9e608ec5dbd5287e5a3d183742effa9ceec06ac53be8eb6e461b4ed.body",
+      "bytes": 219556
+    },
+    {
+      "file": "pydantic-2.14.3-py3-none-any.whl",
+      "sha256": "3f7b347782ab7e4cf4c798496ae3a82787d9f21ec12676a9c564355eeef8daa8",
+      "source_cache_body": "C:\\Users\\god88\\AppData\\Local\\pip\\cache\\http-v2\\c\\f\\0\\0\\6\\cf006e746e218c241ed2ccd8c862eed41f9ece31785a7e22f9e77c8e.body",
+      "bytes": 494071
+    },
+    {
+      "file": "trame_vtk-2.11.17-py3-none-any.whl",
+      "sha256": "8fe2adbe3b6888ad41cb4311421fbd850cece75a801bf8b5f7af5bdc6473bee4",
+      "source_cache_body": "C:\\Users\\god88\\AppData\\Local\\pip\\cache\\http-v2\\d\\0\\4\\d\\f\\d04df50d083e9243d79f55a20fc0c943a8875fb67c61ab23f3daa03c.body",
+      "bytes": 851988
+    },
+    {
+      "file": "numba-0.68.1-cp311-cp311-win_amd64.whl",
+      "sha256": "e5a2d544d8a2da45f9cc5856ed794c31f133ada51ef7a734a9b7cd4596e1887f",
+      "source_cache_body": "C:\\Users\\god88\\AppData\\Local\\pip\\cache\\http-v2\\d\\1\\1\\d\\e\\d11de48422db671e842d6f2b3c9f841d478d4eda9f01e076db6c7a2a.body",
+      "bytes": 2832899
+    },
+    {
+      "file": "starlette-1.10.0-py3-none-any.whl",
+      "sha256": "478c0ab3b4ced6e82719849c118fa406f0278a3499c1a898cd15cd31bdc38ce4",
+      "source_cache_body": "C:\\Users\\god88\\AppData\\Local\\pip\\cache\\http-v2\\d\\9\\c\\8\\7\\d9c87d35ac228b1cee5daee1872c65ca3ab889ed26a3d80909f8d331.body",
+      "bytes": 80571
+    },
+    {
+      "file": "colorama-0.4.6-py3-none-any.whl",
+      "sha256": "4f1d9991f5acc0ca119f9d443620b77f9d6b33703e51011c16baf57afb285fc6",
+      "source_cache_body": "C:\\Users\\god88\\AppData\\Local\\pip\\cache\\http-v2\\e\\1\\7\\f\\b\\e17fbb43e51603036658fe03e225cfe5f672c0647477363082e598d4.body",
+      "bytes": 25335
+    },
+    {
+      "file": "anyio-4.16.0-py3-none-any.whl",
+      "sha256": "c66ae634e0b8228396b801741beb3294326d4b6102f7bba4041c0dfb58c29026",
+      "source_cache_body": "C:\\Users\\god88\\AppData\\Local\\pip\\cache\\http-v2\\e\\2\\d\\3\\8\\e2d38c5f2fefad69adcd6c60d42e5200d3e5c94bfa2585dabdf8f7a8.body",
+      "bytes": 134521
+    },
+    {
+      "file": "aiohttp-3.14.5-cp311-cp311-win_amd64.whl",
+      "sha256": "6f275c11d1aa6d4c458e05a68be084efe3c55a113d99e3f46a318098e52948fc",
+      "source_cache_body": "C:\\Users\\god88\\AppData\\Local\\pip\\cache\\http-v2\\e\\8\\d\\f\\c\\e8dfc9a9946b2ea88a1135a6962fad8d5cbb642e80f1884f4795d6a6.body",
+      "bytes": 512575
+    },
+    {
+      "file": "httptools-0.9.0-cp311-cp311-win_amd64.whl",
+      "sha256": "c4fa57d3c31889722f64bfa785545a5e603a893b6f29ac1a41bfa830abeaefd5",
+      "source_cache_body": "C:\\Users\\god88\\AppData\\Local\\pip\\cache\\http-v2\\e\\9\\6\\2\\c\\e962cc09a88213003f9447fc556e35aeb2fb1b646c31f04dd480b666.body",
+      "bytes": 92421
+    },
+    {
+      "file": "pyparsing-3.3.3-py3-none-any.whl",
+      "sha256": "ece8c00a69cf01b45d0b1dedabb469c90d8caf996d4fda40f147627a122849a4",
+      "source_cache_body": "C:\\Users\\god88\\AppData\\Local\\pip\\cache\\http-v2\\e\\b\\1\\9\\1\\eb191316105c4d39809788cbc595af2313b33a8242498096126657d4.body",
+      "bytes": 126420
+    },
+    {
+      "file": "MarkupSafe-3.0.4-cp311-cp311-win_amd64.whl",
+      "sha256": "fdb4ca07ab75ffadab4a8b135ad59cdbb3156b99310f3d565370da74a15d6bd3",
+      "source_cache_body": "C:\\Users\\god88\\AppData\\Local\\pip\\cache\\http-v2\\e\\c\\1\\5\\5\\ec155b2a7d341ea24b91733c7c750dd3b613d729aaad7030ec3e9ddd.body",
+      "bytes": 14328
+    },
+    {
+      "file": "annotated_doc-0.0.7-py3-none-any.whl",
+      "sha256": "6bc31bbbec6dfaaedc1676dbc11dbda96fe22a2b5c400e9ebad113fec44a9dc6",
+      "source_cache_body": "C:\\Users\\god88\\AppData\\Local\\pip\\cache\\http-v2\\f\\3\\6\\2\\c\\f362c7b7f119db392aea2aabd84d44a5be56af29f3c88a815c9c2993.body",
+      "bytes": 5286
+    },
+    {
+      "file": "trame_components-2.5.0-py3-none-any.whl",
+      "sha256": "897a6c0ebcc72d95a461bde28d2c2e37c4bc4922013ad07df3a65e64d4884672",
+      "source_cache_body": "C:\\Users\\god88\\AppData\\Local\\pip\\cache\\http-v2\\f\\8\\1\\d\\9\\f81d9d44dca40362ee35d0bf6950bfc9b868a3c62511e72c34c90215.body",
+      "bytes": 82345
+    },
+    {
+      "file": "more_itertools-11.2.1-py3-none-any.whl",
+      "sha256": "35a7377edd1dd6608dcb2cdf534ded55ea32d49448875ad042cd3f879fb1ded0",
+      "source_cache_body": "C:\\Users\\god88\\AppData\\Local\\pip\\cache\\http-v2\\f\\e\\f\\5\\b\\fef5b7bda932257ea4a2938a3964e752676ca642fe344ce77afccd7c.body",
+      "bytes": 74405
+    }
+  ]
+}

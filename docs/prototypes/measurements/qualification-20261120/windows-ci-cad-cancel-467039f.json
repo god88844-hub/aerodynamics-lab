@@ -1,0 +1,23 @@
+{
+  "run_id": 44765510019,
+  "run_url": "https://github.com/god88844-hub/aerodynamics-lab/actions/runs/44765510019",
+  "job_id": 136389028808,
+  "pr_head_sha": "467039f61d2be56de84152c4f4df0543658a5ff2",
+  "checked_out_sha": "b9d861f1de1ed9c87342353ba18f8548e50a67af",
+  "pr_head_and_checkout_tree": "a1bcd99527a352c699b1989d3f6293bd467e47cc",
+  "tree_equality_verified": true,
+  "receipt": {
+    "active_worker_pid": 4972,
+    "cancel_cli_return_ns": 310735000,
+    "cleanup_verified": true,
+    "completion_published": false,
+    "method": "normal Godot stop CLI; perf_counter_ns around subprocess.run; 100 ms pre-action resident sampling",
+    "owned_resident_reclaimed_percent": 100,
+    "platform": "win32",
+    "post_cancel_owned_resident_bytes": 0,
+    "pre_cancel_owned_resident_bytes": 388239360,
+    "previous_result_preserved": true,
+    "scope": "CI host process tree, not local graphical timing or system/GPU physical RAM",
+    "source_sha": "b9d861f1de1ed9c87342353ba18f8548e50a67af"
+  }
+}

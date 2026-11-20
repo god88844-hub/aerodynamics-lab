@@ -65,4 +65,11 @@ Its [recorded Windows interaction receipt](prototypes/measurements/reusable-work
 
 The [published 200-part assembly observation](prototypes/ASSEMBLY_BENCHMARK.md) passed the local 600-frame viewport target at 60.004 mean FPS and 17.070 ms p95, with source/saved project fingerprints, asset integrity and cleanup verified. It records actual desktop memory separately from the console launcher and worker descendants, plus two failed precision attempts. This is one Windows hidden-window workload; visible interaction, other profiles, admission limits and installation acceptance remain open.
 
+The [20 November qualification report](prototypes/QUALIFICATION_GATE.md) adds a visible
+1800-frame OS-input observation at 60.009 mean FPS, Windows cancellation/resource
+checks and fresh bundled install/build timings. **The integrated local gate is FAIL:**
+CAD admission and its smoke check refused for insufficient available RAM. CI-host CAD
+cancellation evidence does not erase that local failure. Owner/qualified sign-off and
+the complete hardware matrix remain pending; no physical acceptance gate closes.
+
 Hardware tier support follows [the compatibility matrix and resource/LOD contract](HARDWARE_AND_FIDELITY.md). The initial Windows prototype run is one machine observation. Tier 1/2/3 performance, large-assembly adaptive detail/residency, remote scheduling and enforced worker budgets remain unaccepted until their recorded checks pass.

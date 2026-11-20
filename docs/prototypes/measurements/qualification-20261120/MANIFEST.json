@@ -1,0 +1,62 @@
+{
+  "counts": {
+    "legacy_acceptance_families_remaining": 10,
+    "phase0_work_packages_closed": 0,
+    "phase0_work_packages_open": 12
+  },
+  "gate_report_sha256": "43a81353a77401b6226d2ae5f1d94128d7596da67503198806a520b1c637c21f",
+  "instantaneous_fps_quantiles": {
+    "method": "nearest-rank on 1000/frame_interval_ms, distinct from inverse p95/p99 frame-time tail",
+    "p95": 63.33523339033504,
+    "p99": 66.53359946773121
+  },
+  "local_gate": "FAIL",
+  "owner_signoff": "pending",
+  "physical_acceptance": "none_added",
+  "raw_files": {
+    "cached-tools-native-build.json": "c511796897559a3b0a5c773befa179678cc0eb2b644c1cce568ae098025605d7",
+    "cached-tools-native-build.log": "ea5b445e658b8c7293dd7ff506dd45ca1093bdf605f16fa364b803984fbe2b01",
+    "fresh-bundled-install.json": "c2d268db6abcdb2cfe8603a7e7ca1386c5760f3e937077343e006c2257c3006c",
+    "fresh-bundled-install.log": "4de838290081a436f6a7a700d09c19bfa2dbaf7384d6d43a5ad06a790dbcbb63",
+    "fresh-bundled-pip-check.log": "672aec65a45bed50e70229c70934a7eebf0462595c459b83023027645d57cccf",
+    "interrupted-online-install.json": "377bae18c1f9c3f96ec6ba97b85d8183813119c69f36d150dc283027f7184154",
+    "local-attempts/interrupted-package-download.log": "aa2be32d7b8fc764fc0766682bb212aa2c5ca9198950178ccbc21eeb4451dabe",
+    "local-attempts/post-install-startup-memory.json": "75408ed0a9b1a941d4bf0b4fdde237547866ac053c43539f5d1593250d20b761",
+    "local-attempts/post-install-startup.json": "35a57c7cef7a7e4ee8d533af862052dbb11b5d5736f3902fd16d2fc888d73254",
+    "local-attempts/resource-step2-after-free-memory.log": "3662a10b267805f5301ceeb8058449eb50b5ce159451d12b167b8513654d134c",
+    "local-attempts/resource-step2-tests-final.log": "7fcb604917ec6e349a306dc46e789e322afa3c7a3b577de057bd47835f206179",
+    "local-attempts/resource-step2-tests-isolated.log": "f35cca80cac355f1c0d8795d5848fbb6c47fbd86cdddbe9e38bbc34a5d58884f",
+    "local-attempts/resource-step2-tests-rerun.log": "d771da1df7ca19ffe809cb594adc82cbac6b6233f8ee7cd11d30ebad3d83c20a",
+    "local-attempts/resource-step2-tests.log": "fc3c0728915a74624e297323dc5194ef565fcc9110b40ca742cadfa09945fa7f",
+    "main-ci-a4992b5-jobs.json": "a5cba8aa8301851ebbbcc9a6b319b7c3e596a3116be9f1af9fbe96f24fbe9deb",
+    "main-ci-a4992b5.json": "0482786074530f1976ef643258df5494b6e799dfb676865ccc23d147e1e137c4",
+    "offline-install-plan.log": "ceef8b5b518451829c505a2f0420548f2c85517a567211d7c0198a6a9a7e07e0",
+    "post-install-context.json": "6c252e0e6d96141d03398c155ae6a275113b3b82f0c891f58f319a586f8a9845",
+    "post-install-startup-final-memory.json": "9fd5e4fc5b6ba4a9fe4b5c0a9ceea9675c5c06cd7c5f6ece0f74111cc3f85a1d",
+    "post-install-startup-final-startup.json": "98fd6637e6dea55775c2d75034c61016dd06ea18e81fae2c5d755182bce93fb6",
+    "post-install-startup-final.err": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "post-install-startup-final.log": "e633e5fe75b5386e227698b697074c8c6cd6bada1b6b4fe5b4b6db2e002f69ce",
+    "post-install-startup-summary.json": "b8bac92325c8f4a25a91042d3a8e134c1331b6543d6cd2bb99830c9fd13d8109",
+    "stage_locked_wheelhouse.py": "302c2aa13e1250db87dc0461fedf2513d0fbbfbfeb86e8245596b934bb0aea39",
+    "visible-01-cancel-legacy.json": "bf793dfbdf4f95ff32b66792e9f2f0a52d352fbf1f41dfef29a9563382d9e9aa",
+    "visible-01-memory.json": "ab00d714bc07f1978b1811550b9e12072f33b59ee6ae4ed43706e615a38a4b82",
+    "visible-01-startup.json": "bc0719f1314afe671b0d003d422cb3432e82c53ac33b9482d8bb18bcfc38709f",
+    "visible-01.err": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "visible-01.json": "aa1c2599fffad72bc13a49ba43d85a093c136bec2d2633213e28a7554afb06c7",
+    "visible-01.log": "9310484ef94e9b1b1066e34f788f450d3b2f9090d79adc4ed037e3a251c4b06d",
+    "visible-context.json": "050447bcaba330dd6b157f35231a0f1af30b936462f1030e981d7deb92aacd02",
+    "wheelhouse-manifest.json": "0a08862ac27088186baef9918c0534cbd5175c258d606892d8f907660813e72f",
+    "windows-ci-cad-cancel-467039f.json": "46b490b5885d99876f8f9c9d822b802599dcbaa7dbe4b08367a83622a51e25c0",
+    "windows-ci-cad-cancel.json": "0423708dfbd5ae142e7ce8352cdb3efc2bcc1e65a995a176a0efcf116288db8f",
+    "wip-disposition.json": "0f0f139261a1bee785ae99050b5d76631f4f3d9b3a1f3c37dc5d62bbc706597d"
+  },
+  "report_version": "prototype_gate_20261120_1",
+  "sources": {
+    "archive": "a1d7313146b687e78468df9a5b66a3920120092c",
+    "bundled_install": "5a7d1fc456ec32ead6aa9557808d190cda53ce44",
+    "prerequisite_main": "a4992b55e9131c2d1cc4cc936f7f74e8e3ca5b9b",
+    "qualification_main": "f5fef554fb09c6091051e5e644bf87a2bacd9d27",
+    "visible": "b57721cc22c5b220d513126820340bd9cd6e8906"
+  },
+  "startup_only_s": 2.9220000000000255
+}

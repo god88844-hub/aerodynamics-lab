@@ -1,0 +1,255 @@
+{
+  "baseline": "1d841865e61cb76a58f48eae9e107f8ad737fc1e",
+  "wip": "a1d7313146b687e78468df9a5b66a3920120092c",
+  "local_branch": "feature/production-acceptance",
+  "remote_archive_branch_present": true,
+  "files": [
+    {
+      "path": ".github/workflows/ci.yml",
+      "wip_change": "M",
+      "baseline_blob": "83c30ba241068168665efcce4383b09a159d8656",
+      "wip_blob": "f900f2d63a6896722c622e228037a193de52cba3",
+      "main_blob": "33e0526ae225fc59738bc12e86c25f6cd49f8db9",
+      "disposition": "DIVERGED_REQUIRES_HUNK_TRIAGE",
+      "disposition_detail": "Diverged for desktop CI; WIP API load step and acceptance artifact upload are absent.",
+      "historical_disposition": "DIVERGED_REQUIRES_HUNK_TRIAGE",
+      "historical_audit_blob": "fcf00a8ef6bf862593b690eec9b5e9f97283ff00"
+    },
+    {
+      "path": "apps/api/app/services/run_provenance.py",
+      "wip_change": "A",
+      "baseline_blob": null,
+      "wip_blob": "30eaaef3fc30a97758aedc3784dcf23a95b26124",
+      "main_blob": "30eaaef3fc30a97758aedc3784dcf23a95b26124",
+      "disposition": "EXACT_WIP_BLOB_ON_MAIN",
+      "disposition_detail": "Exact file promoted in 0e3b8a1a044f6be5701de529ff86564e55e69032; checkpoint itself is not an ancestor of main.",
+      "historical_disposition": "EXACT_WIP_BLOB_ON_MAIN",
+      "historical_audit_blob": "30eaaef3fc30a97758aedc3784dcf23a95b26124"
+    },
+    {
+      "path": "apps/api/app/services/simulation_service.py",
+      "wip_change": "M",
+      "baseline_blob": "fc52ef2f0fb60ae7a779a580e0496caf09c59df4",
+      "wip_blob": "855e2fff96097df9fbfeefa45b13ccf3760b416b",
+      "main_blob": "855e2fff96097df9fbfeefa45b13ccf3760b416b",
+      "disposition": "PROVENANCE_CHANGES_PROMOTED_WITH_REGRESSIONS",
+      "disposition_detail": "Provenance changes promoted in 78a3a0b; API tests also add frozen-input/component-change regressions.",
+      "historical_disposition": "BASELINE_UNCHANGED_WIP_NOT_APPLIED",
+      "historical_audit_blob": "fc52ef2f0fb60ae7a779a580e0496caf09c59df4"
+    },
+    {
+      "path": "apps/web/e2e/accessibility.spec.ts",
+      "wip_change": "A",
+      "baseline_blob": null,
+      "wip_blob": "6905a8707cae7ad33b47135947bfb865f5c2dbe2",
+      "main_blob": null,
+      "disposition": "ABSENT_ON_MAIN",
+      "disposition_detail": "New checkpoint file is absent from main; no main acceptance evidence for this WIP feature.",
+      "historical_disposition": "ABSENT_ON_MAIN",
+      "historical_audit_blob": null
+    },
+    {
+      "path": "apps/web/e2e/production-stack.spec.ts",
+      "wip_change": "M",
+      "baseline_blob": "7ea1c1194d02d33b91cbfaf2743777b51c81f02d",
+      "wip_blob": "1ac47eeddbcaa5b446612fd502d06d77d5957c8d",
+      "main_blob": "5215ae382f4ce713dfb3c3515fa14e6dbff00df9",
+      "disposition": "DIVERGED_REQUIRES_HUNK_TRIAGE",
+      "disposition_detail": "Diverged for product rename; WIP AEROFORGE_TEST_PROJECT override is absent.",
+      "historical_disposition": "DIVERGED_REQUIRES_HUNK_TRIAGE",
+      "historical_audit_blob": "5215ae382f4ce713dfb3c3515fa14e6dbff00df9"
+    },
+    {
+      "path": "apps/web/package-lock.json",
+      "wip_change": "M",
+      "baseline_blob": "3f23df31d8910d57e56385c2243817dd310fda9c",
+      "wip_blob": "02a60ef2bb62b5dde69eb5d4e5f101f5fadf8da5",
+      "main_blob": "3f23df31d8910d57e56385c2243817dd310fda9c",
+      "disposition": "BASELINE_UNCHANGED_WIP_NOT_APPLIED",
+      "disposition_detail": "Main retains the baseline blob, so this checkpoint edit was not applied.",
+      "historical_disposition": "BASELINE_UNCHANGED_WIP_NOT_APPLIED",
+      "historical_audit_blob": "3f23df31d8910d57e56385c2243817dd310fda9c"
+    },
+    {
+      "path": "apps/web/package.json",
+      "wip_change": "M",
+      "baseline_blob": "c7fcf5e7cb607dda90f5be7e5bb8feca789e0c0d",
+      "wip_blob": "d4e5f263e64f0d5c0f68b0b14055aebc7b9eafdc",
+      "main_blob": "c7fcf5e7cb607dda90f5be7e5bb8feca789e0c0d",
+      "disposition": "BASELINE_UNCHANGED_WIP_NOT_APPLIED",
+      "disposition_detail": "Main retains the baseline blob, so this checkpoint edit was not applied.",
+      "historical_disposition": "BASELINE_UNCHANGED_WIP_NOT_APPLIED",
+      "historical_audit_blob": "c7fcf5e7cb607dda90f5be7e5bb8feca789e0c0d"
+    },
+    {
+      "path": "apps/web/src/App.tsx",
+      "wip_change": "M",
+      "baseline_blob": "d1e1832f89c32202fdf1483abce0527341788090",
+      "wip_blob": "47750b8b500f8d9954eb29eae01f88d68179335f",
+      "main_blob": "f09cfede76d70c366c513f1e4ff1dd0f31e0682e",
+      "disposition": "DIVERGED_REQUIRES_HUNK_TRIAGE",
+      "disposition_detail": "Diverged for product rename; WIP skip links, accessible landmarks and contrast edits are absent.",
+      "historical_disposition": "DIVERGED_REQUIRES_HUNK_TRIAGE",
+      "historical_audit_blob": "f09cfede76d70c366c513f1e4ff1dd0f31e0682e"
+    },
+    {
+      "path": "apps/web/src/charts/TelemetryCharts.tsx",
+      "wip_change": "M",
+      "baseline_blob": "d39ee000fcef2e4f69052d0375f955394ed029db",
+      "wip_blob": "9118e624ccbe73bd2a1e9fb2fc8cf66628007125",
+      "main_blob": "d39ee000fcef2e4f69052d0375f955394ed029db",
+      "disposition": "BASELINE_UNCHANGED_WIP_NOT_APPLIED",
+      "disposition_detail": "Main retains the baseline blob, so this checkpoint edit was not applied.",
+      "historical_disposition": "BASELINE_UNCHANGED_WIP_NOT_APPLIED",
+      "historical_audit_blob": "d39ee000fcef2e4f69052d0375f955394ed029db"
+    },
+    {
+      "path": "apps/web/src/editor/ComponentInspector.tsx",
+      "wip_change": "M",
+      "baseline_blob": "80ad40d88bbf6e5e8926a4c1a95ac92cfb1540a3",
+      "wip_blob": "92fe167b174efc837021ccaa9fc85752c885c895",
+      "main_blob": "80ad40d88bbf6e5e8926a4c1a95ac92cfb1540a3",
+      "disposition": "BASELINE_UNCHANGED_WIP_NOT_APPLIED",
+      "disposition_detail": "Main retains the baseline blob, so this checkpoint edit was not applied.",
+      "historical_disposition": "BASELINE_UNCHANGED_WIP_NOT_APPLIED",
+      "historical_audit_blob": "80ad40d88bbf6e5e8926a4c1a95ac92cfb1540a3"
+    },
+    {
+      "path": "apps/web/src/index.css",
+      "wip_change": "M",
+      "baseline_blob": "8caaa07f0a84db8e09e918989a0287a943e46ffd",
+      "wip_blob": "ba6ad3d327ac236851d0af127af0198e300f2a85",
+      "main_blob": "8caaa07f0a84db8e09e918989a0287a943e46ffd",
+      "disposition": "BASELINE_UNCHANGED_WIP_NOT_APPLIED",
+      "disposition_detail": "Main retains the baseline blob, so this checkpoint edit was not applied.",
+      "historical_disposition": "BASELINE_UNCHANGED_WIP_NOT_APPLIED",
+      "historical_audit_blob": "8caaa07f0a84db8e09e918989a0287a943e46ffd"
+    },
+    {
+      "path": "apps/web/src/panels/DesignPanel.tsx",
+      "wip_change": "M",
+      "baseline_blob": "fcdd46404f05efe9e88092d4916b26e6adf8dffd",
+      "wip_blob": "64dd4ed30f3653acac69d8f8e24588fc193e4911",
+      "main_blob": "fcdd46404f05efe9e88092d4916b26e6adf8dffd",
+      "disposition": "BASELINE_UNCHANGED_WIP_NOT_APPLIED",
+      "disposition_detail": "Main retains the baseline blob, so this checkpoint edit was not applied.",
+      "historical_disposition": "BASELINE_UNCHANGED_WIP_NOT_APPLIED",
+      "historical_audit_blob": "fcdd46404f05efe9e88092d4916b26e6adf8dffd"
+    },
+    {
+      "path": "apps/web/src/panels/FlightEvidencePanel.tsx",
+      "wip_change": "M",
+      "baseline_blob": "c9a89da26b9d92b8cb990cdcf37284471e57f626",
+      "wip_blob": "9ba63bdd9d4976f002b8754ebb4afbea3439870c",
+      "main_blob": "c9a89da26b9d92b8cb990cdcf37284471e57f626",
+      "disposition": "BASELINE_UNCHANGED_WIP_NOT_APPLIED",
+      "disposition_detail": "Main retains the baseline blob, so this checkpoint edit was not applied.",
+      "historical_disposition": "BASELINE_UNCHANGED_WIP_NOT_APPLIED",
+      "historical_audit_blob": "c9a89da26b9d92b8cb990cdcf37284471e57f626"
+    },
+    {
+      "path": "apps/web/src/panels/ResultsPanel.tsx",
+      "wip_change": "M",
+      "baseline_blob": "ad0cbd2df7883e44fd9ba2e6ea51ab532f572aa7",
+      "wip_blob": "08c4d1704c972c6886ed2f28b740602ce7f87e97",
+      "main_blob": "ad0cbd2df7883e44fd9ba2e6ea51ab532f572aa7",
+      "disposition": "BASELINE_UNCHANGED_WIP_NOT_APPLIED",
+      "disposition_detail": "Main retains the baseline blob, so this checkpoint edit was not applied.",
+      "historical_disposition": "BASELINE_UNCHANGED_WIP_NOT_APPLIED",
+      "historical_audit_blob": "ad0cbd2df7883e44fd9ba2e6ea51ab532f572aa7"
+    },
+    {
+      "path": "apps/web/src/panels/ScenarioPanel.tsx",
+      "wip_change": "M",
+      "baseline_blob": "de9efc1219f38dc4c4dece8c534e785e61faa607",
+      "wip_blob": "8d37a57814ef3a8585d9f8a7e11b811dd177a9d0",
+      "main_blob": "de9efc1219f38dc4c4dece8c534e785e61faa607",
+      "disposition": "BASELINE_UNCHANGED_WIP_NOT_APPLIED",
+      "disposition_detail": "Main retains the baseline blob, so this checkpoint edit was not applied.",
+      "historical_disposition": "BASELINE_UNCHANGED_WIP_NOT_APPLIED",
+      "historical_audit_blob": "de9efc1219f38dc4c4dece8c534e785e61faa607"
+    },
+    {
+      "path": "apps/web/src/panels/fields.tsx",
+      "wip_change": "M",
+      "baseline_blob": "4a770a8e785b0c6d092c18ffef19d4bb3b832331",
+      "wip_blob": "6b43381d004c2adb65e85d677f1d2c94708cb318",
+      "main_blob": "4a770a8e785b0c6d092c18ffef19d4bb3b832331",
+      "disposition": "BASELINE_UNCHANGED_WIP_NOT_APPLIED",
+      "disposition_detail": "Main retains the baseline blob, so this checkpoint edit was not applied.",
+      "historical_disposition": "BASELINE_UNCHANGED_WIP_NOT_APPLIED",
+      "historical_audit_blob": "4a770a8e785b0c6d092c18ffef19d4bb3b832331"
+    },
+    {
+      "path": "apps/web/src/playback/PlaybackWorkspace.tsx",
+      "wip_change": "M",
+      "baseline_blob": "7222c3ee1d26eb6c8bb37e57c9136b2e352793b6",
+      "wip_blob": "b867e562d2ad1aa9789d577d2d75b8e35af44749",
+      "main_blob": "7222c3ee1d26eb6c8bb37e57c9136b2e352793b6",
+      "disposition": "BASELINE_UNCHANGED_WIP_NOT_APPLIED",
+      "disposition_detail": "Main retains the baseline blob, so this checkpoint edit was not applied.",
+      "historical_disposition": "BASELINE_UNCHANGED_WIP_NOT_APPLIED",
+      "historical_audit_blob": "7222c3ee1d26eb6c8bb37e57c9136b2e352793b6"
+    },
+    {
+      "path": "scripts/check_api_load.py",
+      "wip_change": "A",
+      "baseline_blob": null,
+      "wip_blob": "3d2b457205e0f9e19d434478bbc55133ba57b7e3",
+      "main_blob": null,
+      "disposition": "ABSENT_ON_MAIN",
+      "disposition_detail": "New checkpoint file is absent from main; no main acceptance evidence for this WIP feature.",
+      "historical_disposition": "ABSENT_ON_MAIN",
+      "historical_audit_blob": null
+    },
+    {
+      "path": "scripts/verify_release_ci.py",
+      "wip_change": "M",
+      "baseline_blob": "0ff42bf9807eb31e31f342406c6c68a3ad9add4e",
+      "wip_blob": "b7c9678b09f2c9b326ee21797b491f4c8ba79632",
+      "main_blob": "183ab882edd67b43c60ae84b908f19336bcc4c2c",
+      "disposition": "DIVERGED_REQUIRES_HUNK_TRIAGE",
+      "disposition_detail": "Diverged for desktop checks/repository rename; WIP API-load required step is absent.",
+      "historical_disposition": "DIVERGED_REQUIRES_HUNK_TRIAGE",
+      "historical_audit_blob": "183ab882edd67b43c60ae84b908f19336bcc4c2c"
+    },
+    {
+      "path": "tests/integration/test_api.py",
+      "wip_change": "M",
+      "baseline_blob": "a21df73eadf0202c1990657c615c0ed571e9c490",
+      "wip_blob": "829d8b90f842c3a32f5896fe7c7b04a18eaff8c5",
+      "main_blob": "95299059cf6bb5958585a306b1053b0180ff785b",
+      "disposition": "PROVENANCE_CHANGES_PROMOTED_WITH_REGRESSIONS",
+      "disposition_detail": "Provenance changes promoted in 78a3a0b; API tests also add frozen-input/component-change regressions.",
+      "historical_disposition": "BASELINE_UNCHANGED_WIP_NOT_APPLIED",
+      "historical_audit_blob": "a21df73eadf0202c1990657c615c0ed571e9c490"
+    },
+    {
+      "path": "tests/integration/test_run_provenance.py",
+      "wip_change": "A",
+      "baseline_blob": null,
+      "wip_blob": "0f5613bb22041ff0a3753438b6a5896c325315a6",
+      "main_blob": "0f5613bb22041ff0a3753438b6a5896c325315a6",
+      "disposition": "EXACT_WIP_BLOB_ON_MAIN",
+      "disposition_detail": "Exact file promoted in 0e3b8a1a044f6be5701de529ff86564e55e69032; checkpoint itself is not an ancestor of main.",
+      "historical_disposition": "EXACT_WIP_BLOB_ON_MAIN",
+      "historical_audit_blob": "0f5613bb22041ff0a3753438b6a5896c325315a6"
+    }
+  ],
+  "counts": {
+    "DIVERGED_REQUIRES_HUNK_TRIAGE": 4,
+    "EXACT_WIP_BLOB_ON_MAIN": 2,
+    "BASELINE_UNCHANGED_WIP_NOT_APPLIED": 13,
+    "ABSENT_ON_MAIN": 2
+  },
+  "historical_audit_main": "9983b5c68f250eec349e212c807ad9c33b25dce8",
+  "main": "a4992b55e9131c2d1cc4cc936f7f74e8e3ca5b9b",
+  "remote_archive_branch": "archive/aeroforge-wip-2026-11",
+  "remote_archive_sha": "a1d7313146b687e78468df9a5b66a3920120092c",
+  "summary": {
+    "original_paths": 21,
+    "previously_exact_on_main": 2,
+    "additional_provenance_paths_promoted": 2,
+    "paths_with_quarantined_changes": 17
+  }
+}

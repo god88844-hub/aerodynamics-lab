@@ -1,0 +1,64 @@
+...........FF............                                                [100%]
+================================== FAILURES ===================================
+_____ test_real_workspace_overage_preserves_completed_assets_and_recovers _____
+
+tmp_path = WindowsPath('C:/Users/god88/AppData/Local/Temp/pytest-of-god88/pytest-876/test_real_workspace_overage_pr0')
+
+    def test_real_workspace_overage_preserves_completed_assets_and_recovers(tmp_path):
+        with WorkerClient(ROOT, tmp_path, resources=ResourceBudget(workspace_bytes=MIB)) as client:
+>           client.wait_ready()
+
+tests\cad\test_worker_resources.py:38: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <desktop_worker.client.WorkerClient object at 0x000001834BAB9290>
+timeout = 35
+
+    def wait_ready(self, timeout: float = 35) -> dict:
+        deadline = time.monotonic() + timeout
+        while time.monotonic() < deadline:
+            if (self.session / "ready.json").exists():
+                ready = json.loads((self.session / "ready.json").read_bytes())
+                if ready.get("protocol") != "desktop_worker_1" or ready.get("session_id") != self.session_id:
+                    raise ValueError("Worker readiness belongs to a different session")
+                return ready
+            if self.process.poll() is not None:
+                retired = self.session / "retired.json"
+                reason = json.loads(retired.read_bytes()).get("reason") if retired.exists() else "inspect its session log"
+>               raise RuntimeError("CAD worker failed to start: " + str(reason))
+E               RuntimeError: CAD worker failed to start: resource_admission_refused: insufficient_memory_headroom
+
+packages\desktop_worker\client.py:46: RuntimeError
+_____________ test_changed_session_budget_cannot_get_a_completion _____________
+
+tmp_path = WindowsPath('C:/Users/god88/AppData/Local/Temp/pytest-of-god88/pytest-876/test_changed_session_budget_ca0')
+
+    def test_changed_session_budget_cannot_get_a_completion(tmp_path):
+        with WorkerClient(ROOT, tmp_path) as client:
+>           client.wait_ready()
+
+tests\cad\test_worker_resources.py:67: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <desktop_worker.client.WorkerClient object at 0x000001834B9D9390>
+timeout = 35
+
+    def wait_ready(self, timeout: float = 35) -> dict:
+        deadline = time.monotonic() + timeout
+        while time.monotonic() < deadline:
+            if (self.session / "ready.json").exists():
+                ready = json.loads((self.session / "ready.json").read_bytes())
+                if ready.get("protocol") != "desktop_worker_1" or ready.get("session_id") != self.session_id:
+                    raise ValueError("Worker readiness belongs to a different session")
+                return ready
+            if self.process.poll() is not None:
+                retired = self.session / "retired.json"
+                reason = json.loads(retired.read_bytes()).get("reason") if retired.exists() else "inspect its session log"
+>               raise RuntimeError("CAD worker failed to start: " + str(reason))
+E               RuntimeError: CAD worker failed to start: resource_admission_refused: insufficient_memory_headroom
+
+packages\desktop_worker\client.py:46: RuntimeError
+=========================== short test summary info ===========================
+FAILED tests/cad/test_worker_resources.py::test_real_workspace_overage_preserves_completed_assets_and_recovers
+FAILED tests/cad/test_worker_resources.py::test_changed_session_budget_cannot_get_a_completion
+2 failed, 23 passed in 64.13s (0:01:04)
