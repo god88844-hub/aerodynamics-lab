@@ -1,24 +1,40 @@
 param(
     [string]$PythonPath = "",
-    [switch]$Launch
+    [switch]$Launch,
+    [string]$TimingReport = ""
 )
 
 $ErrorActionPreference = "Stop"
 $repositoryRoot = Split-Path -Parent $PSScriptRoot
 $cachePath = Join-Path $repositoryRoot ".cache/desktop"
+$cacheWasPresent = Test-Path -LiteralPath $cachePath
+$script:buildTimings = [System.Collections.Generic.List[object]]::new()
+$buildClock = [System.Diagnostics.Stopwatch]::StartNew()
+$startedUtc = [DateTime]::UtcNow.ToString('o')
+$buildSucceeded = $false
+if ($TimingReport -ne "" -and ((Test-Path -LiteralPath $TimingReport) -or ![System.IO.Path]::IsPathRooted($TimingReport))) {
+    throw "Timing report must be a new absolute path"
+}
 New-Item -ItemType Directory -Path $cachePath -Force | Out-Null
 
 function Invoke-Checked {
     param([string]$Command, [string[]]$Arguments)
-    & $Command @Arguments
-    if ($LASTEXITCODE -ne 0) {
-        throw "$Command failed with exit code $LASTEXITCODE"
+    $commandClock = [System.Diagnostics.Stopwatch]::StartNew()
+    try {
+        & $Command @Arguments
+        if ($LASTEXITCODE -ne 0) {
+            throw "$Command failed with exit code $LASTEXITCODE"
+        }
+    } finally {
+        $script:buildTimings.Add(@{command=$Command; arguments=$Arguments; seconds=$commandClock.Elapsed.TotalSeconds; exit_code=$LASTEXITCODE})
     }
 }
 
 function Get-VerifiedArchive {
     param([string]$Uri, [string]$Digest, [string]$Archive, [string]$Destination)
-    if (!(Test-Path -LiteralPath $Archive)) {
+    $downloadClock = [System.Diagnostics.Stopwatch]::StartNew()
+    $wasCached = Test-Path -LiteralPath $Archive
+    if (!$wasCached) {
         Invoke-WebRequest -Uri $Uri -OutFile $Archive
     }
     $actualDigest = (Get-FileHash -LiteralPath $Archive -Algorithm SHA256).Hash.ToLowerInvariant()
@@ -26,8 +42,10 @@ function Get-VerifiedArchive {
         throw "Downloaded archive failed its SHA-256 check at $Archive"
     }
     Expand-Archive -LiteralPath $Archive -DestinationPath $Destination -Force
+    $script:buildTimings.Add(@{command="verified-download-and-extract"; uri=$Uri; sha256=$Digest; archive_cached=$wasCached; seconds=$downloadClock.Elapsed.TotalSeconds})
 }
 
+try {
 $bindingsCommit = "e83fd0904c13356ed1d4c3d09f8bb9132bdc6b77"
 $bindingsDirectory = Join-Path $cachePath "bindings"
 $bindingsDownload = @{
@@ -85,4 +103,15 @@ if ($editor.ExitCode -ne 0) {
 Invoke-Checked $godot @("--headless", "--path", $desktopDirectory, "--script", "smoke_test.gd")
 if ($Launch) {
     Invoke-Checked $godot @("--path", $desktopDirectory)
+}
+$buildSucceeded = $true
+} finally {
+    if ($TimingReport -ne "") {
+        $receipt = @{protocol="windows_empty_app_cache_build_1"; source_sha=(git -C $repositoryRoot rev-parse HEAD);
+            started_utc=$startedUtc; completed_utc=[DateTime]::UtcNow.ToString('o');
+            cache_preexisted=$cacheWasPresent; cache_path=$cachePath; seconds=$buildClock.Elapsed.TotalSeconds;
+            success=$buildSucceeded; stages=$script:buildTimings; pip_no_cache=$env:PIP_NO_CACHE_DIR;
+            scope="Empty application/dependency/build cache; preinstalled Python/compiler/CMake/Ninja. OS and network caches uncontrolled; not a fresh-boot claim."}
+        $receipt | ConvertTo-Json -Depth 10 | Set-Content -LiteralPath $TimingReport -Encoding utf8
+    }
 }

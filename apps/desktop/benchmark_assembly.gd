@@ -4,6 +4,7 @@ var desktop: Control
 var report_path: String
 var fixture_path: String
 var frames: int = 600
+var interactive: bool = false
 var report: Dictionary = {"report_version": "assembly_viewport_1", "physical_validation_status": "unvalidated",
 	"hardware_tier_acceptance": "pending", "frame_target_ms": 1000.0 / 30.0,
 	"scope": "200-part viewport orbit/selection, save/reopen, then single-solid worker build/torque. Geometry editing of the complete assembly remains pending."}
@@ -15,6 +16,8 @@ func _initialize() -> void:
 
 func _run() -> void:
 	for argument in OS.get_cmdline_user_args():
+		if argument == "--interactive":
+			interactive = true
 		if argument.begins_with("--report="):
 			report_path = argument.trim_prefix("--report=")
 		if argument.begins_with("--frames="):
@@ -43,6 +46,7 @@ func _run() -> void:
 	if not await _wait():
 		_finish(1, "Initial project failed")
 		return
+	_write_record(report_path.get_basename() + "-startup.json", {"desktop_pid": OS.get_process_id(), "ready_usec": Time.get_ticks_usec(), "utc": Time.get_datetime_string_from_system(true)})
 	var start: int = Time.get_ticks_usec()
 	desktop.call("_start_job", "validate", fixture_path)
 	if not await _wait():
@@ -75,12 +79,26 @@ func _run() -> void:
 	var selection_samples: Array[float] = []
 	var tree: Tree = desktop.get("components")
 	var selected: TreeItem = tree.get_root().get_first_child()
+	var initial_yaw: float = desktop.get("yaw")
+	var focused_frames: int = 0
+	if interactive:
+		desktop.set("qualification_orbit_left", true)
+		desktop.get("status_label").text = "QUALIFICATION: press Space, then drag the assembly with the left mouse button. Recording 1800 rendered frames."
+		var input_deadline: int = Time.get_ticks_msec() + 180000
+		while desktop.get("qualification_started_usec") == 0 and Time.get_ticks_msec() < input_deadline:
+			await process_frame
+		if desktop.get("qualification_started_usec") == 0:
+			_finish(1, "No real input started the interactive recording")
+			return
 	var previous: int = Time.get_ticks_usec()
 	var beginning: int = previous
 	for index in range(frames):
-		desktop.set("yaw", 0.7 + (Time.get_ticks_usec() - beginning) / 1000000.0 * 0.4)
-		desktop.call("_update_camera")
-		var selecting: bool = index % 30 == 0
+		if not interactive:
+			desktop.set("yaw", 0.7 + (Time.get_ticks_usec() - beginning) / 1000000.0 * 0.4)
+			desktop.call("_update_camera")
+		var selecting: bool = not interactive and index % 30 == 0
+		if get_root().has_focus():
+			focused_frames += 1
 		var selection_start: int = Time.get_ticks_usec()
 		if selecting:
 			selected.select(0)
@@ -101,6 +119,20 @@ func _run() -> void:
 	report["p95_ms"] = sorted[int(ceil(0.95 * frames)) - 1]
 	report["p99_ms"] = sorted[int(ceil(0.99 * frames)) - 1]
 	report["max_ms"] = sorted[-1]
+	report["p95_frame_equivalent_fps"] = 1000.0 / report["p95_ms"]
+	report["p99_frame_equivalent_fps"] = 1000.0 / report["p99_ms"]
+	report["interactive"] = interactive
+	report["focused_frames"] = focused_frames
+	report["recorded_frames"] = frames
+	if interactive:
+		report["input_events"] = desktop.get("qualification_events")
+		report["yaw_change_rad"] = float(desktop.get("yaw")) - initial_yaw
+		var drag_events: int = 0
+		for event in report["input_events"]:
+			if event["kind"] == "motion" and int(event["buttons"]) & MOUSE_BUTTON_MASK_LEFT:
+				drag_events += 1
+		report["drag_motion_events"] = drag_events
+		report["interactive_input_verified"] = drag_events > 0 and absf(report["yaw_change_rad"]) > 0.01
 	report["viewport_target_met"] = report["p95_ms"] <= report["frame_target_ms"] and report["mean_fps"] >= 30.0
 	report["rendered_objects_monitor"] = Performance.get_monitor(Performance.RENDER_TOTAL_OBJECTS_IN_FRAME)
 	report["draw_calls_monitor"] = Performance.get_monitor(Performance.RENDER_TOTAL_DRAW_CALLS_IN_FRAME)
@@ -122,15 +154,67 @@ func _run() -> void:
 	report["reopen_s"] = (Time.get_ticks_usec() - start) / 1000000.0
 	# Exercise real CAD worker memory after measuring the assembly viewport.
 	desktop.call("_rebuild_body")
+	var cad_ok: bool = await _wait()
+	if cad_ok:
+		desktop.call("_run_cad_torque")
+		cad_ok = await _wait()
+		if cad_ok:
+			cad_ok = desktop.get("result")["result"]["status"] == "completed"
+	report["cad_worker_exercise_passed"] = cad_ok
+	if not cad_ok:
+		report["cad_worker_refusal"] = desktop.get("status_label").text
+	# Measure a real active application job even when local CAD admission refuses.
+	# Keep CAD and legacy results separate; one cannot stand in for the other.
+	if cad_ok:
+		desktop.get("torque_duration").value = 5.0
+		desktop.get("torque_step").value = 0.001
+		desktop.get("torque_z").value = 0.00001
+		desktop.call("_run_cad_torque")
+		report["active_cad_cancel"] = await _measure_cancel()
+	desktop.call("_load_reference")
 	if not await _wait():
-		_finish(1, "Worker build failed")
+		_finish(1, "Reference reload for cancellation failed")
 		return
-	desktop.call("_run_cad_torque")
-	if not await _wait() or desktop.get("result")["result"]["status"] != "completed":
-		_finish(1, "Worker numerical experiment failed")
+	var cancellation_project: Dictionary = desktop.get("project").duplicate(true)
+	cancellation_project["experiment"]["parameters"] = {"duration_s": 30.0}
+	desktop.call("_start_job", "validate", desktop.call("_write_payload", cancellation_project))
+	if not await _wait():
+		_finish(1, "Cancellation input validation failed")
 		return
-	report["worker_exercise"] = "Default constrained body and isolated applied-torque experiment"
-	_finish(0 if report["viewport_target_met"] else 2)
+	desktop.call("_run_experiment")
+	report["active_legacy_cancel"] = await _measure_cancel()
+	var passed: bool = report["viewport_target_met"] and cad_ok and report["active_legacy_cancel"]["project_preserved"]
+	if interactive:
+		passed = passed and report["interactive_input_verified"] and focused_frames == frames
+	_finish(0 if passed else 2)
+
+
+func _measure_cancel() -> Dictionary:
+	var deadline: int = Time.get_ticks_msec() + 20000
+	while not FileAccess.file_exists(desktop.get("job_started")) and desktop.get("job_pid") > 0 and Time.get_ticks_msec() < deadline:
+		await process_frame
+	if not FileAccess.file_exists(desktop.get("job_started")):
+		return {"failure": "No active worker receipt"}
+	await create_timer(0.3).timeout
+	if desktop.get("job_pid") <= 0 or FileAccess.file_exists(desktop.get("job_completion")):
+		return {"failure": "Job completed before active cancellation"}
+	var started: Variant = JSON.parse_string(FileAccess.get_file_as_string(desktop.get("job_started")))
+	var frozen: String = desktop.get("project_document_json")
+	# External observer sees this marker while sampling the actual process tree.
+	var action_usec: int = Time.get_ticks_usec()
+	_write_record(report_path.get_basename() + "-cancel-" + ("cad" if desktop.get("job_uses_reusable") else "legacy") + ".json",
+		{"action_usec": action_usec, "worker_pid": started["worker_pid"], "desktop_pid": OS.get_process_id(), "completion": desktop.get("job_completion")})
+	desktop.call("_cancel_job")
+	return {"worker_pid": started["worker_pid"], "action_usec": action_usec,
+		"application_cancel_return_s": (Time.get_ticks_usec() - action_usec) / 1000000.0,
+		"project_preserved": desktop.get("project_document_json") == frozen,
+		"completion_published": FileAccess.file_exists(desktop.get("job_completion"))}
+
+
+func _write_record(path: String, data: Dictionary) -> void:
+	var output: FileAccess = FileAccess.open(path, FileAccess.WRITE)
+	output.store_string(JSON.stringify(data, "\t", true, true))
+	output.close()
 
 
 func _wait() -> bool:
