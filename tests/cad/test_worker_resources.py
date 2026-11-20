@@ -1,7 +1,12 @@
 """Exercise refusal, overage, completion binding and recovery with real workers."""
 from hashlib import sha256
 import json
+import os
 from pathlib import Path
+import subprocess
+import sys
+import threading
+import time
 
 import pytest
 
@@ -10,6 +15,7 @@ from aeroforge_schemas.cad import BoxRecipe
 from desktop_worker.client import WorkerClient, verify_approval
 from desktop_worker.resources import GIB, MIB, ResourceBudget
 from desktop_worker.supervision import read_record
+from desktop_worker.metrics import ProcessTreeObserver
 
 ROOT = Path(__file__).resolve().parents[2]
 
@@ -69,3 +75,65 @@ def test_changed_session_budget_cannot_get_a_completion(tmp_path):
         with pytest.raises(RuntimeError, match="limits must match"):
             client.request("build-body", BoxRecipe().model_dump(mode="json"))
         assert not (client.last_job / "complete.json").exists()
+
+
+def test_active_cad_cancel_records_cli_latency_and_owned_resident_reclamation(tmp_path):
+    """Measure the same stop CLI invoked by Godot; no system-wide RAM claim."""
+    with WorkerClient(ROOT, tmp_path) as client:
+        ready = client.wait_ready()
+        built = client.request("build-body", BoxRecipe(material_density_kg_m3=500).model_dump(mode="json"))
+        previous_result = (client.last_job / "result.json").read_bytes()
+        previous_directory = client.last_job
+        payload = {"project": built["project"], "experiment": {
+            "duration_s": 5.0, "step_s": .001, "torque_body_nm": [0, 0, .00001]}}
+        errors = []
+
+        def run():
+            try:
+                client.request("cad-torque", payload, asset_root=Path(built["project_path"]).parent)
+            except RuntimeError as error:
+                errors.append(str(error))
+
+        observer = ProcessTreeObserver(client.process.pid)
+        thread = threading.Thread(target=run, daemon=True)
+        thread.start()
+        try:
+            deadline = time.monotonic() + 15
+            while client.last_job == previous_directory or not (client.last_job / "started.json").exists():
+                if time.monotonic() > deadline:
+                    pytest.fail("CAD cancellation did not reach an active job")
+                observer.sample()
+                time.sleep(.01)
+            for _ in range(3):
+                time.sleep(.1)
+                before = observer.sample()
+            assert not (client.last_job / "complete.json").exists(), "Job finished before cancellation"
+            assert any(p["pid"] == ready["worker_pid"] for p in before["processes"])
+            resident_before = sum(p["resident_bytes"] for p in before["processes"])
+            started = time.perf_counter_ns()
+            cancelled = subprocess.run([sys.executable, str(ROOT / "scripts/lab_worker.py"),
+                "--session", str(client.session), "--session-id", client.session_id, "--stop"],
+                capture_output=True, creationflags=subprocess.CREATE_NO_WINDOW if os.name == "nt" else 0)
+            latency_ns = time.perf_counter_ns() - started
+            assert cancelled.returncode == 0, cancelled.stderr
+            client.process.wait(timeout=5)
+            after = observer.sample()
+            resident_after = sum(p["resident_bytes"] for p in after["processes"])
+            assert not any(ref.alive() for ref in observer.processes.values())
+            assert not (client.last_job / "complete.json").exists()
+            assert (previous_directory / "result.json").read_bytes() == previous_result
+            assert latency_ns / 1e9 <= 5
+            assert resident_before > 0 and resident_after == 0
+            print("CAD_CANCEL_RECEIPT=" + json.dumps({"platform": sys.platform,
+                "source_sha": subprocess.check_output(["git", "-C", str(ROOT), "rev-parse", "HEAD"], text=True).strip(),
+                "method": "normal Godot stop CLI; perf_counter_ns around subprocess.run; 100 ms pre-action resident sampling",
+                "active_worker_pid": ready["worker_pid"], "cancel_cli_return_ns": latency_ns,
+                "pre_cancel_owned_resident_bytes": resident_before, "post_cancel_owned_resident_bytes": resident_after,
+                "owned_resident_reclaimed_percent": 100.0, "cleanup_verified": True,
+                "previous_result_preserved": True, "completion_published": False,
+                "scope": "CI host process tree, not local graphical timing or system/GPU physical RAM"}, sort_keys=True))
+        finally:
+            client.close()
+            thread.join(timeout=5)
+            observer.close()
+        assert errors and not thread.is_alive()
