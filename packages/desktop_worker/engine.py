@@ -7,7 +7,7 @@ from pathlib import Path
 import time
 
 from aeroforge_schemas.cad import BladeRecipe, BoxRecipe, CadTorqueRequest
-from desktop_worker.io import read_control_bytes, write_result
+from desktop_worker.io import read_control_bytes, unlink_control_record, write_result
 from desktop_worker.protocol import MAX_REQUEST_BYTES, PROTOCOL, WorkerRequest
 from desktop_worker.resources import ResourceBudget, admission, capacity_snapshot, workspace_size
 from desktop_worker.supervision import IDENTIFIER, ProcessRef, read_record, source_identity
@@ -102,5 +102,5 @@ def serve(session: Path, session_id: str) -> int:
             write_result(directory / "error.json", {**context, "status": "failed", "error": str(error)})
             return 2  # conservatively discard native state after any failed request
         finally:
-            (session / "active.json").unlink(missing_ok=True)
-            claimed.unlink(missing_ok=True)
+            unlink_control_record(session / "active.json")
+            unlink_control_record(claimed)

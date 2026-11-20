@@ -39,13 +39,27 @@ foreach ($session in (Get-ChildItem -LiteralPath $sessionRoot -Directory)) {
     if ($before -contains $session.Name) { continue }
     $destination = Join-Path $ReceiptDirectory ('sessions/' + $session.Name)
     New-Item -ItemType Directory -Path $destination -Force | Out-Null
-    foreach ($name in @('resource-request.json','resource-admission.json','resource-usage.json','supervisor.json','ready.json','retired.json')) {
+    foreach ($name in @('resource-request.json','resource-admission.json','resource-usage.json','supervisor.json','ready.json','retired.json','engine.log','engine-launcher.json')) {
         $source = Join-Path $session.FullName $name
         if (Test-Path -LiteralPath $source) { Copy-Item -LiteralPath $source -Destination $destination }
     }
+    $jobsDirectory = Join-Path $session.FullName 'jobs'
+    if (Test-Path -LiteralPath $jobsDirectory) {
+        foreach ($job in (Get-ChildItem -LiteralPath $jobsDirectory -Directory)) {
+            $jobDestination = Join-Path $destination ('jobs/' + $job.Name)
+            New-Item -ItemType Directory -Path $jobDestination -Force | Out-Null
+            foreach ($name in @('resource-admission.json','started.json','prepared.json','approved.json','complete.json','error.json')) {
+                $jobRecord = Join-Path $job.FullName $name
+                if (Test-Path -LiteralPath $jobRecord) { Copy-Item -LiteralPath $jobRecord -Destination $jobDestination }
+            }
+        }
+    }
     $sessions += $session.Name
 }
-@{source_sha=(git -C $repositoryRoot rev-parse HEAD); started_utc=$startedUtc;
+@{source_sha=(git -C $repositoryRoot rev-parse HEAD);
+    harness_sha256=(Get-FileHash -LiteralPath $PSCommandPath -Algorithm SHA256).Hash.ToLowerInvariant();
+    source_status=(git -C $repositoryRoot status --porcelain);
+    started_utc=$startedUtc;
     completed_utc=[DateTime]::UtcNow.ToString('o'); seconds=$clock.Elapsed.TotalSeconds;
     exit_code=$process.ExitCode; success=($process.ExitCode -eq 0); new_sessions=$sessions;
     memory_metric='GlobalMemoryStatusEx ullAvailPhys in admission; PDH available/free/standby counters observed separately';

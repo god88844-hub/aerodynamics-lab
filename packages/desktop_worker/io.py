@@ -11,6 +11,24 @@ def json_bytes(payload: dict) -> bytes:
     return (json.dumps(payload, sort_keys=True, indent=2, allow_nan=False) + "\n").encode("utf-8")
 
 
+def _windows_access_lock(error: OSError) -> bool:
+    winerror = getattr(error, "winerror", None)
+    return os.name == "nt" and (winerror in (5, 32, 33) or (winerror is None and error.errno == 13))
+
+
+def unlink_control_record(path: Path) -> None:
+    """Retire a control marker after transient readers release their Windows handles."""
+    deadline = time.monotonic() + 0.5
+    while True:
+        try:
+            path.unlink(missing_ok=True)
+            return
+        except OSError as error:
+            if not _windows_access_lock(error) or time.monotonic() >= deadline:
+                raise
+            time.sleep(0.01)
+
+
 def read_control_bytes(path: Path) -> bytes:
     """Read one bounded record; tolerate only brief Windows sharing/access locks."""
     deadline = time.monotonic() + 0.5
@@ -21,9 +39,7 @@ def read_control_bytes(path: Path) -> bytes:
             break
         except PermissionError as error:
             # CPython's CRT open can report only EACCES, without winerror.
-            winerror = getattr(error, "winerror", None)
-            access_lock = winerror in (5, 32, 33) or (winerror is None and error.errno == 13)
-            if os.name != "nt" or not access_lock or time.monotonic() >= deadline:
+            if not _windows_access_lock(error) or time.monotonic() >= deadline:
                 raise
             time.sleep(0.01)
     if len(raw) > 64 * 1024:
@@ -48,7 +64,7 @@ def write_result(destination: Path, payload: dict) -> None:
                 os.replace(temporary, destination)
                 break
             except OSError as error:
-                if os.name != "nt" or error.winerror not in (5, 32, 33) or time.monotonic() >= deadline:
+                if not _windows_access_lock(error) or time.monotonic() >= deadline:
                     raise
                 time.sleep(0.01)
     finally:

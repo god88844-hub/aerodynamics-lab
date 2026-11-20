@@ -48,3 +48,15 @@ CAD geometry, admission threshold, tolerance or executable-capability change is 
 These corrections establish controlled race handling. They do not prove the exact
 unlogged trigger of either initial intermittent failure. Current-head CI and normal
 smoke evidence must be inspected separately before review.
+
+## Observed marker-retirement race
+
+After adequate RAM was available, the post-fix bundled attempt at source `67c12f5`
+exited 23 with `engine_exited`. Its engine log records **WinError 32 on `active.json`**:
+the engine removed the marker while the supervisor briefly held a read handle without
+delete sharing. This is a directly observed cleanup race, separate from memory refusal.
+`unlink_control_record` now retries the same bounded Windows access/sharing conditions
+for 0.5 s. A persistent reader still causes failure; completed bytes are preserved.
+Two real-handle regression checks cover temporary and persistent locks. The combined
+focused foundation set passes **30 tests**. Qualification capture now retains per-job
+admission/completion/error records, engine logs and the actual capture-script hash.

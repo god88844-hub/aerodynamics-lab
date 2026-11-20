@@ -8,7 +8,7 @@ import time
 
 import pytest
 
-from desktop_worker.io import read_control_bytes, write_result
+from desktop_worker.io import read_control_bytes, unlink_control_record, write_result
 
 pytestmark = pytest.mark.skipif(os.name != "nt", reason="Windows file sharing semantics")
 
@@ -73,6 +73,39 @@ def test_control_reader_fails_bounded_on_persistent_exclusive_lock(tmp_path):
     try:
         with pytest.raises(PermissionError):
             read_control_bytes(record)
+    finally:
+        kernel.CloseHandle(handle)
+    assert 0.45 <= time.monotonic() - started < 2
+    assert record.read_bytes() == original
+
+
+def test_control_retirement_retries_a_real_windows_reader(tmp_path):
+    record = tmp_path / "active.json"
+    write_result(record, {"job_id": "owned"})
+    kernel, handle = lock_without_delete_share(record)
+
+    def release():
+        time.sleep(0.12)
+        kernel.CloseHandle(handle)
+
+    thread = threading.Thread(target=release)
+    thread.start()
+    try:
+        unlink_control_record(record)
+    finally:
+        thread.join()
+    assert not record.exists()
+
+
+def test_control_retirement_fails_bounded_on_persistent_reader(tmp_path):
+    record = tmp_path / "active.json"
+    write_result(record, {"job_id": "owned"})
+    original = record.read_bytes()
+    kernel, handle = lock_without_delete_share(record)
+    started = time.monotonic()
+    try:
+        with pytest.raises(OSError):
+            unlink_control_record(record)
     finally:
         kernel.CloseHandle(handle)
     assert 0.45 <= time.monotonic() - started < 2
