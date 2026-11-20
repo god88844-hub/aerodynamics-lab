@@ -1,0 +1,17 @@
+{
+  "native_dll_sha256": "e06d3579c5e2f6dc3360b7a6422cbc35ea39b6c541db7daa45691e9a0c1c1e44",
+  "other_workload": "Other desktop applications uncontrolled; no background download/build",
+  "os": {
+    "Caption": "Microsoft Windows 11 Home Single Language",
+    "Version": "10.0.26300",
+    "BuildNumber": "26300"
+  },
+  "power": "Power Scheme GUID: 381b4222-f694-41f0-9685-ff5bb260df2e  (Balanced)",
+  "startup_cache": "Existing SHA-verified bundled Python environment; fresh native build from unchanged engineering sources",
+  "cpu": "Intel(R) Core(TM) Ultra 7 155U",
+  "gpu": {
+    "Name": "Intel(R) Graphics",
+    "DriverVersion": "32.0.101.6790"
+  },
+  "qualification_scope": "Local 16 GB integrated-GPU prototype with unchanged default admission; no wider hardware/physical acceptance"
+}
