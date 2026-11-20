@@ -8,6 +8,10 @@ $ErrorActionPreference = "Stop"
 $repositoryRoot = Split-Path -Parent $PSScriptRoot
 $cachePath = Join-Path $repositoryRoot ".cache/desktop"
 $cacheWasPresent = Test-Path -LiteralPath $cachePath
+$pythonWasSupplied = $PythonPath -ne ""
+$nativeWasPresent = Test-Path -LiteralPath (Join-Path $cachePath "native")
+$pythonWasPresent = Test-Path -LiteralPath (Join-Path $cachePath "python")
+$editorWasPresent = Test-Path -LiteralPath (Join-Path $repositoryRoot "apps/desktop/.godot")
 $script:buildTimings = [System.Collections.Generic.List[object]]::new()
 $buildClock = [System.Diagnostics.Stopwatch]::StartNew()
 $startedUtc = [DateTime]::UtcNow.ToString('o')
@@ -109,9 +113,11 @@ $buildSucceeded = $true
     if ($TimingReport -ne "") {
         $receipt = @{protocol="windows_empty_app_cache_build_1"; source_sha=(git -C $repositoryRoot rev-parse HEAD);
             started_utc=$startedUtc; completed_utc=[DateTime]::UtcNow.ToString('o');
-            cache_preexisted=$cacheWasPresent; cache_path=$cachePath; seconds=$buildClock.Elapsed.TotalSeconds;
+            cache_preexisted=$cacheWasPresent; native_build_preexisted=$nativeWasPresent;
+            python_environment_supplied=$pythonWasSupplied; python_environment_preexisted=$pythonWasPresent;
+            editor_import_cache_preexisted=$editorWasPresent; cache_path=$cachePath; seconds=$buildClock.Elapsed.TotalSeconds;
             success=$buildSucceeded; stages=$script:buildTimings; pip_no_cache=$env:PIP_NO_CACHE_DIR;
-            scope="Empty application/dependency/build cache; preinstalled Python/compiler/CMake/Ninja. OS and network caches uncontrolled; not a fresh-boot claim."}
+            scope="Measured Windows bootstrap. Cache flags and supplied Python determine cold/warm scope. Preinstalled compiler/CMake/Ninja; OS/network caches uncontrolled; no fresh-boot claim."}
         $receipt | ConvertTo-Json -Depth 10 | Set-Content -LiteralPath $TimingReport -Encoding utf8
     }
 }
