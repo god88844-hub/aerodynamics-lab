@@ -7,7 +7,7 @@ The approved Phase 0 includes a Godot desktop application, full CAD, all four
 drone families, engineering test worlds, weather, guided learning and advanced
 autonomy. The currently implemented application is the existing multirotor
 web/API foundation. Follow the [product specification](docs/PRODUCT_SPEC.md),
-[complete roadmap](docs/ROADMAP.md), [acceptance ledger](docs/ACCEPTANCE.md) and
+[complete roadmap](docs/ROADMAP.md), [acceptance ledger](docs/ACCEPTANCE_LEDGER.md) and
 [research library](docs/SOURCES.md) for current status and builder handoff.
 
 The first [desktop foundation prototype](apps/desktop/README.md) exercises the

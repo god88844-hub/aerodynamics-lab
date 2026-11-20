@@ -1,6 +1,6 @@
 # Aerodynamics Lab product specification
 
-Approved planning decisions, 19 November 2026. This document defines the product. Implementation and measured acceptance are recorded in [ACCEPTANCE.md](ACCEPTANCE.md).
+Approved planning decisions, 19 November 2026. This document defines the product. Implementation and measured acceptance are recorded in [ACCEPTANCE.md](ACCEPTANCE_LEDGER.md).
 
 ## Purpose
 

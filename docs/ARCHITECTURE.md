@@ -32,6 +32,8 @@ The full checkpoint `a1d7313146b687e78468df9a5b66a3920120092c` is retained witho
 
 The original checkpoint has 21 changed paths. Before provenance reconciliation, two exact utility/test files were already present on main and 19 paths had unpromoted changes. Integrating the two missing provenance-hook/test edits reduces the remaining unpromoted path count to 17; it does not change or merge the full archive. All unrelated changes remain quarantined.
 
+The exact path dispositions and Git blob identities are recorded in [LEGACY_WIP_MANIFEST](LEGACY_WIP_MANIFEST.md).
+
 ## Stop condition
 
 Execute archive/architecture, provenance, contract/resource completion, then visible/cold-build/cancellation qualification in that order. Publish a formal gate report and **stop for owner sign-off** before full WP3 CAD expansion or M21/M24/M25/M26 model fixes. Numeric agreement, a working schema and green CI do not establish physical validation.

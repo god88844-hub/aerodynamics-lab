@@ -1,0 +1,1462 @@
+{
+  "checked_at": "2026-11-20",
+  "scope": "All files present in workstation source directory; includes derived files, not all are original evidence",
+  "files": [
+    {
+      "path": "../source-physical/CFRP-lattices-2026/41467_2026_72105_MOESM12_ESM.xlsx",
+      "bytes": 8154310,
+      "sha256": "60a111532fe91494bd586eda3dd7f22142f5270fdf201f4fd7f3726ba1e9e883",
+      "classification": "LOCAL_FILE_NOT_AUTOMATICALLY_PUBLISHER_ORIGINAL",
+      "identity_rule": "Only a match to a documented original pin plus provenance identifies source bytes; derived fits/outputs remain derived"
+    },
+    {
+      "path": "../source-physical/CFRP-lattices-2026/41467_2026_72105_MOESM1_ESM.pdf",
+      "bytes": 6016749,
+      "sha256": "0efdc5f0907921b91d80b29423eb10f19ca2dece1e1e183cf2bd0652669ab5ca",
+      "classification": "LOCAL_FILE_NOT_AUTOMATICALLY_PUBLISHER_ORIGINAL",
+      "identity_rule": "Only a match to a documented original pin plus provenance identifies source bytes; derived fits/outputs remain derived"
+    },
+    {
+      "path": "../source-physical/CFRP-lattices-2026/column-comparison-replay.json",
+      "bytes": 2283,
+      "sha256": "50b0d6c8573abb257c113ca3d22d140dbb11e3dce30ba633fb9549b6e118a8a4",
+      "classification": "LOCAL_FILE_NOT_AUTOMATICALLY_PUBLISHER_ORIGINAL",
+      "identity_rule": "Only a match to a documented original pin plus provenance identifies source bytes; derived fits/outputs remain derived"
+    },
+    {
+      "path": "../source-physical/CFRP-lattices-2026/data.headers",
+      "bytes": 2232,
+      "sha256": "cae28122cdf70113770d695e68cd883d91685fd58c33a301ecfcde4b78aa49a7",
+      "classification": "LOCAL_FILE_NOT_AUTOMATICALLY_PUBLISHER_ORIGINAL",
+      "identity_rule": "Only a match to a documented original pin plus provenance identifies source bytes; derived fits/outputs remain derived"
+    },
+    {
+      "path": "../source-physical/CFRP-lattices-2026/paper.xml",
+      "bytes": 119447,
+      "sha256": "c05e448d31cd22a01ac2c362667b8db49db8c6c2ffea50024da86bccdf105960",
+      "classification": "LOCAL_FILE_NOT_AUTOMATICALLY_PUBLISHER_ORIGINAL",
+      "identity_rule": "Only a match to a documented original pin plus provenance identifies source bytes; derived fits/outputs remain derived"
+    },
+    {
+      "path": "../source-physical/CFRP-lattices-2026/supplement-01.txt",
+      "bytes": 726,
+      "sha256": "0c4f69414112479bd19cf4dbe6bf393a016b0b5dfbe70d0852bbd633dca58387",
+      "classification": "LOCAL_FILE_NOT_AUTOMATICALLY_PUBLISHER_ORIGINAL",
+      "identity_rule": "Only a match to a documented original pin plus provenance identifies source bytes; derived fits/outputs remain derived"
+    },
+    {
+      "path": "../source-physical/CFRP-lattices-2026/supplement-02.txt",
+      "bytes": 2737,
+      "sha256": "e934a10d637a48e17173486214cc15e78145a90f250dfe49a83a6810a1f29ea4",
+      "classification": "LOCAL_FILE_NOT_AUTOMATICALLY_PUBLISHER_ORIGINAL",
+      "identity_rule": "Only a match to a documented original pin plus provenance identifies source bytes; derived fits/outputs remain derived"
+    },
+    {
+      "path": "../source-physical/CFRP-lattices-2026/supplement-03.txt",
+      "bytes": 3167,
+      "sha256": "3e54af263bf915e131efaa937133ca7409608cd661c0c5ad2145070a69057c9c",
+      "classification": "LOCAL_FILE_NOT_AUTOMATICALLY_PUBLISHER_ORIGINAL",
+      "identity_rule": "Only a match to a documented original pin plus provenance identifies source bytes; derived fits/outputs remain derived"
+    },
+    {
+      "path": "../source-physical/CFRP-lattices-2026/supplement-04.txt",
+      "bytes": 3417,
+      "sha256": "3972cd169b7533a5d2d3a4ac5ad4594a97936c6c53ffb3e755ac15b7a4633a45",
+      "classification": "LOCAL_FILE_NOT_AUTOMATICALLY_PUBLISHER_ORIGINAL",
+      "identity_rule": "Only a match to a documented original pin plus provenance identifies source bytes; derived fits/outputs remain derived"
+    },
+    {
+      "path": "../source-physical/CFRP-lattices-2026/supplement-05.txt",
+      "bytes": 3039,
+      "sha256": "49101f7dbc60fd6f26491710752b74f59414f574e05a29aeb4441075240313f4",
+      "classification": "LOCAL_FILE_NOT_AUTOMATICALLY_PUBLISHER_ORIGINAL",
+      "identity_rule": "Only a match to a documented original pin plus provenance identifies source bytes; derived fits/outputs remain derived"
+    },
+    {
+      "path": "../source-physical/CFRP-lattices-2026/supplement-06.txt",
+      "bytes": 2940,
+      "sha256": "56ff05e875e4827df0458290bf9c111431471d8bed6682d11dc18cac6a8d8751",
+      "classification": "LOCAL_FILE_NOT_AUTOMATICALLY_PUBLISHER_ORIGINAL",
+      "identity_rule": "Only a match to a documented original pin plus provenance identifies source bytes; derived fits/outputs remain derived"
+    },
+    {
+      "path": "../source-physical/CFRP-lattices-2026/supplement-07.txt",
+      "bytes": 2758,
+      "sha256": "40063aa07e85c672d15da32e8e2cad662957eb2ed260eeeed021e3f34ec33cfb",
+      "classification": "LOCAL_FILE_NOT_AUTOMATICALLY_PUBLISHER_ORIGINAL",
+      "identity_rule": "Only a match to a documented original pin plus provenance identifies source bytes; derived fits/outputs remain derived"
+    },
+    {
+      "path": "../source-physical/CFRP-lattices-2026/supplement-08.txt",
+      "bytes": 2279,
+      "sha256": "a707311a93c3880848dfddc547aa81aab42230244d9ef3c665729e3a072d28ae",
+      "classification": "LOCAL_FILE_NOT_AUTOMATICALLY_PUBLISHER_ORIGINAL",
+      "identity_rule": "Only a match to a documented original pin plus provenance identifies source bytes; derived fits/outputs remain derived"
+    },
+    {
+      "path": "../source-physical/CFRP-lattices-2026/supplement-09.txt",
+      "bytes": 2327,
+      "sha256": "110fc18206e6edd611ca942d7529e8a92af9bad52454c96f50a947e0c359a4ce",
+      "classification": "LOCAL_FILE_NOT_AUTOMATICALLY_PUBLISHER_ORIGINAL",
+      "identity_rule": "Only a match to a documented original pin plus provenance identifies source bytes; derived fits/outputs remain derived"
+    },
+    {
+      "path": "../source-physical/CFRP-lattices-2026/supplement-10.txt",
+      "bytes": 2306,
+      "sha256": "4b4652767be8d3560f2b721a93f831afd611f4d136d05a12870982277215b23d",
+      "classification": "LOCAL_FILE_NOT_AUTOMATICALLY_PUBLISHER_ORIGINAL",
+      "identity_rule": "Only a match to a documented original pin plus provenance identifies source bytes; derived fits/outputs remain derived"
+    },
+    {
+      "path": "../source-physical/CFRP-lattices-2026/supplement-11.txt",
+      "bytes": 2532,
+      "sha256": "02e672695134248c659609ebf16aabd07ab36e68c638052113deb9bb0acaafdd",
+      "classification": "LOCAL_FILE_NOT_AUTOMATICALLY_PUBLISHER_ORIGINAL",
+      "identity_rule": "Only a match to a documented original pin plus provenance identifies source bytes; derived fits/outputs remain derived"
+    },
+    {
+      "path": "../source-physical/CFRP-lattices-2026/supplement-12.txt",
+      "bytes": 2989,
+      "sha256": "ac00f6116b51ec8d7f020d57f69e1b8f03fafc03d034884687f036e8044dc137",
+      "classification": "LOCAL_FILE_NOT_AUTOMATICALLY_PUBLISHER_ORIGINAL",
+      "identity_rule": "Only a match to a documented original pin plus provenance identifies source bytes; derived fits/outputs remain derived"
+    },
+    {
+      "path": "../source-physical/CFRP-lattices-2026/supplement-13.txt",
+      "bytes": 2553,
+      "sha256": "82c0f15700b8335426113ef2ba0d9eb80805787102e6ca633a49e95603740a49",
+      "classification": "LOCAL_FILE_NOT_AUTOMATICALLY_PUBLISHER_ORIGINAL",
+      "identity_rule": "Only a match to a documented original pin plus provenance identifies source bytes; derived fits/outputs remain derived"
+    },
+    {
+      "path": "../source-physical/CFRP-lattices-2026/supplement-14.txt",
+      "bytes": 2171,
+      "sha256": "65ec1bced460321b38aae5ad21a219c08dd863d830c6b568aeb87448c75ff577",
+      "classification": "LOCAL_FILE_NOT_AUTOMATICALLY_PUBLISHER_ORIGINAL",
+      "identity_rule": "Only a match to a documented original pin plus provenance identifies source bytes; derived fits/outputs remain derived"
+    },
+    {
+      "path": "../source-physical/CFRP-lattices-2026/supplement-15.txt",
+      "bytes": 1921,
+      "sha256": "7706e95f4f2bf568b4cc80e7615704983a709f05032a4a30ba4c83390f871e33",
+      "classification": "LOCAL_FILE_NOT_AUTOMATICALLY_PUBLISHER_ORIGINAL",
+      "identity_rule": "Only a match to a documented original pin plus provenance identifies source bytes; derived fits/outputs remain derived"
+    },
+    {
+      "path": "../source-physical/CFRP-lattices-2026/supplement-16.txt",
+      "bytes": 510,
+      "sha256": "7f56df781c6a3f343b2084d7f1ad895795f7d70620cfbc2e5597ec07b204e2a1",
+      "classification": "LOCAL_FILE_NOT_AUTOMATICALLY_PUBLISHER_ORIGINAL",
+      "identity_rule": "Only a match to a documented original pin plus provenance identifies source bytes; derived fits/outputs remain derived"
+    },
+    {
+      "path": "../source-physical/CFRP-lattices-2026/supplement-17.txt",
+      "bytes": 476,
+      "sha256": "5f9fe3b6f5f725f9fe5a45cc41f4bfc85756ae542d1aaf1f8ac80f2130d89157",
+      "classification": "LOCAL_FILE_NOT_AUTOMATICALLY_PUBLISHER_ORIGINAL",
+      "identity_rule": "Only a match to a documented original pin plus provenance identifies source bytes; derived fits/outputs remain derived"
+    },
+    {
+      "path": "../source-physical/CFRP-lattices-2026/supplement-18.txt",
+      "bytes": 736,
+      "sha256": "db1da50fe69c7a7ab7b6bb3de81c9826f31ab31ee4c7ea11060d149bfce1235f",
+      "classification": "LOCAL_FILE_NOT_AUTOMATICALLY_PUBLISHER_ORIGINAL",
+      "identity_rule": "Only a match to a documented original pin plus provenance identifies source bytes; derived fits/outputs remain derived"
+    },
+    {
+      "path": "../source-physical/CFRP-lattices-2026/supplement-19.txt",
+      "bytes": 726,
+      "sha256": "5eda037b098ee0e35e82876bc443e3d9ecdf3de6e0d43e426b6701e5da854857",
+      "classification": "LOCAL_FILE_NOT_AUTOMATICALLY_PUBLISHER_ORIGINAL",
+      "identity_rule": "Only a match to a documented original pin plus provenance identifies source bytes; derived fits/outputs remain derived"
+    },
+    {
+      "path": "../source-physical/CFRP-lattices-2026/supplement-20.txt",
+      "bytes": 1072,
+      "sha256": "9f463e9adf628ff2fd077039e70d97f146d26429fb0399ef73be201ae598da41",
+      "classification": "LOCAL_FILE_NOT_AUTOMATICALLY_PUBLISHER_ORIGINAL",
+      "identity_rule": "Only a match to a documented original pin plus provenance identifies source bytes; derived fits/outputs remain derived"
+    },
+    {
+      "path": "../source-physical/CFRP-lattices-2026/supplement-21.txt",
+      "bytes": 433,
+      "sha256": "f51d2310970c0cca442fbd20add03ec6b3dd451a7788b3f92c8b5d4325149949",
+      "classification": "LOCAL_FILE_NOT_AUTOMATICALLY_PUBLISHER_ORIGINAL",
+      "identity_rule": "Only a match to a documented original pin plus provenance identifies source bytes; derived fits/outputs remain derived"
+    },
+    {
+      "path": "../source-physical/CFRP-lattices-2026/supplement-22.txt",
+      "bytes": 874,
+      "sha256": "cd866b92ff6a584dfe9d05dcaa2c99e8b2fcbca5f143b0000ad0cf7714eaf177",
+      "classification": "LOCAL_FILE_NOT_AUTOMATICALLY_PUBLISHER_ORIGINAL",
+      "identity_rule": "Only a match to a documented original pin plus provenance identifies source bytes; derived fits/outputs remain derived"
+    },
+    {
+      "path": "../source-physical/CFRP-lattices-2026/supplement-23.txt",
+      "bytes": 1881,
+      "sha256": "617cfb1aa33e86af378ce81227fdca08f164da3f6d76461e4f24403fa308ec37",
+      "classification": "LOCAL_FILE_NOT_AUTOMATICALLY_PUBLISHER_ORIGINAL",
+      "identity_rule": "Only a match to a documented original pin plus provenance identifies source bytes; derived fits/outputs remain derived"
+    },
+    {
+      "path": "../source-physical/CFRP-lattices-2026/supplement-24.txt",
+      "bytes": 1693,
+      "sha256": "8bb4481d3baf526699967695189aa2db6ab5f52e72a5e37e235d080b81f1a8d1",
+      "classification": "LOCAL_FILE_NOT_AUTOMATICALLY_PUBLISHER_ORIGINAL",
+      "identity_rule": "Only a match to a documented original pin plus provenance identifies source bytes; derived fits/outputs remain derived"
+    },
+    {
+      "path": "../source-physical/CFRP-lattices-2026/supplement-25.txt",
+      "bytes": 710,
+      "sha256": "fe14604698d8bdd612045a34128b67eabf7808366978466a2ce674605014917f",
+      "classification": "LOCAL_FILE_NOT_AUTOMATICALLY_PUBLISHER_ORIGINAL",
+      "identity_rule": "Only a match to a documented original pin plus provenance identifies source bytes; derived fits/outputs remain derived"
+    },
+    {
+      "path": "../source-physical/CFRP-lattices-2026/supplement-26.txt",
+      "bytes": 1846,
+      "sha256": "047befe66676d1f8ec1728c10c1182373b18429cfa6df9f26ad3102b7d14529a",
+      "classification": "LOCAL_FILE_NOT_AUTOMATICALLY_PUBLISHER_ORIGINAL",
+      "identity_rule": "Only a match to a documented original pin plus provenance identifies source bytes; derived fits/outputs remain derived"
+    },
+    {
+      "path": "../source-physical/CFRP-lattices-2026/supplement-27.txt",
+      "bytes": 558,
+      "sha256": "b534a3281c6b8a1090c14c97eb45c82fe0a38267d52ed76b7ea4af8ae2dd9a43",
+      "classification": "LOCAL_FILE_NOT_AUTOMATICALLY_PUBLISHER_ORIGINAL",
+      "identity_rule": "Only a match to a documented original pin plus provenance identifies source bytes; derived fits/outputs remain derived"
+    },
+    {
+      "path": "../source-physical/CMU-eVTOL-README.txt",
+      "bytes": 5832,
+      "sha256": "16d5a583e07b6ffd8654a3d88e68751f5d9acef0c3b0090a7b9e9284d273b608",
+      "classification": "LOCAL_FILE_NOT_AUTOMATICALLY_PUBLISHER_ORIGINAL",
+      "identity_rule": "Only a match to a documented original pin plus provenance identifies source bytes; derived fits/outputs remain derived"
+    },
+    {
+      "path": "../source-physical/CMU-M100-flights.zip",
+      "bytes": 41274360,
+      "sha256": "98f65a1ab54a8b618c169fdf49311a53ff1fefed86fdc3f440d6a0166ce49fb1",
+      "classification": "LOCAL_FILE_NOT_AUTOMATICALLY_PUBLISHER_ORIGINAL",
+      "identity_rule": "Only a match to a documented original pin plus provenance identifies source bytes; derived fits/outputs remain derived"
+    },
+    {
+      "path": "../source-physical/CMU-M100-parameters.csv",
+      "bytes": 7867,
+      "sha256": "568dffaed11a4d335ef4f8a932b342c836907af2f4aa54da9b4a0e2ffef2108a",
+      "classification": "LOCAL_FILE_NOT_AUTOMATICALLY_PUBLISHER_ORIGINAL",
+      "identity_rule": "Only a match to a documented original pin plus provenance identifies source bytes; derived fits/outputs remain derived"
+    },
+    {
+      "path": "../source-physical/CMU-M100-README.txt",
+      "bytes": 25101,
+      "sha256": "8601dd211d6c297c5411992dc34923bdb98b72cdc287517ed18e479f0e9540fd",
+      "classification": "LOCAL_FILE_NOT_AUTOMATICALLY_PUBLISHER_ORIGINAL",
+      "identity_rule": "Only a match to a documented original pin plus provenance identifies source bytes; derived fits/outputs remain derived"
+    },
+    {
+      "path": "../source-physical/DronePropA/article.xml",
+      "bytes": 52786,
+      "sha256": "37e404e0311e469667ceff99a6126050423d4a883c6bdd70b565eddbc46c64e6",
+      "classification": "LOCAL_FILE_NOT_AUTOMATICALLY_PUBLISHER_ORIGINAL",
+      "identity_rule": "Only a match to a documented original pin plus provenance identifies source bytes; derived fits/outputs remain derived"
+    },
+    {
+      "path": "../source-physical/DronePropA/climb-catalog.json",
+      "bytes": 3683,
+      "sha256": "44b2d2ab9c298fd79382c8d1f9f182f114c7b7756b94f103c98b20cfef4fc162",
+      "classification": "LOCAL_FILE_NOT_AUTOMATICALLY_PUBLISHER_ORIGINAL",
+      "identity_rule": "Only a match to a documented original pin plus provenance identifies source bytes; derived fits/outputs remain derived"
+    },
+    {
+      "path": "../source-physical/DronePropA/F0_SV0_SP1_t3_D1_R1.mat",
+      "bytes": 41025566,
+      "sha256": "d1bfd446f35895bbb6f83074fffd0696d18b3f3e1dad82d7d3bfcadb20d9c5fa",
+      "classification": "LOCAL_FILE_NOT_AUTOMATICALLY_PUBLISHER_ORIGINAL",
+      "identity_rule": "Only a match to a documented original pin plus provenance identifies source bytes; derived fits/outputs remain derived"
+    },
+    {
+      "path": "../source-physical/DronePropA/F0_SV0_SP1_t3_D1_R2.mat",
+      "bytes": 40119278,
+      "sha256": "0fb9679c2fec8f2e9eeb3362b3e81ff4dd355bfebde89357b2520be239c482a1",
+      "classification": "LOCAL_FILE_NOT_AUTOMATICALLY_PUBLISHER_ORIGINAL",
+      "identity_rule": "Only a match to a documented original pin plus provenance identifies source bytes; derived fits/outputs remain derived"
+    },
+    {
+      "path": "../source-physical/DronePropA/F0_SV0_SP1_t3_D1_R3.mat",
+      "bytes": 40890606,
+      "sha256": "216f7f330be58ff8b9ffc4eccfa2fa7d75c606ba9ebbf0c2aca8800108d324c2",
+      "classification": "LOCAL_FILE_NOT_AUTOMATICALLY_PUBLISHER_ORIGINAL",
+      "identity_rule": "Only a match to a documented original pin plus provenance identifies source bytes; derived fits/outputs remain derived"
+    },
+    {
+      "path": "../source-physical/DronePropA/F0_SV0_SP1_t4_D1_R1.mat",
+      "bytes": 22253156,
+      "sha256": "36e05e9a61dbfd647157e4db2877b1fb60d782c9da448741f1d0cc3f8ea9b25d",
+      "classification": "LOCAL_FILE_NOT_AUTOMATICALLY_PUBLISHER_ORIGINAL",
+      "identity_rule": "Only a match to a documented original pin plus provenance identifies source bytes; derived fits/outputs remain derived"
+    },
+    {
+      "path": "../source-physical/DronePropA/F0_SV0_SP1_t4_D1_R2.mat",
+      "bytes": 22878642,
+      "sha256": "f4931b29c94a9c2b16bc39dff1e5cc7d5c94bbabd418a135496322aa2b9e96b0",
+      "classification": "LOCAL_FILE_NOT_AUTOMATICALLY_PUBLISHER_ORIGINAL",
+      "identity_rule": "Only a match to a documented original pin plus provenance identifies source bytes; derived fits/outputs remain derived"
+    },
+    {
+      "path": "../source-physical/DronePropA/F0_SV0_SP1_t4_D1_R3.mat",
+      "bytes": 24307357,
+      "sha256": "f52b43f23b00de1d1d5648247431bb4ebab0f3d800969c636115e84af1673bd6",
+      "classification": "LOCAL_FILE_NOT_AUTOMATICALLY_PUBLISHER_ORIGINAL",
+      "identity_rule": "Only a match to a documented original pin plus provenance identifies source bytes; derived fits/outputs remain derived"
+    },
+    {
+      "path": "../source-physical/DronePropA/F0_SV0_SP1_t4_D2.mat",
+      "bytes": 23120991,
+      "sha256": "ccc20fe10aa65e5fb896e706f0788a16e8c42c5041786ec8c980260b5e70b382",
+      "classification": "LOCAL_FILE_NOT_AUTOMATICALLY_PUBLISHER_ORIGINAL",
+      "identity_rule": "Only a match to a documented original pin plus provenance identifies source bytes; derived fits/outputs remain derived"
+    },
+    {
+      "path": "../source-physical/DronePropA/F0_SV0_SP1_t4_D3.mat",
+      "bytes": 23252866,
+      "sha256": "16660bc7e5c8d0717a6a9f373627266044595fb1fd13ef7ef546cfae2942f32c",
+      "classification": "LOCAL_FILE_NOT_AUTOMATICALLY_PUBLISHER_ORIGINAL",
+      "identity_rule": "Only a match to a documented original pin plus provenance identifies source bytes; derived fits/outputs remain derived"
+    },
+    {
+      "path": "../source-physical/DronePropA/F0_SV0_SP2_t4_D1_R1.mat",
+      "bytes": 23485233,
+      "sha256": "9f3e7296e87ca89715b4123676b3e05bcab7d44e74051323bdf53017e8da6c47",
+      "classification": "LOCAL_FILE_NOT_AUTOMATICALLY_PUBLISHER_ORIGINAL",
+      "identity_rule": "Only a match to a documented original pin plus provenance identifies source bytes; derived fits/outputs remain derived"
+    },
+    {
+      "path": "../source-physical/DronePropA/F0_SV0_SP2_t4_D1_R2.mat",
+      "bytes": 25071404,
+      "sha256": "ffbb9874ce34f7a5a52c8cdd67d7543e48254cb6d54613bcc40f06b77b0f8951",
+      "classification": "LOCAL_FILE_NOT_AUTOMATICALLY_PUBLISHER_ORIGINAL",
+      "identity_rule": "Only a match to a documented original pin plus provenance identifies source bytes; derived fits/outputs remain derived"
+    },
+    {
+      "path": "../source-physical/DronePropA/F0_SV0_SP2_t4_D1_R3.mat",
+      "bytes": 27011284,
+      "sha256": "1df558325b18330a1bee4a40fd17587ed171448443afdc39972fb8b3587b23fd",
+      "classification": "LOCAL_FILE_NOT_AUTOMATICALLY_PUBLISHER_ORIGINAL",
+      "identity_rule": "Only a match to a documented original pin plus provenance identifies source bytes; derived fits/outputs remain derived"
+    },
+    {
+      "path": "../source-physical/DronePropA/transfer-catalog.json",
+      "bytes": 1563,
+      "sha256": "b4cf7126a595e6904142ced9ead6fdd95f99bb040e4dc0d243378f892dc5423d",
+      "classification": "LOCAL_FILE_NOT_AUTOMATICALLY_PUBLISHER_ORIGINAL",
+      "identity_rule": "Only a match to a documented original pin plus provenance identifies source bytes; derived fits/outputs remain derived"
+    },
+    {
+      "path": "../source-physical/DronePropA/transfer-comparison.md",
+      "bytes": 1481,
+      "sha256": "05ae9fb9551785314febb1d090be9dd1c739fa3ecf986fb0612c575532ed800a",
+      "classification": "LOCAL_FILE_NOT_AUTOMATICALLY_PUBLISHER_ORIGINAL",
+      "identity_rule": "Only a match to a documented original pin plus provenance identifies source bytes; derived fits/outputs remain derived"
+    },
+    {
+      "path": "../source-physical/Emax-Gemfan-quadrotor/dynamic-logs-receipt.json",
+      "bytes": 1188,
+      "sha256": "07a1d56ef72ee45915d13b14094dba495afbb9160f0d00cf8cdedb1a7d99cd1c",
+      "classification": "LOCAL_FILE_NOT_AUTOMATICALLY_PUBLISHER_ORIGINAL",
+      "identity_rule": "Only a match to a documented original pin plus provenance identifies source bytes; derived fits/outputs remain derived"
+    },
+    {
+      "path": "../source-physical/Emax-Gemfan-quadrotor/LICENSE",
+      "bytes": 1070,
+      "sha256": "3ddbc068e17060cd824375938e1bf0a22da67bb8a00c6e0a6d456a98c013a2cd",
+      "classification": "LOCAL_FILE_NOT_AUTOMATICALLY_PUBLISHER_ORIGINAL",
+      "identity_rule": "Only a match to a documented original pin plus provenance identifies source bytes; derived fits/outputs remain derived"
+    },
+    {
+      "path": "../source-physical/Emax-Gemfan-quadrotor/Log_2026-05-02_151607.csv",
+      "bytes": 330564,
+      "sha256": "e4ee8781d0fedffb90ccec715a233fe6016f2fdb6cd4704a06dc8689a9ee70bf",
+      "classification": "LOCAL_FILE_NOT_AUTOMATICALLY_PUBLISHER_ORIGINAL",
+      "identity_rule": "Only a match to a documented original pin plus provenance identifies source bytes; derived fits/outputs remain derived"
+    },
+    {
+      "path": "../source-physical/Emax-Gemfan-quadrotor/Log_2026-05-02_151943.csv",
+      "bytes": 590230,
+      "sha256": "3cfcbff481a89cdced3319e6e5b86ba5e5ca959a737def1a825ccb5b0c3ce0db",
+      "classification": "LOCAL_FILE_NOT_AUTOMATICALLY_PUBLISHER_ORIGINAL",
+      "identity_rule": "Only a match to a documented original pin plus provenance identifies source bytes; derived fits/outputs remain derived"
+    },
+    {
+      "path": "../source-physical/Emax-Gemfan-quadrotor/Log_2026-05-02_152432.csv",
+      "bytes": 381636,
+      "sha256": "8f7cd9c96e0ceeab1249afbb46d36e22addd658ea29419b08689a7199ed5ba68",
+      "classification": "LOCAL_FILE_NOT_AUTOMATICALLY_PUBLISHER_ORIGINAL",
+      "identity_rule": "Only a match to a documented original pin plus provenance identifies source bytes; derived fits/outputs remain derived"
+    },
+    {
+      "path": "../source-physical/Emax-Gemfan-quadrotor/next-comparison.md",
+      "bytes": 1613,
+      "sha256": "234defd0d6c66345e3a3041549dd3c16f39cc62f187477c9201077a30e787088",
+      "classification": "LOCAL_FILE_NOT_AUTOMATICALLY_PUBLISHER_ORIGINAL",
+      "identity_rule": "Only a match to a documented original pin plus provenance identifies source bytes; derived fits/outputs remain derived"
+    },
+    {
+      "path": "../source-physical/Emax-Gemfan-quadrotor/README.md",
+      "bytes": 14501,
+      "sha256": "25b638f77cd8ad07836e6973fa2885f19826b0d1459caccab03e8594fcc4eab5",
+      "classification": "LOCAL_FILE_NOT_AUTOMATICALLY_PUBLISHER_ORIGINAL",
+      "identity_rule": "Only a match to a documented original pin plus provenance identifies source bytes; derived fits/outputs remain derived"
+    },
+    {
+      "path": "../source-physical/Emax-Gemfan-quadrotor/receipt.json",
+      "bytes": 3979,
+      "sha256": "4086553ae61a66cc1a8d5fa1abadbe22b538fe81c25f0fb7c042d9eaee7118a0",
+      "classification": "LOCAL_FILE_NOT_AUTOMATICALLY_PUBLISHER_ORIGINAL",
+      "identity_rule": "Only a match to a documented original pin plus provenance identifies source bytes; derived fits/outputs remain derived"
+    },
+    {
+      "path": "../source-physical/Emax-Gemfan-quadrotor/RPM_10750.csv",
+      "bytes": 31610,
+      "sha256": "b2ea4dfe1149738c3150a58b1570b658cbf60a4069fd03023b6249ca3427ebcf",
+      "classification": "LOCAL_FILE_NOT_AUTOMATICALLY_PUBLISHER_ORIGINAL",
+      "identity_rule": "Only a match to a documented original pin plus provenance identifies source bytes; derived fits/outputs remain derived"
+    },
+    {
+      "path": "../source-physical/Emax-Gemfan-quadrotor/RPM_11850.csv",
+      "bytes": 35103,
+      "sha256": "119b31a0054e07c64e7f4cc267addd577a0f3836e9ec2e8fd79968568f1d631b",
+      "classification": "LOCAL_FILE_NOT_AUTOMATICALLY_PUBLISHER_ORIGINAL",
+      "identity_rule": "Only a match to a documented original pin plus provenance identifies source bytes; derived fits/outputs remain derived"
+    },
+    {
+      "path": "../source-physical/Emax-Gemfan-quadrotor/RPM_12270.csv",
+      "bytes": 39870,
+      "sha256": "c0a1ab1e35848d0de8b9c8d231fca04065a192a2e8cec174a4f38374dfa2c60e",
+      "classification": "LOCAL_FILE_NOT_AUTOMATICALLY_PUBLISHER_ORIGINAL",
+      "identity_rule": "Only a match to a documented original pin plus provenance identifies source bytes; derived fits/outputs remain derived"
+    },
+    {
+      "path": "../source-physical/Emax-Gemfan-quadrotor/RPM_14100.csv",
+      "bytes": 41448,
+      "sha256": "325be27f654e172b92bcdbe473b6f693bd406123db11c52cef3944d1d5e958a1",
+      "classification": "LOCAL_FILE_NOT_AUTOMATICALLY_PUBLISHER_ORIGINAL",
+      "identity_rule": "Only a match to a documented original pin plus provenance identifies source bytes; derived fits/outputs remain derived"
+    },
+    {
+      "path": "../source-physical/Emax-Gemfan-quadrotor/RPM_2130.csv",
+      "bytes": 59986,
+      "sha256": "e62c8629e9b09b26af4df6c349ce9cab6cfbed2ca1f1e27ed3d052be03a792cc",
+      "classification": "LOCAL_FILE_NOT_AUTOMATICALLY_PUBLISHER_ORIGINAL",
+      "identity_rule": "Only a match to a documented original pin plus provenance identifies source bytes; derived fits/outputs remain derived"
+    },
+    {
+      "path": "../source-physical/Emax-Gemfan-quadrotor/RPM_5740.csv",
+      "bytes": 27267,
+      "sha256": "531619be958925ed1d1213df7a5bbbbc49ddf8c510d489b11f88ca1d65057441",
+      "classification": "LOCAL_FILE_NOT_AUTOMATICALLY_PUBLISHER_ORIGINAL",
+      "identity_rule": "Only a match to a documented original pin plus provenance identifies source bytes; derived fits/outputs remain derived"
+    },
+    {
+      "path": "../source-physical/Emax-Gemfan-quadrotor/RPM_8000.csv",
+      "bytes": 32006,
+      "sha256": "8df036963fc2fe8a7c6174edda05172a76e5e701d6641041c1c391b1c6571a10",
+      "classification": "LOCAL_FILE_NOT_AUTOMATICALLY_PUBLISHER_ORIGINAL",
+      "identity_rule": "Only a match to a documented original pin plus provenance identifies source bytes; derived fits/outputs remain derived"
+    },
+    {
+      "path": "../source-physical/Emax-Gemfan-quadrotor/RPM_9600.csv",
+      "bytes": 28329,
+      "sha256": "27aaa31b14438090f14217d2cc4b24a643e911ccbaab475e5d073c7a950e61ab",
+      "classification": "LOCAL_FILE_NOT_AUTOMATICALLY_PUBLISHER_ORIGINAL",
+      "identity_rule": "Only a match to a documented original pin plus provenance identifies source bytes; derived fits/outputs remain derived"
+    },
+    {
+      "path": "../source-physical/Kotarski-2023/provider-release.json",
+      "bytes": 35464,
+      "sha256": "0b3f2914fa77b48cec0cea3daf1875264f5f4dafed1aab48a8ba9864140aacd5",
+      "classification": "LOCAL_FILE_NOT_AUTOMATICALLY_PUBLISHER_ORIGINAL",
+      "identity_rule": "Only a match to a documented original pin plus provenance identifies source bytes; derived fits/outputs remain derived"
+    },
+    {
+      "path": "../source-physical/Kotarski-2023/reproduced-freeze.json",
+      "bytes": 13056,
+      "sha256": "bd84b7b3b18258cd033f291c11a997d317f7c15d3ee4f66dd313ac812e6738ff",
+      "classification": "LOCAL_FILE_NOT_AUTOMATICALLY_PUBLISHER_ORIGINAL",
+      "identity_rule": "Only a match to a documented original pin plus provenance identifies source bytes; derived fits/outputs remain derived"
+    },
+    {
+      "path": "../source-physical/Kotarski-2023/reproduced-result.json",
+      "bytes": 16584,
+      "sha256": "c436bc7a9fdfcfd1f0bd43f4b1bd98b8f7b859f1de6a2ba4da3194fd7ab222da",
+      "classification": "LOCAL_FILE_NOT_AUTOMATICALLY_PUBLISHER_ORIGINAL",
+      "identity_rule": "Only a match to a documented original pin plus provenance identifies source bytes; derived fits/outputs remain derived"
+    },
+    {
+      "path": "../source-physical/Kotarski-2023/setup3-receipt.json",
+      "bytes": 695,
+      "sha256": "50dd3e802aed64ac582180b8d16d7412cd2f1b6112cf6c904ddada64dee04b4a",
+      "classification": "LOCAL_FILE_NOT_AUTOMATICALLY_PUBLISHER_ORIGINAL",
+      "identity_rule": "Only a match to a documented original pin plus provenance identifies source bytes; derived fits/outputs remain derived"
+    },
+    {
+      "path": "../source-physical/Kotarski-2023/setup3_measurement_3.8V.csv",
+      "bytes": 15940,
+      "sha256": "31ae880d06637e8780b64a6b34e6fbc0828d5618f2a9a65bf4c1c6c5fab515bd",
+      "classification": "LOCAL_FILE_NOT_AUTOMATICALLY_PUBLISHER_ORIGINAL",
+      "identity_rule": "Only a match to a documented original pin plus provenance identifies source bytes; derived fits/outputs remain derived"
+    },
+    {
+      "path": "../source-physical/Kotarski-2023/setup3_measurement_4.0V.csv",
+      "bytes": 15839,
+      "sha256": "9d90497f5e13d5e0e449b04fc0850a167027caebcf0db9eb0f2f25448dd53feb",
+      "classification": "LOCAL_FILE_NOT_AUTOMATICALLY_PUBLISHER_ORIGINAL",
+      "identity_rule": "Only a match to a documented original pin plus provenance identifies source bytes; derived fits/outputs remain derived"
+    },
+    {
+      "path": "../source-physical/Kotarski-2023/setup3_measurement_4.2V.csv",
+      "bytes": 15872,
+      "sha256": "a59b8bb83226aa6f0108bd6fe5c6c40399e687b9f1d6fde349a2276694ec3ef8",
+      "classification": "LOCAL_FILE_NOT_AUTOMATICALLY_PUBLISHER_ORIGINAL",
+      "identity_rule": "Only a match to a documented original pin plus provenance identifies source bytes; derived fits/outputs remain derived"
+    },
+    {
+      "path": "../source-physical/m100-planned-calibration.py",
+      "bytes": 2509,
+      "sha256": "3c2375fb4a4388a1aa1da7e4aedd3f980422b42d0b4dba3208ba1af449636663",
+      "classification": "LOCAL_FILE_NOT_AUTOMATICALLY_PUBLISHER_ORIGINAL",
+      "identity_rule": "Only a match to a documented original pin plus provenance identifies source bytes; derived fits/outputs remain derived"
+    },
+    {
+      "path": "../source-physical/m100-reproduced-heldout.json",
+      "bytes": 16216,
+      "sha256": "1b3951bfa6ab6d97535ab7d4b50417bfff76e949c86560125e04fa0b7624f9ba",
+      "classification": "LOCAL_FILE_NOT_AUTOMATICALLY_PUBLISHER_ORIGINAL",
+      "identity_rule": "Only a match to a documented original pin plus provenance identifies source bytes; derived fits/outputs remain derived"
+    },
+    {
+      "path": "../source-physical/main-4c5bd1c1-github-ci.json",
+      "bytes": 1048,
+      "sha256": "84b640fb3af81f6327f5889eed23ac6ad611136d22d71226a2712763000aac8b",
+      "classification": "LOCAL_FILE_NOT_AUTOMATICALLY_PUBLISHER_ORIGINAL",
+      "identity_rule": "Only a match to a documented original pin plus provenance identifies source bytes; derived fits/outputs remain derived"
+    },
+    {
+      "path": "../source-physical/main-815613fe-github-ci.json",
+      "bytes": 1048,
+      "sha256": "8079fb96e94415bbbdb7c93eadb4b0f1d7c46f05f2d11359a7dd3583fbf67720",
+      "classification": "LOCAL_FILE_NOT_AUTOMATICALLY_PUBLISHER_ORIGINAL",
+      "identity_rule": "Only a match to a documented original pin plus provenance identifies source bytes; derived fits/outputs remain derived"
+    },
+    {
+      "path": "../source-physical/Melasta-power/Experiment-I.zip",
+      "bytes": 1205362,
+      "sha256": "a879965afef8691cb2a845e217581d4f5275249fb80dbb615f2cb56418876ff6",
+      "classification": "LOCAL_FILE_NOT_AUTOMATICALLY_PUBLISHER_ORIGINAL",
+      "identity_rule": "Only a match to a documented original pin plus provenance identifies source bytes; derived fits/outputs remain derived"
+    },
+    {
+      "path": "../source-physical/Melasta-power/Experiment-II.zip",
+      "bytes": 3083001,
+      "sha256": "bbc2a2f69e3bc3dc670fb69641ba9950eb0c8f093f26bc825c44808bfacdf6df",
+      "classification": "LOCAL_FILE_NOT_AUTOMATICALLY_PUBLISHER_ORIGINAL",
+      "identity_rule": "Only a match to a documented original pin plus provenance identifies source bytes; derived fits/outputs remain derived"
+    },
+    {
+      "path": "../source-physical/Melasta-power/next-comparison.md",
+      "bytes": 1933,
+      "sha256": "06ba0409c58336db74f21de64c8b3560f90c2b265741821249f977dcb6237d7b",
+      "classification": "LOCAL_FILE_NOT_AUTOMATICALLY_PUBLISHER_ORIGINAL",
+      "identity_rule": "Only a match to a documented original pin plus provenance identifies source bytes; derived fits/outputs remain derived"
+    },
+    {
+      "path": "../source-physical/Melasta-power/receipt.json",
+      "bytes": 704,
+      "sha256": "7d72344340071e8c2ee8ffd5641e3db5004e313fc7a5cbbba03773ec66c87d7c",
+      "classification": "LOCAL_FILE_NOT_AUTOMATICALLY_PUBLISHER_ORIGINAL",
+      "identity_rule": "Only a match to a documented original pin plus provenance identifies source bytes; derived fits/outputs remain derived"
+    },
+    {
+      "path": "../source-physical/NanoBench/A1b_multisine_sysid_rep1.csv",
+      "bytes": 4852929,
+      "sha256": "fa4bc4d57cd9ad7b0e2f862e2e3adec7d10ba27bf2b28f11c26ad779cc519c1d",
+      "classification": "LOCAL_FILE_NOT_AUTOMATICALLY_PUBLISHER_ORIGINAL",
+      "identity_rule": "Only a match to a documented original pin plus provenance identifies source bytes; derived fits/outputs remain derived"
+    },
+    {
+      "path": "../source-physical/NanoBench/A1b_multisine_sysid_rep1_metadata.yaml",
+      "bytes": 683,
+      "sha256": "26468128c8e01c9b19e22ac2d4f5f532e489a4027420c5b51e1da94468160781",
+      "classification": "LOCAL_FILE_NOT_AUTOMATICALLY_PUBLISHER_ORIGINAL",
+      "identity_rule": "Only a match to a documented original pin plus provenance identifies source bytes; derived fits/outputs remain derived"
+    },
+    {
+      "path": "../source-physical/NanoBench/A1b_multisine_sysid_rep2.csv",
+      "bytes": 4840979,
+      "sha256": "39d7e4fc8deeec12e5e871715d8392be573a646525f4aadb9ab963a0474485d9",
+      "classification": "LOCAL_FILE_NOT_AUTOMATICALLY_PUBLISHER_ORIGINAL",
+      "identity_rule": "Only a match to a documented original pin plus provenance identifies source bytes; derived fits/outputs remain derived"
+    },
+    {
+      "path": "../source-physical/NanoBench/A1b_multisine_sysid_rep2_metadata.yaml",
+      "bytes": 684,
+      "sha256": "b9beca13aece2d0bf78fbf7546f97701f231d3d98666d8f757986ec3fefaed09",
+      "classification": "LOCAL_FILE_NOT_AUTOMATICALLY_PUBLISHER_ORIGINAL",
+      "identity_rule": "Only a match to a documented original pin plus provenance identifies source bytes; derived fits/outputs remain derived"
+    },
+    {
+      "path": "../source-physical/NanoBench/B12_staircase_climb_rep1.csv",
+      "bytes": 4875894,
+      "sha256": "a800921b4d08dd0eb5fa8f1ec23daef738ac5abec03f4235cc5b9d2cfb9f1eb2",
+      "classification": "LOCAL_FILE_NOT_AUTOMATICALLY_PUBLISHER_ORIGINAL",
+      "identity_rule": "Only a match to a documented original pin plus provenance identifies source bytes; derived fits/outputs remain derived"
+    },
+    {
+      "path": "../source-physical/NanoBench/B12_staircase_climb_rep1_metadata.yaml",
+      "bytes": 609,
+      "sha256": "2414efe967ac005a29f96f7bfc03340d3629a4a1b7f46e0b468658d92b4db513",
+      "classification": "LOCAL_FILE_NOT_AUTOMATICALLY_PUBLISHER_ORIGINAL",
+      "identity_rule": "Only a match to a documented original pin plus provenance identifies source bytes; derived fits/outputs remain derived"
+    },
+    {
+      "path": "../source-physical/NanoBench/B2_circle_medium_rep1.csv",
+      "bytes": 1818870,
+      "sha256": "5f8f254531d3e367eb30f437d7d7b5d4a6a401b8576a5a0196428d97c909aa76",
+      "classification": "LOCAL_FILE_NOT_AUTOMATICALLY_PUBLISHER_ORIGINAL",
+      "identity_rule": "Only a match to a documented original pin plus provenance identifies source bytes; derived fits/outputs remain derived"
+    },
+    {
+      "path": "../source-physical/NanoBench/B2_circle_medium_rep1_metadata.yaml",
+      "bytes": 548,
+      "sha256": "4ec03bc07caf087106b80623ea15d84c09b058a15ad4f7ca791d931d5f724077",
+      "classification": "LOCAL_FILE_NOT_AUTOMATICALLY_PUBLISHER_ORIGINAL",
+      "identity_rule": "Only a match to a documented original pin plus provenance identifies source bytes; derived fits/outputs remain derived"
+    },
+    {
+      "path": "../source-physical/NanoBench/B2_circle_medium_rep2.csv",
+      "bytes": 2830853,
+      "sha256": "fc5579b60c791bf9045779c09d480fb81baef99d618a9197475e03afa1a52098",
+      "classification": "LOCAL_FILE_NOT_AUTOMATICALLY_PUBLISHER_ORIGINAL",
+      "identity_rule": "Only a match to a documented original pin plus provenance identifies source bytes; derived fits/outputs remain derived"
+    },
+    {
+      "path": "../source-physical/NanoBench/B2_circle_medium_rep2_metadata.yaml",
+      "bytes": 547,
+      "sha256": "ef560fd445196a593901f95e9bd1c973e04dbb69bdc092a46c23ce095d579d00",
+      "classification": "LOCAL_FILE_NOT_AUTOMATICALLY_PUBLISHER_ORIGINAL",
+      "identity_rule": "Only a match to a documented original pin plus provenance identifies source bytes; derived fits/outputs remain derived"
+    },
+    {
+      "path": "../source-physical/NanoBench/calibration-feasibility.py",
+      "bytes": 1953,
+      "sha256": "7a752fbc36b3dba6b3086e2506d7ace7116bf4d46183433b52d6ed0ae13d9e87",
+      "classification": "LOCAL_FILE_NOT_AUTOMATICALLY_PUBLISHER_ORIGINAL",
+      "identity_rule": "Only a match to a documented original pin plus provenance identifies source bytes; derived fits/outputs remain derived"
+    },
+    {
+      "path": "../source-physical/NanoBench/LICENSE",
+      "bytes": 1517,
+      "sha256": "69901188c51f2f874baf81666074a9e8dfbeb581592a068ad60a10dd43a5de59",
+      "classification": "LOCAL_FILE_NOT_AUTOMATICALLY_PUBLISHER_ORIGINAL",
+      "identity_rule": "Only a match to a documented original pin plus provenance identifies source bytes; derived fits/outputs remain derived"
+    },
+    {
+      "path": "../source-physical/NanoBench/next-comparison-notes.md",
+      "bytes": 1981,
+      "sha256": "51569880be6008ab099b66334319fb1ec9b780133077e080ff699407627adf34",
+      "classification": "LOCAL_FILE_NOT_AUTOMATICALLY_PUBLISHER_ORIGINAL",
+      "identity_rule": "Only a match to a documented original pin plus provenance identifies source bytes; derived fits/outputs remain derived"
+    },
+    {
+      "path": "../source-physical/NanoBench/README.md",
+      "bytes": 18341,
+      "sha256": "dcdadfbc306d9218905e08e5710e1bd23f22522aa3d5d3d318821214404f8197",
+      "classification": "LOCAL_FILE_NOT_AUTOMATICALLY_PUBLISHER_ORIGINAL",
+      "identity_rule": "Only a match to a documented original pin plus provenance identifies source bytes; derived fits/outputs remain derived"
+    },
+    {
+      "path": "../source-physical/NanoBench/receipt.json",
+      "bytes": 4232,
+      "sha256": "c3a978829a4f4133e4c75f6d1422b2308afcbb1a7be3d81ce86babb0f420a666",
+      "classification": "LOCAL_FILE_NOT_AUTOMATICALLY_PUBLISHER_ORIGINAL",
+      "identity_rule": "Only a match to a documented original pin plus provenance identifies source bytes; derived fits/outputs remain derived"
+    },
+    {
+      "path": "../source-physical/NanoBench/reproduced-heldout.json",
+      "bytes": 133916,
+      "sha256": "0762fe777edde9e3bd55ac0aa8a668309f70f82631225597c27375e4ed9e7f7e",
+      "classification": "LOCAL_FILE_NOT_AUTOMATICALLY_PUBLISHER_ORIGINAL",
+      "identity_rule": "Only a match to a documented original pin plus provenance identifies source bytes; derived fits/outputs remain derived"
+    },
+    {
+      "path": "../source-physical/NASA-HIRF/archive-tail.bin",
+      "bytes": 262144,
+      "sha256": "8bba127d5b2812bb5059b1342b987b0667e56419c10c922aef6b1fc3cfb8cf12",
+      "classification": "LOCAL_FILE_NOT_AUTOMATICALLY_PUBLISHER_ORIGINAL",
+      "identity_rule": "Only a match to a documented original pin plus provenance identifies source bytes; derived fits/outputs remain derived"
+    },
+    {
+      "path": "../source-physical/NASA-HIRF/archive-tail.headers",
+      "bytes": 456,
+      "sha256": "f45200b41a47d444ae1a9d813e5579dc1ba4deb9e9eef0d728451492c8b9d6ea",
+      "classification": "LOCAL_FILE_NOT_AUTOMATICALLY_PUBLISHER_ORIGINAL",
+      "identity_rule": "Only a match to a documented original pin plus provenance identifies source bytes; derived fits/outputs remain derived"
+    },
+    {
+      "path": "../source-physical/NASA-HIRF/HIRF5.mat",
+      "bytes": 21041776,
+      "sha256": "3924d20a34a46e818adaa8cb237ce3856fe843011fdd24e106b5df66f3273f94",
+      "classification": "LOCAL_FILE_NOT_AUTOMATICALLY_PUBLISHER_ORIGINAL",
+      "identity_rule": "Only a match to a documented original pin plus provenance identifies source bytes; derived fits/outputs remain derived"
+    },
+    {
+      "path": "../source-physical/NASA-HIRF/NASA-prognostics.pdf",
+      "bytes": 1192493,
+      "sha256": "b08eb27cc8aadbdfe9fd7e6b1656a2ac6f282b2f5cc50389b6fc79e91716fede",
+      "classification": "LOCAL_FILE_NOT_AUTOMATICALLY_PUBLISHER_ORIGINAL",
+      "identity_rule": "Only a match to a documented original pin plus provenance identifies source bytes; derived fits/outputs remain derived"
+    },
+    {
+      "path": "../source-physical/NASA-HIRF/NASA-prognostics.txt",
+      "bytes": 65519,
+      "sha256": "4310da731f1dde8c9a742782916d2b9f097aafc14191ea74d020e0602a9156db",
+      "classification": "LOCAL_FILE_NOT_AUTOMATICALLY_PUBLISHER_ORIGINAL",
+      "identity_rule": "Only a match to a documented original pin plus provenance identifies source bytes; derived fits/outputs remain derived"
+    },
+    {
+      "path": "../source-physical/NASA-HIRF/publisher.zip",
+      "bytes": 1088895795,
+      "sha256": "f6ca7b1eeaed8b75da92479a778bbef9253997a572cc20ab480f872a9ee3a9b0",
+      "classification": "LOCAL_FILE_NOT_AUTOMATICALLY_PUBLISHER_ORIGINAL",
+      "identity_rule": "Only a match to a documented original pin plus provenance identifies source bytes; derived fits/outputs remain derived"
+    },
+    {
+      "path": "../source-physical/NASA-HIRF/repeat-freeze.json",
+      "bytes": 1072,
+      "sha256": "622ac9fac7c18264d0d7d91431fa117314aa730c3ba8eb5dc82751303cee6d4e",
+      "classification": "LOCAL_FILE_NOT_AUTOMATICALLY_PUBLISHER_ORIGINAL",
+      "identity_rule": "Only a match to a documented original pin plus provenance identifies source bytes; derived fits/outputs remain derived"
+    },
+    {
+      "path": "../source-physical/NASA-HIRF/repeat-scores.json",
+      "bytes": 37571,
+      "sha256": "f6c0b67cf0e64c3cb2449b0e75f43f3247f8cf34bc6a309a9f735f2c01becec8",
+      "classification": "LOCAL_FILE_NOT_AUTOMATICALLY_PUBLISHER_ORIGINAL",
+      "identity_rule": "Only a match to a documented original pin plus provenance identifies source bytes; derived fits/outputs remain derived"
+    },
+    {
+      "path": "../source-physical/QDrone2-MPC-energy/Fig10a DataRevised.xlsx",
+      "bytes": 120926,
+      "sha256": "2ac0f7af99a5c5fce0160b7dbfb998f4434da27022040e6ed6f9a6b408c93ec0",
+      "classification": "LOCAL_FILE_NOT_AUTOMATICALLY_PUBLISHER_ORIGINAL",
+      "identity_rule": "Only a match to a documented original pin plus provenance identifies source bytes; derived fits/outputs remain derived"
+    },
+    {
+      "path": "../source-physical/QDrone2-MPC-energy/Fig10b DataRevised.xlsx",
+      "bytes": 121100,
+      "sha256": "8531a90fd1091a3fee630da9abe999870af5ae8a304b44aff60dcb13ca93987c",
+      "classification": "LOCAL_FILE_NOT_AUTOMATICALLY_PUBLISHER_ORIGINAL",
+      "identity_rule": "Only a match to a documented original pin plus provenance identifies source bytes; derived fits/outputs remain derived"
+    },
+    {
+      "path": "../source-physical/QDrone2-MPC-energy/Fig11a DataRevised.xlsx",
+      "bytes": 359067,
+      "sha256": "896901bf7dcf44b6c710c058e132751620bccb55206e486d5dceed2ebcbaafcd",
+      "classification": "LOCAL_FILE_NOT_AUTOMATICALLY_PUBLISHER_ORIGINAL",
+      "identity_rule": "Only a match to a documented original pin plus provenance identifies source bytes; derived fits/outputs remain derived"
+    },
+    {
+      "path": "../source-physical/QDrone2-MPC-energy/Fig11b DataRevised.xlsx",
+      "bytes": 415181,
+      "sha256": "26e6da59ef373beef1590d4d5b156c7e568835a71c218781ad65e1333ad7c462",
+      "classification": "LOCAL_FILE_NOT_AUTOMATICALLY_PUBLISHER_ORIGINAL",
+      "identity_rule": "Only a match to a documented original pin plus provenance identifies source bytes; derived fits/outputs remain derived"
+    },
+    {
+      "path": "../source-physical/QDrone2-MPC-energy/Fig12a DataRevised.xlsx",
+      "bytes": 122913,
+      "sha256": "17181f0e85e9071cbb0ea7c916f17d9d02bf26376065c1c3f56c9c0d8c590b7e",
+      "classification": "LOCAL_FILE_NOT_AUTOMATICALLY_PUBLISHER_ORIGINAL",
+      "identity_rule": "Only a match to a documented original pin plus provenance identifies source bytes; derived fits/outputs remain derived"
+    },
+    {
+      "path": "../source-physical/QDrone2-MPC-energy/Fig12b DataRevised.xlsx",
+      "bytes": 124303,
+      "sha256": "8015f8318a0c1c150dd5f41925e2f9cb86acab480bad3cb9c54f6732dfa0d760",
+      "classification": "LOCAL_FILE_NOT_AUTOMATICALLY_PUBLISHER_ORIGINAL",
+      "identity_rule": "Only a match to a documented original pin plus provenance identifies source bytes; derived fits/outputs remain derived"
+    },
+    {
+      "path": "../source-physical/QDrone2-MPC-energy/Fig9a DataRevised.xlsx",
+      "bytes": 404892,
+      "sha256": "ebe17e32d8dc8fd236d1d0c8e064b6004bc94882542d87379eefbf426143d434",
+      "classification": "LOCAL_FILE_NOT_AUTOMATICALLY_PUBLISHER_ORIGINAL",
+      "identity_rule": "Only a match to a documented original pin plus provenance identifies source bytes; derived fits/outputs remain derived"
+    },
+    {
+      "path": "../source-physical/QDrone2-MPC-energy/Fig9b DataRevised.xlsx",
+      "bytes": 413479,
+      "sha256": "551f03d25c47e0ea8b4859bd17fa8388bc63757067d663e79160be018bb00b49",
+      "classification": "LOCAL_FILE_NOT_AUTOMATICALLY_PUBLISHER_ORIGINAL",
+      "identity_rule": "Only a match to a documented original pin plus provenance identifies source bytes; derived fits/outputs remain derived"
+    },
+    {
+      "path": "../source-physical/QDrone2-MPC-energy/next-comparison.md",
+      "bytes": 1811,
+      "sha256": "1d891a1331f5c6e3afe505cd94c489280b758de0771a19bd0c77dbaacbd6bede",
+      "classification": "LOCAL_FILE_NOT_AUTOMATICALLY_PUBLISHER_ORIGINAL",
+      "identity_rule": "Only a match to a documented original pin plus provenance identifies source bytes; derived fits/outputs remain derived"
+    },
+    {
+      "path": "../source-physical/QDrone2-MPC-energy/README Revised.txt",
+      "bytes": 3703,
+      "sha256": "c0b34cf48a0962819d596c8333884edae7900335f721bb7f163d7581cca3e022",
+      "classification": "LOCAL_FILE_NOT_AUTOMATICALLY_PUBLISHER_ORIGINAL",
+      "identity_rule": "Only a match to a documented original pin plus provenance identifies source bytes; derived fits/outputs remain derived"
+    },
+    {
+      "path": "../source-physical/QDrone2-MPC-energy/receipt.json",
+      "bytes": 2880,
+      "sha256": "f2dbbdc9a6a24fd64b02c35f67dd1988fb061776dd61112a3d2fa87fa30cf3d0",
+      "classification": "LOCAL_FILE_NOT_AUTOMATICALLY_PUBLISHER_ORIGINAL",
+      "identity_rule": "Only a match to a documented original pin plus provenance identifies source bytes; derived fits/outputs remain derived"
+    },
+    {
+      "path": "../source-physical/receipt.json",
+      "bytes": 2583,
+      "sha256": "2628594d4609fc9a369467921610effcf8c0eb3e262bfd1e6faf079ddb66fb11",
+      "classification": "LOCAL_FILE_NOT_AUTOMATICALLY_PUBLISHER_ORIGINAL",
+      "identity_rule": "Only a match to a documented original pin plus provenance identifies source bytes; derived fits/outputs remain derived"
+    },
+    {
+      "path": "../source-physical/RepOD-drone-arm/drone_arm_stiffness_dataset.tab",
+      "bytes": 3291316,
+      "sha256": "efd71888cad5f18d4fdfb51ff559ea297ccb5b6f9fce5bd0c716d6451744ddda",
+      "classification": "LOCAL_FILE_NOT_AUTOMATICALLY_PUBLISHER_ORIGINAL",
+      "identity_rule": "Only a match to a documented original pin plus provenance identifies source bytes; derived fits/outputs remain derived"
+    },
+    {
+      "path": "../source-physical/RepOD-drone-arm/drone_arm_stiffness_original.csv",
+      "bytes": 3052355,
+      "sha256": "eb7c6df138780bcda7b44154c9ddf690d19708cba25a99e84c219b7de00166fd",
+      "classification": "LOCAL_FILE_NOT_AUTOMATICALLY_PUBLISHER_ORIGINAL",
+      "identity_rule": "Only a match to a documented original pin plus provenance identifies source bytes; derived fits/outputs remain derived"
+    },
+    {
+      "path": "../source-physical/RepOD-drone-arm/next-comparison-notes.md",
+      "bytes": 2019,
+      "sha256": "733f7f1f7d2cbeb2e2929a7071d3879789a5ef2819d696c745ca83d03b88b1c9",
+      "classification": "LOCAL_FILE_NOT_AUTOMATICALLY_PUBLISHER_ORIGINAL",
+      "identity_rule": "Only a match to a documented original pin plus provenance identifies source bytes; derived fits/outputs remain derived"
+    },
+    {
+      "path": "../source-physical/RepOD-drone-arm/ReadMe.ipynb",
+      "bytes": 7840,
+      "sha256": "a2681d7a779d66e7dee4c91f5954f8ef624d13ec81f80c2510679e424105601c",
+      "classification": "LOCAL_FILE_NOT_AUTOMATICALLY_PUBLISHER_ORIGINAL",
+      "identity_rule": "Only a match to a documented original pin plus provenance identifies source bytes; derived fits/outputs remain derived"
+    },
+    {
+      "path": "../source-physical/RepOD-drone-arm/receipt.json",
+      "bytes": 801,
+      "sha256": "edd5d3ae2cd74c77c86b45ba816a7568b6a5d1d32133d1b4f62be7dbcff7a03c",
+      "classification": "LOCAL_FILE_NOT_AUTOMATICALLY_PUBLISHER_ORIGINAL",
+      "identity_rule": "Only a match to a documented original pin plus provenance identifies source bytes; derived fits/outputs remain derived"
+    },
+    {
+      "path": "../source-physical/RepOD-drone-arm/reproduced-holdout.json",
+      "bytes": 17307,
+      "sha256": "d2902e3a9d47e1c469a84cdefd3163f4ca378747ddce9d5e9e8878e52f076eeb",
+      "classification": "LOCAL_FILE_NOT_AUTOMATICALLY_PUBLISHER_ORIGINAL",
+      "identity_rule": "Only a match to a documented original pin plus provenance identifies source bytes; derived fits/outputs remain derived"
+    },
+    {
+      "path": "../source-physical/SIT-transporter-pack/early-charge-feature-feasibility.json",
+      "bytes": 5080,
+      "sha256": "bdfe7f57c18fe25e3b280ef6e3b72c3920bcf8418ae64315fb3beb01812462fc",
+      "classification": "LOCAL_FILE_NOT_AUTOMATICALLY_PUBLISHER_ORIGINAL",
+      "identity_rule": "Only a match to a documented original pin plus provenance identifies source bytes; derived fits/outputs remain derived"
+    },
+    {
+      "path": "../source-physical/SIT-transporter-pack/m21-cutoff-fit.json",
+      "bytes": 338,
+      "sha256": "7f13e8bad00909053bf6e817c97e838d57bf138353f2fab2986952214d57b16b",
+      "classification": "LOCAL_FILE_NOT_AUTOMATICALLY_PUBLISHER_ORIGINAL",
+      "identity_rule": "Only a match to a documented original pin plus provenance identifies source bytes; derived fits/outputs remain derived"
+    },
+    {
+      "path": "../source-physical/SIT-transporter-pack/m21-cutoff-results-reproduced.json",
+      "bytes": 2257,
+      "sha256": "a43f7201954219a8a154ffe6adc235bce04a8d82f48a428b4bd20e4b9eb1e354",
+      "classification": "LOCAL_FILE_NOT_AUTOMATICALLY_PUBLISHER_ORIGINAL",
+      "identity_rule": "Only a match to a documented original pin plus provenance identifies source bytes; derived fits/outputs remain derived"
+    },
+    {
+      "path": "../source-physical/SIT-transporter-pack/m21-cutoff-results.json",
+      "bytes": 2257,
+      "sha256": "a43f7201954219a8a154ffe6adc235bce04a8d82f48a428b4bd20e4b9eb1e354",
+      "classification": "LOCAL_FILE_NOT_AUTOMATICALLY_PUBLISHER_ORIGINAL",
+      "identity_rule": "Only a match to a documented original pin plus provenance identifies source bytes; derived fits/outputs remain derived"
+    },
+    {
+      "path": "../source-physical/SIT-transporter-pack/m21-fit.json",
+      "bytes": 3384,
+      "sha256": "4718b0058396bbfb1034ed5b139fc32afa59f0e77222050a957f6de36e6ae788",
+      "classification": "LOCAL_FILE_NOT_AUTOMATICALLY_PUBLISHER_ORIGINAL",
+      "identity_rule": "Only a match to a documented original pin plus provenance identifies source bytes; derived fits/outputs remain derived"
+    },
+    {
+      "path": "../source-physical/SIT-transporter-pack/m21-results-reproduced.json",
+      "bytes": 8713,
+      "sha256": "2f0f8f013673cfcdd75a840e0dede0927c160bf43650f7e7c794b0994b0443bb",
+      "classification": "LOCAL_FILE_NOT_AUTOMATICALLY_PUBLISHER_ORIGINAL",
+      "identity_rule": "Only a match to a documented original pin plus provenance identifies source bytes; derived fits/outputs remain derived"
+    },
+    {
+      "path": "../source-physical/SIT-transporter-pack/m21-results.json",
+      "bytes": 8713,
+      "sha256": "2f0f8f013673cfcdd75a840e0dede0927c160bf43650f7e7c794b0994b0443bb",
+      "classification": "LOCAL_FILE_NOT_AUTOMATICALLY_PUBLISHER_ORIGINAL",
+      "identity_rule": "Only a match to a documented original pin plus provenance identifies source bytes; derived fits/outputs remain derived"
+    },
+    {
+      "path": "../source-physical/SIT-transporter-pack/next-comparison-notes.md",
+      "bytes": 1968,
+      "sha256": "6b28628cf3ee21c6035c0cd2d9400892685d7f070c1771dcfeb07896bcf74063",
+      "classification": "LOCAL_FILE_NOT_AUTOMATICALLY_PUBLISHER_ORIGINAL",
+      "identity_rule": "Only a match to a documented original pin plus provenance identifies source bytes; derived fits/outputs remain derived"
+    },
+    {
+      "path": "../source-physical/SIT-transporter-pack/receipt.json",
+      "bytes": 1602,
+      "sha256": "9ecf8b3a3a7b89df303433bccb87167880e3d29beed6e5c65c702e84a17eb7f5",
+      "classification": "LOCAL_FILE_NOT_AUTOMATICALLY_PUBLISHER_ORIGINAL",
+      "identity_rule": "Only a match to a documented original pin plus provenance identifies source bytes; derived fits/outputs remain derived"
+    },
+    {
+      "path": "../source-physical/SIT-transporter-pack/thermal-calibration-feasibility.py",
+      "bytes": 2052,
+      "sha256": "f5695474df9353d1ea4bea01dfea6473c5a9b31c1ad409ee3f2c2407dce04585",
+      "classification": "LOCAL_FILE_NOT_AUTOMATICALLY_PUBLISHER_ORIGINAL",
+      "identity_rule": "Only a match to a documented original pin plus provenance identifies source bytes; derived fits/outputs remain derived"
+    },
+    {
+      "path": "../source-physical/SIT-transporter-pack/UUT2_BatteryModule_Discharge.xlsx",
+      "bytes": 9397987,
+      "sha256": "a4679465b35455ca429519fbc47f04f6e42bea608e0de12b978d482873456205",
+      "classification": "LOCAL_FILE_NOT_AUTOMATICALLY_PUBLISHER_ORIGINAL",
+      "identity_rule": "Only a match to a documented original pin plus provenance identifies source bytes; derived fits/outputs remain derived"
+    },
+    {
+      "path": "../source-physical/SIT-transporter-pack/UUT2_BatteryPackP1_Charge.xlsx",
+      "bytes": 1815465,
+      "sha256": "290d3411a765e011157d68c46163a2adf5f59f66d81fb180218ef37623e65c10",
+      "classification": "LOCAL_FILE_NOT_AUTOMATICALLY_PUBLISHER_ORIGINAL",
+      "identity_rule": "Only a match to a documented original pin plus provenance identifies source bytes; derived fits/outputs remain derived"
+    },
+    {
+      "path": "../source-physical/SIT-transporter-pack/UUT2_BatteryPackP2_Charge.xlsx",
+      "bytes": 1824129,
+      "sha256": "831507d6b0f3a59d218c08376e0924ee2df1c16f653a51337addcefcd64d1bfd",
+      "classification": "LOCAL_FILE_NOT_AUTOMATICALLY_PUBLISHER_ORIGINAL",
+      "identity_rule": "Only a match to a documented original pin plus provenance identifies source bytes; derived fits/outputs remain derived"
+    },
+    {
+      "path": "../source-physical/SIT-transporter-pack/UUT2_BatteryPackP3_Charge.xlsx",
+      "bytes": 1773938,
+      "sha256": "55099cb78feb75bf6cb3f588e0964cd54ec84db1116e26ad69fec485c8f49e77",
+      "classification": "LOCAL_FILE_NOT_AUTOMATICALLY_PUBLISHER_ORIGINAL",
+      "identity_rule": "Only a match to a documented original pin plus provenance identifies source bytes; derived fits/outputs remain derived"
+    },
+    {
+      "path": "../source-physical/SIT-transporter-pack/UUT2_BatteryPackP4_Charge.xlsx",
+      "bytes": 1784638,
+      "sha256": "3ba169def19d2ad68ad0a9256371806970ff59e3f9eba120bfebd96a3d3b2f10",
+      "classification": "LOCAL_FILE_NOT_AUTOMATICALLY_PUBLISHER_ORIGINAL",
+      "identity_rule": "Only a match to a documented original pin plus provenance identifies source bytes; derived fits/outputs remain derived"
+    },
+    {
+      "path": "../source-physical/UAV-FD/esc-development-fit.json",
+      "bytes": 1333,
+      "sha256": "24052b86a73a6cec39c1be155934651160d199ecbae5030fb65a2ee27c9a3113",
+      "classification": "LOCAL_FILE_NOT_AUTOMATICALLY_PUBLISHER_ORIGINAL",
+      "identity_rule": "Only a match to a documented original pin plus provenance identifies source bytes; derived fits/outputs remain derived"
+    },
+    {
+      "path": "../source-physical/UAV-FD/esc-diagnostic-receipt.json",
+      "bytes": 977,
+      "sha256": "29b58da412531e82acbd4b25b9578927d4ee8b8ffd27ef6064d529e4820d140d",
+      "classification": "LOCAL_FILE_NOT_AUTOMATICALLY_PUBLISHER_ORIGINAL",
+      "identity_rule": "Only a match to a documented original pin plus provenance identifies source bytes; derived fits/outputs remain derived"
+    },
+    {
+      "path": "../source-physical/UAV-FD/FAULT_M1_10.mat",
+      "bytes": 18742480,
+      "sha256": "5bfcc4846cc265fa2fe58d65561f09260644090a3f5cd02582a10fb4ea86a840",
+      "classification": "LOCAL_FILE_NOT_AUTOMATICALLY_PUBLISHER_ORIGINAL",
+      "identity_rule": "Only a match to a documented original pin plus provenance identifies source bytes; derived fits/outputs remain derived"
+    },
+    {
+      "path": "../source-physical/UAV-FD/FAULT_M3_10.mat",
+      "bytes": 15650896,
+      "sha256": "9bd3284274615b2c1db7168ff930a2474abdda7a0686f4dba09f2cef46efa46b",
+      "classification": "LOCAL_FILE_NOT_AUTOMATICALLY_PUBLISHER_ORIGINAL",
+      "identity_rule": "Only a match to a documented original pin plus provenance identifies source bytes; derived fits/outputs remain derived"
+    },
+    {
+      "path": "../source-physical/UAV-FD/FAULT_M4_10.mat",
+      "bytes": 14544382,
+      "sha256": "1e99ccf414ac483d1945982a79b966caed5fe3385d0967b126d4624d0ff1a913",
+      "classification": "LOCAL_FILE_NOT_AUTOMATICALLY_PUBLISHER_ORIGINAL",
+      "identity_rule": "Only a match to a documented original pin plus provenance identifies source bytes; derived fits/outputs remain derived"
+    },
+    {
+      "path": "../source-physical/UAV-FD/FAULT_M5_10.mat",
+      "bytes": 17520095,
+      "sha256": "503844932d09b0ab8c243e6b986c2f979271843af3de7709f15a172f09a45d53",
+      "classification": "LOCAL_FILE_NOT_AUTOMATICALLY_PUBLISHER_ORIGINAL",
+      "identity_rule": "Only a match to a documented original pin plus provenance identifies source bytes; derived fits/outputs remain derived"
+    },
+    {
+      "path": "../source-physical/UAV-FD/main.m",
+      "bytes": 6779,
+      "sha256": "596f7cc40cb8c2bb9a6148c84a5daf43b238fcb85b260b9f030faba4a8cea4c9",
+      "classification": "LOCAL_FILE_NOT_AUTOMATICALLY_PUBLISHER_ORIGINAL",
+      "identity_rule": "Only a match to a documented original pin plus provenance identifies source bytes; derived fits/outputs remain derived"
+    },
+    {
+      "path": "../source-physical/UAV-FD/next-comparison-notes.md",
+      "bytes": 1858,
+      "sha256": "b811ae80fc702e2992827c6de227eb5a3a1b3d543897fb87ff632b2c40278709",
+      "classification": "LOCAL_FILE_NOT_AUTOMATICALLY_PUBLISHER_ORIGINAL",
+      "identity_rule": "Only a match to a documented original pin plus provenance identifies source bytes; derived fits/outputs remain derived"
+    },
+    {
+      "path": "../source-physical/UAV-FD/NO_FAULT1.mat",
+      "bytes": 31477776,
+      "sha256": "8fa683680232dae902d7c906853fb80f5b89ffb6b43ff8e97b708bd8f8473ba5",
+      "classification": "LOCAL_FILE_NOT_AUTOMATICALLY_PUBLISHER_ORIGINAL",
+      "identity_rule": "Only a match to a documented original pin plus provenance identifies source bytes; derived fits/outputs remain derived"
+    },
+    {
+      "path": "../source-physical/UAV-FD/NO_FAULT4.mat",
+      "bytes": 43712272,
+      "sha256": "2a41050325fb9315cd2fd12429a31d3d7b1b2fef2a4802dada2eaea57ea3fcd3",
+      "classification": "LOCAL_FILE_NOT_AUTOMATICALLY_PUBLISHER_ORIGINAL",
+      "identity_rule": "Only a match to a documented original pin plus provenance identifies source bytes; derived fits/outputs remain derived"
+    },
+    {
+      "path": "../source-physical/UAV-FD/NO_FAULT5.mat",
+      "bytes": 41697864,
+      "sha256": "85349d743ae4ea17aeb8bb4ac3c74fbe4c3f33ab8dc21b5ae29464e398c14cc2",
+      "classification": "LOCAL_FILE_NOT_AUTOMATICALLY_PUBLISHER_ORIGINAL",
+      "identity_rule": "Only a match to a documented original pin plus provenance identifies source bytes; derived fits/outputs remain derived"
+    },
+    {
+      "path": "../source-physical/UAV-FD/NO_FAULT6.mat",
+      "bytes": 45466208,
+      "sha256": "fe5d6f3f02fc8a99a076ba5d251f7f341c7ff7c5759bc42283c971b9aff52cab",
+      "classification": "LOCAL_FILE_NOT_AUTOMATICALLY_PUBLISHER_ORIGINAL",
+      "identity_rule": "Only a match to a documented original pin plus provenance identifies source bytes; derived fits/outputs remain derived"
+    },
+    {
+      "path": "../source-physical/UAV-FD/receipt.json",
+      "bytes": 2143,
+      "sha256": "3090f523af1aa70ed085ee8d540d257b78d91d163365b60d7295d5f7027dd61c",
+      "classification": "LOCAL_FILE_NOT_AUTOMATICALLY_PUBLISHER_ORIGINAL",
+      "identity_rule": "Only a match to a documented original pin plus provenance identifies source bytes; derived fits/outputs remain derived"
+    },
+    {
+      "path": "../source-physical/UAV-FD/reproduced-after-shared-reader.json",
+      "bytes": 2712,
+      "sha256": "1ead57774f8ad3e29c5c33cc48e2ef13421b4e54d0e27e4be3509632cd17268b",
+      "classification": "LOCAL_FILE_NOT_AUTOMATICALLY_PUBLISHER_ORIGINAL",
+      "identity_rule": "Only a match to a documented original pin plus provenance identifies source bytes; derived fits/outputs remain derived"
+    },
+    {
+      "path": "../source-physical/UAV-FD/reproduced-esc-power.json",
+      "bytes": 4623,
+      "sha256": "8cedbff0f025428d3c6a6cbc0c5fb63a231624b51cb5a541b9139345089932e8",
+      "classification": "LOCAL_FILE_NOT_AUTOMATICALLY_PUBLISHER_ORIGINAL",
+      "identity_rule": "Only a match to a documented original pin plus provenance identifies source bytes; derived fits/outputs remain derived"
+    },
+    {
+      "path": "../source-physical/UAV-FD/reproduced-uav-fd.json",
+      "bytes": 2712,
+      "sha256": "1ead57774f8ad3e29c5c33cc48e2ef13421b4e54d0e27e4be3509632cd17268b",
+      "classification": "LOCAL_FILE_NOT_AUTOMATICALLY_PUBLISHER_ORIGINAL",
+      "identity_rule": "Only a match to a documented original pin plus provenance identifies source bytes; derived fits/outputs remain derived"
+    },
+    {
+      "path": "../source-physical/UAV-FD/sync_resample_exa.m",
+      "bytes": 8148,
+      "sha256": "adb6a70eb5668cfb84b0880e39e74fce4df2810b25ddeaead5d4017e1cde8fcb",
+      "classification": "LOCAL_FILE_NOT_AUTOMATICALLY_PUBLISHER_ORIGINAL",
+      "identity_rule": "Only a match to a documented original pin plus provenance identifies source bytes; derived fits/outputs remain derived"
+    },
+    {
+      "path": "../source-physical/UIUC-APCE-10x5-axial/6005-retry.txt",
+      "bytes": 574,
+      "sha256": "1db2ff99dc611079a5aa91f73ed13fb48a1ebe6874b294789e0872b9756c41e6",
+      "classification": "LOCAL_FILE_NOT_AUTOMATICALLY_PUBLISHER_ORIGINAL",
+      "identity_rule": "Only a match to a documented original pin plus provenance identifies source bytes; derived fits/outputs remain derived"
+    },
+    {
+      "path": "../source-physical/UIUC-APCE-10x5-axial/apce_10x5_kt0821_5000.txt",
+      "bytes": 574,
+      "sha256": "3df32a75d9b09452a6cd22f4853a7ce4c09b51e412fda3c6bea247dd7ce09c61",
+      "classification": "LOCAL_FILE_NOT_AUTOMATICALLY_PUBLISHER_ORIGINAL",
+      "identity_rule": "Only a match to a documented original pin plus provenance identifies source bytes; derived fits/outputs remain derived"
+    },
+    {
+      "path": "../source-physical/UIUC-APCE-10x5-axial/apce_10x5_kt0823_6005.txt",
+      "bytes": 574,
+      "sha256": "1db2ff99dc611079a5aa91f73ed13fb48a1ebe6874b294789e0872b9756c41e6",
+      "classification": "LOCAL_FILE_NOT_AUTOMATICALLY_PUBLISHER_ORIGINAL",
+      "identity_rule": "Only a match to a documented original pin plus provenance identifies source bytes; derived fits/outputs remain derived"
+    },
+    {
+      "path": "../source-physical/UIUC-APCE-10x5-axial/apce_10x5_kt0824_6018.txt",
+      "bytes": 450,
+      "sha256": "9f8a6f9c8775a8cf2334b7b8a6f75b9c4ebbd0ad7474da4938de05557c0278bb",
+      "classification": "LOCAL_FILE_NOT_AUTOMATICALLY_PUBLISHER_ORIGINAL",
+      "identity_rule": "Only a match to a documented original pin plus provenance identifies source bytes; derived fits/outputs remain derived"
+    },
+    {
+      "path": "../source-physical/UIUC-APCE-10x5-axial/apce_10x5_kt0825_6707.txt",
+      "bytes": 574,
+      "sha256": "5ca121ee2ee1f69809cbaeb20601a12c43f7040b8e7bce9e2eda1c1a21723e73",
+      "classification": "LOCAL_FILE_NOT_AUTOMATICALLY_PUBLISHER_ORIGINAL",
+      "identity_rule": "Only a match to a documented original pin plus provenance identifies source bytes; derived fits/outputs remain derived"
+    },
+    {
+      "path": "../source-physical/UIUC-APCE-10x5-axial/apce_10x5_kt0826_6710.txt",
+      "bytes": 544,
+      "sha256": "ac7bef0903f53c227883c68b3e44867242ae00beb27ab6c27a7d8b76ac30b8e3",
+      "classification": "LOCAL_FILE_NOT_AUTOMATICALLY_PUBLISHER_ORIGINAL",
+      "identity_rule": "Only a match to a documented original pin plus provenance identifies source bytes; derived fits/outputs remain derived"
+    },
+    {
+      "path": "../source-physical/UIUC-APCE-10x5-axial/apce_10x5_pg0820_4005.txt",
+      "bytes": 544,
+      "sha256": "088add9d07eae933fb0098c187c980427e5f21525239791095e0dbb4ce2780ee",
+      "classification": "LOCAL_FILE_NOT_AUTOMATICALLY_PUBLISHER_ORIGINAL",
+      "identity_rule": "Only a match to a documented original pin plus provenance identifies source bytes; derived fits/outputs remain derived"
+    },
+    {
+      "path": "../source-physical/UPV-MODERA/digital_model.zip",
+      "bytes": 21886719,
+      "sha256": "86e3054a377737457974feba48ed3ad3093a7b72850166c55c0c365b4d3d1b51",
+      "classification": "LOCAL_FILE_NOT_AUTOMATICALLY_PUBLISHER_ORIGINAL",
+      "identity_rule": "Only a match to a documented original pin plus provenance identifies source bytes; derived fits/outputs remain derived"
+    },
+    {
+      "path": "../source-physical/UPV-MODERA/forces.zip",
+      "bytes": 57735,
+      "sha256": "7d2ad1e86e2a30f12f9105b6f5f6aeaa03738ce173e694e55946a92ebaf89d8b",
+      "classification": "LOCAL_FILE_NOT_AUTOMATICALLY_PUBLISHER_ORIGINAL",
+      "identity_rule": "Only a match to a documented original pin plus provenance identifies source bytes; derived fits/outputs remain derived"
+    },
+    {
+      "path": "../source-physical/UPV-MODERA/next-comparison.md",
+      "bytes": 2089,
+      "sha256": "9f70a39ec0394dd4a0b7f754577d131c86bdc99850132d3a9de131a3baa454c6",
+      "classification": "LOCAL_FILE_NOT_AUTOMATICALLY_PUBLISHER_ORIGINAL",
+      "identity_rule": "Only a match to a documented original pin plus provenance identifies source bytes; derived fits/outputs remain derived"
+    },
+    {
+      "path": "../source-physical/UPV-MODERA/outer.tail",
+      "bytes": 65536,
+      "sha256": "450813e0a1a1207e0e4863e79f64c3ec7a9c75c1a13fa9c164d36d45bc7e77af",
+      "classification": "LOCAL_FILE_NOT_AUTOMATICALLY_PUBLISHER_ORIGINAL",
+      "identity_rule": "Only a match to a documented original pin plus provenance identifies source bytes; derived fits/outputs remain derived"
+    },
+    {
+      "path": "../source-physical/UPV-MODERA/receipt.json",
+      "bytes": 1817,
+      "sha256": "0a589ddc73b2d8f985a2ec042e8316804808ddd55dc4bc0e6f55910ee7a10ca3",
+      "classification": "LOCAL_FILE_NOT_AUTOMATICALLY_PUBLISHER_ORIGINAL",
+      "identity_rule": "Only a match to a documented original pin plus provenance identifies source bytes; derived fits/outputs remain derived"
+    },
+    {
+      "path": "../source-physical/UZH-NeuroBEM/__pycache__/read_release_members.cpython-311.pyc",
+      "bytes": 5189,
+      "sha256": "cad4dea93368054f71764e1c30ebbb127603297f0a9408f65692941e9a2af95c",
+      "classification": "LOCAL_FILE_NOT_AUTOMATICALLY_PUBLISHER_ORIGINAL",
+      "identity_rule": "Only a match to a documented original pin plus provenance identifies source bytes; derived fits/outputs remain derived"
+    },
+    {
+      "path": "../source-physical/UZH-NeuroBEM/archive-tail.bin",
+      "bytes": 1048576,
+      "sha256": "4a91ac2f2685cd3e285afd6b4e4fe8ea9118c3fd0a5e6ed8acc4d572b7e85dd0",
+      "classification": "LOCAL_FILE_NOT_AUTOMATICALLY_PUBLISHER_ORIGINAL",
+      "identity_rule": "Only a match to a documented original pin plus provenance identifies source bytes; derived fits/outputs remain derived"
+    },
+    {
+      "path": "../source-physical/UZH-NeuroBEM/archive-tail.headers",
+      "bytes": 358,
+      "sha256": "46cc27b27b56ef7c5d1b88374a7fabb78c6518fd79c2c4e8833da5b6e8c8d063",
+      "classification": "LOCAL_FILE_NOT_AUTOMATICALLY_PUBLISHER_ORIGINAL",
+      "identity_rule": "Only a match to a documented original pin plus provenance identifies source bytes; derived fits/outputs remain derived"
+    },
+    {
+      "path": "../source-physical/UZH-NeuroBEM/Flights.txt",
+      "bytes": 7043,
+      "sha256": "62dbf4ecd520a12264593c837f0a60162ffa26e21e254e823c1b22a315823f1f",
+      "classification": "LOCAL_FILE_NOT_AUTOMATICALLY_PUBLISHER_ORIGINAL",
+      "identity_rule": "Only a match to a documented original pin plus provenance identifies source bytes; derived fits/outputs remain derived"
+    },
+    {
+      "path": "../source-physical/UZH-NeuroBEM/merged_2021-02-18-13-44-23_seg_2.csv",
+      "bytes": 13061515,
+      "sha256": "07ec70532b8865101e3cf52a93f4ee46166d84c9ae69241b0df7e7cdb83c95a9",
+      "classification": "LOCAL_FILE_NOT_AUTOMATICALLY_PUBLISHER_ORIGINAL",
+      "identity_rule": "Only a match to a documented original pin plus provenance identifies source bytes; derived fits/outputs remain derived"
+    },
+    {
+      "path": "../source-physical/UZH-NeuroBEM/merged_2021-02-18-16-43-54_seg_1.csv",
+      "bytes": 193467,
+      "sha256": "df27ef788eb5e4b8e3ebb15883abeac6d2b0cd84b923a711b95af5cadf71a85d",
+      "classification": "LOCAL_FILE_NOT_AUTOMATICALLY_PUBLISHER_ORIGINAL",
+      "identity_rule": "Only a match to a documented original pin plus provenance identifies source bytes; derived fits/outputs remain derived"
+    },
+    {
+      "path": "../source-physical/UZH-NeuroBEM/merged_2021-02-18-16-43-54_seg_2.csv",
+      "bytes": 483543,
+      "sha256": "ffeb6c73673a6b44eb209db5401c764e015e5b7586a67621e6f715ef0c563d38",
+      "classification": "LOCAL_FILE_NOT_AUTOMATICALLY_PUBLISHER_ORIGINAL",
+      "identity_rule": "Only a match to a documented original pin plus provenance identifies source bytes; derived fits/outputs remain derived"
+    },
+    {
+      "path": "../source-physical/UZH-NeuroBEM/merged_2021-02-18-16-43-54_seg_3.csv",
+      "bytes": 3880951,
+      "sha256": "f6014c66a28434c3c780e34466eb19383f3d85984e62775cce7e6be859d2ceda",
+      "classification": "LOCAL_FILE_NOT_AUTOMATICALLY_PUBLISHER_ORIGINAL",
+      "identity_rule": "Only a match to a documented original pin plus provenance identifies source bytes; derived fits/outputs remain derived"
+    },
+    {
+      "path": "../source-physical/UZH-NeuroBEM/merged_2021-02-18-16-43-54_seg_4.csv",
+      "bytes": 381654,
+      "sha256": "7042b45bfb6cf779c276a3fa329d12487a8d891662df575c3f980e59b0056242",
+      "classification": "LOCAL_FILE_NOT_AUTOMATICALLY_PUBLISHER_ORIGINAL",
+      "identity_rule": "Only a match to a documented original pin plus provenance identifies source bytes; derived fits/outputs remain derived"
+    },
+    {
+      "path": "../source-physical/UZH-NeuroBEM/merged_2021-02-18-16-53-35_seg_2.csv",
+      "bytes": 12419787,
+      "sha256": "0256a2c99a5d08e8ba039cf29653ad710d3a2a82f3e834188f96cd830a40e0bf",
+      "classification": "LOCAL_FILE_NOT_AUTOMATICALLY_PUBLISHER_ORIGINAL",
+      "identity_rule": "Only a match to a documented original pin plus provenance identifies source bytes; derived fits/outputs remain derived"
+    },
+    {
+      "path": "../source-physical/UZH-NeuroBEM/merged_2021-02-18-17-03-20_seg_2.csv",
+      "bytes": 11161270,
+      "sha256": "2a0c3d172edbec0d606af101590ab77f621ac52f2b498bda4171dc462044fa7f",
+      "classification": "LOCAL_FILE_NOT_AUTOMATICALLY_PUBLISHER_ORIGINAL",
+      "identity_rule": "Only a match to a documented original pin plus provenance identifies source bytes; derived fits/outputs remain derived"
+    },
+    {
+      "path": "../source-physical/UZH-NeuroBEM/merged_2021-02-18-17-19-08_seg_2.csv",
+      "bytes": 9830225,
+      "sha256": "0ac1afbac26b04ad0b40eb15fb0c3bfba0254d53659005107463f019d9776a08",
+      "classification": "LOCAL_FILE_NOT_AUTOMATICALLY_PUBLISHER_ORIGINAL",
+      "identity_rule": "Only a match to a documented original pin plus provenance identifies source bytes; derived fits/outputs remain derived"
+    },
+    {
+      "path": "../source-physical/UZH-NeuroBEM/merged_2021-02-18-17-20-37_seg_1.csv",
+      "bytes": 11505199,
+      "sha256": "3b0efacd9890dcc32ed80d7acc6516d9e484f1744582000e7f88936039b366a9",
+      "classification": "LOCAL_FILE_NOT_AUTOMATICALLY_PUBLISHER_ORIGINAL",
+      "identity_rule": "Only a match to a documented original pin plus provenance identifies source bytes; derived fits/outputs remain derived"
+    },
+    {
+      "path": "../source-physical/UZH-NeuroBEM/merged_2021-02-18-17-26-00_seg_1.csv",
+      "bytes": 8070235,
+      "sha256": "9dba2dfc44da51bc0e4ef8a062682fb76b1933dfef0eb976d64ec2f868222585",
+      "classification": "LOCAL_FILE_NOT_AUTOMATICALLY_PUBLISHER_ORIGINAL",
+      "identity_rule": "Only a match to a documented original pin plus provenance identifies source bytes; derived fits/outputs remain derived"
+    },
+    {
+      "path": "../source-physical/UZH-NeuroBEM/merged_2021-02-18-18-08-45_seg_1.csv",
+      "bytes": 12111981,
+      "sha256": "22c2218014873b1dbd9944fae05ebe00a44decaf6f01021372f99faec7bf1805",
+      "classification": "LOCAL_FILE_NOT_AUTOMATICALLY_PUBLISHER_ORIGINAL",
+      "identity_rule": "Only a match to a documented original pin plus provenance identifies source bytes; derived fits/outputs remain derived"
+    },
+    {
+      "path": "../source-physical/UZH-NeuroBEM/merged_2021-02-23-10-48-03_seg_2.csv",
+      "bytes": 9194208,
+      "sha256": "1f225d075e1402d00825710eb5681b4df8d1d8a8fc1f7ad3255a6e371c2f9695",
+      "classification": "LOCAL_FILE_NOT_AUTOMATICALLY_PUBLISHER_ORIGINAL",
+      "identity_rule": "Only a match to a documented original pin plus provenance identifies source bytes; derived fits/outputs remain derived"
+    },
+    {
+      "path": "../source-physical/UZH-NeuroBEM/merged_2021-02-23-10-52-00_seg_1.csv",
+      "bytes": 2261316,
+      "sha256": "d3c7a080ef0efdd4fb9c8f11318116ad72a3842ad21d90d668b1ee5b7188062a",
+      "classification": "LOCAL_FILE_NOT_AUTOMATICALLY_PUBLISHER_ORIGINAL",
+      "identity_rule": "Only a match to a documented original pin plus provenance identifies source bytes; derived fits/outputs remain derived"
+    },
+    {
+      "path": "../source-physical/UZH-NeuroBEM/merged_2021-02-23-10-52-00_seg_2.csv",
+      "bytes": 10776693,
+      "sha256": "49ce15e4075eb7ec78020e9edef7e9c6bfa134bc98a5cff0c32623ccc302146a",
+      "classification": "LOCAL_FILE_NOT_AUTOMATICALLY_PUBLISHER_ORIGINAL",
+      "identity_rule": "Only a match to a documented original pin plus provenance identifies source bytes; derived fits/outputs remain derived"
+    },
+    {
+      "path": "../source-physical/UZH-NeuroBEM/merged_2021-02-23-11-41-38_seg_3.csv",
+      "bytes": 8882957,
+      "sha256": "feeb7ad880e66a0a2026bb912db17180506ead78f8b04cfbef1b5ebd9c7a9836",
+      "classification": "LOCAL_FILE_NOT_AUTOMATICALLY_PUBLISHER_ORIGINAL",
+      "identity_rule": "Only a match to a documented original pin plus provenance identifies source bytes; derived fits/outputs remain derived"
+    },
+    {
+      "path": "../source-physical/UZH-NeuroBEM/merged_2021-02-23-14-21-48_seg_3.csv",
+      "bytes": 11429425,
+      "sha256": "705ca398351876094b3807f1b0d55f037949c0b498ba8cd4c8c444faeb840219",
+      "classification": "LOCAL_FILE_NOT_AUTOMATICALLY_PUBLISHER_ORIGINAL",
+      "identity_rule": "Only a match to a documented original pin plus provenance identifies source bytes; derived fits/outputs remain derived"
+    },
+    {
+      "path": "../source-physical/UZH-NeuroBEM/merged_2021-02-23-14-24-07_seg_1.csv",
+      "bytes": 12375441,
+      "sha256": "b0ea486cfe39b96b89a7671792763b712809a2594c9d1f37ba880f356f2228c7",
+      "classification": "LOCAL_FILE_NOT_AUTOMATICALLY_PUBLISHER_ORIGINAL",
+      "identity_rule": "Only a match to a documented original pin plus provenance identifies source bytes; derived fits/outputs remain derived"
+    },
+    {
+      "path": "../source-physical/UZH-NeuroBEM/merged_2021-02-23-17-27-24_seg_2.csv",
+      "bytes": 7246075,
+      "sha256": "001cff6f1193f565d3c23f3639ef7d0e0ace57d3f11490980d006e1ab62c5435",
+      "classification": "LOCAL_FILE_NOT_AUTOMATICALLY_PUBLISHER_ORIGINAL",
+      "identity_rule": "Only a match to a documented original pin plus provenance identifies source bytes; derived fits/outputs remain derived"
+    },
+    {
+      "path": "../source-physical/UZH-NeuroBEM/merged_2021-02-23-19-45-06_seg_2.csv",
+      "bytes": 18057606,
+      "sha256": "5f8369cb9881521111dd4767919474aea2cbbca95d48e88df7cfb8adecdffd0e",
+      "classification": "LOCAL_FILE_NOT_AUTOMATICALLY_PUBLISHER_ORIGINAL",
+      "identity_rule": "Only a match to a documented original pin plus provenance identifies source bytes; derived fits/outputs remain derived"
+    },
+    {
+      "path": "../source-physical/UZH-NeuroBEM/merged_2021-02-23-22-26-25_seg_2.csv",
+      "bytes": 32799058,
+      "sha256": "afc5ab9021ad12ab216d1f98e59b79265e295dc06349d9d37a6723d568e612dd",
+      "classification": "LOCAL_FILE_NOT_AUTOMATICALLY_PUBLISHER_ORIGINAL",
+      "identity_rule": "Only a match to a documented original pin plus provenance identifies source bytes; derived fits/outputs remain derived"
+    },
+    {
+      "path": "../source-physical/UZH-NeuroBEM/merged_2021-02-23-22-54-17_seg_1.csv",
+      "bytes": 13083749,
+      "sha256": "0c6fc9f1feac5120fd873f7a1f704fc06e65e29a122f79c55a20420e89f88147",
+      "classification": "LOCAL_FILE_NOT_AUTOMATICALLY_PUBLISHER_ORIGINAL",
+      "identity_rule": "Only a match to a documented original pin plus provenance identifies source bytes; derived fits/outputs remain derived"
+    },
+    {
+      "path": "../source-physical/UZH-NeuroBEM/read_release_members.py",
+      "bytes": 2103,
+      "sha256": "d72dc798e1322614eb2bd4bd62e7c260c6a9ffd421db739437c0df6460134fbf",
+      "classification": "LOCAL_FILE_NOT_AUTOMATICALLY_PUBLISHER_ORIGINAL",
+      "identity_rule": "Only a match to a documented original pin plus provenance identifies source bytes; derived fits/outputs remain derived"
+    },
+    {
+      "path": "../source-physical/UZH-NeuroBEM/Readme.md",
+      "bytes": 6174,
+      "sha256": "69c0a051bac4189620790b302a19d158557c52d160271b633325bed532f6350e",
+      "classification": "LOCAL_FILE_NOT_AUTOMATICALLY_PUBLISHER_ORIGINAL",
+      "identity_rule": "Only a match to a documented original pin plus provenance identifies source bytes; derived fits/outputs remain derived"
+    },
+    {
+      "path": "../source-physical/UZH-NeuroBEM/reproduced-freeze.json",
+      "bytes": 1107,
+      "sha256": "f8d13360edf803f14e6a4f4d1f2b6bb32ecb60d0e7e3e61f8d2cd834000cc3a5",
+      "classification": "LOCAL_FILE_NOT_AUTOMATICALLY_PUBLISHER_ORIGINAL",
+      "identity_rule": "Only a match to a documented original pin plus provenance identifies source bytes; derived fits/outputs remain derived"
+    },
+    {
+      "path": "../source-physical/UZH-NeuroBEM/reproduced-results.json",
+      "bytes": 15590,
+      "sha256": "67d338c753c79911e1b26ae137905b331cd443d437ee2031c3d219f4d5dc1fbc",
+      "classification": "LOCAL_FILE_NOT_AUTOMATICALLY_PUBLISHER_ORIGINAL",
+      "identity_rule": "Only a match to a documented original pin plus provenance identifies source bytes; derived fits/outputs remain derived"
+    },
+    {
+      "path": "../source-physical/UZH-NeuroBEM/testset.txt",
+      "bytes": 338,
+      "sha256": "d59cd589105cf4cd3fcfe0a34a0b4824d6ae2560db13d34b9a7acd169deeb367",
+      "classification": "LOCAL_FILE_NOT_AUTOMATICALLY_PUBLISHER_ORIGINAL",
+      "identity_rule": "Only a match to a documented original pin plus provenance identifies source bytes; derived fits/outputs remain derived"
+    },
+    {
+      "path": "../source-physical/VAH01.csv",
+      "bytes": 110884708,
+      "sha256": "596ab1e1e80eeac3509f789609f751527c2073a4310deec8274cbfaf4fef39c4",
+      "classification": "LOCAL_FILE_NOT_AUTOMATICALLY_PUBLISHER_ORIGINAL",
+      "identity_rule": "Only a match to a documented original pin plus provenance identifies source bytes; derived fits/outputs remain derived"
+    },
+    {
+      "path": "../source-physical/VAH01_impedance.csv",
+      "bytes": 1522,
+      "sha256": "f92a2e6b141d732863fbf5ba09e8867c073f15df2d35c80c83887051a1d31b25",
+      "classification": "LOCAL_FILE_NOT_AUTOMATICALLY_PUBLISHER_ORIGINAL",
+      "identity_rule": "Only a match to a documented original pin plus provenance identifies source bytes; derived fits/outputs remain derived"
+    },
+    {
+      "path": "../source-physical/VAH07.csv",
+      "bytes": 20868474,
+      "sha256": "895bbfe543ac7ad1adb1eed4d03c392d0bc460d382acc6a40198c33149360223",
+      "classification": "LOCAL_FILE_NOT_AUTOMATICALLY_PUBLISHER_ORIGINAL",
+      "identity_rule": "Only a match to a documented original pin plus provenance identifies source bytes; derived fits/outputs remain derived"
+    },
+    {
+      "path": "../source-physical/VAH17.csv",
+      "bytes": 65550764,
+      "sha256": "a20cf42e2a58eed8dff3a1d54816012c043664dbf4cfdcee61bf86bd5048b4d8",
+      "classification": "LOCAL_FILE_NOT_AUTOMATICALLY_PUBLISHER_ORIGINAL",
+      "identity_rule": "Only a match to a documented original pin plus provenance identifies source bytes; derived fits/outputs remain derived"
+    },
+    {
+      "path": "../source-physical/VAH27.csv",
+      "bytes": 39543963,
+      "sha256": "c9a2fcdb18a6265cd5b2e0ccba8afc7d5a4051e6bf56590340834df2304a137f",
+      "classification": "LOCAL_FILE_NOT_AUTOMATICALLY_PUBLISHER_ORIGINAL",
+      "identity_rule": "Only a match to a documented original pin plus provenance identifies source bytes; derived fits/outputs remain derived"
+    },
+    {
+      "path": "../source-physical/vtc6-freeze-reproduced.json",
+      "bytes": 2749,
+      "sha256": "f635ffec07c8746e2a19fb688ed7857fee0d3f558049a95c207520042df49d3e",
+      "classification": "LOCAL_FILE_NOT_AUTOMATICALLY_PUBLISHER_ORIGINAL",
+      "identity_rule": "Only a match to a documented original pin plus provenance identifies source bytes; derived fits/outputs remain derived"
+    },
+    {
+      "path": "../source-physical/vtc6-holdout-reproduced.json",
+      "bytes": 18837,
+      "sha256": "d5d0175d5ddd2500958a423e3a81c8b9d30ec1b94bb5dc3496f87fd5553d6611",
+      "classification": "LOCAL_FILE_NOT_AUTOMATICALLY_PUBLISHER_ORIGINAL",
+      "identity_rule": "Only a match to a documented original pin plus provenance identifies source bytes; derived fits/outputs remain derived"
+    },
+    {
+      "path": "../source-physical/Zenodo-7643456/native-source-profile.json",
+      "bytes": 2943,
+      "sha256": "6003557314f9413408579fb86a9319086715db0f5beb4e986a12a91db04466f6",
+      "classification": "LOCAL_FILE_NOT_AUTOMATICALLY_PUBLISHER_ORIGINAL",
+      "identity_rule": "Only a match to a documented original pin plus provenance identifies source bytes; derived fits/outputs remain derived"
+    },
+    {
+      "path": "../source-physical/Zenodo-7643456/receipt.json",
+      "bytes": 470,
+      "sha256": "9e39f4fe3dddee73d5e8292a416eebe656c939e913a70b8cb64346abe3a64b51",
+      "classification": "LOCAL_FILE_NOT_AUTOMATICALLY_PUBLISHER_ORIGINAL",
+      "identity_rule": "Only a match to a documented original pin plus provenance identifies source bytes; derived fits/outputs remain derived"
+    },
+    {
+      "path": "../source-physical/Zenodo-7643456/zenodo-7643456-original.csv",
+      "bytes": 15644028,
+      "sha256": "422e6c7634b899115d038cd82fdf3813e5a783d1c18aba52718ac2a8cd05b8c6",
+      "classification": "LOCAL_FILE_NOT_AUTOMATICALLY_PUBLISHER_ORIGINAL",
+      "identity_rule": "Only a match to a documented original pin plus provenance identifies source bytes; derived fits/outputs remain derived"
+    }
+  ]
+}
