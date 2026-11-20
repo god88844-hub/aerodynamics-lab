@@ -1,0 +1,59 @@
+{
+  "adapter_sha256": "8820a08d5dd984c8347d68a7f4439b5dfaffd1ac29867cbc761b70de818295aa",
+  "cad_kernel_length_unit": "mm",
+  "cadquery_version": "2.8.0",
+  "constraint_check": {
+    "area_m2": 0.004999999999980599,
+    "height_m": 0.05,
+    "solver_cost": 4.911789079728618e-17,
+    "width_m": 0.1
+  },
+  "dependency_lock_sha256": "12fdb4132c62fecd7137230b5a853197692667d143450fbe7ed4eec40daa2ad3",
+  "exact_geometry_asset_id": "pack_body_exact",
+  "mass_properties": {
+    "assumption": "homogeneous_uniform_density",
+    "center_of_mass_m": [
+      0.04999999994351116,
+      0.024999999779354208,
+      0.01749999999999999
+    ],
+    "frame": "local_right_handed_z_up",
+    "inertia_about_cog_kg_m2": [
+      [
+        0.00010864583333253528,
+        1.4486332535743715e-12,
+        -1.1920928955078125e-19
+      ],
+      [
+        1.4486332535743715e-12,
+        0.00032739583333216973,
+        -8.940696716308594e-20
+      ],
+      [
+        -1.1920928955078125e-19,
+        -8.940696716308594e-20,
+        0.00036458333333162026
+      ]
+    ],
+    "mass_kg": 0.34999999999887466,
+    "material_density_kg_m3": 2000.0,
+    "physical_validation_status": "unvalidated",
+    "volume_m3": 0.00017499999999943732
+  },
+  "ocp_version": "7.9.3.1.1",
+  "physical_validation_status": "unvalidated",
+  "profile": "extruded constrained rectangle",
+  "recipe": {
+    "depth_m": 0.035,
+    "height_m": 0.05,
+    "material_density_kg_m3": 2000.0,
+    "mesh_deflection_m": 0.00025,
+    "name": "Benchmark pack",
+    "recipe_type": "box_1",
+    "width_m": 0.1
+  },
+  "recipe_type": "box_1",
+  "source_length_unit": "m",
+  "uniform_density_mass_estimate_kg": 0.34999999999887466,
+  "volume_m3": 0.00017499999999943732
+}

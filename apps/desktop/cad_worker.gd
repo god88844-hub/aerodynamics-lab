@@ -44,7 +44,8 @@ func submit(operation: String, input_path: String, asset_root: String) -> Dictio
 	var source: FileAccess = FileAccess.open(input_path, FileAccess.READ)
 	if source == null or source.get_length() > MAX_REQUEST_BYTES:
 		return {"failure": "CAD input is missing or exceeds the 16 MiB request limit."}
-	var payload: Variant = JSON.parse_string(source.get_as_text())
+	var raw_payload: String = source.get_as_text()
+	var payload: Variant = JSON.parse_string(raw_payload)
 	source.close()
 	if not payload is Dictionary:
 		return {"failure": "CAD input must be a JSON object."}
@@ -54,8 +55,10 @@ func submit(operation: String, input_path: String, asset_root: String) -> Dictio
 		return {"failure": "The CAD worker already has a pending request."}
 	var job_id: String = _nonce()
 	var packet: Dictionary = {"protocol": PROTOCOL, "session_id": session_id, "job_id": job_id,
-		"operation": operation, "payload": payload, "asset_root": asset_root if operation == "cad-torque" else null}
-	var encoded: PackedByteArray = JSON.stringify(packet).to_utf8_buffer()
+		"operation": operation, "asset_root": asset_root if operation == "cad-torque" else null}
+	# Keep the verified engineering JSON numbers out of a rendering-parser round trip.
+	# Trusted routing fields follow the payload; the engine validates the full packet.
+	var encoded: PackedByteArray = ('{"payload":' + raw_payload + ',' + JSON.stringify(packet, "", true, true).trim_prefix('{')).to_utf8_buffer()
 	if encoded.size() > MAX_REQUEST_BYTES:
 		return {"failure": "CAD request exceeds the 16 MiB protocol limit."}
 	var temporary: String = session_path.path_join(".pending.tmp")

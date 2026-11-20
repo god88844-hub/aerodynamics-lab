@@ -25,6 +25,15 @@ func _run() -> void:
 	component_tree.get_root().get_first_child().select(0)
 	desktop.call("_select_component")
 	desktop.get("project")["experiment"]["parameters"] = {"duration_s": 30.0}
+	if not str(desktop.call("_write_job_input")).is_empty():
+		push_error("Untracked display mutation was accepted as a frozen engineering document")
+		quit(40)
+		return
+	# Deliberately create and validate a new test document before executing it.
+	desktop.call("_start_job", "validate", desktop.call("_write_payload", desktop.get("project")))
+	if not await _wait_for_job(desktop):
+		quit(41)
+		return
 	desktop.call("_run_experiment")
 	var cancelled_pid: int = desktop.get("job_pid")
 	var startup_deadline: int = Time.get_ticks_msec() + 20000
@@ -252,6 +261,33 @@ func _run() -> void:
 			quit(35)
 			return
 		print("CAD engine reuse, active cancellation and fresh-session recovery checks passed")
+	var assembly_fixture: String = desktop.call("repository_root").path_join("data/benchmarks/assembly-200/project.json")
+	desktop.call("_start_job", "validate", assembly_fixture)
+	if not await _wait_for_job(desktop):
+		quit(36)
+		return
+	var assembly_meshes: Array[Node] = desktop.get("aircraft").find_children("*", "MeshInstance3D", true, false)
+	if assembly_meshes.size() != 200:
+		push_error("Published assembly did not load 200 geometry-bearing parts")
+		quit(37)
+		return
+	var lod_parts: int = 0
+	for mesh in assembly_meshes:
+		if int(mesh.get_meta("display_lod_count", 0)) > 0:
+			lod_parts += 1
+	if lod_parts < 12:
+		push_error("Published assembly lost blade display LODs")
+		quit(38)
+		return
+	desktop.get("components").get_root().get_first_child().select(0)
+	desktop.call("_select_component")
+	var assembly_input: String = desktop.call("_write_job_input")
+	var encoded_assembly: Variant = JSON.parse_string(FileAccess.get_file_as_string(assembly_input))
+	if encoded_assembly != desktop.get("project") or FileAccess.get_sha256(assembly_input) != FileAccess.get_sha256(desktop.get("job_output")):
+		push_error("Engineering project coordinates changed during JSON serialization")
+		quit(39)
+		return
+	print("Published 200-part assembly load, selection and LOD checks passed")
 	print("Desktop/native/worker smoke checks passed. Physical validation remains pending.")
 	quit(0)
 

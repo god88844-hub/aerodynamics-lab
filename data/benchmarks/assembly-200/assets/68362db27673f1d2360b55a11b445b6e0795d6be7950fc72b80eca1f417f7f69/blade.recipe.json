@@ -1,0 +1,60 @@
+{
+  "adapter_sha256": "8820a08d5dd984c8347d68a7f4439b5dfaffd1ac29867cbc761b70de818295aa",
+  "cad_kernel_length_unit": "mm",
+  "cadquery_version": "2.8.0",
+  "constraint_check": {
+    "area_m2": 0.0008099999999956646,
+    "height_m": 0.018,
+    "solver_cost": 3.396356176704147e-17,
+    "width_m": 0.045
+  },
+  "dependency_lock_sha256": "12fdb4132c62fecd7137230b5a853197692667d143450fbe7ed4eec40daa2ad3",
+  "exact_geometry_asset_id": "blade_blade_exact",
+  "mass_properties": {
+    "assumption": "homogeneous_uniform_density",
+    "center_of_mass_m": [
+      0.10147009155066991,
+      0.005933927998769388,
+      0.0016068560354468298
+    ],
+    "frame": "local_right_handed_z_up",
+    "inertia_about_cog_kg_m2": null,
+    "mass_kg": null,
+    "material_density_kg_m3": null,
+    "physical_validation_status": "unvalidated",
+    "volume_m3": 1.8207219142043298e-05
+  },
+  "ocp_version": "7.9.3.1.1",
+  "physical_validation_status": "unvalidated",
+  "profile": "symmetric four-digit thickness distribution with closed trailing edge, spline sampled",
+  "recipe": {
+    "material_density_kg_m3": null,
+    "mesh_deflection_m": 0.00025,
+    "name": "Three-station blade concept",
+    "profile_samples": 48,
+    "stations": [
+      {
+        "chord_m": 0.045,
+        "radius_m": 0.03,
+        "thickness_to_chord": 0.12,
+        "twist_deg": 22.0
+      },
+      {
+        "chord_m": 0.035,
+        "radius_m": 0.12,
+        "thickness_to_chord": 0.12,
+        "twist_deg": 12.0
+      },
+      {
+        "chord_m": 0.018,
+        "radius_m": 0.22,
+        "thickness_to_chord": 0.12,
+        "twist_deg": 6.0
+      }
+    ]
+  },
+  "recipe_type": "blade_1",
+  "source_length_unit": "m",
+  "uniform_density_mass_estimate_kg": null,
+  "volume_m3": 1.8207219142043298e-05
+}

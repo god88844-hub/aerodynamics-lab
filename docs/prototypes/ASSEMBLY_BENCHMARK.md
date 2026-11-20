@@ -1,0 +1,45 @@
+# 200-part viewport and process-memory benchmark
+
+This is a constructed software workload for #100 and the hardware acceptance matrix. The frozen [project and assets](../../data/benchmarks/assembly-200/project.json) contain 200 geometry-bearing nodes: 2 plates, 6 arms, 6 box motor proxies, 12 lofted blades, 6 pack proxies, 8 boards and 160 fastener proxies. Seven distinct exact solids, their display meshes and parametric records are shared through versioned assembly references. Dimensions, assumed materials and placements are published in `fixture.json`; they are not a qualified bill of materials. Flight, clearance, full-assembly mass and physical acceptance remain unvalidated.
+
+The generator `scripts/build_assembly_benchmark.py NEW_DIRECTORY` uses the existing locked CAD backend. It refuses an existing directory and publishes the project last. STEP export headers and kernel output may differ across regenerations; compare a regenerated workload as a new version. Reproduction of a recorded run uses the committed original bytes and their hashes. Git attributes preserve those bytes on Windows and Linux.
+
+## Predeclared observation protocol
+
+Run `scripts/benchmark_desktop_assembly.py` with the pinned graphical Godot 4.7.2 and configured `LAB_PYTHON` / `LAB_CAD_PYTHON`. The source tree must be clean and every report/log path new. The wrapper verifies every frozen asset before and after the run. It launches a hidden graphical process on Windows; a hidden-window result does not qualify visible interactive use.
+
+The actual desktop imports the assembly through its normal project worker. After 90 warm-up frames, record 600 consecutive intervals between rendered `frame_post_draw` signals while orbiting the camera at 0.4 rad/s and selecting another component every 30 frames. Retain every interval, p50/p95/p99/max, mean FPS, selection-to-rendered-frame observations, scene/resource/triangle/LOD counts, viewport resolution, renderer, VSync and frame cap. The predeclared local viewport target is **mean FPS at least 30 and p95 interval at most 33.333333 ms**. This conservative percentile criterion supplements the roadmap's initial 30 FPS target; it is frozen before observing results.
+
+Frame intervals describe application render-loop wall time including scheduling and presentation throttling. They are not direct GPU timings or measured input-to-display latency. Godot performance monitors provide supplementary scene statistics and can update with delay; they do not replace the recorded interval distribution. See [Godot Performance](https://docs.godotengine.org/en/stable/classes/class_performance.html) and [rendering signals](https://docs.godotengine.org/en/stable/classes/class_renderingserver.html).
+
+Next save through the normal desktop dialog callback, reopen and verify the unchanged project plus all asset bytes. Record import/save/reopen times. Finally exercise the existing single-solid build/torque path to observe real CAD worker memory and stop the engine. This does not demonstrate geometry editing or flight of the complete assembly.
+
+An external standard-library observer requests 100 ms samples of the desktop and discovered descendants, binding each process to its creation identity. Windows records current/OS-peak working set and private committed bytes through [GetProcessMemoryInfo](https://learn.microsoft.com/en-us/windows/win32/api/psapi/nf-psapi-getprocessmemoryinfo) and [PROCESS_MEMORY_COUNTERS_EX](https://learn.microsoft.com/en-us/windows/win32/api/psapi/ns-psapi-process_memory_counters_ex); Linux records `/proc` VmRSS/VmHWM. Report the desktop's largest observed OS lifetime peak and the largest **simultaneously sampled sum** of worker resident memory. Preserve sample times, observation overhead and individual records. Shared pages may be counted more than once, short-lived children or intervening peaks may be missed, and no GPU/unique physical-memory estimate is implied. This is observation, not resource admission or an OS memory cap. Retired worker cleanup must pass independently.
+
+The application reports its actual PID. The observer attributes desktop memory to that process and excludes the launch wrapper from the remaining descendant sum. Other descendant helpers remain in that conservative worker sum. This distinction matters for the Windows Godot console executable, which can launch a separate graphical process. Missing/unobserved application identity invalidates memory attribution and fails the wrapper. Engineering input publication also enables Godot's full-precision JSON serialization for both one-shot payloads and reusable CAD packets; reduced decimal output must not change the frozen project identity.
+
+The measured save/reopen failure also demonstrated that full-precision output alone does not retain all source numbers through the rendering parser. The desktop therefore holds the verified document text separately from its display dictionary. Unchanged saves and runs publish that text directly, and reusable requests retain original payload JSON. New supported edits produce new verified documents through the engineering worker. An untracked mutation of the display dictionary is refused rather than silently turning rounded display values into authoritative inputs. The Python wrapper checks the original and reopened canonical project fingerprints without a numeric tolerance.
+
+```text
+python scripts/benchmark_desktop_assembly.py --godot C:/absolute/Godot_v4.7.2-stable_win64_console.exe --report C:/absolute/new-observation.json --frames 600 --context C:/absolute/machine-context.json
+```
+
+The context JSON records CPU/GPU/driver/OS/RAM, power mode and other active-workload information. The sibling `-memory.json` binds the full source commit and observer hashes. Nonzero exit codes preserve failed observations; do not replace an earlier report. CI checks project portability, process measurement and desktop behavior without asserting machine-dependent FPS. Distinct 8 GB/16 GB/integrated/dedicated/remote profiles, installation/cold-build time, editable assembly workflows and physical validation remain separate acceptance work.
+
+## Recorded Windows observation — 20 November 2026
+
+The [receipt manifest](measurements/assembly-200/manifest.json) retains the initial failed save/reopen attempt, the insufficient full-precision-only attempt, and the complete successful observation at source `6f2079fa731a3122f29287cfe95ab692bb3492dd`. The first attempt's launcher-based memory summary is invalid and excluded. Each retained receipt has an exact SHA-256. No acceptance tolerance was loosened.
+
+The successful run used Intel Core Ultra 7 155U / Intel integrated graphics driver 32.0.101.6790, 16,636,305,408 bytes of system RAM and Balanced power mode. Godot 4.7.2 used the compatibility renderer, VSync enabled, a 1280×800 hidden graphical window and a 930×494 engineering viewport. Other desktop processes were uncontrolled.
+
+| Observation | Recorded result |
+| --- | --- |
+| Scene | 200 geometry parts, 200 mesh resources, 185,592 source triangle instances, 314 generated LOD instances |
+| 600-frame camera/selection run | 60.004 mean FPS; p50 16.659 ms, p95 17.070 ms, p99 17.564 ms, maximum 18.344 ms |
+| Import / save / reopen | 3.349184 / 2.532952 / 3.370527 s |
+| Actual desktop OS peak working set | 328,101,888 bytes (312.90 MiB) |
+| Console launcher OS peak working set | 6,766,592 bytes, recorded separately |
+| Peak simultaneous sampled descendant resident sum | 611,876,864 bytes (583.53 MiB), excluding desktop and launcher |
+| Integrity and lifecycle | Original/saved canonical fingerprints agree; source and saved assets verified; worker stop and all observed process cleanup passed |
+
+Both local viewport thresholds passed. Memory includes the declared single-solid worker exercise after the assembly viewport sequence; it does not measure a detailed 200-part solver. Resident sums retain the sampling/shared-page limitations above. This one hidden-window observation earns neither full hardware-tier support nor physical validation. The next gates are visible interaction and additional hardware measurements, resource admission/budgets and cold-build/install evidence. The full assembly editing/physics bridge remains open.

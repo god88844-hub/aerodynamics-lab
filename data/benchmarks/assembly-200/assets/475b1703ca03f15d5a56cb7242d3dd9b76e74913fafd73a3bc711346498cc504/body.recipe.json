@@ -1,0 +1,59 @@
+{
+  "adapter_sha256": "8820a08d5dd984c8347d68a7f4439b5dfaffd1ac29867cbc761b70de818295aa",
+  "cad_kernel_length_unit": "mm",
+  "cadquery_version": "2.8.0",
+  "constraint_check": {
+    "area_m2": 0.11999999999994282,
+    "height_m": 0.3,
+    "solver_cost": 7.471461403334648e-16,
+    "width_m": 0.4
+  },
+  "dependency_lock_sha256": "12fdb4132c62fecd7137230b5a853197692667d143450fbe7ed4eec40daa2ad3",
+  "exact_geometry_asset_id": "plate_body_exact",
+  "mass_properties": {
+    "assumption": "homogeneous_uniform_density",
+    "center_of_mass_m": [
+      0.19999999844831898,
+      0.14999999673958664,
+      0.0030000000000000005
+    ],
+    "frame": "local_right_handed_z_up",
+    "inertia_about_cog_kg_m2": [
+      [
+        0.008643455999956846,
+        3.3965292968750004e-10,
+        -9.5367431640625e-20
+      ],
+      [
+        3.3965292968750004e-10,
+        0.01536345600002587,
+        1.9073486328125e-19
+      ],
+      [
+        -9.5367431640625e-20,
+        1.9073486328125e-19,
+        0.023999999999982716
+      ]
+    ],
+    "mass_kg": 1.1519999999991726,
+    "material_density_kg_m3": 1600.0,
+    "physical_validation_status": "unvalidated",
+    "volume_m3": 0.0007199999999994829
+  },
+  "ocp_version": "7.9.3.1.1",
+  "physical_validation_status": "unvalidated",
+  "profile": "extruded constrained rectangle",
+  "recipe": {
+    "depth_m": 0.006,
+    "height_m": 0.3,
+    "material_density_kg_m3": 1600.0,
+    "mesh_deflection_m": 0.00025,
+    "name": "Benchmark plate",
+    "recipe_type": "box_1",
+    "width_m": 0.4
+  },
+  "recipe_type": "box_1",
+  "source_length_unit": "m",
+  "uniform_density_mass_estimate_kg": 1.1519999999991726,
+  "volume_m3": 0.0007199999999994829
+}

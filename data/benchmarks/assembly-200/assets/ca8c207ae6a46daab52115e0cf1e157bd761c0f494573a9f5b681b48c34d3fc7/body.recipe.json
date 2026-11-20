@@ -1,0 +1,59 @@
+{
+  "adapter_sha256": "8820a08d5dd984c8347d68a7f4439b5dfaffd1ac29867cbc761b70de818295aa",
+  "cad_kernel_length_unit": "mm",
+  "cadquery_version": "2.8.0",
+  "constraint_check": {
+    "area_m2": 0.0008749999999874263,
+    "height_m": 0.025,
+    "solver_cost": 9.260088220828266e-18,
+    "width_m": 0.035
+  },
+  "dependency_lock_sha256": "12fdb4132c62fecd7137230b5a853197692667d143450fbe7ed4eec40daa2ad3",
+  "exact_geometry_asset_id": "board_body_exact",
+  "mass_properties": {
+    "assumption": "homogeneous_uniform_density",
+    "center_of_mass_m": [
+      0.017499999981147814,
+      0.012499999973046759,
+      0.0015000000000000002
+    ],
+    "frame": "local_right_handed_z_up",
+    "inertia_about_cog_kg_m2": [
+      [
+        2.5657187499676455e-07,
+        1.1281534505542369e-15,
+        0.0
+      ],
+      [
+        1.1281534505542369e-15,
+        4.993843749894558e-07,
+        0.0
+      ],
+      [
+        0.0,
+        0.0,
+        7.486718749863039e-07
+      ]
+    ],
+    "mass_kg": 0.0048562499999544985,
+    "material_density_kg_m3": 1850.0,
+    "physical_validation_status": "unvalidated",
+    "volume_m3": 2.6249999999754046e-06
+  },
+  "ocp_version": "7.9.3.1.1",
+  "physical_validation_status": "unvalidated",
+  "profile": "extruded constrained rectangle",
+  "recipe": {
+    "depth_m": 0.003,
+    "height_m": 0.025,
+    "material_density_kg_m3": 1850.0,
+    "mesh_deflection_m": 0.00025,
+    "name": "Benchmark board",
+    "recipe_type": "box_1",
+    "width_m": 0.035
+  },
+  "recipe_type": "box_1",
+  "source_length_unit": "m",
+  "uniform_density_mass_estimate_kg": 0.0048562499999544985,
+  "volume_m3": 2.6249999999754046e-06
+}

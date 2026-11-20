@@ -54,4 +54,6 @@ The [reusable CAD worker](prototypes/REUSABLE_CAD_WORKER.md) retains loaded libr
 
 Its [recorded Windows interaction receipt](prototypes/measurements/reusable-worker-d72ecc0655.json) reports one constrained-body cold cycle at 2.983 s and five warm cycles at 0.710–0.744 s, with analytical checks and cleanup passing. It does not complete representative-assembly or hardware-tier acceptance.
 
+The [published 200-part assembly observation](prototypes/ASSEMBLY_BENCHMARK.md) passed the local 600-frame viewport target at 60.004 mean FPS and 17.070 ms p95, with source/saved project fingerprints, asset integrity and cleanup verified. It records actual desktop memory separately from the console launcher and worker descendants, plus two failed precision attempts. This is one Windows hidden-window workload; visible interaction, other profiles, admission limits and installation acceptance remain open.
+
 Hardware tier support follows [the compatibility matrix and resource/LOD contract](HARDWARE_AND_FIDELITY.md). The initial Windows prototype run is one machine observation. Tier 1/2/3 performance, large-assembly adaptive detail/residency, remote scheduling and enforced worker budgets remain unaccepted until their recorded checks pass.

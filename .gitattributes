@@ -1,2 +1,6 @@
 # This original instrument file is verified against its upstream Git blob.
 /data/benchmarks/public/quadplane_2022/BATT.csv -text
+
+# Frozen benchmark files are verified by their exact bytes on every platform.
+data/benchmarks/assembly-200/** -text
+docs/prototypes/measurements/assembly-200/** -text
