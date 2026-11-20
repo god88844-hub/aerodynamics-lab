@@ -19,7 +19,7 @@ python scripts/export_contracts.py --check
 python scripts/reconcile_registry.py --check
 pytest
 pytest tests/cad tests/integration/test_project_assets.py
-pytest tests/cad/test_reusable_worker.py tests/cad/test_worker_resources.py tests/integration/test_worker_admission.py tests/integration/test_worker_record_locking.py -o addopts='' -ra -s
+pytest tests/cad/test_reusable_worker.py tests/cad/test_worker_resources.py tests/integration/test_worker_admission.py tests/integration/test_worker_record_locking.py tests/integration/test_worker_retirement.py -o addopts='' -ra -s
 ```
 
 Use the locked backend environment for the general suite and the separate locked CAD environment for CAD/Windows worker tests; see [.github/workflows/ci.yml](.github/workflows/ci.yml). Desktop checks are native CTest and Godot `smoke_test.gd`. For local qualification use [the receipt harness](scripts/qualify_bundled_smoke.ps1) and [protocol/report](docs/prototypes/QUALIFICATION_GATE_LOCAL.md); do not replace local measurements with CI-host claims.

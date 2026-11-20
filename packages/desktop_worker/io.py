@@ -11,6 +11,26 @@ def json_bytes(payload: dict) -> bytes:
     return (json.dumps(payload, sort_keys=True, indent=2, allow_nan=False) + "\n").encode("utf-8")
 
 
+def read_control_bytes(path: Path) -> bytes:
+    """Read one bounded record; tolerate only brief Windows sharing/access locks."""
+    deadline = time.monotonic() + 0.5
+    while True:
+        try:
+            with path.open("rb") as stream:
+                raw = stream.read(64 * 1024 + 1)
+            break
+        except PermissionError as error:
+            # CPython's CRT open can report only EACCES, without winerror.
+            winerror = getattr(error, "winerror", None)
+            access_lock = winerror in (5, 32, 33) or (winerror is None and error.errno == 13)
+            if os.name != "nt" or not access_lock or time.monotonic() >= deadline:
+                raise
+            time.sleep(0.01)
+    if len(raw) > 64 * 1024:
+        raise ValueError("Worker control record is oversized")
+    return raw
+
+
 def write_result(destination: Path, payload: dict) -> None:
     content = json_bytes(payload).decode("utf-8")
     descriptor, temporary = tempfile.mkstemp(prefix=".lab-output-", dir=destination.parent)
