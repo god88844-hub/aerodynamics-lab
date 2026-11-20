@@ -28,4 +28,10 @@ Each build creates new geometry from that request. Torque analysis imports the f
 
 Real process tests verify engine reuse, agreement with direct frozen dynamics, invalid-request retirement/recovery, owner-exit cleanup, forced native-engine deadlines, source-change refusal, duplicate-job protection, idle expiry, abrupt engine exit and wrong-session cancellation rejection. Existing project migration, asset integrity and one-shot CLI checks remain required.
 
-The desktop integration and its timing evidence are recorded as separate delivery steps. The compatibility matrix, 200-part viewport benchmark, memory admission and calibrated physical evidence remain open under [the acceptance ledger](../ACCEPTANCE.md).
+## Desktop integration
+
+CAD builds and applied-torque experiments share the supervised engine. The ordinary project import, verification, package and reference-flight commands retain their one-shot worker path. The interface polls job receipts while the CAD engine stays alive; completion checks bind the current session, job, input and result hashes. Changing a receipt path or request identity cannot substitute an older result.
+
+Cancel stops the owned reusable session and retains the current project. The next CAD operation creates a new session. Application exit also stops an idle engine. The actual desktop smoke verifies one engine PID across repeated edits/analyses, active numerical-job cancellation, preserved project state, fresh-session recovery and all existing save/reopen checks.
+
+Timing is a separate delivery step. The compatibility matrix, 200-part viewport benchmark, memory admission and calibrated physical evidence remain open under [the acceptance ledger](../ACCEPTANCE.md).

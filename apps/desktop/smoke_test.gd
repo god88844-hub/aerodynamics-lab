@@ -100,6 +100,8 @@ func _run() -> void:
 		if not await _wait_for_job(desktop):
 			quit(10)
 			return
+		var reusable_pid: int = int(JSON.parse_string(FileAccess.get_file_as_string(desktop.get("job_started")))["worker_pid"])
+		var reusable_session: String = desktop.get("cad_worker").get("session_id")
 		var cad_project: Dictionary = desktop.get("project")
 		var meshes: Array[Node] = desktop.get("aircraft").find_children("*", "MeshInstance3D", true, false)
 		if cad_project["vehicle"]["format"] != "assembly_1" or meshes.size() != 1:
@@ -201,6 +203,51 @@ func _run() -> void:
 			push_error("Unknown material density was incorrectly treated as a known rigid body")
 			quit(24)
 			return
+		var reused_pid: int = int(JSON.parse_string(FileAccess.get_file_as_string(desktop.get("job_started")))["worker_pid"])
+		if reused_pid != reusable_pid or desktop.get("cad_worker").get("session_id") != reusable_session:
+			push_error("CAD editing and analysis did not reuse one isolated engine")
+			quit(30)
+			return
+		# Cancel an active numerical job, then recover with a newly loaded engine.
+		desktop.get("density_enabled").button_pressed = true
+		desktop.call("_rebuild_body")
+		if not await _wait_for_job(desktop):
+			quit(31)
+			return
+		var retained: Dictionary = desktop.get("project").duplicate(true)
+		desktop.get("torque_duration").value = 5.0
+		desktop.get("torque_step").value = 0.001
+		desktop.get("torque_z").value = 0.00001
+		desktop.call("_run_cad_torque")
+		var active_deadline: int = Time.get_ticks_msec() + 20000
+		while not FileAccess.file_exists(desktop.get("job_started")) and Time.get_ticks_msec() < active_deadline:
+			await process_frame
+		if not _worker_alive(reusable_pid):
+			push_error("Reusable-engine cancellation did not reach an active worker")
+			quit(32)
+			return
+		var reusable_launcher: int = desktop.get("job_pid")
+		desktop.call("_cancel_job")
+		var stopped_deadline: int = Time.get_ticks_msec() + 5000
+		while (OS.is_process_running(reusable_launcher) or _worker_alive(reusable_pid)) and Time.get_ticks_msec() < stopped_deadline:
+			await process_frame
+		if desktop.get("job_pid") != -1 or _worker_alive(reusable_pid) or desktop.get("project") != retained:
+			push_error("Reusable cancellation left a running engine or lost the current project")
+			quit(33)
+			return
+		desktop.get("torque_duration").value = 1.0
+		desktop.get("torque_step").value = 0.005
+		desktop.get("torque_z").value = 0.001
+		desktop.call("_run_cad_torque")
+		if not await _wait_for_job(desktop) or desktop.get("cad_worker").get("session_id") == reusable_session:
+			push_error("CAD worker did not recover into a new session")
+			quit(34)
+			return
+		if desktop.get("result")["result"]["status"] != "completed":
+			push_error("Recovered CAD worker did not produce a completed numerical experiment")
+			quit(35)
+			return
+		print("CAD engine reuse, active cancellation and fresh-session recovery checks passed")
 	print("Desktop/native/worker smoke checks passed. Physical validation remains pending.")
 	quit(0)
 
@@ -220,6 +267,15 @@ func _wait_for_job(desktop: Control) -> bool:
 	if accepted_without_receipt:
 		push_error("Desktop accepted an existing output without this job's completion receipt")
 		return false
+	if desktop.get("job_uses_reusable"):
+		var client: RefCounted = desktop.get("cad_worker")
+		var original: Dictionary = client.get("context").duplicate(true)
+		client.get("context")["request_sha256"] = "0".repeat(64)
+		var accepted_wrong_request: bool = desktop.call("_completed_output")
+		client.set("context", original)
+		if accepted_wrong_request:
+			push_error("Desktop accepted a completion receipt for a different CAD request")
+			return false
 	return true
 
 
@@ -227,7 +283,8 @@ func _worker_alive(pid: int) -> bool:
 	if pid <= 0:
 		return false
 	if OS.get_name() != "Windows":
-		return OS.is_process_running(pid)
+		var posix_output: Array = []
+		return OS.execute("kill", ["-0", str(pid)], posix_output, true, false) == 0
 	# Godot's Windows API tracks only processes it created directly. The venv
 	# interpreter is a descendant, so inspect it through the OS process inventory.
 	var output: Array = []
