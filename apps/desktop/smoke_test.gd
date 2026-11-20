@@ -252,6 +252,27 @@ func _run() -> void:
 			quit(35)
 			return
 		print("CAD engine reuse, active cancellation and fresh-session recovery checks passed")
+	var assembly_fixture: String = desktop.call("repository_root").path_join("data/benchmarks/assembly-200/project.json")
+	desktop.call("_start_job", "validate", assembly_fixture)
+	if not await _wait_for_job(desktop):
+		quit(36)
+		return
+	var assembly_meshes: Array[Node] = desktop.get("aircraft").find_children("*", "MeshInstance3D", true, false)
+	if assembly_meshes.size() != 200:
+		push_error("Published assembly did not load 200 geometry-bearing parts")
+		quit(37)
+		return
+	var lod_parts: int = 0
+	for mesh in assembly_meshes:
+		if int(mesh.get_meta("display_lod_count", 0)) > 0:
+			lod_parts += 1
+	if lod_parts < 12:
+		push_error("Published assembly lost blade display LODs")
+		quit(38)
+		return
+	desktop.get("components").get_root().get_first_child().select(0)
+	desktop.call("_select_component")
+	print("Published 200-part assembly load, selection and LOD checks passed")
 	print("Desktop/native/worker smoke checks passed. Physical validation remains pending.")
 	quit(0)
 
