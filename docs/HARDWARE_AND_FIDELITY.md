@@ -1,6 +1,6 @@
 # Hardware tiers and aerodynamic fidelity
 
-Accepted product direction, 20 November 2026. These are delivery and benchmark targets. The current prototype has not earned a minimum-system-requirements claim. The recorded developer laptop is one test machine in a future compatibility matrix.
+Accepted product direction, 20 November 2026. These are delivery and benchmark targets. The standalone application qualification passed; complete advertised hardware-profile acceptance remains in the master plan. The recorded developer laptop is one test machine in a future compatibility matrix.
 
 ## Hardware targets
 
@@ -18,7 +18,7 @@ Full CAD on Tier 1 means the same supported editing operations with bounded work
 
 Automatic level of detail (LOD) is required for all hardware profiles. Exact CAD stays authoritative for geometry and mass-property computation. A display mesh is a derived asset with an explicit chordal/angular tolerance, units, frame, source identity and hash. Reducing its triangles must not change the solid, flight coefficients, collision-analysis geometry or evidence decision.
 
-The runtime display-mesh path explicitly generates LODs. Godot's automatic scene-import LOD does not automatically cover procedurally created mesh arrays. The initial CAD prototype has bounded tessellation, generated procedural LODs and an explicit display-size refusal. Large-assembly residency and hardware-tier performance remain pending until tested. [Godot mesh LOD](https://docs.godotengine.org/en/stable/tutorials/3d/mesh_lod.html), [ImporterMesh API](https://docs.godotengine.org/en/stable/classes/class_importermesh.html).
+The runtime display-mesh path explicitly generates LODs. Godot's automatic scene-import LOD does not automatically cover procedurally created mesh arrays. The current CAD implementation has bounded tessellation, generated procedural LODs and an explicit display-size refusal. Large-assembly residency and hardware-tier performance remain pending until tested. [Godot mesh LOD](https://docs.godotengine.org/en/stable/tutorials/3d/mesh_lod.html), [ImporterMesh API](https://docs.godotengine.org/en/stable/classes/class_importermesh.html).
 
 Use capability discovery plus a user-selectable profile. Adjust viewport resolution, shadows, effects, terrain detail and sensor-render cadence first. Keep requested and effective values visible. A non-real-time stepped sensor run records simulation time separately from rendering/wall time. Synthetic camera/LiDAR output remains synthetic evidence.
 
@@ -58,4 +58,4 @@ Geometry-to-physics acceptance requires a supported geometry edit to change inde
 
 ## Dependency boundary
 
-The current CAD prototype uses pinned prebuilt CadQuery/OCCT Python wheels in a separate worker and Godot's native extension for the independent C++ core. Its constrained rectangle demonstration does not establish a complete sketcher. FreeCAD solver/UI reuse remains subject to an explicit integration/license decision. Autopilots and detailed solvers use separately versioned adapters/processes where selected. Process isolation alone does not establish license compliance; distributions must retain notices, corresponding-source/relinking obligations where applicable, and a reviewed license inventory.
+The current CAD implementation uses pinned prebuilt CadQuery/OCCT Python wheels in a separate worker and Godot's native extension for the independent C++ core. Its constrained rectangle demonstration does not establish a complete sketcher. FreeCAD solver/UI reuse remains subject to an explicit integration/license decision. Autopilots and detailed solvers use separately versioned adapters/processes where selected. Process isolation alone does not establish license compliance; distributions must retain notices, corresponding-source/relinking obligations where applicable, and a reviewed license inventory.

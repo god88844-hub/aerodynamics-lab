@@ -1,0 +1,56 @@
+{
+  "job_id": "e213639181d32d0fba97a987b276464d",
+  "output_sha256": "77d70629971acb13465fa9de75b0f05eab4aa5ee699b5817c02a798509398930",
+  "protocol": "desktop_worker_1",
+  "request_sha256": "8394d5cb29af07f1072aae5abdbfcc9bc2ed9bf0d9c3b6fad4a598183a8cbe78",
+  "resource_usage": {
+    "capacity": {
+      "available_bytes": 5433823232,
+      "disk_free_bytes": 45943410688,
+      "total_bytes": 16636305408
+    },
+    "contract_version": "local_cad_resources_1",
+    "failure": null,
+    "latest_resident_bytes": 400449536,
+    "latest_workspace_bytes": 1361219,
+    "observed_processes": [
+      {
+        "birth": "134396717589937622",
+        "desktop": true,
+        "os_peak_resident_bytes": 27627520,
+        "pid": 22892,
+        "private_commit_bytes": 18452480,
+        "resident_bytes": 26841088
+      },
+      {
+        "birth": "134396717591495811",
+        "desktop": false,
+        "os_peak_resident_bytes": 4476928,
+        "pid": 3204,
+        "private_commit_bytes": 880640,
+        "resident_bytes": 4476928
+      },
+      {
+        "birth": "134396717591617687",
+        "desktop": false,
+        "os_peak_resident_bytes": 7639040,
+        "pid": 12728,
+        "private_commit_bytes": 1314816,
+        "resident_bytes": 7630848
+      },
+      {
+        "birth": "134396717591829391",
+        "desktop": false,
+        "os_peak_resident_bytes": 629956608,
+        "pid": 10260,
+        "private_commit_bytes": 700334080,
+        "resident_bytes": 361500672
+      }
+    ],
+    "peak_resident_bytes": 662134784,
+    "peak_workspace_bytes": 1361219,
+    "sample_count": 115,
+    "session_id": "6466388dcedc59cd4957ff74f7bddbee"
+  },
+  "session_id": "6466388dcedc59cd4957ff74f7bddbee"
+}

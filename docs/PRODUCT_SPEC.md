@@ -1,6 +1,6 @@
 # Aerodynamics Lab product specification
 
-Approved planning decisions, 19 November 2026. This document defines the product. Implementation and measured acceptance are recorded in [ACCEPTANCE.md](ACCEPTANCE.md).
+Approved planning decisions, 19 November 2026. This document defines the product. Implementation and measured acceptance are recorded in [ACCEPTANCE_LEDGER](ACCEPTANCE_LEDGER.md).
 
 ## Purpose
 
@@ -61,11 +61,13 @@ API callers use `POST /api/projects/import-legacy` with `{"snapshot": ...}` or `
 
 Headless callers run `python scripts/lab_project.py import-legacy source.json project.json`, `validate project.json checked.json`, or `run project.json run.json`. Import/validation output a project document. A run includes the frozen project, digest, backend, existing simulation inputs/result and explicit physical status. Output publication is atomic and uses a separate path from the input.
 
-## Prototype gate
+## Completed qualification and full implementation plan
 
-Before a full interface migration, demonstrate project save/reopen, constrained geometry, blade generation, selection, reference simulation playback and analysis cancellation. Use the [hardware acceptance matrix](HARDWARE_AND_FIDELITY.md) instead of treating one laptop as the product limit. Record installation, startup, memory, input responsiveness and recovery. The initial representative editing target is 30 FPS on a published 200-part assembly, with renderer settings and frame-time distributions alongside results. Automatic display LOD is required across tiers and cannot alter engineering inputs.
+The standalone Godot/OCCT/worker qualification passed. Its [retained report](prototypes/QUALIFICATION_GATE_FOLLOWUP.md) and original graphical receipts remain bounded historical evidence. It is not the current product scope or another prerequisite to repeat.
 
-Godot, OCCT and numerical backends require pinned compatible versions. Benchmark failure is recorded with a diagnosis and reviewed correction before expanding the migration.
+The [MASTER_PLAN](MASTER_PLAN.md) defines all Phase 0 software tasks and separate physical gates, plus later-phase entry/exit checklists. After owner approval of PR #126, merge and `v0.0-plan-locked`, execute Slice 0A beginning with P0A-005. Complete supported CAD, all four aircraft families, engineering worlds/weather, electronics, analysis, learning, autonomy and production acceptance through 0A–0D.
+
+The [hardware acceptance matrix](HARDWARE_AND_FIDELITY.md) remains a product delivery requirement across baseline laptops, dedicated-GPU systems and remote workers. Automatic display LOD cannot alter engineering inputs. Qualification of one measured machine is not the full compatibility matrix. Numerical/physical model support and accepted measurement envelopes remain explicit.
 
 ## Basis
 

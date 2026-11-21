@@ -1,0 +1,13 @@
+{
+  "migration_date_local": "2026-11-21",
+  "canonical_workspace": "C:\\Users\\Simulation apps\\flights simulation",
+  "previous_checkout_head": "23028761a6763df74411c973d895fc506ec41e1a",
+  "preserved_worktrees": 57,
+  "source_file_count_verified": 208,
+  "historical_custody_manifest_sha256": "d7ceb0b33bbfb360ed0c49b96dbd9d24352b8f53e685af4f703ace6baf376453",
+  "original_source_hashes_unchanged": true,
+  "old_codex_workspace_empty": true,
+  "historical_receipts": "Original paths/bytes retained; not rewritten as new acquisitions",
+  "local_data_root": "data/local/source-physical",
+  "local_history_root": ".local/legacy-codex"
+}

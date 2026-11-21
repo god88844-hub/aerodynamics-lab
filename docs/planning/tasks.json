@@ -1,0 +1,3389 @@
+{
+  "schema_version": "1.0",
+  "updated": "2026-11-21",
+  "repository": "god88844-hub/aerodynamics-lab",
+  "plan_issue": 127,
+  "review_pr": 126,
+  "proposed_tag": "v0.0-plan-locked",
+  "authorization_task": "P0A-004",
+  "first_build_task": "P0A-005",
+  "work_packages": [
+    {
+      "number": 1,
+      "issue": 99,
+      "title": "Foundation and contracts",
+      "slices": [
+        "0A",
+        "0B",
+        "0C",
+        "0D"
+      ]
+    },
+    {
+      "number": 2,
+      "issue": 100,
+      "title": "Standalone desktop application",
+      "slices": [
+        "0A",
+        "0B",
+        "0C",
+        "0D"
+      ]
+    },
+    {
+      "number": 3,
+      "issue": 101,
+      "title": "CAD and engineering assemblies",
+      "slices": [
+        "0A",
+        "0B",
+        "0C",
+        "0D"
+      ]
+    },
+    {
+      "number": 4,
+      "issue": 102,
+      "title": "World and experiment authoring",
+      "slices": [
+        "0A",
+        "0B",
+        "0C",
+        "0D"
+      ]
+    },
+    {
+      "number": 5,
+      "issue": 103,
+      "title": "Electrical systems and physical models",
+      "slices": [
+        "0A",
+        "0B",
+        "0C",
+        "0D"
+      ]
+    },
+    {
+      "number": 6,
+      "issue": 104,
+      "title": "Four aircraft families",
+      "slices": [
+        "0A",
+        "0B",
+        "0C",
+        "0D"
+      ]
+    },
+    {
+      "number": 7,
+      "issue": 110,
+      "title": "Interactive and detailed analysis",
+      "slices": [
+        "0A",
+        "0B",
+        "0C",
+        "0D"
+      ]
+    },
+    {
+      "number": 8,
+      "issue": 105,
+      "title": "Atmosphere and advanced weather",
+      "slices": [
+        "0A",
+        "0D"
+      ]
+    },
+    {
+      "number": 9,
+      "issue": 106,
+      "title": "Autonomy, sensors and multi-drone systems",
+      "slices": [
+        "0D"
+      ]
+    },
+    {
+      "number": 10,
+      "issue": 107,
+      "title": "Learning and invention",
+      "slices": [
+        "0A",
+        "0B",
+        "0C",
+        "0D"
+      ]
+    },
+    {
+      "number": 11,
+      "issue": 108,
+      "title": "Scientific validation",
+      "slices": [
+        "0A",
+        "0B",
+        "0C",
+        "0D"
+      ]
+    },
+    {
+      "number": 12,
+      "issue": 109,
+      "title": "Production QA and release",
+      "slices": [
+        "0A",
+        "0B",
+        "0C",
+        "0D"
+      ]
+    }
+  ],
+  "slices": [
+    {
+      "stage": "0A",
+      "title": "Multirotor design, simulation and evidence loop",
+      "entry": "P0A-004",
+      "software_exit": "P0A-039",
+      "physical_exit": "P0A-040"
+    },
+    {
+      "stage": "0B",
+      "title": "Fixed-wing geometry and flight",
+      "entry": "P0A-039",
+      "software_exit": "P0B-021",
+      "physical_exit": "P0B-022"
+    },
+    {
+      "stage": "0C",
+      "title": "Helicopters, VTOL and detailed analysis",
+      "entry": "P0B-021",
+      "software_exit": "P0C-023",
+      "physical_exit": "P0C-024"
+    },
+    {
+      "stage": "0D",
+      "title": "Complete supported drone laboratory",
+      "entry": "P0C-023",
+      "software_exit": "P0D-030",
+      "physical_exit": "P0D-031",
+      "phase_exit": "P0D-032"
+    }
+  ],
+  "future_phases": [
+    {
+      "stage": "1",
+      "issue": 111,
+      "title": "Bio-inspired flight",
+      "entry": "P1-001",
+      "exit": "P1-008",
+      "status": "INTERFACES_AND_REGISTRIES_ONLY_UNTIL_ENTRY"
+    },
+    {
+      "stage": "2",
+      "issue": 112,
+      "title": "Human-scale and crewed systems",
+      "entry": "P2-001",
+      "exit": "P2-008",
+      "status": "INTERFACES_AND_REGISTRIES_ONLY_UNTIL_ENTRY"
+    },
+    {
+      "stage": "3",
+      "issue": 113,
+      "title": "Jets and high-speed flight",
+      "entry": "P3-001",
+      "exit": "P3-008",
+      "status": "INTERFACES_AND_REGISTRIES_ONLY_UNTIL_ENTRY"
+    },
+    {
+      "stage": "4",
+      "issue": 114,
+      "title": "Rockets and spaceflight",
+      "entry": "P4-001",
+      "exit": "P4-008",
+      "status": "INTERFACES_AND_REGISTRIES_ONLY_UNTIL_ENTRY"
+    }
+  ],
+  "tasks": [
+    {
+      "id": "P0A-001",
+      "stage": "0A",
+      "title": "Record the completed standalone desktop qualification",
+      "work_packages": [
+        1,
+        2
+      ],
+      "dependencies": [],
+      "actor": "builder",
+      "status": "done",
+      "acceptance": "Keep the measured qualification PASS, source SHAs, failures and scope intact; no repeat qualification prerequisite for normal execution.",
+      "proof_file": "docs/prototypes/QUALIFICATION_GATE_FOLLOWUP.md",
+      "planned_tests": [],
+      "completion_evidence": [
+        "docs/prototypes/QUALIFICATION_GATE_FOLLOWUP.md",
+        "https://github.com/god88844-hub/aerodynamics-lab/actions/runs/44790665814"
+      ],
+      "gate": null
+    },
+    {
+      "id": "P0A-002",
+      "stage": "0A",
+      "title": "Preserve contracts, archive and development-evidence baseline",
+      "work_packages": [
+        1,
+        11
+      ],
+      "dependencies": [
+        "P0A-001"
+      ],
+      "actor": "builder",
+      "status": "done",
+      "acceptance": "Contract export matches the existing lock; all 21 WIP paths remain traceable; all 20 inspected campaigns remain DEVELOPMENT; no physical gate promoted.",
+      "proof_file": "docs/contracts/wp1-wp3-1/lock.json",
+      "planned_tests": [],
+      "completion_evidence": [
+        "docs/contracts/wp1-wp3-1/lock.json",
+        "docs/LEGACY_WIP_MANIFEST.md",
+        "data/registry.json"
+      ],
+      "gate": null
+    },
+    {
+      "id": "P0A-003",
+      "stage": "0A",
+      "title": "Deliver the master checklist, workspace migration and GitHub task sync",
+      "work_packages": [
+        1,
+        12
+      ],
+      "dependencies": [
+        "P0A-002"
+      ],
+      "actor": "builder",
+      "status": "done",
+      "acceptance": "All development work is under the requested workspace; 208 moved source files retain their hashes; generated plan validates and all 17 issue checklists match its digest.",
+      "proof_file": "docs/WORKSPACE.md",
+      "planned_tests": [],
+      "completion_evidence": [
+        "docs/WORKSPACE.md",
+        "docs/planning/github_sync.json",
+        "docs/MASTER_PLAN.md",
+        "docs/planning/workspace_migration.json"
+      ],
+      "gate": null
+    },
+    {
+      "id": "P0A-004",
+      "stage": "0A",
+      "title": "Record owner authorization for the planning lock",
+      "work_packages": [
+        1,
+        12
+      ],
+      "dependencies": [
+        "P0A-003"
+      ],
+      "actor": "owner",
+      "status": "done",
+      "acceptance": "Actual owner authorization to merge/tag after the three pre-merge checks and green CI is recorded. Approval is distinct from the later operations: merge/tag/clean-main proof belongs to the PR conversation and Git refs after execution, never fabricated before merge. This request does not authorize P0A-005.",
+      "proof_file": "docs/acceptance/P0A-004.md",
+      "planned_tests": [],
+      "completion_evidence": [
+        "docs/acceptance/P0A-004.md"
+      ],
+      "gate": "execution_authorization"
+    },
+    {
+      "id": "P0A-005",
+      "stage": "0A",
+      "title": "Reproduce and freeze M21 cutoff regression cases",
+      "work_packages": [
+        5
+      ],
+      "dependencies": [
+        "P0A-004"
+      ],
+      "actor": "builder",
+      "status": "todo",
+      "acceptance": "Reproduce the SIT 63/63 replay and 68/68 forecast missed 80 V study crossings using pinned DEVELOPMENT data; publish exact commands, time/event definitions and failing regressions before changes.",
+      "proof_file": "docs/acceptance/P0A-005.md",
+      "planned_tests": [
+        "tests/acceptance/test_p0a_005.py"
+      ],
+      "completion_evidence": [],
+      "gate": null
+    },
+    {
+      "id": "P0A-006",
+      "stage": "0A",
+      "title": "Correct causal battery sag and cutoff event propagation",
+      "work_packages": [
+        5
+      ],
+      "dependencies": [
+        "P0A-005"
+      ],
+      "actor": "builder",
+      "status": "todo",
+      "acceptance": "Supported current, SOC, bus-voltage and cutoff events affect the authoritative plant and FAIL verdict; event bracketing handles equality and timestep boundaries; no future measured input or threshold tuning to confirmatory outcomes.",
+      "proof_file": "docs/acceptance/P0A-006.md",
+      "planned_tests": [
+        "tests/acceptance/test_p0a_006.py"
+      ],
+      "completion_evidence": [],
+      "gate": null
+    },
+    {
+      "id": "P0A-007",
+      "stage": "0A",
+      "title": "Verify battery replay versus prospective endurance behavior",
+      "work_packages": [
+        5,
+        11
+      ],
+      "dependencies": [
+        "P0A-006"
+      ],
+      "actor": "builder",
+      "status": "todo",
+      "acceptance": "Separate measured-current replay from forecast demand; unchanged source rows are scored per run; cutoff misses/false alarms, endpoint error, charge/energy balances and timestep convergence are reported against frozen criteria. New physical acceptance stays open.",
+      "proof_file": "docs/acceptance/P0A-007.md",
+      "planned_tests": [
+        "tests/acceptance/test_p0a_007.py"
+      ],
+      "completion_evidence": [],
+      "gate": null
+    },
+    {
+      "id": "P0A-008",
+      "stage": "0A",
+      "title": "Diagnose the UIUC signed-thrust disagreement",
+      "work_packages": [
+        5
+      ],
+      "dependencies": [
+        "P0A-007"
+      ],
+      "actor": "builder",
+      "status": "todo",
+      "acceptance": "Reproduce the signed CT case with source hashes; inspect axes, advance ratio, RPM, units, power definition and near-zero measurement resolution. Record evidence for the cause; do not assume a sign flip is correct.",
+      "proof_file": "docs/acceptance/P0A-008.md",
+      "planned_tests": [
+        "tests/acceptance/test_p0a_008.py"
+      ],
+      "completion_evidence": [],
+      "gate": null
+    },
+    {
+      "id": "P0A-009",
+      "stage": "0A",
+      "title": "Correct and verify the supported signed aerodynamic regime",
+      "work_packages": [
+        5,
+        11
+      ],
+      "dependencies": [
+        "P0A-008"
+      ],
+      "actor": "builder",
+      "status": "todo",
+      "acceptance": "Analytical frame/force checks pass, source sign is preserved, extrapolation is refused or labeled, and all DEVELOPMENT sweep residuals/exclusions are published. M24 acceptance uses predeclared sign-resolution and uncertainty rules.",
+      "proof_file": "docs/acceptance/P0A-009.md",
+      "planned_tests": [
+        "tests/acceptance/test_p0a_009.py"
+      ],
+      "completion_evidence": [],
+      "gate": null
+    },
+    {
+      "id": "P0A-010",
+      "stage": "0A",
+      "title": "Reproduce M25 misses and healthy-flight false alarms",
+      "work_packages": [
+        5
+      ],
+      "dependencies": [
+        "P0A-009"
+      ],
+      "actor": "builder",
+      "status": "todo",
+      "acceptance": "Reproduce UAV-FD rotor-order and ESC-power decisions per whole recording; preserve exclusions, labels and thresholds; identify missed classes and false alarms without using labels as detector inputs.",
+      "proof_file": "docs/acceptance/P0A-010.md",
+      "planned_tests": [
+        "tests/acceptance/test_p0a_010.py"
+      ],
+      "completion_evidence": [],
+      "gate": null
+    },
+    {
+      "id": "P0A-011",
+      "stage": "0A",
+      "title": "Correct fault detection without data leakage",
+      "work_packages": [
+        5,
+        11
+      ],
+      "dependencies": [
+        "P0A-010"
+      ],
+      "actor": "builder",
+      "status": "todo",
+      "acceptance": "Detection, no-alert and INCONCLUSIVE are explicit; whole-flight class/deadline/false-alarm regression cases pass; training and evaluation data remain grouped and disjoint; confirmatory performance is not inferred from development tuning.",
+      "proof_file": "docs/acceptance/P0A-011.md",
+      "planned_tests": [
+        "tests/acceptance/test_p0a_011.py"
+      ],
+      "completion_evidence": [],
+      "gate": null
+    },
+    {
+      "id": "P0A-012",
+      "stage": "0A",
+      "title": "Propagate per-rotor electrical and supported actuator failures",
+      "work_packages": [
+        5
+      ],
+      "dependencies": [
+        "P0A-011"
+      ],
+      "actor": "builder",
+      "status": "todo",
+      "acceptance": "Unequal branch current, voltage, RPM, thermal or actuator limits produce FAIL on the affected component; supported loss/derating changes control authority; unknown post-failure behavior cannot create a successful trajectory.",
+      "proof_file": "docs/acceptance/P0A-012.md",
+      "planned_tests": [
+        "tests/acceptance/test_p0a_012.py"
+      ],
+      "completion_evidence": [],
+      "gate": null
+    },
+    {
+      "id": "P0A-013",
+      "stage": "0A",
+      "title": "Freeze the QDrone collapse and command-provenance regression",
+      "work_packages": [
+        5
+      ],
+      "dependencies": [
+        "P0A-012"
+      ],
+      "actor": "builder",
+      "status": "todo",
+      "acceptance": "Reproduce original versus battery-aware MPC observations and conditional-model failure; identify the 14 V line as study-specific, and mark logged auxiliary/drive commands as measurements rather than independently predicted commands.",
+      "proof_file": "docs/acceptance/P0A-013.md",
+      "planned_tests": [
+        "tests/acceptance/test_p0a_013.py"
+      ],
+      "completion_evidence": [],
+      "gate": null
+    },
+    {
+      "id": "P0A-014",
+      "stage": "0A",
+      "title": "Couple causal bus, propulsion and controller response",
+      "work_packages": [
+        5,
+        6
+      ],
+      "dependencies": [
+        "P0A-013"
+      ],
+      "actor": "builder",
+      "status": "todo",
+      "acceptance": "Demand, voltage/current, attainable thrust, saturation and supported controller/actuator dynamics share one plant/clock; generated commands do not depend on future telemetry; known limit violations retain FAIL and unsupported collapse remains INCONCLUSIVE.",
+      "proof_file": "docs/acceptance/P0A-014.md",
+      "planned_tests": [
+        "tests/acceptance/test_p0a_014.py"
+      ],
+      "completion_evidence": [],
+      "gate": null
+    },
+    {
+      "id": "P0A-015",
+      "stage": "0A",
+      "title": "Verify the corrected multirotor numerical model",
+      "work_packages": [
+        5,
+        11
+      ],
+      "dependencies": [
+        "P0A-014"
+      ],
+      "actor": "builder",
+      "status": "todo",
+      "acceptance": "Analytic force/torque, energy/charge checks, quaternion/coordinate round trips, timestep convergence, deterministic seeded reruns and failure-boundary regressions pass with declared numerical tolerances.",
+      "proof_file": "docs/acceptance/P0A-015.md",
+      "planned_tests": [
+        "tests/acceptance/test_p0a_015.py"
+      ],
+      "completion_evidence": [],
+      "gate": null
+    },
+    {
+      "id": "P0A-016",
+      "stage": "0A",
+      "title": "Make component sources and parameter uncertainty explicit",
+      "work_packages": [
+        1,
+        5,
+        11
+      ],
+      "dependencies": [
+        "P0A-015"
+      ],
+      "actor": "builder",
+      "status": "todo",
+      "acceptance": "Battery/motor/ESC/wiring/material/sensor records carry units, identity, source, limits and parameter-level evidence; unsourced typical values and assumed uncertainty bands display UNVERIFIED_ESTIMATE; missing required limits refuse acceptance.",
+      "proof_file": "docs/acceptance/P0A-016.md",
+      "planned_tests": [
+        "tests/acceptance/test_p0a_016.py"
+      ],
+      "completion_evidence": [],
+      "gate": null
+    },
+    {
+      "id": "P0A-017",
+      "stage": "0A",
+      "title": "Deliver the standalone desktop project workflow",
+      "work_packages": [
+        2
+      ],
+      "dependencies": [
+        "P0A-015"
+      ],
+      "actor": "builder",
+      "status": "todo",
+      "acceptance": "Normal Godot UI creates/imports/opens/saves/versions/reopens a supported project without an HTTP server; corrupt/missing assets and incompatible versions are handled; recovery preserves the last valid project.",
+      "proof_file": "docs/acceptance/P0A-017.md",
+      "planned_tests": [
+        "tests/acceptance/test_p0a_017.py"
+      ],
+      "completion_evidence": [],
+      "gate": null
+    },
+    {
+      "id": "P0A-018",
+      "stage": "0A",
+      "title": "Build supported multirotor geometry through the 3D editor",
+      "work_packages": [
+        2,
+        3
+      ],
+      "dependencies": [
+        "P0A-017"
+      ],
+      "actor": "builder",
+      "status": "todo",
+      "acceptance": "Normal UI edits supported exact body/blade geometry, transforms and dimensions with constraints, undo/redo and visible model support. Exact solids and engineering inputs remain authoritative across save/reopen; no placement-only screen is labeled full CAD.",
+      "proof_file": "docs/acceptance/P0A-018.md",
+      "planned_tests": [
+        "tests/acceptance/test_p0a_018.py"
+      ],
+      "completion_evidence": [],
+      "gate": null
+    },
+    {
+      "id": "P0A-019",
+      "stage": "0A",
+      "title": "Connect component layout, materials, BOM and mass properties",
+      "work_packages": [
+        3,
+        5,
+        6
+      ],
+      "dependencies": [
+        "P0A-018",
+        "P0A-016"
+      ],
+      "actor": "builder",
+      "status": "todo",
+      "acceptance": "Supported arbitrary rotor counts/layouts and component selection update mass, CoG, inertia, powertrain and BOM; independent analytic geometry cases pass; missing density refuses mass and flight acceptance.",
+      "proof_file": "docs/acceptance/P0A-019.md",
+      "planned_tests": [
+        "tests/acceptance/test_p0a_019.py"
+      ],
+      "completion_evidence": [],
+      "gate": null
+    },
+    {
+      "id": "P0A-020",
+      "stage": "0A",
+      "title": "Integrate geometry clearance and supported load checks",
+      "work_packages": [
+        3
+      ],
+      "dependencies": [
+        "P0A-018"
+      ],
+      "actor": "builder",
+      "status": "todo",
+      "acceptance": "Rotor/obstacle/assembly clearance and datum transforms are checked from engineering geometry, including revision changes; LOD cannot change physics/clearance; screens retain analytical versus physically qualified status.",
+      "proof_file": "docs/acceptance/P0A-020.md",
+      "planned_tests": [
+        "tests/acceptance/test_p0a_020.py"
+      ],
+      "completion_evidence": [],
+      "gate": null
+    },
+    {
+      "id": "P0A-021",
+      "stage": "0A",
+      "title": "Author a repeatable engineering test ground",
+      "work_packages": [
+        4,
+        8
+      ],
+      "dependencies": [
+        "P0A-017"
+      ],
+      "actor": "builder",
+      "status": "todo",
+      "acceptance": "Normal UI saves terrain, obstacles, landing/contact surfaces, wind vector, temperature, pressure and humidity with units/origin. Unsupported atmospheric/contact mechanisms are refused or unvalidated, not implemented by a visual shader.",
+      "proof_file": "docs/acceptance/P0A-021.md",
+      "planned_tests": [
+        "tests/acceptance/test_p0a_021.py"
+      ],
+      "completion_evidence": [],
+      "gate": null
+    },
+    {
+      "id": "P0A-022",
+      "stage": "0A",
+      "title": "Author missions, controls, clocks and experiment seeds",
+      "work_packages": [
+        4
+      ],
+      "dependencies": [
+        "P0A-021"
+      ],
+      "actor": "builder",
+      "status": "todo",
+      "acceptance": "Takeoff/climb/hover/descent/landing, manual commands and disturbances serialize commands, timings, controller/sensor settings and seeds; replay reproduces the frozen experiment independently of render cadence.",
+      "proof_file": "docs/acceptance/P0A-022.md",
+      "planned_tests": [
+        "tests/acceptance/test_p0a_022.py"
+      ],
+      "completion_evidence": [],
+      "gate": null
+    },
+    {
+      "id": "P0A-023",
+      "stage": "0A",
+      "title": "Run the supported design in the authoritative desktop simulation",
+      "work_packages": [
+        2,
+        5,
+        6
+      ],
+      "dependencies": [
+        "P0A-019",
+        "P0A-022",
+        "P0A-014"
+      ],
+      "actor": "builder",
+      "status": "todo",
+      "acceptance": "A normal geometry/component/environment/mission edit changes the applicable simulated response; one double-precision integrator drives playback; pause/step/run/cancel/failure states and model limits are visible end to end.",
+      "proof_file": "docs/acceptance/P0A-023.md",
+      "planned_tests": [
+        "tests/acceptance/test_p0a_023.py"
+      ],
+      "completion_evidence": [],
+      "gate": null
+    },
+    {
+      "id": "P0A-024",
+      "stage": "0A",
+      "title": "Inspect telemetry, evidence and reproducible result comparisons",
+      "work_packages": [
+        2,
+        10,
+        11
+      ],
+      "dependencies": [
+        "P0A-023"
+      ],
+      "actor": "builder",
+      "status": "todo",
+      "acceptance": "UI compares frozen runs and source measurements with units, frames, source/model hashes, operating envelope, exclusions and uncertainty; exported results distinguish calculated, measured and synthetic channels.",
+      "proof_file": "docs/acceptance/P0A-024.md",
+      "planned_tests": [
+        "tests/acceptance/test_p0a_024.py"
+      ],
+      "completion_evidence": [],
+      "gate": null
+    },
+    {
+      "id": "P0A-025",
+      "stage": "0A",
+      "title": "Expose numerical fidelity and bounded execution",
+      "work_packages": [
+        2,
+        7,
+        11
+      ],
+      "dependencies": [
+        "P0A-020",
+        "P0A-023"
+      ],
+      "actor": "builder",
+      "status": "todo",
+      "acceptance": "Requested/effective timestep, backend, solver rates, numerical error and runtime budgets are recorded; interactive/offline runs of the same supported case agree within declared tolerance; cancellation and resource refusal preserve projects.",
+      "proof_file": "docs/acceptance/P0A-025.md",
+      "planned_tests": [
+        "tests/acceptance/test_p0a_025.py"
+      ],
+      "completion_evidence": [],
+      "gate": null
+    },
+    {
+      "id": "P0A-026",
+      "stage": "0A",
+      "title": "Register component and multirotor validation protocols",
+      "work_packages": [
+        5,
+        11
+      ],
+      "dependencies": [
+        "P0A-015",
+        "P0A-016"
+      ],
+      "actor": "builder",
+      "status": "todo",
+      "acceptance": "Freeze model/controller/geometry versions, channels, instrument/clock uncertainties, calibration groups, held-out whole experiments, stopping rules and M21–M27 tolerances before confirmatory reveal; qualified review is required for acceptance.",
+      "proof_file": "docs/acceptance/P0A-026.md",
+      "planned_tests": [
+        "tests/acceptance/test_p0a_026.py"
+      ],
+      "completion_evidence": [],
+      "gate": null
+    },
+    {
+      "id": "P0A-027",
+      "stage": "0A",
+      "title": "Acquire and seal matching independent component experiments",
+      "work_packages": [
+        11
+      ],
+      "dependencies": [
+        "P0A-026"
+      ],
+      "actor": "custodian",
+      "status": "todo",
+      "acceptance": "Custodian supplies legally usable exact-hardware/configuration battery, propulsion and sensor/controller measurements with original hashes, calibration and environmental records; previously inspected data cannot be relabeled blind.",
+      "proof_file": "docs/acceptance/P0A-027.md",
+      "planned_tests": [],
+      "completion_evidence": [],
+      "gate": null
+    },
+    {
+      "id": "P0A-028",
+      "stage": "0A",
+      "title": "Validate battery, propulsion and controller component envelopes",
+      "work_packages": [
+        5,
+        11
+      ],
+      "dependencies": [
+        "P0A-027"
+      ],
+      "actor": "builder",
+      "status": "todo",
+      "acceptance": "Each independent component experiment meets applicable M21–M23 frozen error, limit and uncertainty criteria; high-C/endpoints, transient torque/current/RPM and sensor/actuator timing are covered or explicitly outside the accepted envelope.",
+      "proof_file": "docs/acceptance/P0A-028.md",
+      "planned_tests": [
+        "tests/acceptance/test_p0a_028.py"
+      ],
+      "completion_evidence": [],
+      "gate": null
+    },
+    {
+      "id": "P0A-029",
+      "stage": "0A",
+      "title": "Freeze end-to-end multirotor flight predictions",
+      "work_packages": [
+        6,
+        11
+      ],
+      "dependencies": [
+        "P0A-028",
+        "P0A-023"
+      ],
+      "actor": "builder",
+      "status": "todo",
+      "acceptance": "Freeze predictions, installed hardware, mission commands, payload, atmosphere, source custody and joint uncertainty construction before independent complete flights are revealed; no fitted time/trajectory alignment.",
+      "proof_file": "docs/acceptance/P0A-029.md",
+      "planned_tests": [
+        "tests/acceptance/test_p0a_029.py"
+      ],
+      "completion_evidence": [],
+      "gate": null
+    },
+    {
+      "id": "P0A-030",
+      "stage": "0A",
+      "title": "Acquire sealed complete-flight and thermal/structural measurements",
+      "work_packages": [
+        11
+      ],
+      "dependencies": [
+        "P0A-029"
+      ],
+      "actor": "custodian",
+      "status": "todo",
+      "acceptance": "Qualified custodian provides repeated hover/climb/descent/landing/control/disturbance/endurance trials plus applicable heat/load evidence; professional operational review is separate from software approval. Missing channels/calibration keep acceptance blocked.",
+      "proof_file": "docs/acceptance/P0A-030.md",
+      "planned_tests": [],
+      "completion_evidence": [],
+      "gate": null
+    },
+    {
+      "id": "P0A-031",
+      "stage": "0A",
+      "title": "Score full-aircraft agreement and relevant failure modes",
+      "work_packages": [
+        6,
+        11
+      ],
+      "dependencies": [
+        "P0A-030"
+      ],
+      "actor": "builder",
+      "status": "todo",
+      "acceptance": "Per-flight trajectories, energy, heat/control response and failures meet the frozen M24–M26 applicable criteria; observed failures are retained, conditional replay is separate, and out-of-envelope operation is rejected.",
+      "proof_file": "docs/acceptance/P0A-031.md",
+      "planned_tests": [
+        "tests/acceptance/test_p0a_031.py"
+      ],
+      "completion_evidence": [],
+      "gate": null
+    },
+    {
+      "id": "P0A-032",
+      "stage": "0A",
+      "title": "Calibrate joint whole-flight uncertainty and generalization",
+      "work_packages": [
+        11
+      ],
+      "dependencies": [
+        "P0A-031"
+      ],
+      "actor": "builder",
+      "status": "todo",
+      "acceptance": "M27 simultaneous whole-flight channel coverage and width limits pass by independent cohort, including numerical, measurement, parameter, environment and model-discrepancy uncertainty; sample coverage cannot substitute for flight coverage.",
+      "proof_file": "docs/acceptance/P0A-032.md",
+      "planned_tests": [
+        "tests/acceptance/test_p0a_032.py"
+      ],
+      "completion_evidence": [],
+      "gate": null
+    },
+    {
+      "id": "P0A-033",
+      "stage": "0A",
+      "title": "Obtain independent multirotor credibility review",
+      "work_packages": [
+        11
+      ],
+      "dependencies": [
+        "P0A-032"
+      ],
+      "actor": "reviewer",
+      "status": "todo",
+      "acceptance": "Independent reviewer reproduces each intended-use acceptance from frozen inputs and source bytes, signs the scope/uncertainty/failure dossier and identifies all unsupported configurations.",
+      "proof_file": "docs/acceptance/P0A-033.md",
+      "planned_tests": [],
+      "completion_evidence": [],
+      "gate": null
+    },
+    {
+      "id": "P0A-034",
+      "stage": "0A",
+      "title": "Deliver guided learning and saved invention experiments",
+      "work_packages": [
+        10
+      ],
+      "dependencies": [
+        "P0A-024"
+      ],
+      "actor": "builder",
+      "status": "todo",
+      "acceptance": "A learner can state a hypothesis, build/modify a supported drone, enter environment conditions, compare runs, inspect equations/assumptions and save a reproducible experiment through the desktop.",
+      "proof_file": "docs/acceptance/P0A-034.md",
+      "planned_tests": [
+        "tests/acceptance/test_p0a_034.py"
+      ],
+      "completion_evidence": [],
+      "gate": null
+    },
+    {
+      "id": "P0A-035",
+      "stage": "0A",
+      "title": "Deliver bounded sweeps and design comparisons",
+      "work_packages": [
+        7,
+        10
+      ],
+      "dependencies": [
+        "P0A-034"
+      ],
+      "actor": "builder",
+      "status": "todo",
+      "acceptance": "Supported parameter sweeps/optimization retain constraints, seeds, all infeasible/failed candidates and provenance; a repeat run reproduces the candidate/decision set, with no optimization-as-validation claim.",
+      "proof_file": "docs/acceptance/P0A-035.md",
+      "planned_tests": [
+        "tests/acceptance/test_p0a_035.py"
+      ],
+      "completion_evidence": [],
+      "gate": null
+    },
+    {
+      "id": "P0A-036",
+      "stage": "0A",
+      "title": "Package and recover the standalone Windows application",
+      "work_packages": [
+        2,
+        12
+      ],
+      "dependencies": [
+        "P0A-017"
+      ],
+      "actor": "builder",
+      "status": "todo",
+      "acceptance": "A clean-user installation launches desktop, shared services and required workers without a development HTTP server; dependencies/notices are included; failed install/update/project writes recover without losing valid user data.",
+      "proof_file": "docs/acceptance/P0A-036.md",
+      "planned_tests": [
+        "tests/acceptance/test_p0a_036.py"
+      ],
+      "completion_evidence": [],
+      "gate": null
+    },
+    {
+      "id": "P0A-037",
+      "stage": "0A",
+      "title": "Protect regression, dependency security and compatibility",
+      "work_packages": [
+        12
+      ],
+      "dependencies": [
+        "P0A-023",
+        "P0A-036"
+      ],
+      "actor": "builder",
+      "status": "todo",
+      "acceptance": "All five exact-head CI jobs and unchanged npm/backend/CAD audits pass; project migration, incompatible assets, process ownership, budgets, interrupted work, save/recovery and headless/API compatibility have regression evidence.",
+      "proof_file": "docs/acceptance/P0A-037.md",
+      "planned_tests": [
+        "tests/acceptance/test_p0a_037.py"
+      ],
+      "completion_evidence": [],
+      "gate": null
+    },
+    {
+      "id": "P0A-038",
+      "stage": "0A",
+      "title": "Qualify baseline hardware behavior for supported cases",
+      "work_packages": [
+        2,
+        3,
+        12
+      ],
+      "dependencies": [
+        "P0A-020",
+        "P0A-036"
+      ],
+      "actor": "builder",
+      "status": "todo",
+      "acceptance": "Publish distinct 8 GB and 16 GB integrated-GPU installation/edit/run cases with CPU/GPU/OS/settings, >=30 FPS on the declared 200-part editing workload, frame-time/RAM data, <=5 s owned-worker cancellation, and correct low-memory refusal. Existing qualification is retained as one prior observation.",
+      "proof_file": "docs/acceptance/P0A-038.md",
+      "planned_tests": [
+        "tests/acceptance/test_p0a_038.py"
+      ],
+      "completion_evidence": [],
+      "gate": null
+    },
+    {
+      "id": "P0A-039",
+      "stage": "0A",
+      "title": "Exit: usable multirotor software slice",
+      "work_packages": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        10,
+        11,
+        12
+      ],
+      "dependencies": [
+        "P0A-025",
+        "P0A-026",
+        "P0A-035",
+        "P0A-037",
+        "P0A-038"
+      ],
+      "actor": "builder",
+      "status": "todo",
+      "acceptance": "All preceding software tasks required for this slice pass normal-entry-point tests and independent numerical checks; scientific ledger lists accepted, failed and still-unvalidated uses. Publish the slice dossier; this exit enables 0B software, not physical acceptance.",
+      "proof_file": "docs/acceptance/P0A-039.md",
+      "planned_tests": [
+        "tests/acceptance/test_p0a_039.py"
+      ],
+      "completion_evidence": [],
+      "gate": "software_exit"
+    },
+    {
+      "id": "P0A-040",
+      "stage": "0A",
+      "title": "Exit: physically accepted multirotor envelope",
+      "work_packages": [
+        6,
+        11,
+        12
+      ],
+      "dependencies": [
+        "P0A-033",
+        "P0A-039"
+      ],
+      "actor": "builder",
+      "status": "todo",
+      "acceptance": "Independent review accepts only the demonstrated matching multirotor envelope under M21–M27; unresolved physical gates remain open and no universal drone-equivalence claim is made.",
+      "proof_file": "docs/acceptance/P0A-040.md",
+      "planned_tests": [
+        "tests/acceptance/test_p0a_040.py"
+      ],
+      "completion_evidence": [],
+      "gate": "physical_exit"
+    },
+    {
+      "id": "P0B-001",
+      "stage": "0B",
+      "title": "Implement constrained sketch and feature-history editing",
+      "work_packages": [
+        3
+      ],
+      "dependencies": [
+        "P0A-039"
+      ],
+      "actor": "builder",
+      "status": "todo",
+      "acceptance": "Sketch dimensions/constraints, extrusion/revolve/boolean operations and dependency history are editable in the desktop; overconstraints, broken references, undo/redo and regeneration are tested.",
+      "proof_file": "docs/acceptance/P0B-001.md",
+      "planned_tests": [
+        "tests/acceptance/test_p0b_001.py"
+      ],
+      "completion_evidence": [],
+      "gate": null
+    },
+    {
+      "id": "P0B-002",
+      "stage": "0B",
+      "title": "Author exact wings, airfoils, blades and surfaces",
+      "work_packages": [
+        3
+      ],
+      "dependencies": [
+        "P0B-001"
+      ],
+      "actor": "builder",
+      "status": "todo",
+      "acceptance": "Supported custom sections, span/chord/twist and lofts create valid exact geometry with persistent provenance; analytic volume/mass fixtures and geometry tolerances pass; unsupported surfaces are explicit.",
+      "proof_file": "docs/acceptance/P0B-002.md",
+      "planned_tests": [
+        "tests/acceptance/test_p0b_002.py"
+      ],
+      "completion_evidence": [],
+      "gate": null
+    },
+    {
+      "id": "P0B-003",
+      "stage": "0B",
+      "title": "Assemble joints, placements and distributed mass",
+      "work_packages": [
+        3
+      ],
+      "dependencies": [
+        "P0B-002"
+      ],
+      "actor": "builder",
+      "status": "todo",
+      "acceptance": "Supported fixed joints/assemblies transform component masses and inertia to consistent datums; hierarchy edits, constraints and missing-material refusal survive project round trips.",
+      "proof_file": "docs/acceptance/P0B-003.md",
+      "planned_tests": [
+        "tests/acceptance/test_p0b_003.py"
+      ],
+      "completion_evidence": [],
+      "gate": null
+    },
+    {
+      "id": "P0B-004",
+      "stage": "0B",
+      "title": "Deliver versioned CAD import/export and unit-safe exchange",
+      "work_packages": [
+        3
+      ],
+      "dependencies": [
+        "P0B-003"
+      ],
+      "actor": "builder",
+      "status": "todo",
+      "acceptance": "Supported STEP/IGES and display mesh exchange round-trip declared units, solid identity and project references; invalid geometry is diagnosed, and STL/display meshes never silently replace authoritative exact geometry.",
+      "proof_file": "docs/acceptance/P0B-004.md",
+      "planned_tests": [
+        "tests/acceptance/test_p0b_004.py"
+      ],
+      "completion_evidence": [],
+      "gate": null
+    },
+    {
+      "id": "P0B-005",
+      "stage": "0B",
+      "title": "Implement geometry-to-aerodynamics loading",
+      "work_packages": [
+        5
+      ],
+      "dependencies": [
+        "P0B-002",
+        "P0B-003"
+      ],
+      "actor": "builder",
+      "status": "todo",
+      "acceptance": "Existing AeroSurface/AeroLoads contracts consume exact geometry, placements, station/polar hashes and moment datums; a geometric edit changes checked mass/inertia and appropriate aerodynamic loads; LOD independence and transform tests pass.",
+      "proof_file": "docs/acceptance/P0B-005.md",
+      "planned_tests": [
+        "tests/acceptance/test_p0b_005.py"
+      ],
+      "completion_evidence": [],
+      "gate": null
+    },
+    {
+      "id": "P0B-006",
+      "stage": "0B",
+      "title": "Deliver supported section/polar and wing aerodynamic models",
+      "work_packages": [
+        5,
+        7
+      ],
+      "dependencies": [
+        "P0B-005"
+      ],
+      "actor": "builder",
+      "status": "todo",
+      "acceptance": "Signed lift/drag/moment and supported induced-flow/wing models pass analytic and numerical cases; Reynolds/Mach/angle support and uncertainty are enforced; missing polars and unsupported viscous/stall mechanisms cannot receive success.",
+      "proof_file": "docs/acceptance/P0B-006.md",
+      "planned_tests": [
+        "tests/acceptance/test_p0b_006.py"
+      ],
+      "completion_evidence": [],
+      "gate": null
+    },
+    {
+      "id": "P0B-007",
+      "stage": "0B",
+      "title": "Implement fixed-wing propulsion, trim and controls",
+      "work_packages": [
+        5,
+        6
+      ],
+      "dependencies": [
+        "P0B-006",
+        "P0A-014"
+      ],
+      "actor": "builder",
+      "status": "todo",
+      "acceptance": "Control surfaces, throttle and supported trim/flight dynamics share one plant; thrust/energy/actuator limits and infeasible trim are explicit; analytic trim and perturbation checks pass.",
+      "proof_file": "docs/acceptance/P0B-007.md",
+      "planned_tests": [
+        "tests/acceptance/test_p0b_007.py"
+      ],
+      "completion_evidence": [],
+      "gate": null
+    },
+    {
+      "id": "P0B-008",
+      "stage": "0B",
+      "title": "Enforce stall, load, speed and control-authority envelopes",
+      "work_packages": [
+        5,
+        6
+      ],
+      "dependencies": [
+        "P0B-007"
+      ],
+      "actor": "builder",
+      "status": "todo",
+      "acceptance": "Known operating/structural/actuator limits produce FAIL; stalls and post-limit motion are supported only where modeled, otherwise unvalidated/inconclusive; boundary regressions include conflicting or absent limits.",
+      "proof_file": "docs/acceptance/P0B-008.md",
+      "planned_tests": [
+        "tests/acceptance/test_p0b_008.py"
+      ],
+      "completion_evidence": [],
+      "gate": null
+    },
+    {
+      "id": "P0B-009",
+      "stage": "0B",
+      "title": "Run fixed-wing takeoff, cruise, maneuver and landing",
+      "work_packages": [
+        2,
+        4,
+        6
+      ],
+      "dependencies": [
+        "P0B-004",
+        "P0B-008",
+        "P0A-022"
+      ],
+      "actor": "builder",
+      "status": "todo",
+      "acceptance": "A supported fixed-wing design can be authored and flown from the desktop with consistent wind/contact/mission semantics; saved commands and results reproduce through the headless path.",
+      "proof_file": "docs/acceptance/P0B-009.md",
+      "planned_tests": [
+        "tests/acceptance/test_p0b_009.py"
+      ],
+      "completion_evidence": [],
+      "gate": null
+    },
+    {
+      "id": "P0B-010",
+      "stage": "0B",
+      "title": "Expose aerodynamic analysis adapters and convergence",
+      "work_packages": [
+        7,
+        11
+      ],
+      "dependencies": [
+        "P0B-006"
+      ],
+      "actor": "builder",
+      "status": "todo",
+      "acceptance": "Versioned analysis jobs declare backend/fidelity, polar/mesh/boundary inputs, progress and cancellation; supported calculations publish timestep/discretization/iteration error, without claiming planned VLM/CFD execution is already delivered.",
+      "proof_file": "docs/acceptance/P0B-010.md",
+      "planned_tests": [
+        "tests/acceptance/test_p0b_010.py"
+      ],
+      "completion_evidence": [],
+      "gate": null
+    },
+    {
+      "id": "P0B-011",
+      "stage": "0B",
+      "title": "Verify fixed-wing numerical and geometry sensitivity",
+      "work_packages": [
+        3,
+        6,
+        11
+      ],
+      "dependencies": [
+        "P0B-009",
+        "P0B-010"
+      ],
+      "actor": "builder",
+      "status": "todo",
+      "acceptance": "Force/moment signs, geometry perturbations, trim, convergence, frame transforms and energy balances pass frozen verification cases; editor and headless results agree within declared numerical tolerance.",
+      "proof_file": "docs/acceptance/P0B-011.md",
+      "planned_tests": [
+        "tests/acceptance/test_p0b_011.py"
+      ],
+      "completion_evidence": [],
+      "gate": null
+    },
+    {
+      "id": "P0B-012",
+      "stage": "0B",
+      "title": "Register fixed-wing validation policy and frozen models",
+      "work_packages": [
+        11
+      ],
+      "dependencies": [
+        "P0B-011"
+      ],
+      "actor": "builder",
+      "status": "todo",
+      "acceptance": "Create reviewed family-specific criteria/uncertainty/measurement annexes before confirmatory reveal; do not transfer multirotor thresholds or validation without an explicit justified similarity argument.",
+      "proof_file": "docs/acceptance/P0B-012.md",
+      "planned_tests": [
+        "tests/acceptance/test_p0b_012.py"
+      ],
+      "completion_evidence": [],
+      "gate": null
+    },
+    {
+      "id": "P0B-013",
+      "stage": "0B",
+      "title": "Acquire sealed wing and fixed-wing component measurements",
+      "work_packages": [
+        11
+      ],
+      "dependencies": [
+        "P0B-012"
+      ],
+      "actor": "custodian",
+      "status": "todo",
+      "acceptance": "Custodian provides independently measured matching section/wing/installed propulsion data with calibration, source rights, full conditions and whole-experiment grouping.",
+      "proof_file": "docs/acceptance/P0B-013.md",
+      "planned_tests": [],
+      "completion_evidence": [],
+      "gate": null
+    },
+    {
+      "id": "P0B-014",
+      "stage": "0B",
+      "title": "Validate supported wing/component loads",
+      "work_packages": [
+        5,
+        11
+      ],
+      "dependencies": [
+        "P0B-013"
+      ],
+      "actor": "builder",
+      "status": "todo",
+      "acceptance": "Frozen held-out forces/moments/power meet registered error/uncertainty criteria across the intended attached-flow and any explicitly supported stall regimes; unsupported extrapolation remains unvalidated.",
+      "proof_file": "docs/acceptance/P0B-014.md",
+      "planned_tests": [
+        "tests/acceptance/test_p0b_014.py"
+      ],
+      "completion_evidence": [],
+      "gate": null
+    },
+    {
+      "id": "P0B-015",
+      "stage": "0B",
+      "title": "Acquire sealed complete fixed-wing flights",
+      "work_packages": [
+        11
+      ],
+      "dependencies": [
+        "P0B-014"
+      ],
+      "actor": "custodian",
+      "status": "todo",
+      "acceptance": "Matching aircraft, control commands, firmware, payload, environment, independent motion/energy measurements and timing/calibration records cover the registered missions.",
+      "proof_file": "docs/acceptance/P0B-015.md",
+      "planned_tests": [],
+      "completion_evidence": [],
+      "gate": null
+    },
+    {
+      "id": "P0B-016",
+      "stage": "0B",
+      "title": "Validate full fixed-wing missions and joint uncertainty",
+      "work_packages": [
+        6,
+        11
+      ],
+      "dependencies": [
+        "P0B-015"
+      ],
+      "actor": "builder",
+      "status": "todo",
+      "acceptance": "Registered per-flight agreement, failure behavior, whole-flight interval coverage/width and independent cohort generalization pass; failures and excluded channels are retained.",
+      "proof_file": "docs/acceptance/P0B-016.md",
+      "planned_tests": [
+        "tests/acceptance/test_p0b_016.py"
+      ],
+      "completion_evidence": [],
+      "gate": null
+    },
+    {
+      "id": "P0B-017",
+      "stage": "0B",
+      "title": "Obtain independent fixed-wing credibility review",
+      "work_packages": [
+        11
+      ],
+      "dependencies": [
+        "P0B-016"
+      ],
+      "actor": "reviewer",
+      "status": "todo",
+      "acceptance": "Reviewer reproduces the frozen results and signs the limited family-specific operating envelope; a multirotor qualification does not substitute.",
+      "proof_file": "docs/acceptance/P0B-017.md",
+      "planned_tests": [],
+      "completion_evidence": [],
+      "gate": null
+    },
+    {
+      "id": "P0B-018",
+      "stage": "0B",
+      "title": "Teach wing design and comparative experiments",
+      "work_packages": [
+        10
+      ],
+      "dependencies": [
+        "P0B-009",
+        "P0B-010"
+      ],
+      "actor": "builder",
+      "status": "todo",
+      "acceptance": "Desktop workflows compare span/chord/twist/airfoil/control choices with reproducible hypotheses, equations, assumptions, constraints and provenance; learning exercises disclose unvalidated regimes.",
+      "proof_file": "docs/acceptance/P0B-018.md",
+      "planned_tests": [
+        "tests/acceptance/test_p0b_018.py"
+      ],
+      "completion_evidence": [],
+      "gate": null
+    },
+    {
+      "id": "P0B-019",
+      "stage": "0B",
+      "title": "Qualify fixed-wing CAD application recovery and packaging",
+      "work_packages": [
+        12
+      ],
+      "dependencies": [
+        "P0B-004",
+        "P0B-009",
+        "P0B-018"
+      ],
+      "actor": "builder",
+      "status": "todo",
+      "acceptance": "Install/edit/exchange/run/save/reopen/cancel/update flows pass under declared hardware budgets; existing multirotor projects and current-head security checks remain green.",
+      "proof_file": "docs/acceptance/P0B-019.md",
+      "planned_tests": [
+        "tests/acceptance/test_p0b_019.py"
+      ],
+      "completion_evidence": [],
+      "gate": null
+    },
+    {
+      "id": "P0B-020",
+      "stage": "0B",
+      "title": "Complete fixed-wing experiment and source library",
+      "work_packages": [
+        1,
+        4,
+        11
+      ],
+      "dependencies": [
+        "P0B-012"
+      ],
+      "actor": "builder",
+      "status": "todo",
+      "acceptance": "Reference projects, environment/mission presets, model support and source-license/role records are versioned and reproducible; a sample project is not labeled physically accepted before its measurement gates pass.",
+      "proof_file": "docs/acceptance/P0B-020.md",
+      "planned_tests": [
+        "tests/acceptance/test_p0b_020.py"
+      ],
+      "completion_evidence": [],
+      "gate": null
+    },
+    {
+      "id": "P0B-021",
+      "stage": "0B",
+      "title": "Exit: fixed-wing software slice",
+      "work_packages": [
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        10,
+        11,
+        12
+      ],
+      "dependencies": [
+        "P0B-011",
+        "P0B-012",
+        "P0B-018",
+        "P0B-019",
+        "P0B-020"
+      ],
+      "actor": "builder",
+      "status": "todo",
+      "acceptance": "All fixed-wing software acceptance paths and preserved multirotor regressions pass; publish the supported model/domain matrix and unresolved physical requirements. Enables 0C software only.",
+      "proof_file": "docs/acceptance/P0B-021.md",
+      "planned_tests": [
+        "tests/acceptance/test_p0b_021.py"
+      ],
+      "completion_evidence": [],
+      "gate": "software_exit"
+    },
+    {
+      "id": "P0B-022",
+      "stage": "0B",
+      "title": "Exit: physically accepted fixed-wing envelope",
+      "work_packages": [
+        6,
+        11,
+        12
+      ],
+      "dependencies": [
+        "P0B-017",
+        "P0B-021"
+      ],
+      "actor": "builder",
+      "status": "todo",
+      "acceptance": "Independent review accepts only the demonstrated wing/aircraft/mission envelope with calibrated uncertainty and explicit nontransfer limits.",
+      "proof_file": "docs/acceptance/P0B-022.md",
+      "planned_tests": [
+        "tests/acceptance/test_p0b_022.py"
+      ],
+      "completion_evidence": [],
+      "gate": "physical_exit"
+    },
+    {
+      "id": "P0C-001",
+      "stage": "0C",
+      "title": "Author helicopter rotor and articulated assemblies",
+      "work_packages": [
+        3
+      ],
+      "dependencies": [
+        "P0B-021"
+      ],
+      "actor": "builder",
+      "status": "todo",
+      "acceptance": "Rotor blades/hubs, swashplate and supported articulated placements have exact geometry, constraints and mass/inertia; singular/unsupported mechanisms are rejected explicitly.",
+      "proof_file": "docs/acceptance/P0C-001.md",
+      "planned_tests": [
+        "tests/acceptance/test_p0c_001.py"
+      ],
+      "completion_evidence": [],
+      "gate": null
+    },
+    {
+      "id": "P0C-002",
+      "stage": "0C",
+      "title": "Implement qualified rotor inflow and blade-element dynamics",
+      "work_packages": [
+        5,
+        7
+      ],
+      "dependencies": [
+        "P0C-001"
+      ],
+      "actor": "builder",
+      "status": "todo",
+      "acceptance": "Supported BEMT/inflow/flapping equations pass analytical limiting cases and spatial/time convergence; polar envelopes, compressibility/tip limits and uncertainty are explicit; missing effects are not invented.",
+      "proof_file": "docs/acceptance/P0C-002.md",
+      "planned_tests": [
+        "tests/acceptance/test_p0c_002.py"
+      ],
+      "completion_evidence": [],
+      "gate": null
+    },
+    {
+      "id": "P0C-003",
+      "stage": "0C",
+      "title": "Implement rotor torque balance and helicopter control",
+      "work_packages": [
+        5,
+        6
+      ],
+      "dependencies": [
+        "P0C-002"
+      ],
+      "actor": "builder",
+      "status": "todo",
+      "acceptance": "Supported main/tail/coaxial rotor layouts and collective/cyclic controls propagate torque, actuator limits and saturation consistently; trim, hover and failure-boundary verification cases pass.",
+      "proof_file": "docs/acceptance/P0C-003.md",
+      "planned_tests": [
+        "tests/acceptance/test_p0c_003.py"
+      ],
+      "completion_evidence": [],
+      "gate": null
+    },
+    {
+      "id": "P0C-004",
+      "stage": "0C",
+      "title": "Run helicopter missions and supported autorotation",
+      "work_packages": [
+        4,
+        6
+      ],
+      "dependencies": [
+        "P0C-003"
+      ],
+      "actor": "builder",
+      "status": "todo",
+      "acceptance": "Hover/climb/descent/translation/landing and any supported autorotation use recorded commands and one plant; unsupported recovery/autorotation regimes remain inconclusive rather than animated success.",
+      "proof_file": "docs/acceptance/P0C-004.md",
+      "planned_tests": [
+        "tests/acceptance/test_p0c_004.py"
+      ],
+      "completion_evidence": [],
+      "gate": null
+    },
+    {
+      "id": "P0C-005",
+      "stage": "0C",
+      "title": "Author VTOL tilt and lift-plus-cruise configurations",
+      "work_packages": [
+        3,
+        6
+      ],
+      "dependencies": [
+        "P0C-001"
+      ],
+      "actor": "builder",
+      "status": "todo",
+      "acceptance": "Supported tilt mechanisms, lift/cruise powertrains, control surfaces and geometry-dependent mass/loads serialize and round-trip; invalid mechanism configurations are diagnosed.",
+      "proof_file": "docs/acceptance/P0C-005.md",
+      "planned_tests": [
+        "tests/acceptance/test_p0c_005.py"
+      ],
+      "completion_evidence": [],
+      "gate": null
+    },
+    {
+      "id": "P0C-006",
+      "stage": "0C",
+      "title": "Implement coupled VTOL transitions and allocation",
+      "work_packages": [
+        5,
+        6
+      ],
+      "dependencies": [
+        "P0C-005",
+        "P0C-002",
+        "P0B-008"
+      ],
+      "actor": "builder",
+      "status": "todo",
+      "acceptance": "Hover-to-cruise and reverse transitions preserve authoritative state, momentum/energy accounting, actuator limits and control authority; unsupported transition envelopes are rejected explicitly.",
+      "proof_file": "docs/acceptance/P0C-006.md",
+      "planned_tests": [
+        "tests/acceptance/test_p0c_006.py"
+      ],
+      "completion_evidence": [],
+      "gate": null
+    },
+    {
+      "id": "P0C-007",
+      "stage": "0C",
+      "title": "Couple transient electrical, actuator and thermal behavior",
+      "work_packages": [
+        5
+      ],
+      "dependencies": [
+        "P0C-003",
+        "P0C-006"
+      ],
+      "actor": "builder",
+      "status": "todo",
+      "acceptance": "Dynamic bus/current/RPM/torque/heat and supported derating are consistently coupled; independently verified loss/thermal balances and latency/saturation limits pass; estimated parameters remain tagged.",
+      "proof_file": "docs/acceptance/P0C-007.md",
+      "planned_tests": [
+        "tests/acceptance/test_p0c_007.py"
+      ],
+      "completion_evidence": [],
+      "gate": null
+    },
+    {
+      "id": "P0C-008",
+      "stage": "0C",
+      "title": "Model installed rotor interaction and ground effects",
+      "work_packages": [
+        5,
+        7
+      ],
+      "dependencies": [
+        "P0C-002",
+        "P0C-006"
+      ],
+      "actor": "builder",
+      "status": "todo",
+      "acceptance": "Declared interaction/ground/off-axis models have numerical verification, calibration provenance and support envelopes; unknown installation/flow states remain unvalidated until measured.",
+      "proof_file": "docs/acceptance/P0C-008.md",
+      "planned_tests": [
+        "tests/acceptance/test_p0c_008.py"
+      ],
+      "completion_evidence": [],
+      "gate": null
+    },
+    {
+      "id": "P0C-009",
+      "stage": "0C",
+      "title": "Integrate geometry-dependent structural and modal analysis",
+      "work_packages": [
+        3,
+        5,
+        7
+      ],
+      "dependencies": [
+        "P0C-001",
+        "P0C-005"
+      ],
+      "actor": "builder",
+      "status": "todo",
+      "acceptance": "Supported loads, joints/materials, stress, modal/vibration and fatigue jobs consume exact geometry and publish assumptions/convergence; analytical fixtures pass; screening is not presented as installed strength qualification.",
+      "proof_file": "docs/acceptance/P0C-009.md",
+      "planned_tests": [
+        "tests/acceptance/test_p0c_009.py"
+      ],
+      "completion_evidence": [],
+      "gate": null
+    },
+    {
+      "id": "P0C-010",
+      "stage": "0C",
+      "title": "Integrate detailed aerodynamic solver workers",
+      "work_packages": [
+        7
+      ],
+      "dependencies": [
+        "P0C-008",
+        "P0B-010"
+      ],
+      "actor": "builder",
+      "status": "todo",
+      "acceptance": "At least the selected supported panel/VLM/CFD backends have reviewed licenses, mesh/boundary settings, progress/cancel/result contracts and code/solution verification; unimplemented backends remain absent from executable capabilities.",
+      "proof_file": "docs/acceptance/P0C-010.md",
+      "planned_tests": [
+        "tests/acceptance/test_p0c_010.py"
+      ],
+      "completion_evidence": [],
+      "gate": null
+    },
+    {
+      "id": "P0C-011",
+      "stage": "0C",
+      "title": "Integrate supported structural-thermal-aerodynamic coupling",
+      "work_packages": [
+        5,
+        7
+      ],
+      "dependencies": [
+        "P0C-007",
+        "P0C-009",
+        "P0C-010"
+      ],
+      "actor": "builder",
+      "status": "todo",
+      "acceptance": "Coupled exchanges conserve stated loads/energy, use consistent datums/clocks and converge under declared iteration/time tolerances; missing material/heat-transfer/closure inputs prevent acceptance.",
+      "proof_file": "docs/acceptance/P0C-011.md",
+      "planned_tests": [
+        "tests/acceptance/test_p0c_011.py"
+      ],
+      "completion_evidence": [],
+      "gate": null
+    },
+    {
+      "id": "P0C-012",
+      "stage": "0C",
+      "title": "Deliver budgeted local and remote detailed-job execution",
+      "work_packages": [
+        2,
+        7,
+        12
+      ],
+      "dependencies": [
+        "P0C-010",
+        "P0C-009"
+      ],
+      "actor": "builder",
+      "status": "todo",
+      "acceptance": "Queue/admission/progress/cancel/retry/authentication preserve frozen inputs and owned-process cleanup; actual memory/disk/deadline failures cannot publish success; local/remote equivalent cases agree within declared tolerance.",
+      "proof_file": "docs/acceptance/P0C-012.md",
+      "planned_tests": [
+        "tests/acceptance/test_p0c_012.py"
+      ],
+      "completion_evidence": [],
+      "gate": null
+    },
+    {
+      "id": "P0C-013",
+      "stage": "0C",
+      "title": "Verify helicopter and VTOL coupled missions",
+      "work_packages": [
+        6,
+        11
+      ],
+      "dependencies": [
+        "P0C-004",
+        "P0C-006",
+        "P0C-007",
+        "P0C-011"
+      ],
+      "actor": "builder",
+      "status": "todo",
+      "acceptance": "Trim, transition, time/mesh convergence, perturbations, energy, actuator saturation and modeled fault transitions pass normal desktop/headless verification; four-family regression remains green.",
+      "proof_file": "docs/acceptance/P0C-013.md",
+      "planned_tests": [
+        "tests/acceptance/test_p0c_013.py"
+      ],
+      "completion_evidence": [],
+      "gate": null
+    },
+    {
+      "id": "P0C-014",
+      "stage": "0C",
+      "title": "Register rotorcraft/VTOL validation campaigns",
+      "work_packages": [
+        11
+      ],
+      "dependencies": [
+        "P0C-013"
+      ],
+      "actor": "builder",
+      "status": "todo",
+      "acceptance": "Reviewed family-specific rotor, installation, control/thermal/structure and flight requirements, model freezes, uncertainty budgets and whole-experiment splits are registered before reveal.",
+      "proof_file": "docs/acceptance/P0C-014.md",
+      "planned_tests": [
+        "tests/acceptance/test_p0c_014.py"
+      ],
+      "completion_evidence": [],
+      "gate": null
+    },
+    {
+      "id": "P0C-015",
+      "stage": "0C",
+      "title": "Acquire sealed helicopter and installed-rotor measurements",
+      "work_packages": [
+        11
+      ],
+      "dependencies": [
+        "P0C-014"
+      ],
+      "actor": "custodian",
+      "status": "todo",
+      "acceptance": "Custodian supplies compatible rotor thrust/torque/inflow/temperature/control and complete helicopter mission measurements with known geometry, calibration, clocks and licensing.",
+      "proof_file": "docs/acceptance/P0C-015.md",
+      "planned_tests": [],
+      "completion_evidence": [],
+      "gate": null
+    },
+    {
+      "id": "P0C-016",
+      "stage": "0C",
+      "title": "Acquire sealed VTOL transition and coupling measurements",
+      "work_packages": [
+        11
+      ],
+      "dependencies": [
+        "P0C-014"
+      ],
+      "actor": "custodian",
+      "status": "todo",
+      "acceptance": "Custodian supplies matching VTOL hover/transition/cruise/recovery data, actuator states, electrical/thermal loads and independent motion measurements across registered regimes.",
+      "proof_file": "docs/acceptance/P0C-016.md",
+      "planned_tests": [],
+      "completion_evidence": [],
+      "gate": null
+    },
+    {
+      "id": "P0C-017",
+      "stage": "0C",
+      "title": "Validate installed thermal, structural and rotor effects",
+      "work_packages": [
+        5,
+        11
+      ],
+      "dependencies": [
+        "P0C-015",
+        "P0C-016"
+      ],
+      "actor": "builder",
+      "status": "todo",
+      "acceptance": "Independent component/installation forces, heat, strain/vibration and supported failure outcomes meet their registered criteria; apparatus-specific evidence is not transferred to unrelated geometry.",
+      "proof_file": "docs/acceptance/P0C-017.md",
+      "planned_tests": [
+        "tests/acceptance/test_p0c_017.py"
+      ],
+      "completion_evidence": [],
+      "gate": null
+    },
+    {
+      "id": "P0C-018",
+      "stage": "0C",
+      "title": "Validate helicopter complete missions and uncertainty",
+      "work_packages": [
+        6,
+        11
+      ],
+      "dependencies": [
+        "P0C-015",
+        "P0C-017"
+      ],
+      "actor": "builder",
+      "status": "todo",
+      "acceptance": "Per-flight helicopter agreement/failure requirements and calibrated joint coverage/width pass by independent cohort; autorotation is accepted only when explicitly measured and covered.",
+      "proof_file": "docs/acceptance/P0C-018.md",
+      "planned_tests": [
+        "tests/acceptance/test_p0c_018.py"
+      ],
+      "completion_evidence": [],
+      "gate": null
+    },
+    {
+      "id": "P0C-019",
+      "stage": "0C",
+      "title": "Validate VTOL complete missions and uncertainty",
+      "work_packages": [
+        6,
+        11
+      ],
+      "dependencies": [
+        "P0C-016",
+        "P0C-017"
+      ],
+      "actor": "builder",
+      "status": "todo",
+      "acceptance": "Independent transition/control/trajectory/energy/thermal outputs meet frozen requirements with whole-flight uncertainty; mode switching cannot hide unsupported or failing intervals.",
+      "proof_file": "docs/acceptance/P0C-019.md",
+      "planned_tests": [
+        "tests/acceptance/test_p0c_019.py"
+      ],
+      "completion_evidence": [],
+      "gate": null
+    },
+    {
+      "id": "P0C-020",
+      "stage": "0C",
+      "title": "Obtain independent rotorcraft and VTOL review",
+      "work_packages": [
+        11
+      ],
+      "dependencies": [
+        "P0C-018",
+        "P0C-019"
+      ],
+      "actor": "reviewer",
+      "status": "todo",
+      "acceptance": "Reviewer reproduces each family dossier, evaluates coupled-model discrepancy and signs distinct validated operating envelopes and known failures.",
+      "proof_file": "docs/acceptance/P0C-020.md",
+      "planned_tests": [],
+      "completion_evidence": [],
+      "gate": null
+    },
+    {
+      "id": "P0C-021",
+      "stage": "0C",
+      "title": "Deliver rotorcraft/VTOL learning and comparison workflows",
+      "work_packages": [
+        10
+      ],
+      "dependencies": [
+        "P0C-013",
+        "P0C-012"
+      ],
+      "actor": "builder",
+      "status": "todo",
+      "acceptance": "Normal desktop users build supported mechanisms, compare rotor/transition choices, inspect assumptions and save reproducible detailed/interactive experiments with correct evidence labels.",
+      "proof_file": "docs/acceptance/P0C-021.md",
+      "planned_tests": [
+        "tests/acceptance/test_p0c_021.py"
+      ],
+      "completion_evidence": [],
+      "gate": null
+    },
+    {
+      "id": "P0C-022",
+      "stage": "0C",
+      "title": "Qualify four-family application compatibility and recovery",
+      "work_packages": [
+        12
+      ],
+      "dependencies": [
+        "P0C-021",
+        "P0C-012"
+      ],
+      "actor": "builder",
+      "status": "todo",
+      "acceptance": "Install/migrate/edit/run/detailed-job/cancel/save/reopen tests and exact-head audits pass for all supported families; queues and failed remote/local jobs preserve valid projects.",
+      "proof_file": "docs/acceptance/P0C-022.md",
+      "planned_tests": [
+        "tests/acceptance/test_p0c_022.py"
+      ],
+      "completion_evidence": [],
+      "gate": null
+    },
+    {
+      "id": "P0C-023",
+      "stage": "0C",
+      "title": "Exit: four-family and detailed-analysis software slice",
+      "work_packages": [
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        10,
+        11,
+        12
+      ],
+      "dependencies": [
+        "P0C-013",
+        "P0C-014",
+        "P0C-021",
+        "P0C-022"
+      ],
+      "actor": "builder",
+      "status": "todo",
+      "acceptance": "Four families and selected detailed-analysis paths work through normal entry points with declared domains, numerical verification, budgets and explicit remaining physical gaps. Enables 0D software.",
+      "proof_file": "docs/acceptance/P0C-023.md",
+      "planned_tests": [
+        "tests/acceptance/test_p0c_023.py"
+      ],
+      "completion_evidence": [],
+      "gate": "software_exit"
+    },
+    {
+      "id": "P0C-024",
+      "stage": "0C",
+      "title": "Exit: physically accepted rotorcraft/VTOL envelopes",
+      "work_packages": [
+        6,
+        11,
+        12
+      ],
+      "dependencies": [
+        "P0C-020",
+        "P0C-023"
+      ],
+      "actor": "builder",
+      "status": "todo",
+      "acceptance": "Independent review accepts each demonstrated rotorcraft/VTOL envelope without inheriting multirotor/fixed-wing acceptance or asserting unsupported recovery behavior.",
+      "proof_file": "docs/acceptance/P0C-024.md",
+      "planned_tests": [
+        "tests/acceptance/test_p0c_024.py"
+      ],
+      "completion_evidence": [],
+      "gate": "physical_exit"
+    },
+    {
+      "id": "P0D-001",
+      "stage": "0D",
+      "title": "Complete supported CAD, drawings and engineering handoff",
+      "work_packages": [
+        3
+      ],
+      "dependencies": [
+        "P0C-023"
+      ],
+      "actor": "builder",
+      "status": "todo",
+      "acceptance": "Supported sketch/feature/assembly/joint/material operations, clearances, drawing views/dimensions, BOM and exchange work end to end with traceable revisions, units and engineering assumptions.",
+      "proof_file": "docs/acceptance/P0D-001.md",
+      "planned_tests": [
+        "tests/acceptance/test_p0d_001.py"
+      ],
+      "completion_evidence": [],
+      "gate": null
+    },
+    {
+      "id": "P0D-002",
+      "stage": "0D",
+      "title": "Complete component/material/source ingestion libraries",
+      "work_packages": [
+        1,
+        3,
+        5,
+        11
+      ],
+      "dependencies": [
+        "P0D-001"
+      ],
+      "actor": "builder",
+      "status": "todo",
+      "acceptance": "Versioned ingestion validates units, identities, rights, raw hashes, instrument uncertainty and whole-experiment roles; new dated custody records never overwrite historical snapshots; generic/estimated entries remain explicit.",
+      "proof_file": "docs/acceptance/P0D-002.md",
+      "planned_tests": [
+        "tests/acceptance/test_p0d_002.py"
+      ],
+      "completion_evidence": [],
+      "gate": null
+    },
+    {
+      "id": "P0D-003",
+      "stage": "0D",
+      "title": "Complete guided and advanced invention/optimization workflows",
+      "work_packages": [
+        7,
+        10
+      ],
+      "dependencies": [
+        "P0D-001",
+        "P0C-021"
+      ],
+      "actor": "builder",
+      "status": "todo",
+      "acceptance": "All four families support tutorial-to-advanced hypotheses, sweeps, constrained optimization, comparisons and reproducible reports; failed/out-of-envelope candidates remain visible and optimization does not confer validation.",
+      "proof_file": "docs/acceptance/P0D-003.md",
+      "planned_tests": [
+        "tests/acceptance/test_p0d_003.py"
+      ],
+      "completion_evidence": [],
+      "gate": null
+    },
+    {
+      "id": "P0D-004",
+      "stage": "0D",
+      "title": "Complete terrain, collision, contact and world authoring",
+      "work_packages": [
+        4
+      ],
+      "dependencies": [
+        "P0C-023"
+      ],
+      "actor": "builder",
+      "status": "todo",
+      "acceptance": "Saved terrain/obstacles/landing/contact models and mission authoring support all declared families and coordinate/time boundaries; geometry/contact regression cases and replay integrity pass.",
+      "proof_file": "docs/acceptance/P0D-004.md",
+      "planned_tests": [
+        "tests/acceptance/test_p0d_004.py"
+      ],
+      "completion_evidence": [],
+      "gate": null
+    },
+    {
+      "id": "P0D-005",
+      "stage": "0D",
+      "title": "Implement spatial wind, gust, turbulence and atmospheric fields",
+      "work_packages": [
+        4,
+        8
+      ],
+      "dependencies": [
+        "P0D-004"
+      ],
+      "actor": "builder",
+      "status": "todo",
+      "acceptance": "Manual spatial/time fields and seeded gust/turbulence models affect relative-air forces with declared sampling/resolution; temperature/pressure/humidity change supported atmospheric properties; shaders alone cannot change the evidence status.",
+      "proof_file": "docs/acceptance/P0D-005.md",
+      "planned_tests": [
+        "tests/acceptance/test_p0d_005.py"
+      ],
+      "completion_evidence": [],
+      "gate": null
+    },
+    {
+      "id": "P0D-006",
+      "stage": "0D",
+      "title": "Implement supported rain and wet-operation effects",
+      "work_packages": [
+        5,
+        8
+      ],
+      "dependencies": [
+        "P0D-005",
+        "P0C-011"
+      ],
+      "actor": "builder",
+      "status": "todo",
+      "acceptance": "Declared rain/film/mass/drag, sensor and electrical effects couple to the plant using sourced models and parameter ranges; unsupported ingress or failure mechanisms are inconclusive, with no shader-as-physics claim.",
+      "proof_file": "docs/acceptance/P0D-006.md",
+      "planned_tests": [
+        "tests/acceptance/test_p0d_006.py"
+      ],
+      "completion_evidence": [],
+      "gate": null
+    },
+    {
+      "id": "P0D-007",
+      "stage": "0D",
+      "title": "Implement supported snow, icing, melting and shedding",
+      "work_packages": [
+        3,
+        5,
+        8
+      ],
+      "dependencies": [
+        "P0D-006"
+      ],
+      "actor": "builder",
+      "status": "todo",
+      "acceptance": "Declared accumulation/heat/shape/mass/inertia/load/sensor changes and shedding affect supported physics, geometry and limits consistently; unknown ice shapes or thermal parameters remain UNVERIFIED_ESTIMATE/unvalidated.",
+      "proof_file": "docs/acceptance/P0D-007.md",
+      "planned_tests": [
+        "tests/acceptance/test_p0d_007.py"
+      ],
+      "completion_evidence": [],
+      "gate": null
+    },
+    {
+      "id": "P0D-008",
+      "stage": "0D",
+      "title": "Verify adverse-weather coupling and failure propagation",
+      "work_packages": [
+        5,
+        8,
+        11
+      ],
+      "dependencies": [
+        "P0D-007"
+      ],
+      "actor": "builder",
+      "status": "todo",
+      "acceptance": "Limiting/dry cases, mass/energy balances, numerical convergence and supported loss/derating/failure paths pass; each weather mechanism has a distinct applicability and evidence status.",
+      "proof_file": "docs/acceptance/P0D-008.md",
+      "planned_tests": [
+        "tests/acceptance/test_p0d_008.py"
+      ],
+      "completion_evidence": [],
+      "gate": null
+    },
+    {
+      "id": "P0D-009",
+      "stage": "0D",
+      "title": "Register adverse-weather validation protocols",
+      "work_packages": [
+        11
+      ],
+      "dependencies": [
+        "P0D-008"
+      ],
+      "actor": "builder",
+      "status": "todo",
+      "acceptance": "Freeze mechanism-specific rain/wet/snow/icing geometry, conditions, instruments, uncertainty and decision criteria before independent reveal; public section tests cannot automatically validate complete installed vehicles.",
+      "proof_file": "docs/acceptance/P0D-009.md",
+      "planned_tests": [
+        "tests/acceptance/test_p0d_009.py"
+      ],
+      "completion_evidence": [],
+      "gate": null
+    },
+    {
+      "id": "P0D-010",
+      "stage": "0D",
+      "title": "Acquire sealed compatible adverse-weather experiments",
+      "work_packages": [
+        11
+      ],
+      "dependencies": [
+        "P0D-009"
+      ],
+      "actor": "custodian",
+      "status": "todo",
+      "acceptance": "Custodian provides legally usable matched mechanism/component/installation or vehicle measurements with calibrated environment, timing, geometry and uncertainty records.",
+      "proof_file": "docs/acceptance/P0D-010.md",
+      "planned_tests": [],
+      "completion_evidence": [],
+      "gate": null
+    },
+    {
+      "id": "P0D-011",
+      "stage": "0D",
+      "title": "Validate claimed adverse-weather envelopes",
+      "work_packages": [
+        8,
+        11
+      ],
+      "dependencies": [
+        "P0D-010"
+      ],
+      "actor": "builder",
+      "status": "todo",
+      "acceptance": "Every advertised decision-grade weather use meets its frozen agreement, failure and uncertainty criteria; missing matched evidence remains unvalidated research use, not a passed weather gate.",
+      "proof_file": "docs/acceptance/P0D-011.md",
+      "planned_tests": [
+        "tests/acceptance/test_p0d_011.py"
+      ],
+      "completion_evidence": [],
+      "gate": null
+    },
+    {
+      "id": "P0D-012",
+      "stage": "0D",
+      "title": "Integrate ArduPilot SITL with one authoritative plant",
+      "work_packages": [
+        6,
+        9
+      ],
+      "dependencies": [
+        "P0C-023",
+        "P0D-004"
+      ],
+      "actor": "builder",
+      "status": "todo",
+      "acceptance": "Pinned firmware, controls, state exchanges and clocks use one declared integrator; commanded faults, latency/saturation, pause/step/replay and loss of link are verified without duplicate plant integration.",
+      "proof_file": "docs/acceptance/P0D-012.md",
+      "planned_tests": [
+        "tests/acceptance/test_p0d_012.py"
+      ],
+      "completion_evidence": [],
+      "gate": null
+    },
+    {
+      "id": "P0D-013",
+      "stage": "0D",
+      "title": "Integrate declared PX4 and controller adapter support",
+      "work_packages": [
+        6,
+        9
+      ],
+      "dependencies": [
+        "P0D-012"
+      ],
+      "actor": "builder",
+      "status": "todo",
+      "acceptance": "Selected supported PX4/controller configurations have versioned frame/unit/time/actuator adapters and repeatable missions; unsupported firmware/modes are refused and are not listed as working integrations.",
+      "proof_file": "docs/acceptance/P0D-013.md",
+      "planned_tests": [
+        "tests/acceptance/test_p0d_013.py"
+      ],
+      "completion_evidence": [],
+      "gate": null
+    },
+    {
+      "id": "P0D-014",
+      "stage": "0D",
+      "title": "Deliver timestamped camera, LiDAR and sensor experiments",
+      "work_packages": [
+        4,
+        9
+      ],
+      "dependencies": [
+        "P0D-005",
+        "P0D-012"
+      ],
+      "actor": "builder",
+      "status": "todo",
+      "acceptance": "Declared IMU/GNSS/barometer/camera/LiDAR noise, bias, latency, calibration and clocks are recorded; rendered observations remain SYNTHETIC and their rate/resolution never alters the authoritative plant.",
+      "proof_file": "docs/acceptance/P0D-014.md",
+      "planned_tests": [
+        "tests/acceptance/test_p0d_014.py"
+      ],
+      "completion_evidence": [],
+      "gate": null
+    },
+    {
+      "id": "P0D-015",
+      "stage": "0D",
+      "title": "Deliver vision, localization, mapping and navigation",
+      "work_packages": [
+        9,
+        10
+      ],
+      "dependencies": [
+        "P0D-014"
+      ],
+      "actor": "builder",
+      "status": "todo",
+      "acceptance": "Supported VIO/SLAM/map/navigation experiments have declared sensor models, reproducible ground-truth scoring and loss/failure cases; synthetic performance is labeled separately from hardware validation.",
+      "proof_file": "docs/acceptance/P0D-015.md",
+      "planned_tests": [
+        "tests/acceptance/test_p0d_015.py"
+      ],
+      "completion_evidence": [],
+      "gate": null
+    },
+    {
+      "id": "P0D-016",
+      "stage": "0D",
+      "title": "Deliver obstacle avoidance, geofences and manual overrides",
+      "work_packages": [
+        9
+      ],
+      "dependencies": [
+        "P0D-015",
+        "P0D-004"
+      ],
+      "actor": "builder",
+      "status": "todo",
+      "acceptance": "Supported obstacle/geofence scenarios, perception failures, loss of navigation and operator override produce reproducible decisions and explicit limits; unavailable avoidance authority cannot create success.",
+      "proof_file": "docs/acceptance/P0D-016.md",
+      "planned_tests": [
+        "tests/acceptance/test_p0d_016.py"
+      ],
+      "completion_evidence": [],
+      "gate": null
+    },
+    {
+      "id": "P0D-017",
+      "stage": "0D",
+      "title": "Deliver coordinated multi-drone experiments",
+      "work_packages": [
+        4,
+        9
+      ],
+      "dependencies": [
+        "P0D-016"
+      ],
+      "actor": "builder",
+      "status": "todo",
+      "acceptance": "Each vehicle has independent identity/state/power/limits; shared clocks/world effects, inter-vehicle sensing/collision and bounded swarm scheduling reproduce with declared seeds and resources.",
+      "proof_file": "docs/acceptance/P0D-017.md",
+      "planned_tests": [
+        "tests/acceptance/test_p0d_017.py"
+      ],
+      "completion_evidence": [],
+      "gate": null
+    },
+    {
+      "id": "P0D-018",
+      "stage": "0D",
+      "title": "Integrate controller and sensor hardware-in-the-loop",
+      "work_packages": [
+        5,
+        9
+      ],
+      "dependencies": [
+        "P0D-013",
+        "P0D-014"
+      ],
+      "actor": "builder",
+      "status": "todo",
+      "acceptance": "Actual configured firmware, clock synchronization, actuator/sensor latency and saturation are measured and replayed; hardware disconnect/failure handling and evidence provenance are verified.",
+      "proof_file": "docs/acceptance/P0D-018.md",
+      "planned_tests": [
+        "tests/acceptance/test_p0d_018.py"
+      ],
+      "completion_evidence": [],
+      "gate": null
+    },
+    {
+      "id": "P0D-019",
+      "stage": "0D",
+      "title": "Register autonomy and sensor validation campaigns",
+      "work_packages": [
+        11
+      ],
+      "dependencies": [
+        "P0D-016",
+        "P0D-017",
+        "P0D-018"
+      ],
+      "actor": "builder",
+      "status": "todo",
+      "acceptance": "Freeze independent real-sensor/controller missions, environment, failure classes, observables, whole-trial splits and decision criteria; simulation ground truth cannot substitute for physical observations.",
+      "proof_file": "docs/acceptance/P0D-019.md",
+      "planned_tests": [
+        "tests/acceptance/test_p0d_019.py"
+      ],
+      "completion_evidence": [],
+      "gate": null
+    },
+    {
+      "id": "P0D-020",
+      "stage": "0D",
+      "title": "Acquire sealed sensor/controller/autonomy measurements",
+      "work_packages": [
+        11
+      ],
+      "dependencies": [
+        "P0D-019"
+      ],
+      "actor": "custodian",
+      "status": "todo",
+      "acceptance": "Custodian supplies matching hardware/firmware/calibration/clock records and repeated physical missions, including relevant disturbance and failure cases under appropriate professional review.",
+      "proof_file": "docs/acceptance/P0D-020.md",
+      "planned_tests": [],
+      "completion_evidence": [],
+      "gate": null
+    },
+    {
+      "id": "P0D-021",
+      "stage": "0D",
+      "title": "Validate advertised sensor, autonomy and multi-drone uses",
+      "work_packages": [
+        9,
+        11
+      ],
+      "dependencies": [
+        "P0D-020"
+      ],
+      "actor": "builder",
+      "status": "todo",
+      "acceptance": "Registered tracking/perception/control/failure criteria and joint uncertainty pass for each claimed real-world use; unsupported algorithms, hardware and environments retain unvalidated status.",
+      "proof_file": "docs/acceptance/P0D-021.md",
+      "planned_tests": [
+        "tests/acceptance/test_p0d_021.py"
+      ],
+      "completion_evidence": [],
+      "gate": null
+    },
+    {
+      "id": "P0D-022",
+      "stage": "0D",
+      "title": "Qualify dedicated-GPU and remote/workstation profiles",
+      "work_packages": [
+        2,
+        7,
+        12
+      ],
+      "dependencies": [
+        "P0D-003",
+        "P0D-017",
+        "P0C-012"
+      ],
+      "actor": "builder",
+      "status": "todo",
+      "acceptance": "Publish actual Tier 2 camera/LiDAR/editing and Tier 3 selected solver/swarm budgets, frame-time/RAM/VRAM/runtime/cancellation and correctness; no unlimited mesh/assembly guarantee or silent fidelity substitution.",
+      "proof_file": "docs/acceptance/P0D-022.md",
+      "planned_tests": [
+        "tests/acceptance/test_p0d_022.py"
+      ],
+      "completion_evidence": [],
+      "gate": null
+    },
+    {
+      "id": "P0D-023",
+      "stage": "0D",
+      "title": "Complete application accessibility, help and learning content",
+      "work_packages": [
+        2,
+        10,
+        12
+      ],
+      "dependencies": [
+        "P0D-003",
+        "P0D-016"
+      ],
+      "actor": "builder",
+      "status": "todo",
+      "acceptance": "Keyboard/focus/contrast/readability/error-recovery and supported instructional journeys pass in the desktop; equations, assumptions, model/evidence status and operating limits are available at the decision point.",
+      "proof_file": "docs/acceptance/P0D-023.md",
+      "planned_tests": [
+        "tests/acceptance/test_p0d_023.py"
+      ],
+      "completion_evidence": [],
+      "gate": null
+    },
+    {
+      "id": "P0D-024",
+      "stage": "0D",
+      "title": "Complete production data, privacy and job hardening",
+      "work_packages": [
+        12
+      ],
+      "dependencies": [
+        "P0D-018",
+        "P0D-022"
+      ],
+      "actor": "builder",
+      "status": "todo",
+      "acceptance": "Project/database migrations, schema compatibility, access controls, remote authentication, recovery/backups, bounded logs, plugin boundaries, load/performance and interrupted-job tests pass; local operation does not require cloud services.",
+      "proof_file": "docs/acceptance/P0D-024.md",
+      "planned_tests": [
+        "tests/acceptance/test_p0d_024.py"
+      ],
+      "completion_evidence": [],
+      "gate": null
+    },
+    {
+      "id": "P0D-025",
+      "stage": "0D",
+      "title": "Complete dependency licensing, SBOM and security acceptance",
+      "work_packages": [
+        12
+      ],
+      "dependencies": [
+        "P0D-002",
+        "P0D-024"
+      ],
+      "actor": "builder",
+      "status": "todo",
+      "acceptance": "Redistributed code/data/models/notices have reviewed terms and pinned versions; SBOM is reproducible; all required audits and threat-relevant regressions pass without ignored audit failures.",
+      "proof_file": "docs/acceptance/P0D-025.md",
+      "planned_tests": [
+        "tests/acceptance/test_p0d_025.py"
+      ],
+      "completion_evidence": [],
+      "gate": null
+    },
+    {
+      "id": "P0D-026",
+      "stage": "0D",
+      "title": "Build reproducible standalone release installers",
+      "work_packages": [
+        2,
+        12
+      ],
+      "dependencies": [
+        "P0D-025"
+      ],
+      "actor": "builder",
+      "status": "todo",
+      "acceptance": "Windows installer and declared headless/other-platform distributions reproduce from frozen locks with checksums/notices and selected signing policy; unsupported platforms are not advertised as tested.",
+      "proof_file": "docs/acceptance/P0D-026.md",
+      "planned_tests": [
+        "tests/acceptance/test_p0d_026.py"
+      ],
+      "completion_evidence": [],
+      "gate": null
+    },
+    {
+      "id": "P0D-027",
+      "stage": "0D",
+      "title": "Run complete desktop release journeys and compatibility matrix",
+      "work_packages": [
+        12
+      ],
+      "dependencies": [
+        "P0D-001",
+        "P0D-008",
+        "P0D-017",
+        "P0D-023",
+        "P0D-026"
+      ],
+      "actor": "builder",
+      "status": "todo",
+      "acceptance": "Clean installation, all-family design/edit/exchange/run/analysis/learn/save/reopen/update/cancel/recovery paths pass on advertised profiles; existing project migrations and all exact-head CI jobs remain green.",
+      "proof_file": "docs/acceptance/P0D-027.md",
+      "planned_tests": [
+        "tests/acceptance/test_p0d_027.py"
+      ],
+      "completion_evidence": [],
+      "gate": null
+    },
+    {
+      "id": "P0D-028",
+      "stage": "0D",
+      "title": "Assemble the complete numerical and scientific dossier",
+      "work_packages": [
+        11
+      ],
+      "dependencies": [
+        "P0A-040",
+        "P0B-022",
+        "P0C-024",
+        "P0D-011",
+        "P0D-021",
+        "P0D-027"
+      ],
+      "actor": "builder",
+      "status": "todo",
+      "acceptance": "Each decision-grade claim links source/geometry/controller/model identity, numerical verification, held-out measured agreement, uncertainty coverage, failures and applicability; every unvalidated use is explicit.",
+      "proof_file": "docs/acceptance/P0D-028.md",
+      "planned_tests": [
+        "tests/acceptance/test_p0d_028.py"
+      ],
+      "completion_evidence": [],
+      "gate": null
+    },
+    {
+      "id": "P0D-029",
+      "stage": "0D",
+      "title": "Obtain independent Phase 0 engineering acceptance",
+      "work_packages": [
+        11
+      ],
+      "dependencies": [
+        "P0D-028"
+      ],
+      "actor": "reviewer",
+      "status": "todo",
+      "acceptance": "Qualified independent reviewers reproduce and approve the stated intended uses and release limitations; owner/product approval cannot replace scientific review.",
+      "proof_file": "docs/acceptance/P0D-029.md",
+      "planned_tests": [],
+      "completion_evidence": [],
+      "gate": null
+    },
+    {
+      "id": "P0D-030",
+      "stage": "0D",
+      "title": "Exit: complete supported drone laboratory software",
+      "work_packages": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12
+      ],
+      "dependencies": [
+        "P0D-027"
+      ],
+      "actor": "builder",
+      "status": "todo",
+      "acceptance": "Every Phase 0 functional requirement and all 12 work-package software checklists are implemented and verified, with traceable supported domains and honest research/physical status. This alone does not close M21–M30.",
+      "proof_file": "docs/acceptance/P0D-030.md",
+      "planned_tests": [
+        "tests/acceptance/test_p0d_030.py"
+      ],
+      "completion_evidence": [],
+      "gate": "software_exit"
+    },
+    {
+      "id": "P0D-031",
+      "stage": "0D",
+      "title": "Release the evidence-qualified drone laboratory",
+      "work_packages": [
+        11,
+        12
+      ],
+      "dependencies": [
+        "P0D-029",
+        "P0D-030"
+      ],
+      "actor": "builder",
+      "status": "todo",
+      "acceptance": "Reproducible release package, independent review, operating-envelope documentation, recovery/security/compatibility results and all advertised physical claims pass; unsupported novel designs remain explicitly unvalidated.",
+      "proof_file": "docs/acceptance/P0D-031.md",
+      "planned_tests": [
+        "tests/acceptance/test_p0d_031.py"
+      ],
+      "completion_evidence": [],
+      "gate": "release"
+    },
+    {
+      "id": "P0D-032",
+      "stage": "0D",
+      "title": "Exit Phase 0 and reconcile every legacy acceptance gate",
+      "work_packages": [
+        1,
+        11,
+        12
+      ],
+      "dependencies": [
+        "P0D-031"
+      ],
+      "actor": "owner",
+      "status": "todo",
+      "acceptance": "Owner accepts the completed Phase 0 dossier; all 12 package issues and applicable M21–M30 exits have distinct linked software/scientific evidence. Missing required evidence keeps this gate open and future phases locked.",
+      "proof_file": "docs/acceptance/P0D-032.md",
+      "planned_tests": [],
+      "completion_evidence": [],
+      "gate": "phase_exit"
+    },
+    {
+      "id": "P1-001",
+      "stage": "1",
+      "title": "Authorize entry to Bio-inspired flight",
+      "work_packages": [],
+      "dependencies": [
+        "P0D-032"
+      ],
+      "actor": "owner",
+      "status": "todo",
+      "acceptance": "Previous phase exit and Phase 0 acceptance are complete; owner explicitly authorizes this phase. Until then, interfaces and dataset registries only; no new model/product implementation.",
+      "proof_file": "docs/acceptance/P1-001.md",
+      "planned_tests": [],
+      "completion_evidence": [],
+      "gate": "phase_entry"
+    },
+    {
+      "id": "P1-002",
+      "stage": "1",
+      "title": "Define morphing/flapping geometry and measured parameter contracts",
+      "work_packages": [],
+      "dependencies": [
+        "P1-001"
+      ],
+      "actor": "builder",
+      "status": "todo",
+      "acceptance": "Versioned geometry, articulated/flexible state, actuator/energy, source-role and bird/robot measurement interfaces are reviewed; biological measurements are not silently scaled into validated aircraft.",
+      "proof_file": "docs/acceptance/P1-002.md",
+      "planned_tests": [
+        "tests/acceptance/test_p1_002.py"
+      ],
+      "completion_evidence": [],
+      "gate": null
+    },
+    {
+      "id": "P1-003",
+      "stage": "1",
+      "title": "Implement supported unsteady aeroelastic and flapping dynamics",
+      "work_packages": [],
+      "dependencies": [
+        "P1-002"
+      ],
+      "actor": "builder",
+      "status": "todo",
+      "acceptance": "Selected equations/closures and numerical discretization have analytic/limiting/convergence checks; unsourced coefficients remain UNVERIFIED_ESTIMATE and unsupported mechanisms are rejected.",
+      "proof_file": "docs/acceptance/P1-003.md",
+      "planned_tests": [
+        "tests/acceptance/test_p1_003.py"
+      ],
+      "completion_evidence": [],
+      "gate": null
+    },
+    {
+      "id": "P1-004",
+      "stage": "1",
+      "title": "Freeze bio-inspired actuation, structure and mission protocols",
+      "work_packages": [],
+      "dependencies": [
+        "P1-003"
+      ],
+      "actor": "builder",
+      "status": "todo",
+      "acceptance": "Freeze configurations, control, compliant structure, fatigue/energy limits, intended uses and reviewed independent component/mission criteria before reveal.",
+      "proof_file": "docs/acceptance/P1-004.md",
+      "planned_tests": [
+        "tests/acceptance/test_p1_004.py"
+      ],
+      "completion_evidence": [],
+      "gate": null
+    },
+    {
+      "id": "P1-005",
+      "stage": "1",
+      "title": "Acquire sealed mechanism and uncrewed mission measurements",
+      "work_packages": [],
+      "dependencies": [
+        "P1-004"
+      ],
+      "actor": "custodian",
+      "status": "todo",
+      "acceptance": "Matching independent force/deformation/actuator/energy/trajectory data include calibration, clocks, conditions and whole-experiment splits.",
+      "proof_file": "docs/acceptance/P1-005.md",
+      "planned_tests": [],
+      "completion_evidence": [],
+      "gate": null
+    },
+    {
+      "id": "P1-006",
+      "stage": "1",
+      "title": "Verify and integrate the bio-inspired desktop design/run loop",
+      "work_packages": [],
+      "dependencies": [
+        "P1-005"
+      ],
+      "actor": "builder",
+      "status": "todo",
+      "acceptance": "Build/edit/control/run/cancel/save/reopen learning workflows and all prior supported drone regressions pass with numerical error reported.",
+      "proof_file": "docs/acceptance/P1-006.md",
+      "planned_tests": [
+        "tests/acceptance/test_p1_006.py"
+      ],
+      "completion_evidence": [],
+      "gate": null
+    },
+    {
+      "id": "P1-007",
+      "stage": "1",
+      "title": "Validate bio-inspired operating envelopes and joint uncertainty",
+      "work_packages": [],
+      "dependencies": [
+        "P1-006"
+      ],
+      "actor": "builder",
+      "status": "todo",
+      "acceptance": "Frozen held-out mechanism and complete-mission criteria, failure detection, discrepancy and cohort coverage pass; drone acceptance is not inherited.",
+      "proof_file": "docs/acceptance/P1-007.md",
+      "planned_tests": [
+        "tests/acceptance/test_p1_007.py"
+      ],
+      "completion_evidence": [],
+      "gate": null
+    },
+    {
+      "id": "P1-008",
+      "stage": "1",
+      "title": "Review and release the supported bio-inspired scope",
+      "work_packages": [],
+      "dependencies": [
+        "P1-007"
+      ],
+      "actor": "reviewer",
+      "status": "todo",
+      "acceptance": "Independent qualified review accepts the limited intended uses; reproducible installation/security/recovery and a signed evidence dossier close the phase.",
+      "proof_file": "docs/acceptance/P1-008.md",
+      "planned_tests": [],
+      "completion_evidence": [],
+      "gate": "phase_exit"
+    },
+    {
+      "id": "P2-001",
+      "stage": "2",
+      "title": "Authorize entry to Human-scale and crewed systems",
+      "work_packages": [],
+      "dependencies": [
+        "P1-008"
+      ],
+      "actor": "owner",
+      "status": "todo",
+      "acceptance": "Previous phase exit and Phase 0 acceptance are complete; owner explicitly authorizes this phase. Until then, interfaces and dataset registries only; no new model/product implementation.",
+      "proof_file": "docs/acceptance/P2-001.md",
+      "planned_tests": [],
+      "completion_evidence": [],
+      "gate": "phase_entry"
+    },
+    {
+      "id": "P2-002",
+      "stage": "2",
+      "title": "Define human loads, apparatus mass and recovery contracts",
+      "work_packages": [],
+      "dependencies": [
+        "P2-001"
+      ],
+      "actor": "builder",
+      "status": "todo",
+      "acceptance": "Human mass, complete apparatus, geometry, human-machine control, redundancy/recovery and engineering review requirements are explicit; the 60 kg pilot is an assumption, not total takeoff mass.",
+      "proof_file": "docs/acceptance/P2-002.md",
+      "planned_tests": [
+        "tests/acceptance/test_p2_002.py"
+      ],
+      "completion_evidence": [],
+      "gate": null
+    },
+    {
+      "id": "P2-003",
+      "stage": "2",
+      "title": "Implement supported human-scale coupled models and controls",
+      "work_packages": [],
+      "dependencies": [
+        "P2-002"
+      ],
+      "actor": "builder",
+      "status": "todo",
+      "acceptance": "Aerodynamic, structural, thermal, control and failure mechanisms have verified equations/limits, numerical convergence and sourced parameters; no extrapolated drone certification.",
+      "proof_file": "docs/acceptance/P2-003.md",
+      "planned_tests": [
+        "tests/acceptance/test_p2_003.py"
+      ],
+      "completion_evidence": [],
+      "gate": null
+    },
+    {
+      "id": "P2-004",
+      "stage": "2",
+      "title": "Freeze professionally reviewed validation and risk protocols",
+      "work_packages": [],
+      "dependencies": [
+        "P2-003"
+      ],
+      "actor": "builder",
+      "status": "todo",
+      "acceptance": "Qualified reviewers approve intended uses, instrumentation, uncertainty, independent data partitions and professional experimental requirements before reveal; software approval authorizes no human flight.",
+      "proof_file": "docs/acceptance/P2-004.md",
+      "planned_tests": [
+        "tests/acceptance/test_p2_004.py"
+      ],
+      "completion_evidence": [],
+      "gate": null
+    },
+    {
+      "id": "P2-005",
+      "stage": "2",
+      "title": "Acquire sealed component and uncrewed full-scale measurements",
+      "work_packages": [],
+      "dependencies": [
+        "P2-004"
+      ],
+      "actor": "custodian",
+      "status": "todo",
+      "acceptance": "Independent compatible structural/power/actuator/thermal and uncrewed full-scale records are supplied by qualified custodians with applicable permissions and calibration.",
+      "proof_file": "docs/acceptance/P2-005.md",
+      "planned_tests": [],
+      "completion_evidence": [],
+      "gate": null
+    },
+    {
+      "id": "P2-006",
+      "stage": "2",
+      "title": "Verify and integrate human-scale engineering workflows",
+      "work_packages": [],
+      "dependencies": [
+        "P2-005"
+      ],
+      "actor": "builder",
+      "status": "todo",
+      "acceptance": "Supported design/load/control/redundancy/recovery studies reproduce through desktop/headless paths; conservation, limits, numerical error and prior-family regressions pass.",
+      "proof_file": "docs/acceptance/P2-006.md",
+      "planned_tests": [
+        "tests/acceptance/test_p2_006.py"
+      ],
+      "completion_evidence": [],
+      "gate": null
+    },
+    {
+      "id": "P2-007",
+      "stage": "2",
+      "title": "Validate human-scale decision envelopes and uncertainty",
+      "work_packages": [],
+      "dependencies": [
+        "P2-006"
+      ],
+      "actor": "builder",
+      "status": "todo",
+      "acceptance": "Predeclared held-out agreement/failure/uncertainty criteria pass for stated configurations; unsupported human/crewed operating claims remain unvalidated.",
+      "proof_file": "docs/acceptance/P2-007.md",
+      "planned_tests": [
+        "tests/acceptance/test_p2_007.py"
+      ],
+      "completion_evidence": [],
+      "gate": null
+    },
+    {
+      "id": "P2-008",
+      "stage": "2",
+      "title": "Review and release the supported human-scale scope",
+      "work_packages": [],
+      "dependencies": [
+        "P2-007"
+      ],
+      "actor": "reviewer",
+      "status": "todo",
+      "acceptance": "Independent qualified engineering review, evidence reproducibility and complete release QA accept only stated uses; no airworthiness or operational permission is inferred.",
+      "proof_file": "docs/acceptance/P2-008.md",
+      "planned_tests": [],
+      "completion_evidence": [],
+      "gate": "phase_exit"
+    },
+    {
+      "id": "P3-001",
+      "stage": "3",
+      "title": "Authorize entry to Jets and high-speed flight",
+      "work_packages": [],
+      "dependencies": [
+        "P2-008"
+      ],
+      "actor": "owner",
+      "status": "todo",
+      "acceptance": "Previous phase exit and Phase 0 acceptance are complete; owner explicitly authorizes this phase. Until then, interfaces and dataset registries only; no new model/product implementation.",
+      "proof_file": "docs/acceptance/P3-001.md",
+      "planned_tests": [],
+      "completion_evidence": [],
+      "gate": "phase_entry"
+    },
+    {
+      "id": "P3-002",
+      "stage": "3",
+      "title": "Define compressible-flow, turbine and thermal interfaces",
+      "work_packages": [],
+      "dependencies": [
+        "P3-001"
+      ],
+      "actor": "builder",
+      "status": "todo",
+      "acceptance": "Contracts/registries identify Mach/Reynolds/temperature ranges, gas properties, compressor/turbine data, flutter and thermal/structural boundaries with exact source/license roles.",
+      "proof_file": "docs/acceptance/P3-002.md",
+      "planned_tests": [
+        "tests/acceptance/test_p3_002.py"
+      ],
+      "completion_evidence": [],
+      "gate": null
+    },
+    {
+      "id": "P3-003",
+      "stage": "3",
+      "title": "Implement selected compressible and propulsion models",
+      "work_packages": [],
+      "dependencies": [
+        "P3-002"
+      ],
+      "actor": "builder",
+      "status": "todo",
+      "acceptance": "Supported shock/viscous/transition/propulsion mechanisms have code verification and mesh/time/iteration studies; closure assumptions and calculation-only benchmarks are explicit.",
+      "proof_file": "docs/acceptance/P3-003.md",
+      "planned_tests": [
+        "tests/acceptance/test_p3_003.py"
+      ],
+      "completion_evidence": [],
+      "gate": null
+    },
+    {
+      "id": "P3-004",
+      "stage": "3",
+      "title": "Freeze flutter, propulsion and flight validation protocols",
+      "work_packages": [],
+      "dependencies": [
+        "P3-003"
+      ],
+      "actor": "builder",
+      "status": "todo",
+      "acceptance": "Reviewed rig/vehicle matching, source partitions, numerical/measurement error, thermal/structural limits and high-speed intended-use criteria are registered before reveal.",
+      "proof_file": "docs/acceptance/P3-004.md",
+      "planned_tests": [
+        "tests/acceptance/test_p3_004.py"
+      ],
+      "completion_evidence": [],
+      "gate": null
+    },
+    {
+      "id": "P3-005",
+      "stage": "3",
+      "title": "Acquire sealed compressor, thermal and high-speed measurements",
+      "work_packages": [],
+      "dependencies": [
+        "P3-004"
+      ],
+      "actor": "custodian",
+      "status": "todo",
+      "acceptance": "Qualified custodian provides independent compatible rig/wind-tunnel/flight measurements with geometry, boundaries, calibration and clocks; CFD output is not physical data.",
+      "proof_file": "docs/acceptance/P3-005.md",
+      "planned_tests": [],
+      "completion_evidence": [],
+      "gate": null
+    },
+    {
+      "id": "P3-006",
+      "stage": "3",
+      "title": "Integrate and verify high-speed desktop and worker workflows",
+      "work_packages": [],
+      "dependencies": [
+        "P3-005"
+      ],
+      "actor": "builder",
+      "status": "todo",
+      "acceptance": "Supported design/mesh/run/control/cancel/compare paths pass convergence, energy, shock/propulsion limiting cases and prior-family regressions under measured budgets.",
+      "proof_file": "docs/acceptance/P3-006.md",
+      "planned_tests": [
+        "tests/acceptance/test_p3_006.py"
+      ],
+      "completion_evidence": [],
+      "gate": null
+    },
+    {
+      "id": "P3-007",
+      "stage": "3",
+      "title": "Validate high-speed envelopes and joint uncertainty",
+      "work_packages": [],
+      "dependencies": [
+        "P3-006"
+      ],
+      "actor": "builder",
+      "status": "todo",
+      "acceptance": "Independent held-out forces/propulsion/thermal/structure/trajectory outcomes and failure limits meet registered requirements across declared regimes.",
+      "proof_file": "docs/acceptance/P3-007.md",
+      "planned_tests": [
+        "tests/acceptance/test_p3_007.py"
+      ],
+      "completion_evidence": [],
+      "gate": null
+    },
+    {
+      "id": "P3-008",
+      "stage": "3",
+      "title": "Review and release the supported high-speed scope",
+      "work_packages": [],
+      "dependencies": [
+        "P3-007"
+      ],
+      "actor": "reviewer",
+      "status": "todo",
+      "acceptance": "Qualified independent review reproduces each claimed envelope; licensing/security/compatibility/recovery and installation acceptance close the phase.",
+      "proof_file": "docs/acceptance/P3-008.md",
+      "planned_tests": [],
+      "completion_evidence": [],
+      "gate": "phase_exit"
+    },
+    {
+      "id": "P4-001",
+      "stage": "4",
+      "title": "Authorize entry to Rockets and spaceflight",
+      "work_packages": [],
+      "dependencies": [
+        "P3-008"
+      ],
+      "actor": "owner",
+      "status": "todo",
+      "acceptance": "Previous phase exit and Phase 0 acceptance are complete; owner explicitly authorizes this phase. Until then, interfaces and dataset registries only; no new model/product implementation.",
+      "proof_file": "docs/acceptance/P4-001.md",
+      "planned_tests": [],
+      "completion_evidence": [],
+      "gate": "phase_entry"
+    },
+    {
+      "id": "P4-002",
+      "stage": "4",
+      "title": "Define variable-mass, staging and thermochemistry interfaces",
+      "work_packages": [],
+      "dependencies": [
+        "P4-001"
+      ],
+      "actor": "builder",
+      "status": "todo",
+      "acceptance": "Versioned mass/inertia/propulsion/stage/atmosphere/orbit/re-entry contracts and licensed dataset/tool registries are reviewed; CEA or other computed thermochemistry remains calculated evidence.",
+      "proof_file": "docs/acceptance/P4-002.md",
+      "planned_tests": [
+        "tests/acceptance/test_p4_002.py"
+      ],
+      "completion_evidence": [],
+      "gate": null
+    },
+    {
+      "id": "P4-003",
+      "stage": "4",
+      "title": "Implement supported ascent, staging, orbit and recovery models",
+      "work_packages": [],
+      "dependencies": [
+        "P4-002"
+      ],
+      "actor": "builder",
+      "status": "todo",
+      "acceptance": "Changing mass/inertia, thrust, controls, staging, atmospheric/orbital dynamics and supported recovery/re-entry coupling have sourced equations and explicit validity boundaries.",
+      "proof_file": "docs/acceptance/P4-003.md",
+      "planned_tests": [
+        "tests/acceptance/test_p4_003.py"
+      ],
+      "completion_evidence": [],
+      "gate": null
+    },
+    {
+      "id": "P4-004",
+      "stage": "4",
+      "title": "Freeze propulsion, trajectory and re-entry validation protocols",
+      "work_packages": [],
+      "dependencies": [
+        "P4-003"
+      ],
+      "actor": "builder",
+      "status": "todo",
+      "acceptance": "Qualified intended-use criteria, physical limits, measurements, independent partitions, clocks and uncertainty budgets are registered before outcomes are revealed.",
+      "proof_file": "docs/acceptance/P4-004.md",
+      "planned_tests": [
+        "tests/acceptance/test_p4_004.py"
+      ],
+      "completion_evidence": [],
+      "gate": null
+    },
+    {
+      "id": "P4-005",
+      "stage": "4",
+      "title": "Acquire sealed compatible propulsion and flight measurements",
+      "work_packages": [],
+      "dependencies": [
+        "P4-004"
+      ],
+      "actor": "custodian",
+      "status": "todo",
+      "acceptance": "Qualified custodian supplies independent geometry/engine/vehicle-matched measured data with original bytes, calibration, environmental and operational records; simulations cannot substitute.",
+      "proof_file": "docs/acceptance/P4-005.md",
+      "planned_tests": [],
+      "completion_evidence": [],
+      "gate": null
+    },
+    {
+      "id": "P4-006",
+      "stage": "4",
+      "title": "Verify and integrate supported spaceflight engineering workflows",
+      "work_packages": [],
+      "dependencies": [
+        "P4-005"
+      ],
+      "actor": "builder",
+      "status": "todo",
+      "acceptance": "Analytic ballistic/orbital limiting cases, mass/momentum/energy accounting, staging events and numerical convergence pass alongside desktop/headless job, cancel/recovery and prior-phase regressions.",
+      "proof_file": "docs/acceptance/P4-006.md",
+      "planned_tests": [
+        "tests/acceptance/test_p4_006.py"
+      ],
+      "completion_evidence": [],
+      "gate": null
+    },
+    {
+      "id": "P4-007",
+      "stage": "4",
+      "title": "Validate spaceflight decision envelopes and uncertainty",
+      "work_packages": [],
+      "dependencies": [
+        "P4-006"
+      ],
+      "actor": "builder",
+      "status": "todo",
+      "acceptance": "Frozen held-out propulsion/trajectory/thermal/recovery and failure requirements pass with calibrated uncertainty and no unsupported extrapolation.",
+      "proof_file": "docs/acceptance/P4-007.md",
+      "planned_tests": [
+        "tests/acceptance/test_p4_007.py"
+      ],
+      "completion_evidence": [],
+      "gate": null
+    },
+    {
+      "id": "P4-008",
+      "stage": "4",
+      "title": "Review and release the supported spaceflight scope",
+      "work_packages": [],
+      "dependencies": [
+        "P4-007"
+      ],
+      "actor": "reviewer",
+      "status": "todo",
+      "acceptance": "Qualified independent review accepts the stated limited uses; source/rights/security, reproducible distributions, compatibility and recovery gates close the phase.",
+      "proof_file": "docs/acceptance/P4-008.md",
+      "planned_tests": [],
+      "completion_evidence": [],
+      "gate": "phase_exit"
+    }
+  ],
+  "legacy_gates": [
+    {
+      "id": "M21",
+      "title": "battery",
+      "tasks": [
+        "P0A-005",
+        "P0A-007",
+        "P0A-028",
+        "P0A-040"
+      ]
+    },
+    {
+      "id": "M22",
+      "title": "propulsion",
+      "tasks": [
+        "P0A-014",
+        "P0A-028",
+        "P0C-017"
+      ]
+    },
+    {
+      "id": "M23",
+      "title": "sensors and controls",
+      "tasks": [
+        "P0A-028",
+        "P0D-018",
+        "P0D-021"
+      ]
+    },
+    {
+      "id": "M24",
+      "title": "aero and thermal",
+      "tasks": [
+        "P0A-009",
+        "P0B-014",
+        "P0C-017",
+        "P0D-011"
+      ]
+    },
+    {
+      "id": "M25",
+      "title": "structure and failures",
+      "tasks": [
+        "P0A-012",
+        "P0C-017",
+        "P0D-027"
+      ]
+    },
+    {
+      "id": "M26",
+      "title": "complete flight",
+      "tasks": [
+        "P0A-031",
+        "P0B-016",
+        "P0C-018",
+        "P0C-019"
+      ]
+    },
+    {
+      "id": "M27",
+      "title": "uncertainty",
+      "tasks": [
+        "P0A-032",
+        "P0B-016",
+        "P0C-018",
+        "P0C-019",
+        "P0D-021"
+      ]
+    },
+    {
+      "id": "M28",
+      "title": "CAD workspace",
+      "tasks": [
+        "P0D-001",
+        "P0D-027"
+      ]
+    },
+    {
+      "id": "M29",
+      "title": "production QA",
+      "tasks": [
+        "P0D-024",
+        "P0D-025",
+        "P0D-026",
+        "P0D-027"
+      ]
+    },
+    {
+      "id": "M30",
+      "title": "release",
+      "tasks": [
+        "P0D-031",
+        "P0D-032"
+      ]
+    }
+  ],
+  "execution_hold": "Stop after the authorized merge, annotated tag and clean-main verification; P0A-005 requires a new owner instruction."
+}

@@ -1,0 +1,9 @@
+{
+  "source_sha": "67c12f520fe853a38a572e41eaf4d7a709cd4d69",
+  "completed_utc": "2026-11-20T17:53:57.6185910Z",
+  "success": false,
+  "seconds": 27.2909785,
+  "exit_code": 10,
+  "started_utc": "2026-11-20T17:53:30.3203851Z",
+  "scope": "Normal Godot smoke entry point with the pinned existing native build and installed bundled Python; no rebuild, installation or fresh-cache claim"
+}

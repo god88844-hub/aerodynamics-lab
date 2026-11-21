@@ -3,16 +3,11 @@
 An open-source engineering laboratory for learning, designing, inventing and
 testing flying machines in a physics-driven 3D world.
 
-The approved Phase 0 includes a Godot desktop application, full CAD, all four
-drone families, engineering test worlds, weather, guided learning and advanced
-autonomy. The currently implemented application is the existing multirotor
-web/API foundation. Follow the [product specification](docs/PRODUCT_SPEC.md),
-[complete roadmap](docs/ROADMAP.md), [acceptance ledger](docs/ACCEPTANCE.md) and
-[research library](docs/SOURCES.md) for current status and builder handoff.
+The primary product is the [standalone Godot 3D desktop application](apps/desktop/README.md), with shared Python/C++ engineering services and exact CAD workers. `apps/web/` is frozen legacy. Qualification passed; the current stage is full software planning lock and dependency-ordered implementation.
 
-The first [desktop foundation prototype](apps/desktop/README.md) exercises the
-Godot/C++/Python integration. Its constrained CAD, blade and full performance
-acceptance work remains tracked in desktop issue #100.
+Start with [AGENTS.md](AGENTS.md), [ROADMAP](docs/ROADMAP.md) and the complete [MASTER_PLAN](docs/MASTER_PLAN.md). Phase 0 covers multirotor, fixed-wing, helicopter and VTOL drones; CAD, engineering worlds/weather, electronics, learning, analysis, autonomy and evidence. The task checkboxes distinguish existing verified foundations from the remaining software and physical acceptance work. [ACCEPTANCE_LEDGER](docs/ACCEPTANCE_LEDGER.md) records actual status.
+
+On this workstation all project work belongs under `C:\Users\Simulation apps\flights simulation`; see [WORKSPACE](docs/WORKSPACE.md). Owner authorization for conditional PR #126 merge and `v0.0-plan-locked` is recorded in P0A-004. The current request stops after plan-lock publication; Slice 0A implementation is not started.
 
 ## Mission
 
@@ -45,7 +40,11 @@ acceptance work remains tracked in desktop issue #100.
 
 ## Quickstart
 
-### Packaged app (Docker Compose)
+### Primary standalone desktop
+
+Follow [workspace setup](docs/WORKSPACE.md), then run `scripts/build_desktop.ps1 -Launch` from the repository root. Windows is the first installation target.
+
+### Maintained legacy web/API deployment (Docker Compose)
 
 ```bash
 docker compose up --build --wait

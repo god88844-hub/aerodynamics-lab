@@ -1,0 +1,9 @@
+{
+  "error": "resource_admission_refused: insufficient_memory_headroom",
+  "job_id": "5d94a98a3c4f51b4bd75c842f88319e3",
+  "protocol": "desktop_worker_1",
+  "request_sha256": "45233d28396e33a6aea6c6778db28960d13d1db9377328072c42e3a473ca639f",
+  "session_id": "258a40cc3589a64e47ffdecd16c37714",
+  "status": "failed",
+  "worker_pid": 3080
+}

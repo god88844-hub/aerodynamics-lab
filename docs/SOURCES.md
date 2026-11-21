@@ -1,8 +1,16 @@
 # Aerodynamics Lab source and evidence library
 
-Checked **19 November 2026**. The machine-readable [registry](../data/research/registry.json) caches primary-source findings, licensing scope, hardware/channels, acquisition instructions and gaps for every approved phase. The project remains Apache-2.0; external code, data and documents retain their own terms.
+Reconciled **20 November 2026**. The canonical [data/registry.json](../data/registry.json) indexes 51 current/planned sources and all 20 inspected campaigns, with source-specific licenses, historical partitions, exact original hash references and explicitly normalized repository-text hashes. The dated [legacy catalog](../data/research/registry.json) remains compatible with existing readers; it is a research snapshot, not current acceptance status. The project remains Apache-2.0; external code, data and documents retain their own terms.
 
-## What is actually cached
+## Current custody and roles
+
+The [20 November workstation snapshot](../data/research/custody-20261120.json) hashes all 208 files present under the external source directory, including originals, extracted files, fits and reproduced outputs. This is broader than the earlier 33-file audit below. Only documented original-pin matches identify source bytes; local presence or a model-output hash is not physical evidence. The canonical registry links matching digests to campaigns and preserves unclassified files explicitly. A clean clone does not include these external files.
+
+All 20 inspected campaigns, including their historically named calibration/holdout partitions, are **DEVELOPMENT** under policy 1.0.0. No confirmatory campaign or physical acceptance is granted. Unacquired planned sources retain null hashes. Dataset-specific rights remain separate from article/code licenses; unresolved rights remain unresolved. MODERA explicitly excludes operational/safety-critical/decision-making use. No new original bytes are redistributed here.
+
+Verify metadata/content: `python scripts/reconcile_registry.py --check`. To verify existing custody after relocation: `python scripts/reconcile_registry.py --verify-local`. The old `--audit-local` spelling is a read-only compatibility alias; historical snapshots are never overwritten. New acquisitions require a new dated custody record. Current local originals are under `data/local/source-physical/` inside [WORKSPACE](WORKSPACE.md); the dated snapshot retains its original historical paths. Historical calibration/holdout values are preserved in the index and linked artifacts; never relabel them blind under a new policy.
+
+## Earlier 19 November custody snapshot
 
 Research records and URLs are cached in the registry. Original provider bytes are a separate fact:
 

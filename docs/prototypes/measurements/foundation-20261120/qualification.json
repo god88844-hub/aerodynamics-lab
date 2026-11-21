@@ -1,0 +1,16 @@
+{
+  "source_sha": "0e3b9b7c36d4f43bceefcabb5f3402d40b870276",
+  "success": true,
+  "completed_utc": "2026-11-20T17:14:09.6590021Z",
+  "memory_metric": "GlobalMemoryStatusEx ullAvailPhys in admission; PDH available/free/standby counters observed separately",
+  "seconds": 95.1656876,
+  "exit_code": 0,
+  "new_sessions": [
+    "183d3a6c7a59eb020d9561cc207d7381",
+    "28f332483c459ca1549f001ac143663e",
+    "c0a64e260fd157b11183fb82386c616c",
+    "e909ffa50b4c6ec70039d8bac43b3bff"
+  ],
+  "started_utc": "2026-11-20T17:12:34.4636163Z",
+  "limits": "Existing sampled memory/workspace/deadline guards unchanged; no OS hard quota claimed"
+}

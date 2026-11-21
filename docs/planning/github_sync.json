@@ -1,0 +1,110 @@
+{
+  "checked_utc": "2026-11-20T19:50:51.521Z",
+  "plan_sha256_lf": "f42053bca735795316caf2085b23001ff86ac30b609d370facb07e37904d65c2",
+  "unique_tasks": 150,
+  "scope": "Live read-back of owner-authorization completion and explicit P0A-005 hold; no merge/tag or scientific result claimed in advance",
+  "issues": {
+    "99": {
+      "url": "https://github.com/god88844-hub/aerodynamics-lab/issues/99",
+      "checklist_sha256": "0d55fef830f25d5b0f7061d9ed53977d375309c889e5e4955ac4bd6623b05945",
+      "task_entries": 10,
+      "state": "open"
+    },
+    "100": {
+      "url": "https://github.com/god88844-hub/aerodynamics-lab/issues/100",
+      "checklist_sha256": "53243c4f0ab676ee3669b788fdff45f2fc0968d17d32cc2abfe04998a7b12b66",
+      "task_entries": 17,
+      "state": "open"
+    },
+    "101": {
+      "url": "https://github.com/god88844-hub/aerodynamics-lab/issues/101",
+      "checklist_sha256": "37b1ced033183193b5c740b7ec92dcb23b6621c16d6b43c4f06b32a438c2c37b",
+      "task_entries": 19,
+      "state": "open"
+    },
+    "102": {
+      "url": "https://github.com/god88844-hub/aerodynamics-lab/issues/102",
+      "checklist_sha256": "d30fda4bbb1a4d15598f95b34764496e85c44a442daa742e352767d0ca3c7b29",
+      "task_entries": 13,
+      "state": "open"
+    },
+    "103": {
+      "url": "https://github.com/god88844-hub/aerodynamics-lab/issues/103",
+      "checklist_sha256": "d206f7accc3cfcd148fe88dd21a4f4b72b6eb203ee5236784bf26ef266cf4b17",
+      "task_entries": 38,
+      "state": "open"
+    },
+    "104": {
+      "url": "https://github.com/god88844-hub/aerodynamics-lab/issues/104",
+      "checklist_sha256": "6ef83b25c5cdc0175054cef5208e8c88d40aaa09cbec575d564f2a42fce1f5c2",
+      "task_entries": 26,
+      "state": "open"
+    },
+    "105": {
+      "url": "https://github.com/god88844-hub/aerodynamics-lab/issues/105",
+      "checklist_sha256": "c68fb51ec34e0fc2997b78f6baf8edda639e0fed9bfd57836c327947fdd12bd4",
+      "task_entries": 8,
+      "state": "open"
+    },
+    "106": {
+      "url": "https://github.com/god88844-hub/aerodynamics-lab/issues/106",
+      "checklist_sha256": "afbf0f5a218fe732f807f45b9e7cc556a0bb1eee268c6d3ca874aafb2945e328",
+      "task_entries": 9,
+      "state": "open"
+    },
+    "107": {
+      "url": "https://github.com/god88844-hub/aerodynamics-lab/issues/107",
+      "checklist_sha256": "355047595c34e04f857c03a0254f730cf2f048704645b3bc9970a5e5120898b3",
+      "task_entries": 12,
+      "state": "open"
+    },
+    "108": {
+      "url": "https://github.com/god88844-hub/aerodynamics-lab/issues/108",
+      "checklist_sha256": "c615e316cbcfb272fbe25e3461b536aa73fcb5706d3faaef21cbd172d5308be9",
+      "task_entries": 52,
+      "state": "open"
+    },
+    "109": {
+      "url": "https://github.com/god88844-hub/aerodynamics-lab/issues/109",
+      "checklist_sha256": "4e02072982d453f944e9b821c7401740ca7fb710ff2c897c647ec17c2a0f1788",
+      "task_entries": 23,
+      "state": "open"
+    },
+    "110": {
+      "url": "https://github.com/god88844-hub/aerodynamics-lab/issues/110",
+      "checklist_sha256": "c0323e5d68ef643a571a7a024b9903e336ae75bf4d8f9ef51728470b4fcd2a53",
+      "task_entries": 16,
+      "state": "open"
+    },
+    "111": {
+      "url": "https://github.com/god88844-hub/aerodynamics-lab/issues/111",
+      "checklist_sha256": "a60ef93213d25e5d396064e11aeb30f61d0142179c6da86aedac8505bab08dae",
+      "task_entries": 8,
+      "state": "open"
+    },
+    "112": {
+      "url": "https://github.com/god88844-hub/aerodynamics-lab/issues/112",
+      "checklist_sha256": "e9b7b9d5bc830156dd3949f86ca43ec6d0a2e48ad539cdfdee3c1c3d9fb24fc2",
+      "task_entries": 8,
+      "state": "open"
+    },
+    "113": {
+      "url": "https://github.com/god88844-hub/aerodynamics-lab/issues/113",
+      "checklist_sha256": "7ce505e7a84ab1d7584b4ba84dd5aba2188b4bf8476656f391f4fe68a6c5470d",
+      "task_entries": 8,
+      "state": "open"
+    },
+    "114": {
+      "url": "https://github.com/god88844-hub/aerodynamics-lab/issues/114",
+      "checklist_sha256": "de7702da6688e8ad24244078a3f635b235fd2036b6b52c60b3699a73415c1c66",
+      "task_entries": 8,
+      "state": "open"
+    },
+    "127": {
+      "url": "https://github.com/god88844-hub/aerodynamics-lab/issues/127",
+      "checklist_sha256": "f8342eed187b979fca6a54c77251aa68d3ed1c5e282de505e9193dce152b689c",
+      "task_entries": 150,
+      "state": "open"
+    }
+  }
+}

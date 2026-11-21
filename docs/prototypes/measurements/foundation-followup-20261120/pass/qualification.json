@@ -1,0 +1,18 @@
+{
+  "source_sha": "366777dd45cc6ae6cf751ab7c0c6e085d9e754fe",
+  "completed_utc": "2026-11-20T18:09:49.6235680Z",
+  "started_utc": "2026-11-20T18:08:14.4968041Z",
+  "exit_code": 0,
+  "limits": "Existing sampled memory/workspace/deadline guards unchanged; no OS hard quota claimed",
+  "seconds": 95.0924463,
+  "source_status": " M apps/desktop/project.godot",
+  "new_sessions": [
+    "21c97f12b2be01e21284b7828a041145",
+    "6466388dcedc59cd4957ff74f7bddbee",
+    "b2f57e6092ae711fef50b3146f50808d",
+    "de8e1183faffe244aa0cc79bbe80530c"
+  ],
+  "harness_sha256": "16cf167d6567667e1f532c6eef1c077f855e1323e0bb9d6140ccb71c93cd22f0",
+  "memory_metric": "GlobalMemoryStatusEx ullAvailPhys in admission; PDH available/free/standby counters observed separately",
+  "success": true
+}

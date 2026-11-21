@@ -1,0 +1,41 @@
+{
+  "capacity": {
+    "available_bytes": 5831585792,
+    "disk_free_bytes": 45708087296,
+    "total_bytes": 16636305408
+  },
+  "contract_version": "local_cad_resources_1",
+  "failure": "memory_budget_exceeded",
+  "latest_resident_bytes": 27475968,
+  "latest_workspace_bytes": 1939,
+  "observed_processes": [
+    {
+      "birth": "134396717806823916",
+      "desktop": true,
+      "os_peak_resident_bytes": 22274048,
+      "pid": 25540,
+      "private_commit_bytes": 12410880,
+      "resident_bytes": 21504000
+    },
+    {
+      "birth": "134396717808229847",
+      "desktop": false,
+      "os_peak_resident_bytes": 2883584,
+      "pid": 19756,
+      "private_commit_bytes": 606208,
+      "resident_bytes": 2883584
+    },
+    {
+      "birth": "134396717808344591",
+      "desktop": false,
+      "os_peak_resident_bytes": 3088384,
+      "pid": 14680,
+      "private_commit_bytes": 532480,
+      "resident_bytes": 3088384
+    }
+  ],
+  "peak_resident_bytes": 27475968,
+  "peak_workspace_bytes": 1939,
+  "sample_count": 1,
+  "session_id": "de8e1183faffe244aa0cc79bbe80530c"
+}

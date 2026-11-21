@@ -48,3 +48,17 @@ def test_real_capacity_and_controlled_workspace_observation(tmp_path):
     assert observed["disk_free_bytes"] > 0
     (tmp_path / "bytes.bin").write_bytes(b"abc")
     assert workspace_size(tmp_path) == 3
+
+
+def test_16gb_host_uses_available_memory_and_still_refuses_low_headroom():
+    """Standby pages are usable; free-only memory is not the admission metric."""
+    request = ResourceBudget()
+    plentiful = {**capacity(total=16 * GIB, available=4 * GIB), "free_zero_bytes": 16 * MIB}
+    assert admission(request, plentiful)["status"] == "admitted"
+    scarce = {**plentiful, "available_bytes": 2 * GIB}
+    decision = admission(request, scarce)
+    assert decision["status"] == "refused"
+    assert decision["reasons"] == ["insufficient_memory_headroom"]
+    assert decision["reserve_bytes"] == 2 * GIB
+    assert decision["requested"] == request.document()
+    assert runtime_failure(request, scarce, GIB + 1, 0) == "memory_budget_exceeded"

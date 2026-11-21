@@ -1,61 +1,41 @@
-# Aerodynamics Lab complete roadmap
+# Aerodynamics Lab roadmap
 
-The approved scope is defined in [PRODUCT_SPEC.md](PRODUCT_SPEC.md). Only Phase 0 is the current implementation focus. Source details and acquisition gaps belong to [SOURCES.md](SOURCES.md). Actual completion belongs to [ACCEPTANCE.md](ACCEPTANCE.md).
+**Full standalone software planning lock — 21 November 2026.** Qualification passed and is complete. The primary product is `apps/desktop/`, the real standalone Godot 3D application; `apps/web/` remains frozen legacy. [PRODUCT_SPEC](PRODUCT_SPEC.md) defines scope and [ARCHITECTURE](ARCHITECTURE.md) defines the shared engineering execution path without a required HTTP server.
 
-## Phase 0 — Drone invention laboratory
+The complete numbered, checkable task breakdown is **[MASTER_PLAN.md](MASTER_PLAN.md)**, generated from [planning/tasks.json](planning/tasks.json). It contains **150 unique tasks: 118 across Phase 0 and 32 across Phases 1–4**, each with dependencies, responsible actor, exact proof artifact, acceptance conditions and a planned verification target where applicable. The generated master issue and every relevant package/phase issue carry synchronized checklists.
 
-Build the shared foundation before expanding individual aircraft families. Each package has an issue, requirements, dependencies and observable acceptance evidence.
+## Approval and exact next task
 
-Ship the packages through the [0A–0D vertical slices and hardware/fidelity contracts](HARDWARE_AND_FIDELITY.md). These preserve the full Phase 0 scope while providing complete design/run/comparison loops earlier. Hardware tiers describe measured delivery targets; fidelity levels describe selected engineering models.
+[PR #126](https://github.com/god88844-hub/aerodynamics-lab/pull/126) has conditional owner merge/tag authorization recorded in [P0A-004](acceptance/P0A-004.md). Run the three pre-merge checks and require five green CI jobs before merge and annotated **`v0.0-plan-locked`** publication. Verify clean synchronized main, then stop. **Do not start P0A-005 under this request.** When the owner later resumes implementation, P0A-005 is the first software task: reproduce/freeze M21 cutoff failures, then follow the numbered dependency order.
 
-| Package | Dependencies | Deliverable and exit evidence |
-| --- | --- | --- |
-| Foundation and identity | Audited baseline | Renamed repository, preserved history and unfinished work, published specifications, stable versioned project contracts and regression-tested legacy import. |
-| Desktop and native prototype | Foundation | Godot application opens/saves projects, edits a representative geometry, selects components, renders reference results and cancels a worker. Publish baseline performance and installation results. |
-| CAD and engineering assembly | Prototype | Constrained sketches, features, solids/surfaces, assemblies/joints, blades/wings, drawings, BOM and exchange work through normal application entry points. Validate geometry, mass properties, round trips and revision recovery. |
-| Environment and experiments | Foundation, prototype | Save/replay terrain, obstacles, atmospheric fields, missions, disturbances, seeds and analysis settings. Coordinate and unit tests plus reproducible experiment runs pass. |
-| Physical models and electrical integration | Foundation, CAD | Component and assembly behavior, per-component limits, thermal and structural mechanisms have declared support and evidence. Invalid limits fail and unknown parameters remain visible. |
-| Four aircraft families | Physical models, environment | Multirotor, fixed-wing, helicopter and VTOL reference projects complete their applicable missions. Custom geometry and mechanisms have explicit supported domains. Each family has its own measurement campaign. |
-| Interactive and detailed analysis | CAD, environment, physical models | The application runs reference cases and cancellable CFD, structural, vibration, fatigue, thermal and electrical jobs. Results retain backend versions, convergence, discrepancy, uncertainty and reproducible inputs. |
-| Rain, snow, wet operation and icing | Physical models, environment | Applicable accumulation/shedding, airflow, sensor, electrical and structural effects have implemented models and qualification cases. Record missing matched tests. |
-| Autonomy and multi-drone experiments | Aircraft, environment | Manual/mission control, sensor models, autopilot integration, visual navigation, mapping, obstacle avoidance and coordinated multi-vehicle scenarios pass recorded tests. |
-| Learning and invention workflows | CAD, experiment execution | Guided experiments, equations, assumptions, sweeps, comparisons and optimization are usable in the application. Saved hypotheses and results remain reproducible. |
-| Scientific acceptance and release | All applicable packages | Predeclared held-out comparisons, uncertainty coverage, failure cases, independent review, desktop packaging, compatibility, security, accessibility, load and recovery acceptance are complete. |
+## Phase 0 slices
 
-Software availability and physical acceptance are separate. Public data are the first evidence source. A requirement awaiting new measurements or qualified review remains open.
+| Slice | Product outcome | Required entry | Software exit | Separate physical exit |
+| --- | --- | --- | --- | --- |
+| 0A | Multirotor CAD/design, environment, missions, corrected coupled physics, learning, evidence and standalone application loop | P0A-004 owner plan approval | P0A-039 | P0A-040 |
+| 0B | Full supported wing geometry/CAD-to-aero and fixed-wing mission loop | P0A-039 | P0B-021 | P0B-022 |
+| 0C | Helicopter and VTOL mechanisms/transitions plus selected detailed analysis and local/remote workers | P0B-021 | P0C-023 | P0C-024 |
+| 0D | Complete supported CAD, weather, autonomy, sensors/swarms, learning, production and release | P0C-023 | P0D-030 | P0D-031; final Phase 0 exit P0D-032 |
 
-GitHub tracks [Phase 0](https://github.com/god88844-hub/aerodynamics-lab/milestone/1) through foundation #99, desktop #100, CAD #101, world #102, electrical/physical models #103, aircraft #104, weather #105, autonomy #106, learning #107, validation #108, release #109 and detailed analysis #110.
+A software exit permits dependency-ready software in the next slice with physical gaps visible; it does not turn missing measurements into acceptance. Physical exits need actual matching independent evidence and review. Final Phase 0 acceptance and later-phase entry require their explicit scientific/release gates. Any suitable reference hardware may be used, with the model and each measurement campaign matched to that hardware and its conditions.
 
-## Phase 1 — Bio-inspired flight
+The [master plan](MASTER_PLAN.md#work-packages-and-slice-mapping) maps **all 12 work packages** to their slices and issues: WP1 #99, WP2 #100, WP3 #101, WP4 #102, WP5 #103, WP6 #104, WP7 #110, WP8 #105, WP9 #106, WP10 #107, WP11 #108, WP12 #109. Cross-cutting tasks retain one ID even when listed under several packages. WP7 detailed analysis, WP8 advanced weather and WP9 autonomy follow their listed prerequisites; qualification is not reopened.
 
-Add morphing/flapping mechanisms, compliant surfaces, flexible structures and aeroelastic coupling. Develop uncrewed demonstrations and compare measured forces, deformations, actuator response, energy and control behavior. Candidate references include PigeonBot II, measured avian morphology and inertia. Completion requires geometry-specific held-out experiments and bounded validity claims.
+## Phases 1–4
 
-## Phase 2 — Human-scale and crewed systems
+| Phase / issue | Scope | Prerequisite / entry | Exit |
+| --- | --- | --- | --- |
+| 1 / #111 | Bio-inspired morphing/flapping/flexible flight | Phase 0 P0D-032 plus owner gate P1-001 | P1-008 |
+| 2 / #112 | Human-scale and crewed engineering | P1-008 plus owner gate P2-001 | P2-008 |
+| 3 / #113 | Jets, compressible/high-speed flight and turbine/thermal coupling | P2-008 plus owner gate P3-001 | P3-008 |
+| 4 / #114 | Rockets, variable mass/staging, orbital/re-entry/recovery models | P3-008 plus owner gate P4-001 | P4-008 |
 
-Add human loads, human-machine control, redundancy and recovery systems. Evaluate the original configurable 60 kg pilot scenario with apparatus mass, structure, propulsion, gusts and operating conditions included. Independently reviewed structural and flight evidence establishes each intended use. Drone validation transfers only where a documented similarity argument and additional evidence support it.
+Each phase has eight concrete checklist tasks covering entry, contracts/sources, implementation, frozen protocols, independent measurements, verification, physical validation/uncertainty and qualified review/release. Until entry is approved, **interfaces and dataset registries only**. Drone results do not automatically validate another flying system. The 60 kg pilot concept remains a later study assumption, including apparatus mass; calculated thermochemistry remains calculated evidence.
 
-## Phase 3 — Jets and high-speed flight
+## Evidence and completion
 
-Add compressible flow, turbine propulsion, shocks, flutter and thermal/structural coupling. Use qualified NASA CFD and compressor-rig benchmarks before configuration-matched propulsion and flight campaigns. Completion requires demonstrated behavior across the declared speed, Reynolds number, temperature and installation ranges.
+Use [ACCEPTANCE_LEDGER](ACCEPTANCE_LEDGER.md), [VALIDATION_TOLERANCES](VALIDATION_TOLERANCES.md), [fundamentals](fundamentals/coordinates_and_units.md), [SOURCES](SOURCES.md) and [hardware/fidelity requirements](HARDWARE_AND_FIDELITY.md). All 20 inspected campaigns remain DEVELOPMENT under the prospective policy. Failure limits, qualified uncertainty, matching hardware and independent review remain required. Owner software-plan approval is not scientific certification.
 
-## Phase 4 — Rockets and spaceflight
+**Twelve broad Phase 0 package issues and ten legacy M21–M30 acceptance families remain open.** They overlap the task breakdown; they are not 22 sequential tasks or 150 validated milestones. The master plan includes their exact crosswalk and distinct milestone checklists. Preserve M0–M20 reports as history; M31 expansion is split between Phase 0 drone families and later phases.
 
-Add changing mass/inertia, propulsion, staging, atmospheric ascent, recovery, orbital dynamics and re-entry. Candidate tools include NASA CEA, RocketPy and OpenRocket under their individual licenses. Analytical checks, trajectory convergence and measured propulsion/flight evidence qualify each model. Calculated thermochemistry remains classified as calculation.
-
-## Legacy milestone crosswalk
-
-| Legacy scope | Role in the new roadmap |
-| --- | --- |
-| M0–M10 | Reusable architecture, multirotor physics, controller, scenarios, editor, optimization, V&V and audit foundation. |
-| M11, M29 | Dependency security, production, migration, provenance, deployment, recovery and release requirements. |
-| M12–M20 | Existing component/flight evidence, ingestion and protocol tooling. Reuse where the normal workflow and evidence support the new requirement. |
-| M21–M27 | Outstanding battery, propulsion, controls, aero/thermal, structures, complete-flight and uncertainty acceptance. |
-| M28 | Existing placement editing, revision and clearance work feeds the larger full-CAD requirement. |
-| M30 | Legacy drone release acceptance maps to the Phase 0 release gate. |
-| M31 | Expansion is split between additional uncrewed families inside Phase 0 and later flying-system phases. |
-
-The former ten outstanding M21–M30 families describe the legacy multirotor release scope. The acceptance ledger tracks the expanded requirements individually.
-
-## Builder sequence
-
-Read the acceptance ledger and select the next dependency-ready issue. Inspect its linked code, experiment and source records. Implement its normal user entry point, verify the acceptance conditions, and record current commit/run evidence. Keep independent measurement gaps open. Merge a PR after its current head and required checks pass.
+For a new builder: open `AGENTS.md`, follow the master task ID, record its exact proof, update the canonical task data, regenerate/sync checklists and commit a completed milestone. Require all five final-head CI jobs and unchanged dependency audits. All local work stays in [the canonical workspace](WORKSPACE.md).

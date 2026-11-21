@@ -7,7 +7,7 @@ from pathlib import Path
 import time
 
 from aeroforge_schemas.cad import BladeRecipe, BoxRecipe, CadTorqueRequest
-from desktop_worker.io import write_result
+from desktop_worker.io import read_control_bytes, unlink_control_record, write_result
 from desktop_worker.protocol import MAX_REQUEST_BYTES, PROTOCOL, WorkerRequest
 from desktop_worker.resources import ResourceBudget, admission, capacity_snapshot, workspace_size
 from desktop_worker.supervision import IDENTIFIER, ProcessRef, read_record, source_identity
@@ -90,16 +90,17 @@ def serve(session: Path, session_id: str) -> int:
             # current resources before allowing this prepared output to become success.
             while not (directory / "approved.json").is_file():
                 time.sleep(0.01)
-            approved = read_record(directory / "approved.json")
+            approved_raw = read_control_bytes(directory / "approved.json")
+            approved = json.loads(approved_raw)
             if any(approved.get(key) != prepared[key] for key in ("protocol", "session_id", "job_id", "request_sha256", "output_sha256")):
                 raise ValueError("Resource approval does not match this frozen result")
             if sha256(output.read_bytes()).hexdigest() != prepared["output_sha256"]:
                 raise ValueError("Prepared output changed before completion")
             write_result(directory / "complete.json", {**prepared, "resource_approval_sha256":
-                         sha256((directory / "approved.json").read_bytes()).hexdigest()})
+                         sha256(approved_raw).hexdigest()})
         except Exception as error:
             write_result(directory / "error.json", {**context, "status": "failed", "error": str(error)})
             return 2  # conservatively discard native state after any failed request
         finally:
-            (session / "active.json").unlink(missing_ok=True)
-            claimed.unlink(missing_ok=True)
+            unlink_control_record(session / "active.json")
+            unlink_control_record(claimed)

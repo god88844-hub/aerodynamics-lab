@@ -31,7 +31,7 @@ jobs:
       - name: Verify Windows records, nine lifecycle checks, budgets and contract lock
         run: |
           python scripts/export_contracts.py --check
-          python -m pytest tests/cad/test_reusable_worker.py tests/cad/test_worker_resources.py tests/integration/test_worker_admission.py tests/integration/test_worker_record_locking.py -o addopts='' -ra -s
+          python -m pytest tests/cad/test_reusable_worker.py tests/cad/test_worker_resources.py tests/integration/test_worker_admission.py tests/integration/test_worker_record_locking.py tests/integration/test_worker_retirement.py -o addopts='' -ra -s
 
   desktop-foundation:
     runs-on: ubuntu-latest
@@ -91,6 +91,11 @@ jobs:
           python -m venv "$RUNNER_TEMP/aeroforge-audit"
           "$RUNNER_TEMP/aeroforge-audit/bin/pip" install pip-audit==2.10.1
           "$RUNNER_TEMP/aeroforge-audit/bin/python" -m pip_audit -r apps/api/requirements.lock --disable-pip --no-deps
+      - name: Verify master plan, source registry and frozen contracts
+        run: |
+          python scripts/check_master_plan.py --check
+          python scripts/reconcile_registry.py --check
+          python scripts/export_contracts.py --check
       - name: Run pytest (physics, integration, regression)
         run: pytest
 

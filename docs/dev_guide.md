@@ -1,10 +1,12 @@
-# AeroForge Developer Guide
+# Aerodynamics Lab Developer Guide
+
+The primary product is the standalone Godot 3D desktop. Start with [WORKSPACE](WORKSPACE.md), [ROADMAP](ROADMAP.md) and the numbered [MASTER_PLAN](MASTER_PLAN.md). Qualification is complete; the web/API instructions below maintain legacy compatibility.
 
 ## Environment
 
 - Python 3.11+ (backend + physics), Node 20+/22+ (frontend), git.
 - Backend deps: `cd apps/api && python -m pip install --require-hashes --only-binary=:all: -r requirements.lock`.
-- Frontend deps: `cd apps/web && npm install`.
+- Frontend deps: `cd apps/web && npm ci`.
 
 ## Running
 

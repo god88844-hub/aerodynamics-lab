@@ -16,7 +16,7 @@ import subprocess
 import sys
 import time
 
-from desktop_worker.io import write_result
+from desktop_worker.io import read_control_bytes, write_result
 
 PROTOCOL = "desktop_worker_1"
 IDENTIFIER = re.compile(r"^[0-9a-f]{32}$")
@@ -98,8 +98,13 @@ def terminate_record(record: dict, *, group: bool) -> None:
         if os.name == "nt":
             result = subprocess.run(["taskkill", "/PID", str(process.pid), "/T", "/F"],
                                     capture_output=True, creationflags=subprocess.CREATE_NO_WINDOW)
-            if result.returncode and process.alive():
-                raise OSError("Could not terminate the owned worker process tree")
+            if result.returncode:
+                # Windows termination is asynchronous. A nonzero tree-command result
+                # can race exit; require the birth-bound handle to signal before success.
+                state = process.kernel.WaitForSingleObject(process.handle, 1000)
+                if state != 0:
+                    raise OSError(f"Could not terminate the owned worker process tree: taskkill={result.returncode}; "
+                                  f"wait={state}; stderr={result.stderr!r}")
         elif group:
             os.killpg(process.pid, signal.SIGKILL)
         else:
@@ -122,11 +127,7 @@ def record_alive(record: dict) -> bool:
 
 
 def read_record(path: Path) -> dict:
-    with path.open("rb") as source:
-        raw = source.read(64 * 1024 + 1)
-    if len(raw) > 64 * 1024:
-        raise ValueError("Worker control record is oversized")
-    return json.loads(raw)
+    return json.loads(read_control_bytes(path))
 
 
 def stop_session(session: Path, session_id: str) -> None:

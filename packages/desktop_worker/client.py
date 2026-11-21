@@ -9,8 +9,8 @@ import sys
 import time
 from uuid import uuid4
 
-from desktop_worker.io import json_bytes, write_result
-from desktop_worker.supervision import stop_session
+from desktop_worker.io import json_bytes, read_control_bytes, write_result
+from desktop_worker.supervision import read_record, stop_session
 from desktop_worker.resources import ResourceBudget
 
 
@@ -36,13 +36,13 @@ class WorkerClient:
         deadline = time.monotonic() + timeout
         while time.monotonic() < deadline:
             if (self.session / "ready.json").exists():
-                ready = json.loads((self.session / "ready.json").read_bytes())
+                ready = read_record(self.session / "ready.json")
                 if ready.get("protocol") != "desktop_worker_1" or ready.get("session_id") != self.session_id:
                     raise ValueError("Worker readiness belongs to a different session")
                 return ready
             if self.process.poll() is not None:
                 retired = self.session / "retired.json"
-                reason = json.loads(retired.read_bytes()).get("reason") if retired.exists() else "inspect its session log"
+                reason = read_record(retired).get("reason") if retired.exists() else "inspect its session log"
                 raise RuntimeError("CAD worker failed to start: " + str(reason))
             time.sleep(0.01)
         raise TimeoutError("CAD worker readiness deadline exceeded")
@@ -64,14 +64,14 @@ class WorkerClient:
         while time.monotonic() < deadline:
             error = self.last_job / "error.json"
             if error.is_file():
-                failure = json.loads(error.read_bytes())
+                failure = read_record(error)
                 if any(failure.get(key) != value for key, value in (("protocol", "desktop_worker_1"),
                        ("session_id", self.session_id), ("job_id", job_id), ("request_sha256", digest))):
                     raise ValueError("Worker error does not match this request")
                 raise RuntimeError(failure.get("error", "Worker request failed"))
             receipt_path = self.last_job / "complete.json"
             if receipt_path.is_file():
-                receipt = json.loads(receipt_path.read_bytes())
+                receipt = read_record(receipt_path)
                 result = (self.last_job / "result.json").read_bytes()
                 if any(receipt.get(key) != value for key, value in (
                     ("protocol", "desktop_worker_1"), ("session_id", self.session_id),
@@ -99,7 +99,7 @@ class WorkerClient:
 
 
 def verify_approval(directory: Path, receipt: dict) -> None:
-    raw = (directory / "approved.json").read_bytes()
+    raw = read_control_bytes(directory / "approved.json")
     approval = json.loads(raw)
     if receipt.get("resource_approval_sha256") != sha256(raw).hexdigest() or any(
         approval.get(key) != receipt.get(key)

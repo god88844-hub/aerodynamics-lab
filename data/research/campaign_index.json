@@ -1,0 +1,363 @@
+{
+  "checked_at": "2026-11-20",
+  "additional_sources": [
+    {
+      "id": "cmu_vtc6",
+      "title": "CMU VTC6 aircraft-duty-cycle cell experiments",
+      "kind": "measured_source_or_candidate",
+      "urls": [
+        "https://doi.org/10.1184/R1/14226830.v3"
+      ],
+      "license": {
+        "identifier": "CC-BY-4.0",
+        "scope": "Dataset-specific declaration in linked primary metadata or historical campaign; article/software terms do not automatically cover raw data",
+        "terms_url": "https://doi.org/10.1184/R1/14226830.v3",
+        "redistribution": "Review source terms and restrictions; registry does not grant permission"
+      },
+      "uncertainty_and_gaps": [
+        "Sony-Murata VTC6 cells; not a 6S/12S LiPo pack; timing/gap and cell identity matter."
+      ],
+      "evidence_reference": "Relevant linked campaign or data/benchmarks candidate metadata; original hash pins separate from derived hashes"
+    },
+    {
+      "id": "sit_module",
+      "title": "SIT Transporter 24S module cycling",
+      "kind": "measured_source_or_candidate",
+      "urls": [
+        "https://doi.org/10.25447/sit.21301188.v1"
+      ],
+      "license": {
+        "identifier": "CC-BY-NC-ND-4.0",
+        "scope": "Dataset-specific declaration in linked primary metadata or historical campaign; article/software terms do not automatically cover raw data",
+        "terms_url": "https://doi.org/10.25447/sit.21301188.v1",
+        "redistribution": "Review source terms and restrictions; registry does not grant permission"
+      },
+      "uncertainty_and_gaps": [
+        "One repeatedly cycled 24S1P module, forced-air surface sensors; NC/ND terms need review before derived redistribution; no independent pack population."
+      ],
+      "evidence_reference": "Relevant linked campaign or data/benchmarks candidate metadata; original hash pins separate from derived hashes"
+    },
+    {
+      "id": "melasta_pulse",
+      "title": "Melasta Experiment I cell pulse",
+      "kind": "measured_source_or_candidate",
+      "urls": [
+        "https://doi.org/10.5281/zenodo.12543440"
+      ],
+      "license": {
+        "identifier": "CC-BY-4.0",
+        "scope": "Dataset-specific declaration in linked primary metadata or historical campaign; article/software terms do not automatically cover raw data",
+        "terms_url": "https://doi.org/10.5281/zenodo.12543440",
+        "redistribution": "Review source terms and restrictions; registry does not grant permission"
+      },
+      "uncertainty_and_gaps": [
+        "6.8 Ah cell-level 10C pulse, five cells and repeated trials; not installed-pack endurance."
+      ],
+      "evidence_reference": "Relevant linked campaign or data/benchmarks candidate metadata; original hash pins separate from derived hashes"
+    },
+    {
+      "id": "emax_gemfan",
+      "title": "Emax ECOII-2807 / Gemfan Flash 7042 / Tekko32 bench",
+      "kind": "measured_source_or_candidate",
+      "urls": [
+        "https://github.com/mdttech/quadrotor-design/tree/b6f1dde3aafb1c5f564485f91406226e236ab578"
+      ],
+      "license": {
+        "identifier": "UNRESOLVED",
+        "scope": "Dataset-specific declaration in linked primary metadata or historical campaign; article/software terms do not automatically cover raw data",
+        "terms_url": "https://github.com/mdttech/quadrotor-design/tree/b6f1dde3aafb1c5f564485f91406226e236ab578",
+        "redistribution": "Review source terms and restrictions; registry does not grant permission"
+      },
+      "uncertainty_and_gaps": [
+        "Selected CSV RPM channels are zero; filename RPM labels are not RPM measurements. Original data redistribution rights not established by public access."
+      ],
+      "evidence_reference": "Relevant linked campaign or data/benchmarks candidate metadata; original hash pins separate from derived hashes"
+    },
+    {
+      "id": "dronepropa",
+      "title": "DronePropA QDrone 2 trajectories",
+      "kind": "measured_source_or_candidate",
+      "urls": [
+        "https://data.mendeley.com/datasets/ftdyxrr3c5/1"
+      ],
+      "license": {
+        "identifier": "CC-BY-4.0",
+        "scope": "Dataset-specific declaration in linked primary metadata or historical campaign; article/software terms do not automatically cover raw data",
+        "terms_url": "https://data.mendeley.com/datasets/ftdyxrr3c5/1",
+        "redistribution": "Review source terms and restrictions; registry does not grant permission"
+      },
+      "uncertainty_and_gaps": [
+        "Indoor motion capture; publisher position-channel descriptions need author-code reconciliation; reference-response fit is conditional, not a complete aircraft plant."
+      ],
+      "evidence_reference": "Relevant linked campaign or data/benchmarks candidate metadata; original hash pins separate from derived hashes"
+    },
+    {
+      "id": "modera",
+      "title": "MODERA vehicle force fixture",
+      "kind": "measured_source_or_candidate",
+      "urls": [
+        "https://zenodo.org/records/17457069"
+      ],
+      "license": {
+        "identifier": "CC-BY-SA-4.0",
+        "scope": "Dataset-specific declaration in linked primary metadata or historical campaign; article/software terms do not automatically cover raw data",
+        "terms_url": "https://zenodo.org/records/17457069",
+        "redistribution": "Review source terms and restrictions; registry does not grant permission"
+      },
+      "uncertainty_and_gaps": [
+        "Publisher restricts intended use to research/education and expressly excludes operational, safety-critical, navigational or decision-making use. Do not use for decision-grade acceptance. Reconcile license/disclaimer scope before distribution; seven fixture headings are not seven independent vehicles."
+      ],
+      "evidence_reference": "Relevant linked campaign or data/benchmarks candidate metadata; original hash pins separate from derived hashes"
+    },
+    {
+      "id": "uav_fd",
+      "title": "UAV-FD hexarotor actuator faults",
+      "kind": "measured_source_or_candidate",
+      "urls": [
+        "https://zenodo.org/records/7648996"
+      ],
+      "license": {
+        "identifier": "CC-BY-4.0",
+        "scope": "Dataset-specific declaration in linked primary metadata or historical campaign; article/software terms do not automatically cover raw data",
+        "terms_url": "https://zenodo.org/records/7648996",
+        "redistribution": "Review source terms and restrictions; registry does not grant permission"
+      },
+      "uncertainty_and_gaps": [
+        "One rig, customized ArduPilot high-rate logging, chipped propellers; few healthy/fault flights cannot identify population false-alarm rates or installed strength."
+      ],
+      "evidence_reference": "Relevant linked campaign or data/benchmarks candidate metadata; original hash pins separate from derived hashes"
+    },
+    {
+      "id": "repod_arm",
+      "title": "RepOD printed drone-arm measurements",
+      "kind": "measured_source_or_candidate",
+      "urls": [
+        "https://doi.org/10.18150/JG8XQS"
+      ],
+      "license": {
+        "identifier": "CC-BY-SA-4.0",
+        "scope": "Dataset-specific declaration in linked primary metadata or historical campaign; article/software terms do not automatically cover raw data",
+        "terms_url": "https://doi.org/10.18150/JG8XQS",
+        "redistribution": "Review source terms and restrictions; registry does not grant permission"
+      },
+      "uncertainty_and_gaps": [
+        "Nominal actuator stroke includes fixture compliance; independent manufactured specimen count and arm-tip laser calibration not established."
+      ],
+      "evidence_reference": "Relevant linked campaign or data/benchmarks candidate metadata; original hash pins separate from derived hashes"
+    },
+    {
+      "id": "cfrp_columns",
+      "title": "Mesoscale CFRP column compression workbook",
+      "kind": "measured_source_or_candidate",
+      "urls": [
+        "https://doi.org/10.1038/s41467-026-72105-4"
+      ],
+      "license": {
+        "identifier": "UNRESOLVED",
+        "scope": "Dataset-specific declaration in linked primary metadata or historical campaign; article/software terms do not automatically cover raw data",
+        "terms_url": "https://doi.org/10.1038/s41467-026-72105-4",
+        "redistribution": "Review source terms and restrictions; registry does not grant permission"
+      },
+      "uncertainty_and_gaps": [
+        "Source workbook and article/supplement identities retained; data-specific redistribution terms need review. One released trace per configuration; e5 caption/table discrepancy; no installed-airframe strength transfer."
+      ],
+      "evidence_reference": "Relevant linked campaign or data/benchmarks candidate metadata; original hash pins separate from derived hashes"
+    },
+    {
+      "id": "qdrone_mpc",
+      "title": "QDrone 2 MPC voltage/altitude exports",
+      "kind": "measured_source_or_candidate",
+      "urls": [
+        "https://doi.org/10.5281/zenodo.19464105"
+      ],
+      "license": {
+        "identifier": "CC-BY-4.0",
+        "scope": "Dataset-specific declaration in linked primary metadata or historical campaign; article/software terms do not automatically cover raw data",
+        "terms_url": "https://doi.org/10.5281/zenodo.19464105",
+        "redistribution": "Review source terms and restrictions; registry does not grant permission"
+      },
+      "uncertainty_and_gaps": [
+        "Conditional logged-command response; no controller protection flag or firmware cutoff timing. 14 V is a study line. Original MPC observed altitude collapse is not predicted by the fitted response."
+      ],
+      "evidence_reference": "Relevant linked campaign or data/benchmarks candidate metadata; original hash pins separate from derived hashes"
+    },
+    {
+      "id": "tu_p80iii_candidate",
+      "title": "TU Braunschweig P80III external flight candidate",
+      "kind": "measured_source_or_candidate",
+      "urls": [
+        "https://leopard.tu-braunschweig.de/receive/dbbs_mods_00070168"
+      ],
+      "license": {
+        "identifier": "UNRESOLVED",
+        "scope": "Dataset-specific declaration in linked primary metadata or historical campaign; article/software terms do not automatically cover raw data",
+        "terms_url": "https://leopard.tu-braunschweig.de/receive/dbbs_mods_00070168",
+        "redistribution": "Review source terms and restrictions; registry does not grant permission"
+      },
+      "uncertainty_and_gaps": [
+        "Originals/channel schema/license/calibration not acquired or verified. Matching motor name is not full-aircraft compatibility; no fabricated source hash."
+      ],
+      "evidence_reference": "Relevant linked campaign or data/benchmarks candidate metadata; original hash pins separate from derived hashes"
+    },
+    {
+      "id": "zenodo_m300",
+      "title": "DJI M300 multi-modal flight source",
+      "kind": "measured_source_or_candidate",
+      "urls": [
+        "https://zenodo.org/records/7643456"
+      ],
+      "license": {
+        "identifier": "UNRESOLVED",
+        "scope": "Dataset-specific declaration in linked primary metadata or historical campaign; article/software terms do not automatically cover raw data",
+        "terms_url": "https://zenodo.org/records/7643456",
+        "redistribution": "Review source terms and restrictions; registry does not grant permission"
+      },
+      "uncertainty_and_gaps": [
+        "Original source admitted historically, but repeated integer timestamps block strict energy integration; electrical units/signs and rights need review. Not the AeroForge reference aircraft."
+      ],
+      "evidence_reference": "Relevant linked campaign or data/benchmarks candidate metadata; original hash pins separate from derived hashes"
+    }
+  ],
+  "campaigns": [
+    {
+      "id": "m21_vtc6",
+      "source_ids": [
+        "cmu_vtc6"
+      ],
+      "report": "docs/campaigns/M21_VTC6_CELL_BENCHMARK.md"
+    },
+    {
+      "id": "m21_sit_module_electrothermal",
+      "source_ids": [
+        "sit_module"
+      ],
+      "report": "docs/campaigns/M21_6_10_SIT_MODULE_ELECTROTHERMAL.md"
+    },
+    {
+      "id": "m21_sit_cutoff_forecast",
+      "source_ids": [
+        "sit_module"
+      ],
+      "report": "docs/campaigns/M21_11_15_SIT_CUTOFF_FORECAST.md"
+    },
+    {
+      "id": "m21_melasta_pulse",
+      "source_ids": [
+        "melasta_pulse"
+      ],
+      "report": "docs/campaigns/M21_16_20_MELASTA_PULSE.md"
+    },
+    {
+      "id": "m21_edge_pack",
+      "source_ids": [
+        "nasa_edge"
+      ],
+      "report": "docs/campaigns/M21_21_25_NASA_EDGE_PACK.md"
+    },
+    {
+      "id": "m22_gemfan_bench",
+      "source_ids": [
+        "emax_gemfan"
+      ],
+      "report": "docs/campaigns/M22_1_5_GEMFAN_BENCH.md"
+    },
+    {
+      "id": "m22_gemfan_transients",
+      "source_ids": [
+        "emax_gemfan"
+      ],
+      "report": "docs/campaigns/M22_6_10_GEMFAN_TRANSIENTS.md"
+    },
+    {
+      "id": "m22_kotarski_setup3",
+      "source_ids": [
+        "kotarski_setup3"
+      ],
+      "report": "docs/campaigns/M22_KOTARSKI_SETUP3_BENCHMARK.md"
+    },
+    {
+      "id": "m23_dronepropa_altitude",
+      "source_ids": [
+        "dronepropa"
+      ],
+      "report": "docs/campaigns/M23_3_7_DRONEPROPA_ALTITUDE.md"
+    },
+    {
+      "id": "m24_uiuc_axial_sweeps",
+      "source_ids": [
+        "uiuc_propellers"
+      ],
+      "report": "docs/campaigns/M24_2_6_UIUC_AXIAL_SWEEPS.md"
+    },
+    {
+      "id": "m24_modera_vertical_force",
+      "source_ids": [
+        "modera"
+      ],
+      "report": "docs/campaigns/M24_7_11_MODERA_VERTICAL_FORCE.md"
+    },
+    {
+      "id": "m24_neurobem_force",
+      "source_ids": [
+        "neurobem"
+      ],
+      "report": "docs/campaigns/M24_12_16_NEUROBEM_FORCE.md"
+    },
+    {
+      "id": "m25_uav_fd_rotor_order",
+      "source_ids": [
+        "uav_fd"
+      ],
+      "report": "docs/campaigns/M25_2_6_UAV_FD_ROTOR_ORDER.md"
+    },
+    {
+      "id": "m25_uav_fd_esc_power",
+      "source_ids": [
+        "uav_fd"
+      ],
+      "report": "docs/campaigns/M25_7_11_UAV_FD_ESC_POWER.md"
+    },
+    {
+      "id": "m25_repod_arm_response",
+      "source_ids": [
+        "repod_arm"
+      ],
+      "report": "docs/campaigns/M25_12_16_REPOD_ARM_RESPONSE.md"
+    },
+    {
+      "id": "m25_column_compression",
+      "source_ids": [
+        "cfrp_columns"
+      ],
+      "report": "docs/campaigns/M25_17_21_COLUMN_COMPRESSION.md"
+    },
+    {
+      "id": "m26_nanobench_vertical",
+      "source_ids": [
+        "nanobench"
+      ],
+      "report": "docs/campaigns/M26_40_44_NANOBENCH_VERTICAL.md"
+    },
+    {
+      "id": "m26_m100_mission_energy",
+      "source_ids": [
+        "cmu_m100"
+      ],
+      "report": "docs/campaigns/M26_45_49_M100_MISSION_ENERGY.md"
+    },
+    {
+      "id": "m26_qdrone_voltage",
+      "source_ids": [
+        "qdrone_mpc"
+      ],
+      "report": "docs/campaigns/M26_50_54_QDRONE_VOLTAGE_TRANSFER.md"
+    },
+    {
+      "id": "m27_dronepropa_transfer",
+      "source_ids": [
+        "dronepropa"
+      ],
+      "report": "docs/campaigns/M27_11_15_DRONEPROPA_TRANSFER.md"
+    }
+  ]
+}

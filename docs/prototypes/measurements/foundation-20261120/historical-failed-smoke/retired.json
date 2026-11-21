@@ -1,0 +1,6 @@
+{
+  "cleaned_up": true,
+  "protocol": "desktop_worker_1",
+  "reason": "resource_admission_refused: insufficient_memory_headroom",
+  "session_id": "3d04c53e0eb1ff2860465d44ff30678f"
+}

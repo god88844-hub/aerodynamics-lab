@@ -14,6 +14,8 @@ apps/web/dist/
 apps/web/test-results/
 
 # Local state / outputs
+.local/
+data/local/
 *.sqlite3
 *.db
 outputs/

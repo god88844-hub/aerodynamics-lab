@@ -1,0 +1,11 @@
+{
+  "source_sha": "67c12f520fe853a38a572e41eaf4d7a709cd4d69",
+  "started_utc": "2026-11-20T17:54:38.887825+00:00",
+  "seconds": 46.03066319999925,
+  "exit_code": 24,
+  "success": false,
+  "scope": "Normal smoke entry point; existing pinned native build and installed bundled Python; no rebuild or installation claim",
+  "new_sessions": [
+    "f7c165ac4e5f637dabaf7cefe56be209"
+  ]
+}
