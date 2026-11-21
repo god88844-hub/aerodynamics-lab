@@ -108,213 +108,492 @@ Tasks with several WPs appear in each relevant issue but retain one canonical ID
 - [ ] **P0A-005 — Reproduce and freeze M21 cutoff regression cases** (WP5; actor: builder)
   - Prerequisites: P0A-004. Proof: [docs/acceptance/P0A-005.md](acceptance/P0A-005.md).
   - Acceptance: Reproduce the SIT 63/63 replay and 68/68 forecast missed 80 V study crossings using pinned DEVELOPMENT data; publish exact commands, time/event definitions and failing regressions before changes.
+  - Language: Python.
+  - Target files: `tests/acceptance/test_p0a_005.py`; `docs/acceptance/P0A-005.md`; `packages/physics/propulsion/battery.py`; `data/research/registry.json`.
+  - Todos:
+    - [ ] 1. Read docs/M21_BATTERY_EVIDENCE.md and data/research/registry.json; pin the exact DEVELOPMENT campaign rows, file hashes and clock/time definitions for the SIT replay and forecast study.
+    - [ ] 2. Implement tests/acceptance/test_p0a_005.py: measured-current SIT replay and forecast-demand harness reproducing 63/63 replay and 68/68 missed 80 V study crossings against the frozen rows.
+    - [ ] 3. Publish exact commands, time/event definitions and the failing regressions in docs/acceptance/P0A-005.md (with the pinned hashes).
+    - [ ] 4. Freeze this baseline: change nothing in packages/physics in this task — the fixes are P0A-006.
+    - [ ] 5. Run the declared verification commands and record the output in docs/acceptance/P0A-005.md.
+  - Verify: `pytest tests/acceptance/test_p0a_005.py -q` | `python scripts/reconcile_registry.py --check` | `python scripts/check_master_plan.py --check`
   - Planned verification: `pytest tests/acceptance/test_p0a_005.py`; required current-head CI.
 
 <a name="p0a-006"></a>
 - [ ] **P0A-006 — Correct causal battery sag and cutoff event propagation** (WP5; actor: builder)
   - Prerequisites: P0A-005. Proof: [docs/acceptance/P0A-006.md](acceptance/P0A-006.md).
   - Acceptance: Supported current, SOC, bus-voltage and cutoff events affect the authoritative plant and FAIL verdict; event bracketing handles equality and timestep boundaries; no future measured input or threshold tuning to confirmatory outcomes.
+  - Language: Python.
+  - Target files: `packages/physics/propulsion/battery.py`; `packages/desktop_worker/engine.py`; `tests/acceptance/test_p0a_006.py`; `docs/acceptance/P0A-006.md`.
+  - Todos:
+    - [ ] 1. Implement causal sag in the authoritative plant: load current -> pack R drop -> loaded bus voltage -> attainable voltage-dependent behavior, using the existing BatteryPack equations.
+    - [ ] 2. Propagate cutoff/warning events with explicit bracketing of equality and timestep boundaries (event at t exactly on a step edge must fire deterministically).
+    - [ ] 3. Propagate affected-component FAIL verdicts and supported bus-voltage effects into scenario results and the authoritative plant state.
+    - [ ] 4. Guard against future-information leakage: no step may read a later SOC/current than its clock.
+    - [ ] 5. Extend tests/acceptance/test_p0a_006.py for equality/boundary brackets and verdict propagation; re-run the frozen P0A-005 regressions and record the delta.
+  - Verify: `pytest tests/acceptance/test_p0a_006.py tests/acceptance/test_p0a_005.py -q` | `pytest tests/physics -q`
   - Planned verification: `pytest tests/acceptance/test_p0a_006.py`; required current-head CI.
 
 <a name="p0a-007"></a>
 - [ ] **P0A-007 — Verify battery replay versus prospective endurance behavior** (WP5, WP11; actor: builder)
   - Prerequisites: P0A-006. Proof: [docs/acceptance/P0A-007.md](acceptance/P0A-007.md).
   - Acceptance: Separate measured-current replay from forecast demand; unchanged source rows are scored per run; cutoff misses/false alarms, endpoint error, charge/energy balances and timestep convergence are reported against frozen criteria. New physical acceptance stays open.
+  - Language: Python.
+  - Target files: `tests/acceptance/test_p0a_007.py`; `docs/acceptance/P0A-007.md`; `packages/physics/propulsion/battery.py`.
+  - Todos:
+    - [ ] 1. Split the two scoring modes: measured-current replay (current is source data) and forecast demand (current is model output); never mix them in one score.
+    - [ ] 2. Score every unchanged source row: cutoff misses/false alarms, endpoint SOC/error, charge/energy balances.
+    - [ ] 3. Add timestep-convergence cases for the replay and forecast paths and record the convergence table.
+    - [ ] 4. Document per-run results and exclusions in docs/acceptance/P0A-007.md.
+  - Verify: `pytest tests/acceptance/test_p0a_007.py -q` | `pytest tests/acceptance/test_p0a_005.py tests/acceptance/test_p0a_006.py -q`
   - Planned verification: `pytest tests/acceptance/test_p0a_007.py`; required current-head CI.
 
 <a name="p0a-008"></a>
 - [ ] **P0A-008 — Diagnose the UIUC signed-thrust disagreement** (WP5; actor: builder)
   - Prerequisites: P0A-007. Proof: [docs/acceptance/P0A-008.md](acceptance/P0A-008.md).
   - Acceptance: Reproduce the signed CT case with source hashes; inspect axes, advance ratio, RPM, units, power definition and near-zero measurement resolution. Record evidence for the cause; do not assume a sign flip is correct.
+  - Language: Python.
+  - Target files: `tests/acceptance/test_p0a_008.py`; `docs/acceptance/P0A-008.md`; `data/research/registry.json`.
+  - Todos:
+    - [ ] 1. Reproduce the signed-CT disagreement case with original source hashes and the exact pinned rows (no repaired data).
+    - [ ] 2. Inspect, one at a time and recorded: coordinate axes/normal conventions, advance-ratio handling, RPM units, thrust/power sign definitions, and the near-zero measurement resolution of the source instrument.
+    - [ ] 3. Write the evidence-backed cause (or the shortlist with the discriminating experiment) into docs/acceptance/P0A-008.md.
+    - [ ] 4. Change no model behavior in this task — diagnosis only.
+  - Verify: `pytest tests/acceptance/test_p0a_008.py -q` | `python scripts/reconcile_registry.py --check`
   - Planned verification: `pytest tests/acceptance/test_p0a_008.py`; required current-head CI.
 
 <a name="p0a-009"></a>
 - [ ] **P0A-009 — Correct and verify the supported signed aerodynamic regime** (WP5, WP11; actor: builder)
   - Prerequisites: P0A-008. Proof: [docs/acceptance/P0A-009.md](acceptance/P0A-009.md).
   - Acceptance: Analytical frame/force checks pass, source sign is preserved, extrapolation is refused or labeled, and all DEVELOPMENT sweep residuals/exclusions are published. M24 acceptance uses predeclared sign-resolution and uncertainty rules.
+  - Language: Python.
+  - Target files: `packages/physics/aerodynamics/`; `tests/acceptance/test_p0a_009.py`; `docs/acceptance/P0A-009.md`.
+  - Todos:
+    - [ ] 1. Implement the corrected supported signed-thrust/signed-speed regime with explicit analytic frame/force checks (sign preservation end to end).
+    - [ ] 2. Refuse or explicitly label any extrapolation outside the supported signed regime.
+    - [ ] 3. Publish all DEVELOPMENT sweep residuals and exclusions; M24 acceptance uses only the supported envelope.
+    - [ ] 4. Re-run the P0A-008 diagnosis against the corrected model and record the agreement.
+  - Verify: `pytest tests/acceptance/test_p0a_009.py -q` | `pytest packages/physics -q 2>/dev/null; pytest tests/physics -q`
   - Planned verification: `pytest tests/acceptance/test_p0a_009.py`; required current-head CI.
 
 <a name="p0a-010"></a>
 - [ ] **P0A-010 — Reproduce M25 misses and healthy-flight false alarms** (WP5; actor: builder)
   - Prerequisites: P0A-009. Proof: [docs/acceptance/P0A-010.md](acceptance/P0A-010.md).
   - Acceptance: Reproduce UAV-FD rotor-order and ESC-power decisions per whole recording; preserve exclusions, labels and thresholds; identify missed classes and false alarms without using labels as detector inputs.
+  - Language: Python.
+  - Target files: `tests/acceptance/test_p0a_010.py`; `docs/acceptance/P0A-010.md`.
+  - Todos:
+    - [ ] 1. Reproduce the M25 decisions per WHOLE recording: rotor-order classes and ESC-power anomalies with the frozen thresholds.
+    - [ ] 2. Preserve all source exclusions and labels exactly; no label may leak into features.
+    - [ ] 3. Tabulate missed classes and false alarms per recording and identify the systematic causes.
+    - [ ] 4. Freeze the failure reproduction before any detector change (fixes are P0A-011).
+  - Verify: `pytest tests/acceptance/test_p0a_010.py -q`
   - Planned verification: `pytest tests/acceptance/test_p0a_010.py`; required current-head CI.
 
 <a name="p0a-011"></a>
 - [ ] **P0A-011 — Correct fault detection without data leakage** (WP5, WP11; actor: builder)
   - Prerequisites: P0A-010. Proof: [docs/acceptance/P0A-011.md](acceptance/P0A-011.md).
   - Acceptance: Detection, no-alert and INCONCLUSIVE are explicit; whole-flight class/deadline/false-alarm regression cases pass; training and evaluation data remain grouped and disjoint; confirmatory performance is not inferred from development tuning.
+  - Language: Python.
+  - Target files: `tests/acceptance/test_p0a_011.py`; `docs/acceptance/P0A-011.md`.
+  - Todos:
+    - [ ] 1. Make DETECT / NO-ALERT / INCONCLUSIVE explicit outcomes of the detector contract (an alert must name its class and deadline).
+    - [ ] 2. Correct the detection logic with grouped, disjoint training/evaluation recordings — no whole-recording leakage in either direction.
+    - [ ] 3. Add confirmation/hysteresis rules so single-sample false alarms cannot raise an alert.
+    - [ ] 4. Re-run the P0A-010 reproduction and record the per-class improvements and remaining misses.
+  - Verify: `pytest tests/acceptance/test_p0a_010.py tests/acceptance/test_p0a_011.py -q`
   - Planned verification: `pytest tests/acceptance/test_p0a_011.py`; required current-head CI.
 
 <a name="p0a-012"></a>
 - [ ] **P0A-012 — Propagate per-rotor electrical and supported actuator failures** (WP5; actor: builder)
   - Prerequisites: P0A-011. Proof: [docs/acceptance/P0A-012.md](acceptance/P0A-012.md).
   - Acceptance: Unequal branch current, voltage, RPM, thermal or actuator limits produce FAIL on the affected component; supported loss/derating changes control authority; unknown post-failure behavior cannot create a successful trajectory.
+  - Language: Python.
+  - Target files: `packages/physics/propulsion/`; `packages/physics/controller/`; `tests/acceptance/test_p0a_012.py`; `docs/acceptance/P0A-012.md`.
+  - Todos:
+    - [ ] 1. Propagate per-branch electrical state: unequal branch current, voltage, RPM, thermal and actuator limits produce FAIL on the affected component.
+    - [ ] 2. Model only the supported loss/derating behaviors (loss of one branch, reduced-voltage derating); unknown post-failure behavior yields INCONCLUSIVE, never a synthesized recovery.
+    - [ ] 3. Assert control-authority changes after derating are reflected in attainable attitude/altitude responses.
+    - [ ] 4. Extend the acceptance tests for each supported failure class.
+  - Verify: `pytest tests/acceptance/test_p0a_012.py -q`
   - Planned verification: `pytest tests/acceptance/test_p0a_012.py`; required current-head CI.
 
 <a name="p0a-013"></a>
 - [ ] **P0A-013 — Freeze the QDrone collapse and command-provenance regression** (WP5; actor: builder)
   - Prerequisites: P0A-012. Proof: [docs/acceptance/P0A-013.md](acceptance/P0A-013.md).
   - Acceptance: Reproduce original versus battery-aware MPC observations and conditional-model failure; identify the 14 V line as study-specific, and mark logged auxiliary/drive commands as measurements rather than independently predicted commands.
+  - Language: Python.
+  - Target files: `tests/acceptance/test_p0a_013.py`; `docs/acceptance/P0A-013.md`; `data/research/registry.json`.
+  - Todos:
+    - [ ] 1. Reproduce the QDrone original-vs-battery-aware MPC observations and the conditional-model failure from the frozen source rows.
+    - [ ] 2. Identify and record the 14 V line as study-specific (not a pack property).
+    - [ ] 3. Mark logged auxiliary/drive commands as measured inputs (not free model outputs) in the registry and evidence.
+    - [ ] 4. Freeze the regression before any controller-coupling change (P0A-014).
+  - Verify: `pytest tests/acceptance/test_p0a_013.py -q` | `python scripts/reconcile_registry.py --check`
   - Planned verification: `pytest tests/acceptance/test_p0a_013.py`; required current-head CI.
 
 <a name="p0a-014"></a>
 - [ ] **P0A-014 — Couple causal bus, propulsion and controller response** (WP5, WP6; actor: builder)
   - Prerequisites: P0A-013. Proof: [docs/acceptance/P0A-014.md](acceptance/P0A-014.md).
   - Acceptance: Demand, voltage/current, attainable thrust, saturation and supported controller/actuator dynamics share one plant/clock; generated commands do not depend on future telemetry; known limit violations retain FAIL and unsupported collapse remains INCONCLUSIVE.
+  - Language: Python.
+  - Target files: `packages/physics/controller/`; `packages/physics/propulsion/`; `packages/desktop_worker/engine.py`; `tests/acceptance/test_p0a_014.py`; `docs/acceptance/P0A-014.md`.
+  - Todos:
+    - [ ] 1. Couple demand, bus voltage/current, attainable thrust, saturation and the supported controller/actuator dynamics on ONE plant state and ONE declared clock.
+    - [ ] 2. Prove no generated command depends on future telemetry (causality test over reordered/stepped clocks).
+    - [ ] 3. Cover the known limit interactions: bus sag -> attainable thrust -> saturation -> controller response, with boundary brackets.
+    - [ ] 4. Extend tests/acceptance/test_p0a_014.py for each coupling edge and the shared-clock guarantee.
+  - Verify: `pytest tests/acceptance/test_p0a_014.py -q` | `pytest tests/acceptance/test_p0a_006.py tests/acceptance/test_p0a_012.py -q`
   - Planned verification: `pytest tests/acceptance/test_p0a_014.py`; required current-head CI.
 
 <a name="p0a-015"></a>
 - [ ] **P0A-015 — Verify the corrected multirotor numerical model** (WP5, WP11; actor: builder)
   - Prerequisites: P0A-014. Proof: [docs/acceptance/P0A-015.md](acceptance/P0A-015.md).
   - Acceptance: Analytic force/torque, energy/charge checks, quaternion/coordinate round trips, timestep convergence, deterministic seeded reruns and failure-boundary regressions pass with declared numerical tolerances.
+  - Language: Python.
+  - Target files: `packages/physics/`; `tests/acceptance/test_p0a_015.py`; `docs/acceptance/P0A-015.md`.
+  - Todos:
+    - [ ] 1. Verify analytic force/torque identities for the corrected plant (sum of rotor contributions vs plant output).
+    - [ ] 2. Verify energy and charge balances over closed integrations (consumed charge == integral of current within declared numerical tolerance).
+    - [ ] 3. Verify quaternion/coordinate round trips (body<->world, wxyz convention) for randomized attitudes.
+    - [ ] 4. Add timestep-convergence and deterministic seeded-rerun cases; cover the failure-boundary regressions from P0A-012.
+    - [ ] 5. Publish the declared numerical tolerances in docs/acceptance/P0A-015.md.
+  - Verify: `pytest tests/acceptance/test_p0a_015.py -q` | `pytest tests/physics -q`
   - Planned verification: `pytest tests/acceptance/test_p0a_015.py`; required current-head CI.
 
 <a name="p0a-016"></a>
 - [ ] **P0A-016 — Make component sources and parameter uncertainty explicit** (WP1, WP5, WP11; actor: builder)
   - Prerequisites: P0A-015. Proof: [docs/acceptance/P0A-016.md](acceptance/P0A-016.md).
   - Acceptance: Battery/motor/ESC/wiring/material/sensor records carry units, identity, source, limits and parameter-level evidence; unsourced typical values and assumed uncertainty bands display UNVERIFIED_ESTIMATE; missing required limits refuse acceptance.
+  - Language: Python.
+  - Target files: `data/research/registry.json`; `data/components/`; `packages/shared-schemas/`; `tests/acceptance/test_p0a_016.py`; `docs/acceptance/P0A-016.md`.
+  - Todos:
+    - [ ] 1. Extend the component registry records: units, physical identity, source citation, operating limits and parameter-level evidence links for battery/motor/ESC/wiring/material/sensor records.
+    - [ ] 2. Mark every unsourced typical value and assumed uncertainty band UNVERIFIED_ESTIMATE and surface that flag in the UI/exports.
+    - [ ] 3. Refuse mass-property computation when a required density/source is missing (fail closed).
+    - [ ] 4. Add acceptance tests asserting each record carries the mandated fields.
+  - Verify: `pytest tests/acceptance/test_p0a_016.py -q` | `python scripts/reconcile_registry.py --check`
   - Planned verification: `pytest tests/acceptance/test_p0a_016.py`; required current-head CI.
 
 <a name="p0a-017"></a>
 - [ ] **P0A-017 — Deliver the standalone desktop project workflow** (WP2; actor: builder)
   - Prerequisites: P0A-015. Proof: [docs/acceptance/P0A-017.md](acceptance/P0A-017.md).
   - Acceptance: Normal Godot UI creates/imports/opens/saves/versions/reopens a supported project without an HTTP server; corrupt/missing assets and incompatible versions are handled; recovery preserves the last valid project.
+  - Language: GDScript, Python.
+  - Target files: `apps/desktop/main.gd`; `apps/desktop/main.tscn`; `scripts/lab_project.py`; `packages/desktop_worker/`; `tests/acceptance/test_p0a_017.py`; `docs/acceptance/P0A-017.md`.
+  - Todos:
+    - [ ] 1. Implement the normal Godot UI workflow: create, import, open, save, version and reopen a supported project entirely through the local worker (no HTTP server).
+    - [ ] 2. Handle corrupt/missing assets and incompatible project versions with explicit recovery or refusal paths.
+    - [ ] 3. Preserve project numeric identity through desktop round trips (existing JSON-authoritative tests stay green).
+    - [ ] 4. Add acceptance tests driving the worker contract from the UI entry points.
+  - Verify: `pytest tests/acceptance/test_p0a_017.py -q` | `pytest tests/integration -q`
   - Planned verification: `pytest tests/acceptance/test_p0a_017.py`; required current-head CI.
 
 <a name="p0a-018"></a>
 - [ ] **P0A-018 — Build supported multirotor geometry through the 3D editor** (WP2, WP3; actor: builder)
   - Prerequisites: P0A-017. Proof: [docs/acceptance/P0A-018.md](acceptance/P0A-018.md).
   - Acceptance: Normal UI edits supported exact body/blade geometry, transforms and dimensions with constraints, undo/redo and visible model support. Exact solids and engineering inputs remain authoritative across save/reopen; no placement-only screen is labeled full CAD.
+  - Language: GDScript.
+  - Target files: `apps/desktop/`; `tests/acceptance/test_p0a_018.py`; `docs/acceptance/P0A-018.md`.
+  - Todos:
+    - [ ] 1. Implement supported exact body/blade geometry editing in the 3D editor: transforms, dimensions and constraints through the normal UI.
+    - [ ] 2. Add undo/redo with visible model support (display LOD must never alter the authored engineering geometry).
+    - [ ] 3. Keep exact solids and engineering inputs authoritative in the saved project (worker-computed, UI-rendered).
+    - [ ] 4. Add acceptance tests for the edit -> save -> reload -> exact-geometry identity.
+  - Verify: `pytest tests/acceptance/test_p0a_018.py -q`
   - Planned verification: `pytest tests/acceptance/test_p0a_018.py`; required current-head CI.
 
 <a name="p0a-019"></a>
 - [ ] **P0A-019 — Connect component layout, materials, BOM and mass properties** (WP3, WP5, WP6; actor: builder)
   - Prerequisites: P0A-018, P0A-016. Proof: [docs/acceptance/P0A-019.md](acceptance/P0A-019.md).
   - Acceptance: Supported arbitrary rotor counts/layouts and component selection update mass, CoG, inertia, powertrain and BOM; independent analytic geometry cases pass; missing density refuses mass and flight acceptance.
+  - Language: GDScript, Python.
+  - Target files: `apps/desktop/`; `scripts/lab_worker.py`; `packages/physics/dynamics/`; `tests/acceptance/test_p0a_019.py`; `docs/acceptance/P0A-019.md`.
+  - Todos:
+    - [ ] 1. Wire supported arbitrary rotor counts/layouts and component selection from the editor into the worker mass-property assembly.
+    - [ ] 2. Update mass, CoG, inertia, powertrain and BOM through the authoritative assembly; render in the UI from the same numbers.
+    - [ ] 3. Add independent analytic geometry cases (known layouts -> known CoG/inertia).
+    - [ ] 4. Refuse mass-property computation on missing density/source (fail closed) and surface the refusal in the UI.
+  - Verify: `pytest tests/acceptance/test_p0a_019.py -q` | `pytest tests/physics/test_mass_properties.py -q`
   - Planned verification: `pytest tests/acceptance/test_p0a_019.py`; required current-head CI.
 
 <a name="p0a-020"></a>
 - [ ] **P0A-020 — Integrate geometry clearance and supported load checks** (WP3; actor: builder)
   - Prerequisites: P0A-018. Proof: [docs/acceptance/P0A-020.md](acceptance/P0A-020.md).
   - Acceptance: Rotor/obstacle/assembly clearance and datum transforms are checked from engineering geometry, including revision changes; LOD cannot change physics/clearance; screens retain analytical versus physically qualified status.
+  - Language: Python, C++20.
+  - Target files: `packages/engineering-core/`; `scripts/lab_cad.py`; `scripts/lab_cad_analysis.py`; `tests/acceptance/test_p0a_020.py`; `docs/acceptance/P0A-020.md`.
+  - Todos:
+    - [ ] 1. Implement rotor/obstacle/assembly clearance and datum-transform checks from the exact CAD geometry through the native/OCCT core.
+    - [ ] 2. Guarantee revision changes re-run the clearance checks; display LOD cannot change physics or clearance results.
+    - [ ] 3. Keep analytic screening results visible in the UI alongside the exact checks.
+    - [ ] 4. Add acceptance tests with known-overlap and known-clear fixtures through the real worker.
+  - Verify: `pytest tests/acceptance/test_p0a_020.py -q` | `pytest tests/cad -q`
   - Planned verification: `pytest tests/acceptance/test_p0a_020.py`; required current-head CI.
 
 <a name="p0a-021"></a>
 - [ ] **P0A-021 — Author a repeatable engineering test ground** (WP4, WP8; actor: builder)
   - Prerequisites: P0A-017. Proof: [docs/acceptance/P0A-021.md](acceptance/P0A-021.md).
   - Acceptance: Normal UI saves terrain, obstacles, landing/contact surfaces, wind vector, temperature, pressure and humidity with units/origin. Unsupported atmospheric/contact mechanisms are refused or unvalidated, not implemented by a visual shader.
+  - Language: GDScript.
+  - Target files: `apps/desktop/`; `tests/acceptance/test_p0a_021.py`; `docs/acceptance/P0A-021.md`.
+  - Todos:
+    - [ ] 1. Implement the engineering test-ground authoring UI: terrain, obstacles, landing/contact surfaces, wind vector, temperature, pressure and humidity with units and declared origin.
+    - [ ] 2. Refuse unsupported atmospheric/contact mechanisms explicitly (fail closed with the reason).
+    - [ ] 3. Serialize the authored ground with the project and verify save/reload identity.
+    - [ ] 4. Add acceptance tests for authoring, serialization and refusal paths.
+  - Verify: `pytest tests/acceptance/test_p0a_021.py -q`
   - Planned verification: `pytest tests/acceptance/test_p0a_021.py`; required current-head CI.
 
 <a name="p0a-022"></a>
 - [ ] **P0A-022 — Author missions, controls, clocks and experiment seeds** (WP4; actor: builder)
   - Prerequisites: P0A-021. Proof: [docs/acceptance/P0A-022.md](acceptance/P0A-022.md).
   - Acceptance: Takeoff/climb/hover/descent/landing, manual commands and disturbances serialize commands, timings, controller/sensor settings and seeds; replay reproduces the frozen experiment independently of render cadence.
+  - Language: GDScript, Python.
+  - Target files: `apps/desktop/`; `scripts/lab_worker.py`; `tests/acceptance/test_p0a_022.py`; `docs/acceptance/P0A-022.md`.
+  - Todos:
+    - [ ] 1. Implement mission authoring: takeoff/climb/hover/descent/landing phases, manual commands and disturbances with serialized commands and timings.
+    - [ ] 2. Serialize controller/sensor settings and experiment seeds with the mission (replay reproduces the frozen experiment identically).
+    - [ ] 3. Add acceptance tests: authored mission -> replay -> identical telemetry under the declared seed.
+  - Verify: `pytest tests/acceptance/test_p0a_022.py -q`
   - Planned verification: `pytest tests/acceptance/test_p0a_022.py`; required current-head CI.
 
 <a name="p0a-023"></a>
 - [ ] **P0A-023 — Run the supported design in the authoritative desktop simulation** (WP2, WP5, WP6; actor: builder)
   - Prerequisites: P0A-019, P0A-022, P0A-014. Proof: [docs/acceptance/P0A-023.md](acceptance/P0A-023.md).
   - Acceptance: A normal geometry/component/environment/mission edit changes the applicable simulated response; one double-precision integrator drives playback; pause/step/run/cancel/failure states and model limits are visible end to end.
+  - Language: GDScript, Python.
+  - Target files: `apps/desktop/`; `scripts/lab_worker.py`; `packages/desktop_worker/engine.py`; `packages/physics/`; `tests/acceptance/test_p0a_023.py`; `docs/acceptance/P0A-023.md`.
+  - Todos:
+    - [ ] 1. Run the supported design through the authoritative desktop simulation: a normal geometry/component/environment/mission edit must change the applicable simulated response.
+    - [ ] 2. Drive playback from ONE double-precision integrator (no parallel approximate integrators).
+    - [ ] 3. Implement pause/step/run/cancel and failure-state handling with worker supervision.
+    - [ ] 4. Add acceptance tests for edit->response causality and the playback state machine.
+  - Verify: `pytest tests/acceptance/test_p0a_023.py -q` | `pytest tests/acceptance/test_p0a_014.py tests/acceptance/test_p0a_019.py -q`
   - Planned verification: `pytest tests/acceptance/test_p0a_023.py`; required current-head CI.
 
 <a name="p0a-024"></a>
 - [ ] **P0A-024 — Inspect telemetry, evidence and reproducible result comparisons** (WP2, WP10, WP11; actor: builder)
   - Prerequisites: P0A-023. Proof: [docs/acceptance/P0A-024.md](acceptance/P0A-024.md).
   - Acceptance: UI compares frozen runs and source measurements with units, frames, source/model hashes, operating envelope, exclusions and uncertainty; exported results distinguish calculated, measured and synthetic channels.
+  - Language: GDScript, Python.
+  - Target files: `apps/desktop/`; `packages/desktop_worker/`; `tests/acceptance/test_p0a_024.py`; `docs/acceptance/P0A-024.md`.
+  - Todos:
+    - [ ] 1. Implement frozen-run vs source-measurement comparison in the UI: units, frames, source/model hashes, operating envelope, exclusions and uncertainty.
+    - [ ] 2. Distinguish calculated, measured and interpolated values in every exported result.
+    - [ ] 3. Add acceptance tests for the comparison pipeline with a frozen run and a pinned source measurement.
+  - Verify: `pytest tests/acceptance/test_p0a_024.py -q`
   - Planned verification: `pytest tests/acceptance/test_p0a_024.py`; required current-head CI.
 
 <a name="p0a-025"></a>
 - [ ] **P0A-025 — Expose numerical fidelity and bounded execution** (WP2, WP7, WP11; actor: builder)
   - Prerequisites: P0A-020, P0A-023. Proof: [docs/acceptance/P0A-025.md](acceptance/P0A-025.md).
   - Acceptance: Requested/effective timestep, backend, solver rates, numerical error and runtime budgets are recorded; interactive/offline runs of the same supported case agree within declared tolerance; cancellation and resource refusal preserve projects.
+  - Language: GDScript, Python.
+  - Target files: `apps/desktop/`; `packages/desktop_worker/engine.py`; `packages/physics/`; `tests/acceptance/test_p0a_025.py`; `docs/acceptance/P0A-025.md`.
+  - Todos:
+    - [ ] 1. Record requested vs effective timestep, backend, solver rates, numerical error and runtime budgets with every run.
+    - [ ] 2. Prove interactive and offline runs of the same supported case agree within the declared tolerance (desktop worker vs headless integration).
+    - [ ] 3. Expose the fidelity/budget panel in the UI from the recorded numbers (not free text).
+    - [ ] 4. Add acceptance tests for the agreement bound and the recorded budgets.
+  - Verify: `pytest tests/acceptance/test_p0a_025.py -q` | `pytest tests/acceptance/test_p0a_023.py -q`
   - Planned verification: `pytest tests/acceptance/test_p0a_025.py`; required current-head CI.
 
 <a name="p0a-026"></a>
 - [ ] **P0A-026 — Register component and multirotor validation protocols** (WP5, WP11; actor: builder)
   - Prerequisites: P0A-015, P0A-016. Proof: [docs/acceptance/P0A-026.md](acceptance/P0A-026.md).
   - Acceptance: Freeze model/controller/geometry versions, channels, instrument/clock uncertainties, calibration groups, held-out whole experiments, stopping rules and M21–M27 tolerances before confirmatory reveal; qualified review is required for acceptance.
+  - Language: Python.
+  - Target files: `data/research/registry.json`; `data/campaigns/`; `tests/acceptance/test_p0a_026.py`; `docs/acceptance/P0A-026.md`.
+  - Todos:
+    - [ ] 1. Freeze and register the validation protocols: model/controller/geometry versions, channels, instrument/clock uncertainties, calibration groups, held-out whole experiments, stopping rules and the M21–M27 tolerance bindings.
+    - [ ] 2. Refuse protocol registration with missing calibration groups or held-out definitions (fail closed).
+    - [ ] 3. Add acceptance tests asserting the frozen protocol records satisfy the registry contract.
+  - Verify: `pytest tests/acceptance/test_p0a_026.py -q` | `python scripts/reconcile_registry.py --check`
   - Planned verification: `pytest tests/acceptance/test_p0a_026.py`; required current-head CI.
 
 <a name="p0a-027"></a>
 - [ ] **P0A-027 — Acquire and seal matching independent component experiments** (WP11; actor: custodian)
   - Prerequisites: P0A-026. Proof: [docs/acceptance/P0A-027.md](acceptance/P0A-027.md).
   - Acceptance: Custodian supplies legally usable exact-hardware/configuration battery, propulsion and sensor/controller measurements with original hashes, calibration and environmental records; previously inspected data cannot be relabeled blind.
+  - Language: Python.
+  - Target files: `data/campaigns/`; `data/research/registry.json`; `docs/acceptance/P0A-027.md`.
+  - Todos:
+    - [ ] 1. CUSTODIAN (requires real external receipts): obtain legally usable exact-hardware/configuration battery, propulsion and sensor/controller measurements with original file hashes.
+    - [ ] 2. Record calibration groups, environmental conditions, instrument identity and clock bases per campaign; preserve source bytes unmodified.
+    - [ ] 3. Register each campaign in data/research/registry.json and reconcile; mark DEVELOPMENT/holdout partition per the prospective policy.
+    - [ ] 4. No acceptance tests exist by design — the custodian receipts ARE the evidence; the registry reconciliation is the machine check.
+  - Verify: `python scripts/reconcile_registry.py --check` | `python scripts/export_contracts.py --check`
 
 <a name="p0a-028"></a>
 - [ ] **P0A-028 — Validate battery, propulsion and controller component envelopes** (WP5, WP11; actor: builder)
   - Prerequisites: P0A-027. Proof: [docs/acceptance/P0A-028.md](acceptance/P0A-028.md).
   - Acceptance: Each independent component experiment meets applicable M21–M23 frozen error, limit and uncertainty criteria; high-C/endpoints, transient torque/current/RPM and sensor/actuator timing are covered or explicitly outside the accepted envelope.
+  - Language: Python.
+  - Target files: `tests/acceptance/test_p0a_028.py`; `docs/acceptance/P0A-028.md`; `packages/physics/propulsion/`; `packages/physics/propulsion/battery.py`.
+  - Todos:
+    - [ ] 1. Score each independent component experiment (P0A-027 receipts) against the frozen M21–M23 error, limit and uncertainty criteria.
+    - [ ] 2. Cover high-C discharge endpoints, transient torque/current/RPM and sensor/actuator timing per the frozen protocol.
+    - [ ] 3. Publish per-campaign results; a criterion miss is FAILED VALIDATION, recorded — never re-banded after the fact.
+    - [ ] 4. Update the component evidence records with the measured residuals.
+  - Verify: `pytest tests/acceptance/test_p0a_028.py -q` | `python scripts/reconcile_registry.py --check`
   - Planned verification: `pytest tests/acceptance/test_p0a_028.py`; required current-head CI.
 
 <a name="p0a-029"></a>
 - [ ] **P0A-029 — Freeze end-to-end multirotor flight predictions** (WP6, WP11; actor: builder)
   - Prerequisites: P0A-028, P0A-023. Proof: [docs/acceptance/P0A-029.md](acceptance/P0A-029.md).
   - Acceptance: Freeze predictions, installed hardware, mission commands, payload, atmosphere, source custody and joint uncertainty construction before independent complete flights are revealed; no fitted time/trajectory alignment.
+  - Language: Python.
+  - Target files: `data/campaigns/`; `tests/acceptance/test_p0a_029.py`; `docs/acceptance/P0A-029.md`; `packages/physics/`.
+  - Todos:
+    - [ ] 1. Freeze the end-to-end flight predictions BEFORE the flights are revealed: predictions, installed hardware, mission commands, payload, atmosphere, source custody and the joint uncertainty construction.
+    - [ ] 2. Cover the supported failure modes in the frozen predictions (loss/derating/saturation) per P0A-012.
+    - [ ] 3. Seal the frozen set with hashes in the registry; no post-hoc edits.
+    - [ ] 4. Add acceptance tests asserting the frozen set is complete and hash-bound.
+  - Verify: `pytest tests/acceptance/test_p0a_029.py -q` | `python scripts/reconcile_registry.py --check`
   - Planned verification: `pytest tests/acceptance/test_p0a_029.py`; required current-head CI.
 
 <a name="p0a-030"></a>
 - [ ] **P0A-030 — Acquire sealed complete-flight and thermal/structural measurements** (WP11; actor: custodian)
   - Prerequisites: P0A-029. Proof: [docs/acceptance/P0A-030.md](acceptance/P0A-030.md).
   - Acceptance: Qualified custodian provides repeated hover/climb/descent/landing/control/disturbance/endurance trials plus applicable heat/load evidence; professional operational review is separate from software approval. Missing channels/calibration keep acceptance blocked.
+  - Language: Python.
+  - Target files: `data/campaigns/`; `data/research/registry.json`; `docs/acceptance/P0A-030.md`.
+  - Todos:
+    - [ ] 1. CUSTODIAN (requires real external receipts): obtain repeated hover/climb/descent/landing/control/disturbance/endurance flight trials on the frozen installed hardware, plus applicable heat/load evidence.
+    - [ ] 2. Record telemetry channels, clocks, environmental conditions and custody per flight; keep the professional operational review separate from this acquisition.
+    - [ ] 3. Register the sealed flight campaigns with original hashes; DEVELOPMENT/holdout partition per policy.
+    - [ ] 4. No acceptance tests exist by design — the custodian receipts ARE the evidence.
+  - Verify: `python scripts/reconcile_registry.py --check` | `python scripts/export_contracts.py --check`
 
 <a name="p0a-031"></a>
 - [ ] **P0A-031 — Score full-aircraft agreement and relevant failure modes** (WP6, WP11; actor: builder)
   - Prerequisites: P0A-030. Proof: [docs/acceptance/P0A-031.md](acceptance/P0A-031.md).
   - Acceptance: Per-flight trajectories, energy, heat/control response and failures meet the frozen M24–M26 applicable criteria; observed failures are retained, conditional replay is separate, and out-of-envelope operation is rejected.
+  - Language: Python.
+  - Target files: `tests/acceptance/test_p0a_031.py`; `docs/acceptance/P0A-031.md`; `packages/physics/`; `packages/desktop_worker/`.
+  - Todos:
+    - [ ] 1. Score per-flight trajectories, energy, heat/control response and the frozen failure-mode predictions against the sealed flights (P0A-030) using the frozen M24–M26 criteria.
+    - [ ] 2. Retain observed failures; separate conditional replay from the primary blind scores.
+    - [ ] 3. Publish per-flight agreement tables and all exclusions with reasons.
+  - Verify: `pytest tests/acceptance/test_p0a_031.py -q` | `python scripts/reconcile_registry.py --check`
   - Planned verification: `pytest tests/acceptance/test_p0a_031.py`; required current-head CI.
 
 <a name="p0a-032"></a>
 - [ ] **P0A-032 — Calibrate joint whole-flight uncertainty and generalization** (WP11; actor: builder)
   - Prerequisites: P0A-031. Proof: [docs/acceptance/P0A-032.md](acceptance/P0A-032.md).
   - Acceptance: M27 simultaneous whole-flight channel coverage and width limits pass by independent cohort, including numerical, measurement, parameter, environment and model-discrepancy uncertainty; sample coverage cannot substitute for flight coverage.
+  - Language: Python.
+  - Target files: `tests/acceptance/test_p0a_032.py`; `docs/acceptance/P0A-032.md`; `packages/physics/`.
+  - Todos:
+    - [ ] 1. Calibrate the joint whole-flight uncertainty: simultaneous M27 channel coverage and width limits per independent cohort.
+    - [ ] 2. Include numerical, measurement, parameter, environment and model-discrepancy uncertainty terms explicitly (no single ±band collapse).
+    - [ ] 3. Publish the calibration result and any cohort that fails the width limits as FAILED VALIDATION.
+  - Verify: `pytest tests/acceptance/test_p0a_032.py -q`
   - Planned verification: `pytest tests/acceptance/test_p0a_032.py`; required current-head CI.
 
 <a name="p0a-033"></a>
 - [ ] **P0A-033 — Obtain independent multirotor credibility review** (WP11; actor: reviewer)
   - Prerequisites: P0A-032. Proof: [docs/acceptance/P0A-033.md](acceptance/P0A-033.md).
   - Acceptance: Independent reviewer reproduces each intended-use acceptance from frozen inputs and source bytes, signs the scope/uncertainty/failure dossier and identifies all unsupported configurations.
+  - Language: Python.
+  - Target files: `docs/acceptance/P0A-033.md`.
+  - Todos:
+    - [ ] 1. REVIEWER (requires real external receipts): independently reproduce each intended-use acceptance from frozen inputs and original source bytes.
+    - [ ] 2. Sign the scope/uncertainty/failure dossier and identify every unsupported configuration, parameter or claim.
+    - [ ] 3. Record the review in docs/acceptance/P0A-033.md with the reviewer identity and the exact reproduced commands.
+  - Verify: `pytest tests/acceptance/ -q`
 
 <a name="p0a-034"></a>
 - [ ] **P0A-034 — Deliver guided learning and saved invention experiments** (WP10; actor: builder)
   - Prerequisites: P0A-024. Proof: [docs/acceptance/P0A-034.md](acceptance/P0A-034.md).
   - Acceptance: A learner can state a hypothesis, build/modify a supported drone, enter environment conditions, compare runs, inspect equations/assumptions and save a reproducible experiment through the desktop.
+  - Language: GDScript, Python.
+  - Target files: `apps/desktop/`; `packages/desktop_worker/`; `tests/acceptance/test_p0a_034.py`; `docs/acceptance/P0A-034.md`.
+  - Todos:
+    - [ ] 1. Implement the guided learning workflow: state a hypothesis, build/modify a supported drone, enter environment conditions, compare runs, inspect equations/assumptions and save a reproducible experiment — all through the normal UI.
+    - [ ] 2. Bind every saved experiment to the frozen inputs needed for exact replay.
+    - [ ] 3. Add acceptance tests for the save -> reopen -> reproduce identity.
+  - Verify: `pytest tests/acceptance/test_p0a_034.py -q`
   - Planned verification: `pytest tests/acceptance/test_p0a_034.py`; required current-head CI.
 
 <a name="p0a-035"></a>
 - [ ] **P0A-035 — Deliver bounded sweeps and design comparisons** (WP7, WP10; actor: builder)
   - Prerequisites: P0A-034. Proof: [docs/acceptance/P0A-035.md](acceptance/P0A-035.md).
   - Acceptance: Supported parameter sweeps/optimization retain constraints, seeds, all infeasible/failed candidates and provenance; a repeat run reproduces the candidate/decision set, with no optimization-as-validation claim.
+  - Language: GDScript, Python.
+  - Target files: `packages/optimization/`; `apps/desktop/`; `tests/acceptance/test_p0a_035.py`; `docs/acceptance/P0A-035.md`.
+  - Todos:
+    - [ ] 1. Expose bounded parameter sweeps and design comparisons through the UI on the supported optimization package: constraints, seeds and all infeasible/failed candidates retained.
+    - [ ] 2. Guarantee a repeat run reproduces the candidate/decision set exactly (seeded, hash-bound).
+    - [ ] 3. Surface optimization-frontier caveats (no invented optimum) in the results view.
+    - [ ] 4. Add acceptance tests for retention, reproduction and constraint handling.
+  - Verify: `pytest tests/acceptance/test_p0a_035.py -q` | `pytest tests/physics/test_optimization.py -q`
   - Planned verification: `pytest tests/acceptance/test_p0a_035.py`; required current-head CI.
 
 <a name="p0a-036"></a>
 - [ ] **P0A-036 — Package and recover the standalone Windows application** (WP2, WP12; actor: builder)
   - Prerequisites: P0A-017. Proof: [docs/acceptance/P0A-036.md](acceptance/P0A-036.md).
   - Acceptance: A clean-user installation launches desktop, shared services and required workers without a development HTTP server; dependencies/notices are included; failed install/update/project writes recover without losing valid user data.
+  - Language: GDScript, Python.
+  - Target files: `apps/desktop/`; `scripts/lab_worker.py`; `packages/desktop_worker/`; `tests/acceptance/test_p0a_036.py`; `docs/acceptance/P0A-036.md`.
+  - Todos:
+    - [ ] 1. Package the standalone Windows application: desktop app, local shared services and required workers, with dependencies and notices included and no development HTTP server.
+    - [ ] 2. Cover failed install/update/project-recovery paths with explicit user-visible handling.
+    - [ ] 3. Add acceptance tests executed against the packaged layout (not the dev checkout).
+  - Verify: `pytest tests/acceptance/test_p0a_036.py -q`
   - Planned verification: `pytest tests/acceptance/test_p0a_036.py`; required current-head CI.
 
 <a name="p0a-037"></a>
 - [ ] **P0A-037 — Protect regression, dependency security and compatibility** (WP12; actor: builder)
   - Prerequisites: P0A-023, P0A-036. Proof: [docs/acceptance/P0A-037.md](acceptance/P0A-037.md).
   - Acceptance: All five exact-head CI jobs and unchanged npm/backend/CAD audits pass; project migration, incompatible assets, process ownership, budgets, interrupted work, save/recovery and headless/API compatibility have regression evidence.
+  - Language: Python.
+  - Target files: `.github/workflows/ci.yml`; `tests/acceptance/test_p0a_037.py`; `docs/acceptance/P0A-037.md`.
+  - Todos:
+    - [ ] 1. Keep all five exact-head CI jobs and the unchanged npm/backend/CAD audits passing; bind results to the final PR head.
+    - [ ] 2. Cover project migration, incompatible assets, process ownership, budgets, interrupted work and save/recovery headless cases in acceptance tests.
+    - [ ] 3. No audit bypasses: npm audit --audit-level=moderate including development dependencies stays required.
+  - Verify: `pytest tests/acceptance/test_p0a_037.py -q` | `pytest -q`
   - Planned verification: `pytest tests/acceptance/test_p0a_037.py`; required current-head CI.
 
 <a name="p0a-038"></a>
 - [ ] **P0A-038 — Qualify baseline hardware behavior for supported cases** (WP2, WP3, WP12; actor: builder)
   - Prerequisites: P0A-020, P0A-036. Proof: [docs/acceptance/P0A-038.md](acceptance/P0A-038.md).
   - Acceptance: Publish distinct 8 GB and 16 GB integrated-GPU installation/edit/run cases with CPU/GPU/OS/settings, >=30 FPS on the declared 200-part editing workload, frame-time/RAM data, <=5 s owned-worker cancellation, and correct low-memory refusal. Existing qualification is retained as one prior observation.
+  - Language: Python.
+  - Target files: `docs/acceptance/P0A-038.md`; `tests/acceptance/test_p0a_038.py`; `outputs/`.
+  - Todos:
+    - [ ] 1. Publish distinct 8 GB and 16 GB integrated-GPU installation/edit/run cases with CPU/GPU/OS/settings and measured frame-time/RAM data.
+    - [ ] 2. Meet >=30 FPS on the declared 200-part editing workload and <=5 s project load on the recorded hardware.
+    - [ ] 3. Take real measurements on the declared machines — synthetic or CI-host numbers do not qualify.
+  - Verify: `pytest tests/acceptance/test_p0a_038.py -q`
   - Planned verification: `pytest tests/acceptance/test_p0a_038.py`; required current-head CI.
 
 <a name="p0a-039"></a>
 - [ ] **P0A-039 — Exit: usable multirotor software slice** (WP1, WP2, WP3, WP4, WP5, WP6, WP7, WP8, WP10, WP11, WP12; actor: builder)
   - Prerequisites: P0A-025, P0A-026, P0A-035, P0A-037, P0A-038. Proof: [docs/acceptance/P0A-039.md](acceptance/P0A-039.md).
   - Acceptance: All preceding software tasks required for this slice pass normal-entry-point tests and independent numerical checks; scientific ledger lists accepted, failed and still-unvalidated uses. Publish the slice dossier; this exit enables 0B software, not physical acceptance.
+  - Language: Python.
+  - Target files: `docs/acceptance/P0A-039.md`; `tests/acceptance/test_p0a_039.py`; `docs/ACCEPTANCE_LEDGER.md`.
+  - Todos:
+    - [ ] 1. Exit gate: verify every preceding software task required by this slice passes its normal-entry-point tests and independent numerical checks.
+    - [ ] 2. Publish the scientific ledger listing accepted, failed and still-unvalidated capabilities — software slice exit and physical exit remain different gates.
+    - [ ] 3. Record the exact commands and outputs in docs/acceptance/P0A-039.md.
+  - Verify: `pytest -q` | `python scripts/check_master_plan.py --check` | `python scripts/export_contracts.py --check` | `python scripts/reconcile_registry.py --check`
   - Planned verification: `pytest tests/acceptance/test_p0a_039.py`; required current-head CI.
 
 <a name="p0a-040"></a>
 - [ ] **P0A-040 — Exit: physically accepted multirotor envelope** (WP6, WP11, WP12; actor: builder)
   - Prerequisites: P0A-033, P0A-039. Proof: [docs/acceptance/P0A-040.md](acceptance/P0A-040.md).
   - Acceptance: Independent review accepts only the demonstrated matching multirotor envelope under M21–M27; unresolved physical gates remain open and no universal drone-equivalence claim is made.
+  - Language: Python.
+  - Target files: `docs/acceptance/P0A-040.md`; `tests/acceptance/test_p0a_040.py`; `docs/ACCEPTANCE_LEDGER.md`.
+  - Todos:
+    - [ ] 1. Physical exit gate: assemble the P0A-033 signed dossier, the M21–M27 acceptance results and the open physical gates.
+    - [ ] 2. Accept only the demonstrated matching multirotor envelope under the frozen criteria; make no universal drone-equivalence claim and keep unresolved physical gates open.
+    - [ ] 3. Record the final envelope statement and open gates in docs/acceptance/P0A-040.md and the ledger.
+  - Verify: `pytest tests/acceptance/test_p0a_040.py -q` | `python scripts/check_master_plan.py --check`
   - Planned verification: `pytest tests/acceptance/test_p0a_040.py`; required current-head CI.
 
 

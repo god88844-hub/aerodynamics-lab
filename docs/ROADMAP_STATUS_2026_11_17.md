@@ -1,3 +1,7 @@
+> **ARCHIVED / SUPERSEDED by [docs/MASTER_PLAN.md](MASTER_PLAN.md).** This document is a
+> read-only historical review snapshot (17 November 2026). It is never an active work plan
+> and must not be edited or resurrected as tasks; see [AGENTS](../AGENTS.md).
+
 # AeroForge — Reconciled roadmap and scientific exit count
 
 **Repository:** `god88844-hub/aeroforge` · **Review date:** 17 November 2026 · **Basis:** original M0–M31 roadmap, merged software PRs, M9 audit and open physical-evidence issues.

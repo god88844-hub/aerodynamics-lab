@@ -2,6 +2,10 @@
 
 Approved planning decisions, 19 November 2026. This document defines the product. Implementation and measured acceptance are recorded in [ACCEPTANCE_LEDGER](ACCEPTANCE_LEDGER.md).
 
+## Standalone offline product (locked)
+
+Aerodynamics Lab is a **100 % standalone, local, offline desktop application**. The installer bundles the desktop executable, the native/CAD runtime, the built-in component and material libraries, starter designs, lessons and compact reference benchmarks, so any user can design, invent, simulate and learn completely offline with **zero server or Docker setup**. Large multi-gigabyte raw external research datasets are structured as **optional downloadable offline data packs** — never forced into the base installer and never required for the core offline workflow. `apps/web/` and the `apps/api/` HTTP server stack are **frozen legacy**: no new features there, and the desktop application must never depend on a running web/API server.
+
 ## Purpose
 
 Build an open-source desktop engineering application where people learn by creating, modifying and testing flying machines in a physics-driven 3D environment. Phase 0 covers multirotors, fixed-wing drones, helicopter drones and VTOL. Users can invent configurations and explore unsupported conditions, with their uncertainty and validation status visible.

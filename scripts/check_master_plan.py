@@ -155,6 +155,16 @@ def render(plan):
             lines += [f'<a name="{ident.lower()}"></a>', f"- [{'x' if task['status']=='done' else ' '}] **{ident} — {task['title']}** ({packages}; actor: {task['actor']})",
                       f"  - Prerequisites: {', '.join(task['dependencies']) or 'none'}. Proof: [{task['proof_file']}]({local_link(task['proof_file'])}).",
                       f"  - Acceptance: {task['acceptance']}"]
+            if task.get("language"):
+                lines.append("  - Language: " + ", ".join(task["language"]) + ".")
+            if task.get("target_files"):
+                lines.append("  - Target files: " + "; ".join(f"`{p}`" for p in task["target_files"]) + ".")
+            if task.get("todos"):
+                lines.append("  - Todos:")
+                for todo in task["todos"]:
+                    lines.append(f"    - [ ] {todo}")
+            if task.get("verify_commands"):
+                lines.append("  - Verify: " + " | ".join(f"`{c}`" for c in task["verify_commands"]))
             if task["planned_tests"]:
                 lines.append("  - Planned verification: " + "; ".join("`pytest "+p+"`" for p in task["planned_tests"]) + "; required current-head CI.")
             if task["completion_evidence"]:

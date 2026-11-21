@@ -1,6 +1,6 @@
 {
-  "checked_utc": "2026-11-20T19:50:51.521Z",
-  "plan_sha256_lf": "f42053bca735795316caf2085b23001ff86ac30b609d370facb07e37904d65c2",
+  "checked_utc": "2026-11-21T05:31:50.617Z",
+  "plan_sha256_lf": "4d0a07df80e8b984e52c1eb9fcce4bd44d5ee765792f9d435c8973190c4cf7d6",
   "unique_tasks": 150,
   "scope": "Live read-back of owner-authorization completion and explicit P0A-005 hold; no merge/tag or scientific result claimed in advance",
   "issues": {
