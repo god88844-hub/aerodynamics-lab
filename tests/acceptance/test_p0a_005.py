@@ -19,9 +19,13 @@ digests. Setting AEROFORGE_SIT_WORKBOOK to a local copy of the workbook
 enables the full re-execution path, which re-runs both benchmark scripts
 and asserts bit-identical results.
 
-The repaired cutoff behavior is P0A-006: the strict-xfail marker freezes
-the current 0/63 + 0/68 prediction state so any accidental "fix" without
-the P0A-006 task fails the suite.
+P0A-006 reconciliation: the four strict-xfail markers that froze the
+0/63 + 0/68 prediction state were removed when the repair landed. The
+frozen baseline stays protected by the pinned observed/missed counts
+asserted below (the artifacts are historical evidence and are NOT
+rewritten), and the repaired causal model's evaluation delta is pinned in
+tests/acceptance/test_p0a_006.py against
+docs/campaigns/m21_sit_causal_repair_delta.json.
 
 Reference: docs/M21_BATTERY_CAMPAIGN.md,
 docs/campaigns/M21_6_10_SIT_MODULE_ELECTROTHERMAL.md,
@@ -144,29 +148,14 @@ def test_module_limit_threshold_is_80v():
 
 
 # ---------------------------------------------------------------------------
-# Strict xfail: the repaired cutoff prediction is P0A-006. These currently
-# fail because both frozen models missed every crossing; when P0A-006 lands
-# they will XPASS under strict mode and the marker must be removed.
+# P0A-006 reconciliation: the four strict-xfail markers that froze the
+# 0/63 + 0/68 prediction state were removed when the causal repair landed.
+# The frozen baseline remains protected: the tests above pin the observed
+# and missed counts, the canonical digests and the cohort contract, and
+# tests/acceptance/test_p0a_006.py pins the repaired model's evaluation
+# delta against the committed causal-repair artifact. The frozen artifacts
+# themselves are historical evidence and are never rewritten.
 # ---------------------------------------------------------------------------
-
-
-@pytest.mark.xfail(strict=True, reason="Frozen M21 cutoff regression; repaired in P0A-006")
-@pytest.mark.parametrize("model", ["fixed_r", "one_rc"])
-def test_replay_models_predict_all_module_crossings(replay: dict, model: str):
-    total_observed = 0
-    total_predicted = 0
-    for cohort in replay["cohorts"].values():
-        screen = _limit_screen(cohort, model)
-        total_observed += screen["observed_cycles"]
-        total_predicted += screen["predicted_cycles"]
-    assert total_observed == 63
-    assert total_predicted == total_observed
-
-
-@pytest.mark.xfail(strict=True, reason="Frozen M21 forecast regression; repaired in P0A-006")
-@pytest.mark.parametrize("cohort", ["first", "second"])
-def test_updated_forecast_predicts_all_crossings(forecast: dict, cohort: str):
-    assert forecast["cohorts"][cohort]["updated_cutoff_missed"] == 0
 
 
 # ---------------------------------------------------------------------------

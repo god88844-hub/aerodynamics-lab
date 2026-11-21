@@ -1,0 +1,352 @@
+{
+  "plan": "m21-sit-causal-repair-delta-v1",
+  "source": {
+    "url": "https://doi.org/10.25447/sit.21301188.v1",
+    "sha256": "a4679465b35455ca429519fbc47f04f6e42bea608e0de12b978d482873456205"
+  },
+  "parent_fit_canonical_sha256": "f959786b7d37ad82dc84780331fbd1363b63f2f109cd0bf0c4fb6cd7adbb4764",
+  "parent_guard_canonical_sha256": "16c92466dc5f4f4af8820cdb194524f61c57724dc02a81280acace33937b2664",
+  "repaired_model": {
+    "description": "frozen one-RC fit under battery.py's strict declared-support causal contract + canonical constant-power solve",
+    "solver": "physics.propulsion.battery.BatteryPack.solve_constant_power",
+    "solver_vs_frozen_forecast_max_relative_current_deviation": 0.0,
+    "strict_support": {
+      "fitted_support_soc_pct": [
+        3.5627777777772707,
+        100.0
+      ],
+      "series_ohm": 0.046664488422,
+      "polarization_ohm": 0.018322312505,
+      "tau_s": 2,
+      "calibrated_cycles": "1-50 only",
+      "held_out_tuning": false
+    }
+  },
+  "replay": {
+    "threshold_v": 80.0,
+    "before": {
+      "observed_crossings_total": 63,
+      "missed_fixed_r": 63,
+      "missed_one_rc": 63,
+      "per_cohort": {
+        "mid_life": {
+          "cycles_scored": 49,
+          "observed_crossings": 32,
+          "missed_fixed_r": 32,
+          "missed_one_rc": 32,
+          "module_voltage_mae_v": {
+            "mae": 0.52704079,
+            "rmse": 0.92791117,
+            "bias": 0.38929323,
+            "maximum_absolute_error": 7.31047934
+          }
+        },
+        "late_life": {
+          "cycles_scored": 50,
+          "observed_crossings": 31,
+          "missed_fixed_r": 31,
+          "missed_one_rc": 31,
+          "module_voltage_mae_v": {
+            "mae": 0.8309215,
+            "rmse": 1.25855254,
+            "bias": 0.73985373,
+            "maximum_absolute_error": 9.15740899
+          }
+        }
+      }
+    },
+    "after": {
+      "observed_crossings_total": 63,
+      "predicted_crossings_total": 0,
+      "missed_total": 63,
+      "per_cohort": {
+        "mid_life": {
+          "cycles_scored": 49,
+          "source_rejections": {
+            "168": "unexpected_cycle_or_sample_clock"
+          },
+          "observed_crossings": 32,
+          "predicted_crossings": 0,
+          "missed_crossings": 32,
+          "module_voltage_mae_v": {
+            "mae": 0.52704079,
+            "rmse": 0.92791117,
+            "bias": 0.38929323,
+            "maximum_absolute_error": 7.31047934
+          },
+          "crossing_time_error_s": {
+            "count": 0,
+            "median_s": null,
+            "max_abs_s": null,
+            "values_s": []
+          }
+        },
+        "late_life": {
+          "cycles_scored": 50,
+          "source_rejections": {},
+          "observed_crossings": 31,
+          "predicted_crossings": 0,
+          "missed_crossings": 31,
+          "module_voltage_mae_v": {
+            "mae": 0.8309215,
+            "rmse": 1.25855254,
+            "bias": 0.73985373,
+            "maximum_absolute_error": 9.15740899
+          },
+          "crossing_time_error_s": {
+            "count": 0,
+            "median_s": null,
+            "max_abs_s": null,
+            "values_s": []
+          }
+        }
+      },
+      "crossing_time_error_s": {
+        "count": 0,
+        "median_s": null,
+        "max_abs_s": null
+      }
+    }
+  },
+  "forecast": {
+    "guard_margin_v": 1.207804065,
+    "before": {
+      "observed_crossings_total": 68,
+      "missed_updated_total": 68,
+      "per_cohort": {
+        "first": {
+          "selected_cycles": 50,
+          "observed_post_issue_cutoff": 31,
+          "updated_cutoff_missed": 31,
+          "guard_warning_any": 50,
+          "guard_cutoff_missed": 0,
+          "updated_voltage_error_v": {
+            "mae": 0.21893274,
+            "rmse": 0.28110437,
+            "bias": 0.21580319,
+            "maximum_absolute_error": 1.32653647
+          }
+        },
+        "second": {
+          "selected_cycles": 50,
+          "observed_post_issue_cutoff": 37,
+          "updated_cutoff_missed": 37,
+          "guard_warning_any": 50,
+          "guard_cutoff_missed": 0,
+          "updated_voltage_error_v": {
+            "mae": 0.31742905,
+            "rmse": 0.38295303,
+            "bias": 0.31742905,
+            "maximum_absolute_error": 1.30393368
+          }
+        }
+      }
+    },
+    "after": {
+      "observed_crossings_total": 68,
+      "predicted_point_crossings_total": 0,
+      "missed_updated_total": 68,
+      "guard_warning_any_total": 100,
+      "guard_cutoff_missed_total": 0,
+      "crossing_time_error_s": {
+        "count": 0,
+        "median_s": null,
+        "max_abs_s": null,
+        "positive_is_late": true
+      },
+      "per_cohort": {
+        "first": {
+          "selected_cycles": 50,
+          "source_rejections": {},
+          "full_pairs": 50,
+          "unsupported_or_missing_pair": 0,
+          "observed_post_issue_cutoff": 31,
+          "observed_cutoff_outside_pairs": 0,
+          "updated_cutoff_missed": 31,
+          "updated_point_cutoff_any": 0,
+          "predicted_point_crossings": 0,
+          "guard_warning_any": 50,
+          "guard_cutoff_missed": 0,
+          "guard_only_without_observed_crossing": 19,
+          "guard_only_in_early_ending_recordings": 19,
+          "lower_band_covered_entire_compared_segment": 49,
+          "updated_voltage_error_v": {
+            "mae": 0.21893274,
+            "rmse": 0.28110437,
+            "bias": 0.21580319,
+            "maximum_absolute_error": 1.32653647
+          },
+          "guard_lead_time_s_median": 8.0
+        },
+        "second": {
+          "selected_cycles": 50,
+          "source_rejections": {},
+          "full_pairs": 50,
+          "unsupported_or_missing_pair": 0,
+          "observed_post_issue_cutoff": 37,
+          "observed_cutoff_outside_pairs": 0,
+          "updated_cutoff_missed": 37,
+          "updated_point_cutoff_any": 0,
+          "predicted_point_crossings": 0,
+          "guard_warning_any": 50,
+          "guard_cutoff_missed": 0,
+          "guard_only_without_observed_crossing": 13,
+          "guard_only_in_early_ending_recordings": 13,
+          "lower_band_covered_entire_compared_segment": 49,
+          "updated_voltage_error_v": {
+            "mae": 0.31742905,
+            "rmse": 0.38295303,
+            "bias": 0.31742905,
+            "maximum_absolute_error": 1.30393368
+          },
+          "guard_lead_time_s_median": 6.0
+        }
+      }
+    }
+  },
+  "knee_anchor_probe": {
+    "status": "REFUTED - declared-tail extension does not recover the held-out crossings; the fitted support already spans the knee region and the deficit is the aged-module state unobservable from the frozen calibration split",
+    "declared_tail_soc_pct_cell_v": [
+      [
+        0.0,
+        3.3
+      ],
+      [
+        5.0,
+        3.5
+      ]
+    ],
+    "provenance": "data/components/batteries/generic_6s_lipo_16000mah.json OCV tail (soc 0 % -> 3.3 V/cell, soc 5 % -> 3.5 V/cell); declared shape joined to the fitted curve level at the fitted support's lower edge",
+    "model": {
+      "fitted_support_soc_pct": [
+        3.5627777777772707,
+        100.0
+      ],
+      "junction_offset_v": 0.20074413370140975,
+      "tail_points_soc_pct_cell_v": [
+        [
+          0.0,
+          3.5007441337014096
+        ]
+      ],
+      "dense_resample_points": 400,
+      "dense_resample_max_knot_deviation_cell_v": 0.0,
+      "series_ohm": 0.046664488422,
+      "polarization_ohm": 0.018322312505,
+      "tau_s": 2
+    },
+    "replay": {
+      "observed_crossings_total": 63,
+      "predicted_crossings_total": 0,
+      "missed_total": 63,
+      "per_cohort": {
+        "mid_life": {
+          "cycles_scored": 49,
+          "source_rejections": {
+            "168": "unexpected_cycle_or_sample_clock"
+          },
+          "observed_crossings": 32,
+          "predicted_crossings": 0,
+          "missed_crossings": 32,
+          "module_voltage_mae_v": {
+            "mae": 0.52704086,
+            "rmse": 0.92791118,
+            "bias": 0.38929334,
+            "maximum_absolute_error": 7.31047934
+          },
+          "crossing_time_error_s": {
+            "count": 0,
+            "median_s": null,
+            "max_abs_s": null,
+            "values_s": []
+          }
+        },
+        "late_life": {
+          "cycles_scored": 50,
+          "source_rejections": {},
+          "observed_crossings": 31,
+          "predicted_crossings": 0,
+          "missed_crossings": 31,
+          "module_voltage_mae_v": {
+            "mae": 0.83092157,
+            "rmse": 1.25855259,
+            "bias": 0.73985382,
+            "maximum_absolute_error": 9.15740741
+          },
+          "crossing_time_error_s": {
+            "count": 0,
+            "median_s": null,
+            "max_abs_s": null,
+            "values_s": []
+          }
+        }
+      },
+      "crossing_time_error_s": {
+        "count": 0,
+        "median_s": null,
+        "max_abs_s": null
+      }
+    },
+    "forecast": {
+      "observed_crossings_total": 68,
+      "predicted_point_crossings_total": 0,
+      "missed_updated_total": 68,
+      "guard_warning_any_total": 100,
+      "guard_cutoff_missed_total": 0,
+      "crossing_time_error_s": {
+        "count": 0,
+        "median_s": null,
+        "max_abs_s": null,
+        "positive_is_late": true
+      },
+      "per_cohort": {
+        "first": {
+          "selected_cycles": 50,
+          "source_rejections": {},
+          "full_pairs": 50,
+          "unsupported_or_missing_pair": 0,
+          "observed_post_issue_cutoff": 31,
+          "observed_cutoff_outside_pairs": 0,
+          "updated_cutoff_missed": 31,
+          "updated_point_cutoff_any": 0,
+          "predicted_point_crossings": 0,
+          "guard_warning_any": 50,
+          "guard_cutoff_missed": 0,
+          "guard_only_without_observed_crossing": 19,
+          "guard_only_in_early_ending_recordings": 19,
+          "lower_band_covered_entire_compared_segment": 49,
+          "updated_voltage_error_v": {
+            "mae": 0.21893276,
+            "rmse": 0.28110438,
+            "bias": 0.2158032,
+            "maximum_absolute_error": 1.32653653
+          },
+          "guard_lead_time_s_median": 8.0
+        },
+        "second": {
+          "selected_cycles": 50,
+          "source_rejections": {},
+          "full_pairs": 50,
+          "unsupported_or_missing_pair": 0,
+          "observed_post_issue_cutoff": 37,
+          "observed_cutoff_outside_pairs": 0,
+          "updated_cutoff_missed": 37,
+          "updated_point_cutoff_any": 0,
+          "predicted_point_crossings": 0,
+          "guard_warning_any": 50,
+          "guard_cutoff_missed": 0,
+          "guard_only_without_observed_crossing": 13,
+          "guard_only_in_early_ending_recordings": 13,
+          "lower_band_covered_entire_compared_segment": 49,
+          "updated_voltage_error_v": {
+            "mae": 0.31742902,
+            "rmse": 0.38295301,
+            "bias": 0.31742902,
+            "maximum_absolute_error": 1.30393386
+          },
+          "guard_lead_time_s_median": 6.0
+        }
+      }
+    }
+  }
+}

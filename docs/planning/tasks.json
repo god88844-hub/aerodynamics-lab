@@ -6,7 +6,7 @@
   "review_pr": 126,
   "proposed_tag": "v0.0-plan-locked",
   "authorization_task": "P0A-004",
-  "first_build_task": "P0A-006",
+  "first_build_task": "P0A-007",
   "work_packages": [
     {
       "number": 1,
@@ -346,33 +346,44 @@
         "P0A-005"
       ],
       "actor": "builder",
-      "status": "todo",
+      "status": "done",
       "acceptance": "Supported current, SOC, bus-voltage and cutoff events affect the authoritative plant and FAIL verdict; event bracketing handles equality and timestep boundaries; no future measured input or threshold tuning to confirmatory outcomes.",
       "proof_file": "docs/acceptance/P0A-006.md",
       "planned_tests": [
         "tests/acceptance/test_p0a_006.py"
       ],
-      "completion_evidence": [],
+      "completion_evidence": [
+        "docs/acceptance/P0A-006.md",
+        "docs/campaigns/m21_sit_causal_repair_delta.json",
+        "tests/acceptance/test_p0a_006.py"
+      ],
       "gate": null,
       "language": [
         "Python"
       ],
       "target_files": [
         "packages/physics/propulsion/battery.py",
-        "packages/desktop_worker/engine.py",
+        "packages/physics/scenarios/runner.py",
+        "packages/physics/scenarios/service.py",
+        "scripts/benchmark_sit_causal_repair.py",
+        "tests/acceptance/test_p0a_005.py",
         "tests/acceptance/test_p0a_006.py",
-        "docs/acceptance/P0A-006.md"
+        "docs/acceptance/P0A-006.md",
+        "docs/campaigns/m21_sit_causal_repair_delta.json"
       ],
       "todos": [
-        "1. Implement causal sag in the authoritative plant: load current -> pack R drop -> loaded bus voltage -> attainable voltage-dependent behavior, using the existing BatteryPack equations.",
-        "2. Propagate cutoff/warning events with explicit bracketing of equality and timestep boundaries (event at t exactly on a step edge must fire deterministically).",
-        "3. Propagate affected-component FAIL verdicts and supported bus-voltage effects into scenario results and the authoritative plant state.",
-        "4. Guard against future-information leakage: no step may read a later SOC/current than its clock.",
-        "5. Extend tests/acceptance/test_p0a_006.py for equality/boundary brackets and verdict propagation; re-run the frozen P0A-005 regressions and record the delta."
+        "1. battery.py: strict declared OCV support (fail closed below the calibrated knee region, no extrapolation), exact quadratic constant-power solve of V_bus = V_oc(SOC) - V_rc - I*R_int with voltage-collapse detection (stable upper root), max deliverable power, and deterministic sub-step cutoff/warning crossing bracketing. Existing method semantics stay byte-identical (the frozen SIT benchmarks call them).",
+        "2. Authoritative plant (verified: Godot -> scripts/lab_project.py run -> project_service.run_project -> simulation_service.run_simulation -> scenarios.service.run_flight -> runner.run_scenario -> LoopPowertrain.step; packages/desktop_worker/engine.py is the CAD engine, not the flight plant): causal per-tick order (solve at start-of-tick SOC), explicit demanded-power vs max-deliverable-power collapse gate, bracketed warning/cutoff events, latch-on-crossing warnings.",
+        "3. run_scenario converts powertrain fail-closed refusals into a named battery_voltage_collapse critical event (no invented post-failure thrust or state), records per-component verdicts (FAIL / NO_MODELED_LIMIT_BREACHED / NOT_SIMULATED) in ScenarioResult, and run_flight surfaces them.",
+        "4. Causality guard tests: perturbing the load after t_k leaves state and telemetry bit-identical up to and including t_k; equality and tick-edge bracketing; declared thresholds used verbatim from the component spec (no hardcoded tuning).",
+        "5. SIT delta: scripts/benchmark_sit_causal_repair.py re-runs the frozen calibration (cycles 1-50 only), applies the declared knee-anchor extension (component-table tail shape joined to the fitted curve; zero held-out tuning), evaluates replay + forecast with battery.py's canonical causal solver, and commits docs/campaigns/m21_sit_causal_repair_delta.json with the exact before-vs-after numbers. Frozen M21 artifacts untouched; the 4 stale strict-xfail markers in test_p0a_005.py are reconciled."
       ],
       "verify_commands": [
         "pytest tests/acceptance/test_p0a_006.py tests/acceptance/test_p0a_005.py -q",
-        "pytest tests/physics -q"
+        "pytest tests/physics -q",
+        "python scripts/check_master_plan.py --check",
+        "python scripts/export_contracts.py --check",
+        "python scripts/reconcile_registry.py --check"
       ]
     },
     {
@@ -384,6 +395,7 @@
         11
       ],
       "dependencies": [
+        "P0A-004",
         "P0A-006"
       ],
       "actor": "builder",
@@ -4054,5 +4066,5 @@
       ]
     }
   ],
-  "execution_hold": "Stage 0A execution is active. Stop after P0A-005 is merged and the P0A-006 plan is presented to the owner; do not start P0A-006 (or any packages/physics edits) without a new owner instruction."
+  "execution_hold": "Stage 0A execution is active. P0A-006 is complete and merged; stop after reporting the P0A-007 plan to the owner - do not start P0A-007 (or any further packages/physics edits) without a new owner instruction."
 }

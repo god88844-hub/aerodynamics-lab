@@ -10,7 +10,7 @@ Aerodynamics Lab is a **100 % standalone, local, offline desktop application** (
 
 ## Plan-lock and execution hold (status)
 
-Qualification passed and is complete. Owner authorization for conditional merge/tag is recorded in [P0A-004](docs/acceptance/P0A-004.md). PR #126 is merged at `5644110b`, the annotated tag `v0.0-plan-locked` exists and `main` is synchronized and green. **Stage 0A execution is ACTIVE**: the owner lifted the hold at `dd366d9` and P0A-005 (reproduce and freeze the M21 SIT cutoff regressions) is complete per [docs/acceptance/P0A-005.md](docs/acceptance/P0A-005.md); the next builder task is P0A-006. There is no new qualification stage; Phases 1–4 remain contracts/registries only until their explicit entry gates.
+Qualification passed and is complete. Owner authorization for conditional merge/tag is recorded in [P0A-004](docs/acceptance/P0A-004.md). PR #126 is merged at `5644110b`, the annotated tag `v0.0-plan-locked` exists and `main` is synchronized and green. **Stage 0A execution is ACTIVE**: P0A-005 (M21 SIT cutoff regression reproduction) and P0A-006 (causal battery sag/cutoff propagation in the authoritative plant, strict-support battery contract, exact event bracketing, component FAIL verdicts; the SIT knee-anchor probe was refuted and the repaired model's held-out numbers equal the frozen baseline) are complete per [docs/acceptance/P0A-005.md](docs/acceptance/P0A-005.md) and [docs/acceptance/P0A-006.md](docs/acceptance/P0A-006.md); the next builder task is P0A-007 (awaits owner instruction). There is no new qualification stage; Phases 1–4 remain contracts/registries only until their explicit entry gates.
 
 ## Legacy plans are read-only
 
@@ -51,7 +51,7 @@ A new sequential builder agent needs exactly one read of this file plus [MASTER_
 
 1. **State**: read this file top to bottom; [MASTER_PLAN](docs/MASTER_PLAN.md) "Next action and execution rules"; confirm `git log -1` matches `origin/main` (`git fetch origin && git status -sb`) and the latest recorded evidence in [ACCEPTANCE_LEDGER](docs/ACCEPTANCE_LEDGER.md); `git status` must be clean.
 2. **Authority**: confirm an explicit owner instruction exists for the next task (implementation is held by default; custodian/reviewer/owner tasks need real external receipts).
-3. **Task**: take the first unchecked builder task in [MASTER_PLAN](docs/MASTER_PLAN.md) whose `dependencies` are all `done` (currently **P0A-005**). Read its `language`, `target_files`, numbered `todos`, `verify_commands` and `acceptance`.
+3. **Task**: take the first unchecked builder task in [MASTER_PLAN](docs/MASTER_PLAN.md) whose `dependencies` are all `done` (currently **P0A-007**). Read its `language`, `target_files`, numbered `todos`, `verify_commands` and `acceptance`.
 4. **Implement**: work only in the declared `target_files`; keep SI/frames/quaternion/time-base contracts; refuse unsupported mechanisms.
 5. **Verify**: run the task's `verify_commands` plus the boundary checks above; the task's `planned_tests`/acceptance proof must pass on the final head.
 6. **Record**: fill `docs/acceptance/<TASK>.md`, add `completion_evidence` to the task in `docs/planning/tasks.json`, regenerate `MASTER_PLAN.md` (`python scripts/check_master_plan.py --render`), sync issue checklists (`python scripts/sync_issue_checklists.py`), commit on a feature branch and open a PR.
