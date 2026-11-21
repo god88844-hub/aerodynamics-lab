@@ -109,14 +109,18 @@ def local_link(path):
 
 
 def render(plan):
-    lines = ["# Master task and execution plan", "", "21 November 2026. **Full standalone software plan; owner approval pending.**",
+    approved = next(t for t in plan["tasks"] if t["id"] == plan["authorization_task"])["status"] == "done"
+    state = "owner authorization recorded; implementation held" if approved else "owner approval pending"
+    next_action = (f"**{plan['authorization_task']} is complete** with the owner's actual authorization receipt. Merge/tag requires the three pre-merge checks and five green CI jobs; actual operation receipts are recorded afterward. **{plan.get('execution_hold', 'Do not begin implementation without a new owner request.')}** The next future software task is **{plan['first_build_task']}**."
+                   if approved else f"The next action is **{plan['authorization_task']}**, owner approval/merge/tag. No implementation may begin before approval.")
+    lines = ["# Master task and execution plan", "", f"21 November 2026. **Full standalone software plan; {state}.**",
              "", "Qualification is complete. The primary product is `apps/desktop/`, the standalone Godot 3D application; shared engineering services remain usable without an HTTP server. `apps/web/` is frozen legacy (security and minimal compatibility only). Historical qualification receipts remain evidence, not a recurring development stage.",
              "", f"Tracking: [master issue #{plan['plan_issue']}](https://github.com/{plan['repository']}/issues/{plan['plan_issue']}), [PR #126](https://github.com/{plan['repository']}/pull/126). Proposed release marker: **`{plan['proposed_tag']}`**. This document does not approve merge, tagging, physical testing or physical acceptance.",
              "", "## Next action and execution rules", "",
-             f"The next action is **{plan['authorization_task']}**, owner approval/merge/tag. After that approval is recorded, the first software task is **{plan['first_build_task']}**, reproducing the M21 cutoff failures. Do not restart qualification or start code execution from this planning PR.",
+             next_action,
              "", "1. Read `AGENTS.md`, this task's section, the linked fundamentals and acceptance ledger. Use only the canonical local workspace in `WORKSPACE.md`.",
-             "2. Pick the first unchecked builder task in document order whose prerequisites are checked. A pending owner/custodian/reviewer task requires its real receipt; a builder cannot self-approve it or invent data.",
-             "3. Approval of the plan authorizes dependency-ordered Phase 0 software work. WP7–WP9 begin only at their listed tasks/prerequisites; no separate repeated qualification permission is implied. Phases 1–4 remain interfaces/registries only until their explicit entry gates.",
+             "2. When implementation is explicitly resumed, pick the first unchecked builder task in document order whose prerequisites are checked. A pending owner/custodian/reviewer task requires its real receipt; a builder cannot self-approve it or invent data.",
+             "3. The current request authorizes merge/tag and clean-main verification only, then stop before P0A-005. After a new owner request to resume, Phase 0 follows dependency order and WP7–WP9 follow their listed tasks. No repeated qualification stage is implied. Phases 1–4 remain interfaces/registries only until their entry gates.",
              "4. Implement the named normal desktop/headless behavior and its verification target. Each unchecked test path below is a **planned acceptance test to implement**, not a claim that the file already exists.",
              "5. Record the exact proof, update the canonical JSON, regenerate this document and sync every affected issue checklist. Commit after a completed milestone; merge only with the required final-head CI green.",
              "6. Checkbox completion is a scoped task result. Scientific status is tracked separately in `ACCEPTANCE_LEDGER.md`; code, a shader, optimization or synthetic sensor output never counts as physical validation.",
@@ -162,6 +166,9 @@ def render(plan):
 
 
 def issue_blocks(plan):
+    approved = next(t for t in plan["tasks"] if t["id"] == plan["authorization_task"])["status"] == "done"
+    authorization = (f"Owner authorization **{plan['authorization_task']} is complete** with its receipt. Merge/tag still requires pre-merge checks and five green CI jobs; operation receipts are recorded afterward. **Stop before {plan['first_build_task']}**; implementation requires a new owner instruction."
+                     if approved else f"Owner approval is **{plan['authorization_task']}**; no implementation is authorized yet.")
     mapping = {}
     for p in plan["work_packages"]:
         mapping[p["issue"]] = (f"WP{p['number']} — {p['title']}", [t for t in plan["tasks"] if p["number"] in t["work_packages"]])
@@ -171,7 +178,7 @@ def issue_blocks(plan):
     result = {}
     for number, (title, tasks) in mapping.items():
         lines = [START, "## " + title, "", f"Generated from the [review plan](https://github.com/{plan['repository']}/blob/feature/foundation-spec-lock/docs/MASTER_PLAN.md) in [PR #126](https://github.com/{plan['repository']}/pull/126). After merge, use `docs/MASTER_PLAN.md` on main. Canonical state is `docs/planning/tasks.json`; repeated task IDs share one status.",
-                 "", f"Qualification is complete. Owner merge/tag approval is **{plan['authorization_task']}**; the first implementation task afterward is **{plan['first_build_task']}**. This checklist confers no physical acceptance. Custodian/reviewer gates need real independent receipts.", ""]
+                 "", f"Qualification is complete. {authorization} This checklist confers no physical acceptance. Custodian/reviewer gates need real independent receipts.", ""]
         for t in tasks:
             lines.append(f"- [{'x' if t['status']=='done' else ' '}] **{t['id']}** — {t['title']} (deps: {', '.join(t['dependencies']) or 'none'}; {t['actor']}). Proof: `{t['proof_file']}`.")
         lines += ["", "For exact acceptance conditions and planned verification files, follow the matching numbered task in MASTER_PLAN. Keep unsupported/scientific status separate in ACCEPTANCE_LEDGER.", END]
@@ -207,7 +214,8 @@ def main():
         if (ROOT / MASTER).read_text(encoding="utf-8-sig") != expected:
             raise SystemExit("Master plan drift: edit canonical JSON and regenerate")
         check_sync(plan)
-    print(f"Master plan verified: {len(plan['tasks'])} numbered tasks, 12 packages, 8 stages; next owner action {plan['authorization_task']}, first software task {plan['first_build_task']}")
+    approval = next(t for t in plan["tasks"] if t["id"] == plan["authorization_task"])["status"]
+    print(f"Master plan verified: {len(plan['tasks'])} numbered tasks, 12 packages, 8 stages; {plan['authorization_task']}={approval}; {plan['first_build_task']} held until owner resumes")
 
 
 if __name__ == "__main__":

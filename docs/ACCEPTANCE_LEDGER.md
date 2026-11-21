@@ -23,7 +23,7 @@ The original admission correctly refused: total **16636305408**, available **232
 
 After the Windows control-record corrections, the [post-fix bundled smoke](prototypes/QUALIFICATION_GATE_FOLLOWUP.md) passed at `366777dd45cc6ae6cf751ab7c0c6e085d9e754fe`: full harness 95.0924463 s, bootstrap entry point 93.6484139 s, native build 40.7723507 s, native CTest 1/1 and normal Godot smoke exit 0. Per-job receipts and all five intervening failed attempts are retained. Original visible FPS/latency measurements were not repeated at this source. Current PR head CI is reported in PR #126; the baseline counts above remain historical.
 
-**Current review boundary:** PR #126 is the full planning lock. Qualification is complete. Await owner approval before merge, `v0.0-plan-locked` and P0A-005 execution; thereafter follow [MASTER_PLAN](MASTER_PLAN.md). Wider hardware and scientific gates remain separate.
+**Current review boundary:** PR #126 is the full planning lock. Qualification is complete. Owner approval for conditional merge/tag is recorded in [P0A-004](acceptance/P0A-004.md); verify the pre-merge checks/green CI and post-action Git refs, then stop before P0A-005. Wider hardware and scientific gates remain separate.
 
 ## Twelve work packages
 
@@ -63,7 +63,7 @@ Each remains **OPEN**. “Measured comparison” below describes source-specific
 
 ## Exact execution handoff
 
-1. P0A-004: owner approval of PR #126, merge and `v0.0-plan-locked`; no builder self-approval.
+1. P0A-004: completed owner authorization receipt; merge/tag and clean-main results are verified afterward in PR #126. Stop before P0A-005 under the current request.
 2. P0A-005: reproduce/freeze M21 cutoff regressions, then P0A-006–007 correct and verify causal cutoff/sag behavior.
 3. P0A-008 onward: signed UIUC investigation, M25 detector failures and causal QDrone coupling, followed by the complete 0A–0D implementation/evidence checklists in [MASTER_PLAN](MASTER_PLAN.md).
 

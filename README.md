@@ -7,7 +7,7 @@ The primary product is the [standalone Godot 3D desktop application](apps/deskto
 
 Start with [AGENTS.md](AGENTS.md), [ROADMAP](docs/ROADMAP.md) and the complete [MASTER_PLAN](docs/MASTER_PLAN.md). Phase 0 covers multirotor, fixed-wing, helicopter and VTOL drones; CAD, engineering worlds/weather, electronics, learning, analysis, autonomy and evidence. The task checkboxes distinguish existing verified foundations from the remaining software and physical acceptance work. [ACCEPTANCE_LEDGER](docs/ACCEPTANCE_LEDGER.md) records actual status.
 
-On this workstation all project work belongs under `C:\Users\Simulation apps\flights simulation`; see [WORKSPACE](docs/WORKSPACE.md). PR #126 awaits owner approval before merge, `v0.0-plan-locked` and Slice 0A execution.
+On this workstation all project work belongs under `C:\Users\Simulation apps\flights simulation`; see [WORKSPACE](docs/WORKSPACE.md). Owner authorization for conditional PR #126 merge and `v0.0-plan-locked` is recorded in P0A-004. The current request stops after plan-lock publication; Slice 0A implementation is not started.
 
 ## Mission
 

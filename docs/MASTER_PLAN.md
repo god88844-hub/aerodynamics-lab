@@ -1,6 +1,6 @@
 # Master task and execution plan
 
-21 November 2026. **Full standalone software plan; owner approval pending.**
+21 November 2026. **Full standalone software plan; owner authorization recorded; implementation held.**
 
 Qualification is complete. The primary product is `apps/desktop/`, the standalone Godot 3D application; shared engineering services remain usable without an HTTP server. `apps/web/` is frozen legacy (security and minimal compatibility only). Historical qualification receipts remain evidence, not a recurring development stage.
 
@@ -8,11 +8,11 @@ Tracking: [master issue #127](https://github.com/god88844-hub/aerodynamics-lab/i
 
 ## Next action and execution rules
 
-The next action is **P0A-004**, owner approval/merge/tag. After that approval is recorded, the first software task is **P0A-005**, reproducing the M21 cutoff failures. Do not restart qualification or start code execution from this planning PR.
+**P0A-004 is complete** with the owner's actual authorization receipt. Merge/tag requires the three pre-merge checks and five green CI jobs; actual operation receipts are recorded afterward. **Stop after the authorized merge, annotated tag and clean-main verification; P0A-005 requires a new owner instruction.** The next future software task is **P0A-005**.
 
 1. Read `AGENTS.md`, this task's section, the linked fundamentals and acceptance ledger. Use only the canonical local workspace in `WORKSPACE.md`.
-2. Pick the first unchecked builder task in document order whose prerequisites are checked. A pending owner/custodian/reviewer task requires its real receipt; a builder cannot self-approve it or invent data.
-3. Approval of the plan authorizes dependency-ordered Phase 0 software work. WP7–WP9 begin only at their listed tasks/prerequisites; no separate repeated qualification permission is implied. Phases 1–4 remain interfaces/registries only until their explicit entry gates.
+2. When implementation is explicitly resumed, pick the first unchecked builder task in document order whose prerequisites are checked. A pending owner/custodian/reviewer task requires its real receipt; a builder cannot self-approve it or invent data.
+3. The current request authorizes merge/tag and clean-main verification only, then stop before P0A-005. After a new owner request to resume, Phase 0 follows dependency order and WP7–WP9 follow their listed tasks. No repeated qualification stage is implied. Phases 1–4 remain interfaces/registries only until their entry gates.
 4. Implement the named normal desktop/headless behavior and its verification target. Each unchecked test path below is a **planned acceptance test to implement**, not a claim that the file already exists.
 5. Record the exact proof, update the canonical JSON, regenerate this document and sync every affected issue checklist. Commit after a completed milestone; merge only with the required final-head CI green.
 6. Checkbox completion is a scoped task result. Scientific status is tracked separately in `ACCEPTANCE_LEDGER.md`; code, a shader, optimization or synthetic sensor output never counts as physical validation.
@@ -99,9 +99,10 @@ Tasks with several WPs appear in each relevant issue but retain one canonical ID
   - Recorded evidence: [docs/WORKSPACE.md](WORKSPACE.md), [docs/planning/github_sync.json](planning/github_sync.json), [docs/MASTER_PLAN.md](MASTER_PLAN.md), [docs/planning/workspace_migration.json](planning/workspace_migration.json).
 
 <a name="p0a-004"></a>
-- [ ] **P0A-004 — Approve planning PR, merge and create v0.0-plan-locked** (WP1, WP12; actor: owner)
+- [x] **P0A-004 — Record owner authorization for the planning lock** (WP1, WP12; actor: owner)
   - Prerequisites: P0A-003. Proof: [docs/acceptance/P0A-004.md](acceptance/P0A-004.md).
-  - Acceptance: Owner approval is recorded; final PR-head CI has all five jobs green; merge SHA and v0.0-plan-locked tag resolve to the approved plan. No builder self-approval.
+  - Acceptance: Actual owner authorization to merge/tag after the three pre-merge checks and green CI is recorded. Approval is distinct from the later operations: merge/tag/clean-main proof belongs to the PR conversation and Git refs after execution, never fabricated before merge. This request does not authorize P0A-005.
+  - Recorded evidence: [docs/acceptance/P0A-004.md](acceptance/P0A-004.md).
 
 <a name="p0a-005"></a>
 - [ ] **P0A-005 — Reproduce and freeze M21 cutoff regression cases** (WP5; actor: builder)
@@ -983,4 +984,4 @@ Tasks with several WPs appear in each relevant issue but retain one canonical ID
   - Prerequisites: P4-007. Proof: [docs/acceptance/P4-008.md](acceptance/P4-008.md).
   - Acceptance: Qualified independent review accepts the stated limited uses; source/rights/security, reproducible distributions, compatibility and recovery gates close the phase.
 
-Unique task count: **150**; checked **3**, unchecked **147**. These are planning tasks, not a count of physically validated milestones. All ten legacy major acceptance families and all twelve broad Phase 0 package issues remain open until their own actual exit evidence exists.
+Unique task count: **150**; checked **4**, unchecked **146**. These are planning tasks, not a count of physically validated milestones. All ten legacy major acceptance families and all twelve broad Phase 0 package issues remain open until their own actual exit evidence exists.

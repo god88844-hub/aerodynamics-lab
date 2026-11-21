@@ -25,11 +25,11 @@ paths describe past measurements; use the locations above for new work. Do not r
 old receipts or dataset hashes to make them look newly acquired. The dated registry's
 `../source-physical` paths are historical custody paths, not current launch instructions.
 
-For local PowerShell work, set scratch/application state for that process before tests
+From any cloned checkout, set scratch/application state for that process before tests
 or launching the desktop:
 
 ```powershell
-$workspaceRoot = 'C:\Users\Simulation apps\flights simulation'
+$workspaceRoot = (git rev-parse --show-toplevel)
 Set-Location -LiteralPath $workspaceRoot
 $env:TEMP = Join-Path $workspaceRoot '.local/tmp'
 $env:TMP = $env:TEMP

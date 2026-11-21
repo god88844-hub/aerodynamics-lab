@@ -1,6 +1,6 @@
 # PR #126 exact file manifest
 
-Compared with main baseline `8a511949a639b8b42d27a9c7ba9967b661db1c06`. **382 exact changed paths**: 361 added, 21 updated. Statuses use Git with rename inference disabled. The manifest includes itself; historical raw qualification receipts are retained unchanged by this final planning pass.
+Compared with main baseline `8a511949a639b8b42d27a9c7ba9967b661db1c06`. **383 exact changed paths**: 362 added, 21 updated. Statuses use Git with rename inference disabled. The manifest includes itself; historical raw qualification receipts are retained unchanged by this final planning pass.
 
 The full software plan is MASTER_PLAN, with canonical tasks, owner approval, dependency/proof checks and synchronized GitHub checklists. The primary application is apps/desktop; apps/web stays frozen legacy.
 
@@ -28,6 +28,7 @@ The full software plan is MASTER_PLAN, with canonical tasks, owner approval, dep
 | M | `docs/ROADMAP.md` |
 | M | `docs/SOURCES.md` |
 | A | `docs/WORKSPACE.md` |
+| A | `docs/acceptance/P0A-004.md` |
 | M | `docs/contracts/README.md` |
 | M | `docs/dev_guide.md` |
 | A | `docs/fundamentals/coordinates_and_units.md` |

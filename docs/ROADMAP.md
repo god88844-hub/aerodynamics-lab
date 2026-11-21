@@ -6,7 +6,7 @@ The complete numbered, checkable task breakdown is **[MASTER_PLAN.md](MASTER_PLA
 
 ## Approval and exact next task
 
-[PR #126](https://github.com/god88844-hub/aerodynamics-lab/pull/126) remains open for owner review. Do not merge, tag **`v0.0-plan-locked`**, or begin execution before approval (**P0A-004**). After approval is recorded, start **P0A-005**: reproduce and freeze the M21 cutoff failures. Continue with battery event/sag correction, UIUC signed-thrust diagnosis, M25 fault detection and causal QDrone coupling in that order. The 14 V QDrone line is study-specific; no blanket UIUC sign flip is preapproved.
+[PR #126](https://github.com/god88844-hub/aerodynamics-lab/pull/126) has conditional owner merge/tag authorization recorded in [P0A-004](acceptance/P0A-004.md). Run the three pre-merge checks and require five green CI jobs before merge and annotated **`v0.0-plan-locked`** publication. Verify clean synchronized main, then stop. **Do not start P0A-005 under this request.** When the owner later resumes implementation, P0A-005 is the first software task: reproduce/freeze M21 cutoff failures, then follow the numbered dependency order.
 
 ## Phase 0 slices
 

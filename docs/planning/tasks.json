@@ -272,7 +272,7 @@
     {
       "id": "P0A-004",
       "stage": "0A",
-      "title": "Approve planning PR, merge and create v0.0-plan-locked",
+      "title": "Record owner authorization for the planning lock",
       "work_packages": [
         1,
         12
@@ -281,11 +281,13 @@
         "P0A-003"
       ],
       "actor": "owner",
-      "status": "todo",
-      "acceptance": "Owner approval is recorded; final PR-head CI has all five jobs green; merge SHA and v0.0-plan-locked tag resolve to the approved plan. No builder self-approval.",
+      "status": "done",
+      "acceptance": "Actual owner authorization to merge/tag after the three pre-merge checks and green CI is recorded. Approval is distinct from the later operations: merge/tag/clean-main proof belongs to the PR conversation and Git refs after execution, never fabricated before merge. This request does not authorize P0A-005.",
       "proof_file": "docs/acceptance/P0A-004.md",
       "planned_tests": [],
-      "completion_evidence": [],
+      "completion_evidence": [
+        "docs/acceptance/P0A-004.md"
+      ],
       "gate": "execution_authorization"
     },
     {
@@ -3382,5 +3384,6 @@
         "P0D-032"
       ]
     }
-  ]
+  ],
+  "execution_hold": "Stop after the authorized merge, annotated tag and clean-main verification; P0A-005 requires a new owner instruction."
 }
