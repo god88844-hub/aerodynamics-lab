@@ -8,7 +8,7 @@ Tracking: [master issue #127](https://github.com/god88844-hub/aerodynamics-lab/i
 
 ## Next action and execution rules
 
-**P0A-004 is complete** with the owner's actual authorization receipt. Merge/tag requires the three pre-merge checks and five green CI jobs; actual operation receipts are recorded afterward. **Stop after the authorized merge, annotated tag and clean-main verification; P0A-005 requires a new owner instruction.** The next future software task is **P0A-005**.
+**P0A-004 is complete** with the owner's actual authorization receipt. Merge/tag requires the three pre-merge checks and five green CI jobs; actual operation receipts are recorded afterward. **Stage 0A execution is active. Stop after P0A-005 is merged and the P0A-006 plan is presented to the owner; do not start P0A-006 (or any packages/physics edits) without a new owner instruction.** The next future software task is **P0A-006**.
 
 1. Read `AGENTS.md`, this task's section, the linked fundamentals and acceptance ledger. Use only the canonical local workspace in `WORKSPACE.md`.
 2. When implementation is explicitly resumed, pick the first unchecked builder task in document order whose prerequisites are checked. A pending owner/custodian/reviewer task requires its real receipt; a builder cannot self-approve it or invent data.
@@ -105,23 +105,24 @@ Tasks with several WPs appear in each relevant issue but retain one canonical ID
   - Recorded evidence: [docs/acceptance/P0A-004.md](acceptance/P0A-004.md).
 
 <a name="p0a-005"></a>
-- [ ] **P0A-005 — Reproduce and freeze M21 cutoff regression cases** (WP5; actor: builder)
+- [x] **P0A-005 — Reproduce and freeze M21 cutoff regression cases** (WP5; actor: builder)
   - Prerequisites: P0A-004. Proof: [docs/acceptance/P0A-005.md](acceptance/P0A-005.md).
   - Acceptance: Reproduce the SIT 63/63 replay and 68/68 forecast missed 80 V study crossings using pinned DEVELOPMENT data; publish exact commands, time/event definitions and failing regressions before changes.
   - Language: Python.
-  - Target files: `tests/acceptance/test_p0a_005.py`; `docs/acceptance/P0A-005.md`; `packages/physics/propulsion/battery.py`; `data/research/registry.json`.
+  - Target files: `tests/acceptance/test_p0a_005.py`; `docs/acceptance/P0A-005.md`; `data/research/registry.json`.
   - Todos:
-    - [ ] 1. Read docs/M21_BATTERY_EVIDENCE.md and data/research/registry.json; pin the exact DEVELOPMENT campaign rows, file hashes and clock/time definitions for the SIT replay and forecast study.
-    - [ ] 2. Implement tests/acceptance/test_p0a_005.py: measured-current SIT replay and forecast-demand harness reproducing 63/63 replay and 68/68 missed 80 V study crossings against the frozen rows.
-    - [ ] 3. Publish exact commands, time/event definitions and the failing regressions in docs/acceptance/P0A-005.md (with the pinned hashes).
-    - [ ] 4. Freeze this baseline: change nothing in packages/physics in this task — the fixes are P0A-006.
-    - [ ] 5. Run the declared verification commands and record the output in docs/acceptance/P0A-005.md.
+    - [x] 1. DONE — pinned DEVELOPMENT campaign rows, hashes and clock/time definitions read from docs/M21_BATTERY_CAMPAIGN.md, docs/campaigns/M21_6_10_SIT_MODULE_ELECTROTHERMAL.md, docs/campaigns/M21_11_15_SIT_CUTOFF_FORECAST.md and data/research/registry.json.
+    - [x] 2. DONE — tests/acceptance/test_p0a_005.py reproduces 63/63 replay and 68/68 forecast missed 80 V crossings from the pinned workbook (full re-execution bit-identical).
+    - [x] 3. DONE — exact commands, time/event definitions and failing regressions published in docs/acceptance/P0A-005.md with the pinned hashes.
+    - [x] 4. DONE — packages/physics untouched; the causal fixes are P0A-006.
+    - [x] 5. DONE — verification commands run and output recorded in docs/acceptance/P0A-005.md.
   - Verify: `pytest tests/acceptance/test_p0a_005.py -q` | `python scripts/reconcile_registry.py --check` | `python scripts/check_master_plan.py --check`
   - Planned verification: `pytest tests/acceptance/test_p0a_005.py`; required current-head CI.
+  - Recorded evidence: [docs/acceptance/P0A-005.md](acceptance/P0A-005.md), [docs/campaigns/m21_sit_module_electrothermal_results.json](campaigns/m21_sit_module_electrothermal_results.json), [docs/campaigns/m21_sit_cutoff_forecast_results.json](campaigns/m21_sit_cutoff_forecast_results.json).
 
 <a name="p0a-006"></a>
 - [ ] **P0A-006 — Correct causal battery sag and cutoff event propagation** (WP5; actor: builder)
-  - Prerequisites: P0A-005. Proof: [docs/acceptance/P0A-006.md](acceptance/P0A-006.md).
+  - Prerequisites: P0A-004, P0A-005. Proof: [docs/acceptance/P0A-006.md](acceptance/P0A-006.md).
   - Acceptance: Supported current, SOC, bus-voltage and cutoff events affect the authoritative plant and FAIL verdict; event bracketing handles equality and timestep boundaries; no future measured input or threshold tuning to confirmatory outcomes.
   - Language: Python.
   - Target files: `packages/physics/propulsion/battery.py`; `packages/desktop_worker/engine.py`; `tests/acceptance/test_p0a_006.py`; `docs/acceptance/P0A-006.md`.
@@ -1263,4 +1264,4 @@ Tasks with several WPs appear in each relevant issue but retain one canonical ID
   - Prerequisites: P4-007. Proof: [docs/acceptance/P4-008.md](acceptance/P4-008.md).
   - Acceptance: Qualified independent review accepts the stated limited uses; source/rights/security, reproducible distributions, compatibility and recovery gates close the phase.
 
-Unique task count: **150**; checked **4**, unchecked **146**. These are planning tasks, not a count of physically validated milestones. All ten legacy major acceptance families and all twelve broad Phase 0 package issues remain open until their own actual exit evidence exists.
+Unique task count: **150**; checked **5**, unchecked **145**. These are planning tasks, not a count of physically validated milestones. All ten legacy major acceptance families and all twelve broad Phase 0 package issues remain open until their own actual exit evidence exists.

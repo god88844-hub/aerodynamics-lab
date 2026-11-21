@@ -160,9 +160,11 @@ def render(plan):
             if task.get("target_files"):
                 lines.append("  - Target files: " + "; ".join(f"`{p}`" for p in task["target_files"]) + ".")
             if task.get("todos"):
+                done_task = task["status"] == "done"
                 lines.append("  - Todos:")
                 for todo in task["todos"]:
-                    lines.append(f"    - [ ] {todo}")
+                    box = "x" if done_task else " "
+                    lines.append(f"    - [{box}] {todo}")
             if task.get("verify_commands"):
                 lines.append("  - Verify: " + " | ".join(f"`{c}`" for c in task["verify_commands"]))
             if task["planned_tests"]:
