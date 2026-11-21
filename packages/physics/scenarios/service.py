@@ -416,6 +416,7 @@ def run_flight(design: DroneDesign, data_dir: Path | None = None) -> dict:
             "aborted": res.aborted,
             "abort_event": res.abort_event.message if res.abort_event else None,
         },
+        "component_verdicts": res.component_verdicts,
         "results": {
             "time_to_5m_s": res.time_to_altitude_s,
             "max_altitude_m": res.max_altitude_m,
@@ -447,8 +448,12 @@ def run_flight(design: DroneDesign, data_dir: Path | None = None) -> dict:
             },
             "failure_policy": {
                 "status": "declared in physics/scenarios/runner.py",
-                "caveat": "critical events abort the run with a named cause; "
-                "warnings are logged",
+                "caveat": "critical events abort the run with a named cause at "
+                "their bracketed crossing time; warnings are logged once at "
+                "their crossing; component_verdicts record declared hard-limit "
+                "breaches (FAIL) vs no breach (NO_MODELED_LIMIT_BREACHED — "
+                "not a fitness claim); a demanded bus power above the pack's "
+                "constant-power collapse boundary is refused, not simulated",
             },
             "controller": {
                 "status": "deterministic closed loop, perfect state knowledge",

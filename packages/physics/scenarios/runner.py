@@ -10,19 +10,29 @@ project failure"):
       destructive overcurrent),
     - motor current above the continuous rating sustained for the datasheet's
       continuous duration (180 s for the MN3508) — thermal burnout,
-    - battery cell voltage (under load) at/below the cutoff threshold,
+    - battery loaded cell voltage reaching the cutoff threshold — bracketed
+      to its exact in-tick crossing time (equality and tick edges fire
+      deterministically; P0A-006),
+    - a powertrain demand the pack cannot supply (above the exact
+      constant-power collapse boundary) or a state outside the declared
+      model support — fail-closed refusals become named critical events, the
+      commanded propulsion output is not simulated (P0A-006),
     - any ESC branch current or shared bus voltage above its declared rating,
     - arm root bending stress at/above material yield,
     - ground impact (z below start with negative speed at ground level),
     - attitude loss (|tilt| > 45 deg — unrecoverable for this controller class).
   NON-CRITICAL (logged, run continues):
-    - battery warning cell voltage (land-now threshold),
+    - battery warning cell voltage — fires once at its bracketed crossing
+      (land-now threshold; latched thereafter),
     - per-tick over-current below the destructive threshold (counted; the
       sustained rule above is the abort criterion),
     - structural margin < 1.5 (warn).
 
 Design-level acceptance: a run that hits a critical failure returns
-``aborted=True`` with the named event instead of silently continuing.
+``aborted=True`` with the named event instead of silently continuing, and
+``component_verdicts`` records FAIL for each component whose declared hard
+limit was breached (absence of a breach is recorded, and is NOT a fitness
+claim).
 """
 
 from __future__ import annotations
@@ -39,8 +49,13 @@ from physics.dynamics.quaternion import conjugate, rotate, rotation_matrix
 from physics.dynamics.rigid_body import make_state, normalize_state
 from physics.integration.rk4 import rk4_step
 from physics.integration.runtime_limit import check_time_limit
-from physics.propulsion.battery import BatteryPack
-from physics.propulsion.dataset import PowertrainDataset
+from physics.propulsion.battery import (
+    BatteryPack,
+    OutOfSupportError,
+    PowertrainError,
+    VoltageCollapseError,
+)
+from physics.propulsion.dataset import OutOfEnvelopeError, PowertrainDataset
 from physics.propulsion.esc import Esc
 from physics.structures.beam import check_arm, effective_arm_spans_m
 from physics.structures.materials import MaterialProps, load_materials
@@ -61,6 +76,14 @@ def altitude_at(waypoints: list[tuple[float, float]], t: float) -> float:
 
 # ------------------------------------------------------------- powertrain loop
 
+# Quasi-static bus solve bounds: the damped fixed point converges for any
+# supported demand (seeded with the previous tick's converged bus voltage —
+# past state only, so still causal); non-convergence is a declared refusal
+# (the demand has no stable quasi-static solution), never a silent last
+# iterate. Tolerance matches StaticPowertrain.solve_bus.
+BUS_SOLVE_MAX_ITERATIONS = 24
+BUS_SOLVE_TOLERANCE_V = 1e-4
+
 
 @dataclass
 class LoopAux:
@@ -79,7 +102,17 @@ class LoopPowertrain:
     """Sourced powertrain evaluated per control tick: thrust commands ->
     rpm/current via the measured dataset; battery SOC integration and bus
     sag quasi-static. Quasi-static is valid because bus dynamics are far
-    faster than the control loop but change slowly at hover bandwidth."""
+    faster than the control loop but change slowly at hover bandwidth.
+
+    Causal contract (P0A-006): every quantity in ``step`` is a function of
+    the state at the START of the tick (SOC at the tick's clock) and the
+    commanded load — no step reads a later SOC or current than its clock.
+    The loaded bus voltage is solved at the start-of-tick SOC and threshold
+    crossings (warning/cutoff) are bracketed through the tick's linear SOC
+    drain with exact equality and tick-edge handling. A demand the pack
+    cannot supply (above the exact constant-power collapse boundary) raises
+    ``VoltageCollapseError`` — the commanded propulsion output is not
+    attainable and is never simulated."""
 
     def __init__(
         self,
@@ -97,6 +130,8 @@ class LoopPowertrain:
         self.max_continuous_a = motor.max_continuous_current_a
         self.continuous_duration_s = motor.max_continuous_duration_s or 180.0
         self._over_current_time = np.zeros(1)  # resized per unit count
+        self._warning_latched = False
+        self._v_bus_seed: float | None = None  # previous tick's converged bus
         self.energy_wh = 0.0
 
     def step(self, thrusts: np.ndarray, dt: float) -> LoopAux:
@@ -106,88 +141,152 @@ class LoopPowertrain:
         events: list[dict] = []
         rpm_lo, rpm_hi = self.dataset.envelope()["rpm_range_merged"]
 
+        # Causal state: everything below uses the SOC at this tick's clock.
+        soc_pre = self.soc
+        v_oc = self.battery.ocv_pack(soc_pre)
+
         # Fixed-point bus solve: currents depend on v_bus, v_bus on total draw.
-        v_bus = self.battery.ocv_pack(self.soc)
+        # Seeded with the previous tick's converged bus voltage (past state)
+        # or the OCV on the first tick. A sagged bus leaving the measured
+        # motor-data voltage excursion mid-solve is the collapse regime of
+        # this data-limited model — converted to the typed refusal below.
+        v_bus = self._v_bus_seed if self._v_bus_seed is not None else v_oc
         currents = np.zeros(n)
         rpms = np.zeros(n)
-        for _ in range(8):
-            total_current = 0.0
-            for i, thrust in enumerate(thrusts):
-                if thrust > self.max_thrust_n:
-                    events.append({
-                        "kind": "over_max_thrust",
-                        "critical": True,
-                        "message": (
-                            f"motor {i} commanded {thrust:.1f} N above the measured "
-                            f"static maximum {self.max_thrust_n:.1f} N (propeller "
-                            "over-speed territory — outside validated envelope)"
-                        ),
-                        "t_s": None,
-                    })
-                    rpms[i] = float("nan")
-                    currents[i] = float("nan")
-                    continue
-                if thrust <= 1e-9:
-                    rpms[i] = 0.0
-                    currents[i] = 0.0
-                    continue
-                gf = thrust / 9.80665e-3
-                gf_table_min = float(self.dataset._merged_thrust_gf.min())
-                if gf < gf_table_min:
-                    # Descent regime below the measured table: DECLARED
-                    # extrapolation (static scaling + nearest-plane current),
-                    # flagged non-critically once per tick.
-                    rpm = self.dataset.thrust_rpm_extrapolated(gf).value
-                    cur = self.dataset.current_a_extrapolated(rpm, v_bus).value
-                    if not any(e["kind"] == "thrust_below_envelope" for e in events):
-                        events.append({
-                            "kind": "thrust_below_envelope",
-                            "critical": False,
-                            "message": (
-                                f"per-motor thrust {thrust:.2f} N below the measured "
-                                f"static minimum {gf_table_min * 9.80665e-3:.2f} N — "
-                                "rpm/current are declared extrapolations (uncertainty "
-                                "widened)"
-                            ),
-                            "t_s": None,
-                        })
-                else:
-                    f = lambda r: float(self.dataset.thrust_gf(r).value) - gf  # noqa: E731
-                    rpm = brentq(f, float(rpm_lo), float(rpm_hi), xtol=1e-3)
-                    cur = self.dataset.current_a(rpm, v_bus).value
-                rpms[i] = rpm
-                currents[i] = cur
-                total_current += cur
-            v_new = self.battery.voltage_under_load(self.soc, total_current)
-            if abs(v_new - v_bus) < 1e-3:
-                v_bus = v_new
-                break
-            v_bus = 0.5 * (v_bus + v_new)
+        converged = False
+        try:
+            for _ in range(BUS_SOLVE_MAX_ITERATIONS):
+                total_current = 0.0
+                for i, thrust in enumerate(thrusts):
+                    if thrust > self.max_thrust_n:
+                        if not any(
+                            e["kind"] == "over_max_thrust" and e.get("motor") == i
+                            for e in events
+                        ):
+                            events.append({
+                                "kind": "over_max_thrust",
+                                "critical": True,
+                                "motor": i,
+                                "message": (
+                                    f"motor {i} commanded {thrust:.1f} N above the measured "
+                                    f"static maximum {self.max_thrust_n:.1f} N (propeller "
+                                    "over-speed territory — outside validated envelope)"
+                                ),
+                                "t_s": None,
+                            })
+                        rpms[i] = float("nan")
+                        currents[i] = float("nan")
+                        continue
+                    if thrust <= 1e-9:
+                        rpms[i] = 0.0
+                        currents[i] = 0.0
+                        continue
+                    gf = thrust / 9.80665e-3
+                    gf_table_min = float(self.dataset._merged_thrust_gf.min())
+                    if gf < gf_table_min:
+                        # Descent regime below the measured table: DECLARED
+                        # extrapolation (static scaling + nearest-plane current),
+                        # flagged non-critically once per tick.
+                        rpm = self.dataset.thrust_rpm_extrapolated(gf).value
+                        cur = self.dataset.current_a_extrapolated(rpm, v_bus).value
+                        if not any(e["kind"] == "thrust_below_envelope" for e in events):
+                            events.append({
+                                "kind": "thrust_below_envelope",
+                                "critical": False,
+                                "message": (
+                                    f"per-motor thrust {thrust:.2f} N below the measured "
+                                    f"static minimum {gf_table_min * 9.80665e-3:.2f} N — "
+                                    "rpm/current are declared extrapolations (uncertainty "
+                                    "widened)"
+                                ),
+                                "t_s": None,
+                            })
+                    else:
+                        f = lambda r: float(self.dataset.thrust_gf(r).value) - gf  # noqa: E731
+                        rpm = brentq(f, float(rpm_lo), float(rpm_hi), xtol=1e-3)
+                        cur = self.dataset.current_a(rpm, v_bus).value
+                    rpms[i] = rpm
+                    currents[i] = cur
+                    total_current += cur
+                v_new = self.battery.voltage_under_load(soc_pre, total_current)
+                if abs(v_new - v_bus) < BUS_SOLVE_TOLERANCE_V:
+                    v_bus = v_new
+                    converged = True
+                    break
+                v_bus = 0.5 * (v_bus + v_new)
+        except OutOfEnvelopeError as exc:
+            raise VoltageCollapseError(
+                "bus voltage left the measured motor-data voltage excursion "
+                f"during the solve at {soc_pre:.1f}% SOC ({exc}) — the demanded "
+                "operating point is not attainable on measured data "
+                "(fail closed)"
+            ) from exc
+        if not converged:
+            raise PowertrainError(
+                f"bus voltage solve did not converge in {BUS_SOLVE_MAX_ITERATIONS} "
+                f"iterations at {soc_pre:.1f}% SOC (last v_bus={v_bus:.3f} V, OCV "
+                f"{v_oc:.2f} V) — the demanded operating point has no stable "
+                "quasi-static solution at this clock"
+            )
+        self._v_bus_seed = v_bus
 
-        # Battery drain + status.
+        # Attainable-output gate: the commanded electrical power must lie
+        # inside the pack's exact constant-power feasibility boundary
+        # (V_oc^2 / (4 R) at this SOC). Above it the bus collapses — the
+        # commanded propulsion output is NOT attainable and is not simulated.
         total_current = float(np.nansum(currents))
+        demanded_power_w = v_bus * total_current
+        max_power_w = self.battery.max_deliverable_power_w(soc_pre)
+        if demanded_power_w > max_power_w:
+            raise VoltageCollapseError(
+                f"demanded bus power {demanded_power_w:.1f} W exceeds the pack's "
+                f"maximum deliverable power {max_power_w:.1f} W at {soc_pre:.1f}% SOC "
+                f"(OCV {v_oc:.2f} V, R {self.battery.spec.internal_resistance_ohm:.4f} "
+                "ohm) — voltage collapse; the commanded propulsion output is not "
+                "attainable"
+            )
+
+        # Battery drain over the tick, then threshold brackets: the loaded
+        # cell voltage is evaluated on the start-of-tick state and bracketed
+        # through the tick's linear SOC drain, so a crossing is stamped at
+        # its bracketed time (equality and tick edges fire deterministically).
+        soc_post = self.battery.soc_after(soc_pre, total_current, dt)
         self.energy_wh += v_bus * total_current * dt / 3600.0
-        self.soc = self.battery.soc_after(self.soc, total_current, dt)
-        status = self.battery.status(self.soc, total_current)
-        if status.cutoff:
+        self.soc = soc_post
+
+        if not self._warning_latched:
+            tau_warn = self.battery.crossing_time_below_cell_v(
+                soc_pre, soc_post, total_current, dt,
+                self.battery.spec.warning_cell_voltage_v,
+            )
+            if tau_warn is not None:
+                self._warning_latched = True
+                events.append({
+                    "kind": "battery_warning",
+                    "critical": False,
+                    "message": (
+                        f"battery loaded cell voltage reaches the "
+                        f"{self.battery.spec.warning_cell_voltage_v:.2f} V warning "
+                        f"threshold {tau_warn * 1e3:.1f} ms into the tick "
+                        f"({total_current:.1f} A draw) — land now"
+                    ),
+                    "t_s": tau_warn,
+                })
+        tau_cut = self.battery.crossing_time_below_cell_v(
+            soc_pre, soc_post, total_current, dt,
+            self.battery.spec.cutoff_cell_voltage_v,
+        )
+        if tau_cut is not None:
             events.append({
                 "kind": "battery_cutoff",
                 "critical": True,
                 "message": (
-                    f"battery cell voltage {status.cell_voltage_loaded_v:.2f} V at/below "
-                    f"cutoff {self.battery.spec.cutoff_cell_voltage_v:.2f} V — pack depleted"
+                    f"battery loaded cell voltage reaches the "
+                    f"{self.battery.spec.cutoff_cell_voltage_v:.2f} V cutoff "
+                    f"{tau_cut * 1e3:.1f} ms into the tick ({total_current:.1f} A "
+                    "draw) — pack depleted; no post-cutoff thrust is simulated"
                 ),
-                "t_s": None,
-            })
-        elif status.warning:
-            events.append({
-                "kind": "battery_warning",
-                "critical": False,
-                "message": (
-                    f"battery cell voltage {status.cell_voltage_loaded_v:.2f} V at/below "
-                    f"warning {self.battery.spec.warning_cell_voltage_v:.2f} V — land now"
-                ),
-                "t_s": None,
+                "t_s": tau_cut,
             })
 
         # Motor thermal rule (datasheet-backed): continuous rating for the
@@ -353,6 +452,25 @@ class ScenarioResult:
     success_all: bool | None
     notes: list[str]
     allocation_counts: dict[str, int] = field(default_factory=dict)
+    # P0A-006: per-component verdict over the run. "FAIL" = a declared hard
+    # limit was breached; "NO_MODELED_LIMIT_BREACHED" = the component was in
+    # the loop with its modeled limits checked and none breached (NOT a
+    # fitness claim); "NOT_SIMULATED" = the component was not in the loop.
+    component_verdicts: dict[str, str] = field(default_factory=dict)
+
+
+# Component owning each critical limit event (P0A-006 verdict propagation).
+_COMPONENT_OF_EVENT: dict[str, str] = {
+    "battery_cutoff": "battery",
+    "battery_voltage_collapse": "battery",
+    "battery_out_of_support": "battery",
+    "motor_overcurrent_destructive": "motor",
+    "motor_burnout": "motor",
+    "esc_overcurrent": "esc",
+    "esc_overvoltage": "esc",
+    "structure_yield": "frame",
+    "powertrain_refused": "powertrain",
+}
 
 
 def run_scenario(
@@ -480,16 +598,40 @@ def run_scenario(
         if scenario.motor_failure_at_s is not None and t >= scenario.motor_failure_at_s:
             thrusts[0] = 0.0
 
-        # Powertrain aux + its events.
+        # Powertrain aux + its events. A fail-closed refusal (the pack cannot
+        # supply the demanded operating point, or the state leaves the
+        # declared support) becomes a named critical event — the commanded
+        # propulsion output is NOT simulated and no post-failure state is
+        # invented (P0A-006).
         aux = None
         if loop_pt is not None:
-            aux = loop_pt.step(thrusts, control_dt_s)
-            for ev in aux.events:
-                fe = FailureEvent(t_s=t, kind=ev["kind"], critical=ev["critical"],
-                                  message=ev["message"])
-                if fe.critical:
-                    abort_event = fe
+            try:
+                aux = loop_pt.step(thrusts, control_dt_s)
+            except PowertrainError as exc:
+                if isinstance(exc, VoltageCollapseError):
+                    kind = "battery_voltage_collapse"
+                elif isinstance(exc, OutOfSupportError):
+                    kind = "battery_out_of_support"
+                else:
+                    kind = "powertrain_refused"
+                fe = FailureEvent(t_s=t, kind=kind, critical=True, message=str(exc))
+                abort_event = fe
                 events.append(fe)
+            else:
+                for ev in aux.events:
+                    # "t_s" in a powertrain event is either None (stamp at the
+                    # tick start) or the crossing offset WITHIN the tick, so
+                    # the absolute event time is the tick start plus the
+                    # bracketed offset (P0A-006).
+                    t_ev = t if ev["t_s"] is None else t + ev["t_s"]
+                    fe = FailureEvent(
+                        t_s=t_ev,
+                        kind=ev["kind"], critical=ev["critical"],
+                        message=ev["message"],
+                    )
+                    if fe.critical:
+                        abort_event = fe
+                    events.append(fe)
 
         # Monitors.
         ev = check_ground(state, t)
@@ -579,6 +721,20 @@ def run_scenario(
             notes.append(f"success criterion {name!r} raised: {exc}")
     success_all = all(success.values()) if success else None
 
+    # Component verdicts (P0A-006): every component that was in the loop with
+    # modeled limits starts at NO_MODELED_LIMIT_BREACHED — explicitly NOT a
+    # fitness claim — and a critical limit breach names its component FAIL.
+    component_verdicts: dict[str, str] = {}
+    if aux_enabled:
+        for comp in ("battery", "motor", "esc", "powertrain"):
+            component_verdicts[comp] = "NO_MODELED_LIMIT_BREACHED"
+    if design.frame is not None:
+        component_verdicts["frame"] = "NO_MODELED_LIMIT_BREACHED"
+    for ev in events:
+        comp = _COMPONENT_OF_EVENT.get(ev.kind)
+        if comp is not None and ev.critical:
+            component_verdicts[comp] = "FAIL"
+
     return ScenarioResult(
         scenario=scenario.name,
         aborted=abort_event is not None,
@@ -598,6 +754,7 @@ def run_scenario(
         success_all=success_all,
         notes=notes,
         allocation_counts=controller.allocation_counts.copy(),
+        component_verdicts=component_verdicts,
     )
 
 

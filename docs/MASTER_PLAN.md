@@ -8,7 +8,7 @@ Tracking: [master issue #127](https://github.com/god88844-hub/aerodynamics-lab/i
 
 ## Next action and execution rules
 
-**P0A-004 is complete** with the owner's actual authorization receipt. Merge/tag requires the three pre-merge checks and five green CI jobs; actual operation receipts are recorded afterward. **Stage 0A execution is active. Stop after P0A-005 is merged and the P0A-006 plan is presented to the owner; do not start P0A-006 (or any packages/physics edits) without a new owner instruction.** The next future software task is **P0A-006**.
+**P0A-004 is complete** with the owner's actual authorization receipt. Merge/tag requires the three pre-merge checks and five green CI jobs; actual operation receipts are recorded afterward. **Stage 0A execution is active. P0A-006 is complete and merged; stop after reporting the P0A-007 plan to the owner - do not start P0A-007 (or any further packages/physics edits) without a new owner instruction.** The next future software task is **P0A-007**.
 
 1. Read `AGENTS.md`, this task's section, the linked fundamentals and acceptance ledger. Use only the canonical local workspace in `WORKSPACE.md`.
 2. When implementation is explicitly resumed, pick the first unchecked builder task in document order whose prerequisites are checked. A pending owner/custodian/reviewer task requires its real receipt; a builder cannot self-approve it or invent data.
@@ -121,23 +121,24 @@ Tasks with several WPs appear in each relevant issue but retain one canonical ID
   - Recorded evidence: [docs/acceptance/P0A-005.md](acceptance/P0A-005.md), [docs/campaigns/m21_sit_module_electrothermal_results.json](campaigns/m21_sit_module_electrothermal_results.json), [docs/campaigns/m21_sit_cutoff_forecast_results.json](campaigns/m21_sit_cutoff_forecast_results.json).
 
 <a name="p0a-006"></a>
-- [ ] **P0A-006 — Correct causal battery sag and cutoff event propagation** (WP5; actor: builder)
+- [x] **P0A-006 — Correct causal battery sag and cutoff event propagation** (WP5; actor: builder)
   - Prerequisites: P0A-004, P0A-005. Proof: [docs/acceptance/P0A-006.md](acceptance/P0A-006.md).
   - Acceptance: Supported current, SOC, bus-voltage and cutoff events affect the authoritative plant and FAIL verdict; event bracketing handles equality and timestep boundaries; no future measured input or threshold tuning to confirmatory outcomes.
   - Language: Python.
-  - Target files: `packages/physics/propulsion/battery.py`; `packages/desktop_worker/engine.py`; `tests/acceptance/test_p0a_006.py`; `docs/acceptance/P0A-006.md`.
+  - Target files: `packages/physics/propulsion/battery.py`; `packages/physics/scenarios/runner.py`; `packages/physics/scenarios/service.py`; `scripts/benchmark_sit_causal_repair.py`; `tests/acceptance/test_p0a_005.py`; `tests/acceptance/test_p0a_006.py`; `docs/acceptance/P0A-006.md`; `docs/campaigns/m21_sit_causal_repair_delta.json`.
   - Todos:
-    - [ ] 1. Implement causal sag in the authoritative plant: load current -> pack R drop -> loaded bus voltage -> attainable voltage-dependent behavior, using the existing BatteryPack equations.
-    - [ ] 2. Propagate cutoff/warning events with explicit bracketing of equality and timestep boundaries (event at t exactly on a step edge must fire deterministically).
-    - [ ] 3. Propagate affected-component FAIL verdicts and supported bus-voltage effects into scenario results and the authoritative plant state.
-    - [ ] 4. Guard against future-information leakage: no step may read a later SOC/current than its clock.
-    - [ ] 5. Extend tests/acceptance/test_p0a_006.py for equality/boundary brackets and verdict propagation; re-run the frozen P0A-005 regressions and record the delta.
-  - Verify: `pytest tests/acceptance/test_p0a_006.py tests/acceptance/test_p0a_005.py -q` | `pytest tests/physics -q`
+    - [x] 1. battery.py: strict declared OCV support (fail closed below the calibrated knee region, no extrapolation), exact quadratic constant-power solve of V_bus = V_oc(SOC) - V_rc - I*R_int with voltage-collapse detection (stable upper root), max deliverable power, and deterministic sub-step cutoff/warning crossing bracketing. Existing method semantics stay byte-identical (the frozen SIT benchmarks call them).
+    - [x] 2. Authoritative plant (verified: Godot -> scripts/lab_project.py run -> project_service.run_project -> simulation_service.run_simulation -> scenarios.service.run_flight -> runner.run_scenario -> LoopPowertrain.step; packages/desktop_worker/engine.py is the CAD engine, not the flight plant): causal per-tick order (solve at start-of-tick SOC), explicit demanded-power vs max-deliverable-power collapse gate, bracketed warning/cutoff events, latch-on-crossing warnings.
+    - [x] 3. run_scenario converts powertrain fail-closed refusals into a named battery_voltage_collapse critical event (no invented post-failure thrust or state), records per-component verdicts (FAIL / NO_MODELED_LIMIT_BREACHED / NOT_SIMULATED) in ScenarioResult, and run_flight surfaces them.
+    - [x] 4. Causality guard tests: perturbing the load after t_k leaves state and telemetry bit-identical up to and including t_k; equality and tick-edge bracketing; declared thresholds used verbatim from the component spec (no hardcoded tuning).
+    - [x] 5. SIT delta: scripts/benchmark_sit_causal_repair.py re-runs the frozen calibration (cycles 1-50 only), applies the declared knee-anchor extension (component-table tail shape joined to the fitted curve; zero held-out tuning), evaluates replay + forecast with battery.py's canonical causal solver, and commits docs/campaigns/m21_sit_causal_repair_delta.json with the exact before-vs-after numbers. Frozen M21 artifacts untouched; the 4 stale strict-xfail markers in test_p0a_005.py are reconciled.
+  - Verify: `pytest tests/acceptance/test_p0a_006.py tests/acceptance/test_p0a_005.py -q` | `pytest tests/physics -q` | `python scripts/check_master_plan.py --check` | `python scripts/export_contracts.py --check` | `python scripts/reconcile_registry.py --check`
   - Planned verification: `pytest tests/acceptance/test_p0a_006.py`; required current-head CI.
+  - Recorded evidence: [docs/acceptance/P0A-006.md](acceptance/P0A-006.md), [docs/campaigns/m21_sit_causal_repair_delta.json](campaigns/m21_sit_causal_repair_delta.json), [tests/acceptance/test_p0a_006.py](../tests/acceptance/test_p0a_006.py).
 
 <a name="p0a-007"></a>
 - [ ] **P0A-007 — Verify battery replay versus prospective endurance behavior** (WP5, WP11; actor: builder)
-  - Prerequisites: P0A-006. Proof: [docs/acceptance/P0A-007.md](acceptance/P0A-007.md).
+  - Prerequisites: P0A-004, P0A-006. Proof: [docs/acceptance/P0A-007.md](acceptance/P0A-007.md).
   - Acceptance: Separate measured-current replay from forecast demand; unchanged source rows are scored per run; cutoff misses/false alarms, endpoint error, charge/energy balances and timestep convergence are reported against frozen criteria. New physical acceptance stays open.
   - Language: Python.
   - Target files: `tests/acceptance/test_p0a_007.py`; `docs/acceptance/P0A-007.md`; `packages/physics/propulsion/battery.py`.
@@ -1264,4 +1265,4 @@ Tasks with several WPs appear in each relevant issue but retain one canonical ID
   - Prerequisites: P4-007. Proof: [docs/acceptance/P4-008.md](acceptance/P4-008.md).
   - Acceptance: Qualified independent review accepts the stated limited uses; source/rights/security, reproducible distributions, compatibility and recovery gates close the phase.
 
-Unique task count: **150**; checked **5**, unchecked **145**. These are planning tasks, not a count of physically validated milestones. All ten legacy major acceptance families and all twelve broad Phase 0 package issues remain open until their own actual exit evidence exists.
+Unique task count: **150**; checked **6**, unchecked **144**. These are planning tasks, not a count of physically validated milestones. All ten legacy major acceptance families and all twelve broad Phase 0 package issues remain open until their own actual exit evidence exists.
