@@ -1,6 +1,6 @@
 # Desktop architecture and legacy boundary
 
-The standalone Godot 3D application is the primary product. Foundation qualification passed and is complete. The current stage is the full [master software plan](MASTER_PLAN.md), pending owner approval of PR #126 and `v0.0-plan-locked`. After approval, execute the numbered Phase 0 dependencies; there is no new qualification stage before normal feature work.
+The standalone Godot 3D application is the primary product. It is a **100 % standalone, local, offline desktop application**: a normal user installs it once and can design, invent, simulate and learn with **zero server or Docker setup** and no network connection. The installer bundles everything needed for that: the desktop executable, the native/CAD runtime, the built-in component and material libraries, starter designs, lessons and compact reference benchmarks. Large multi-gigabyte raw external research datasets are **optional downloadable offline data packs** — never forced into the base installer and never required for the core offline workflow. Foundation qualification passed and is complete. The current stage is the full [master software plan](MASTER_PLAN.md), pending owner approval of PR #126 and `v0.0-plan-locked`. After approval, execute the numbered Phase 0 dependencies; there is no new qualification stage before normal feature work.
 
 ## Authoritative execution path
 
@@ -22,9 +22,9 @@ The Godot desktop **does not require a running FastAPI HTTP server**. It invokes
 
 ## Frozen legacy web application
 
-**`apps/web` is frozen/legacy.** Do not add web UI features or duplicate desktop product work there. Security fixes and minimal compatibility corrections explicitly needed to preserve the existing CI/legacy interface remain allowed. Keep its required npm audit, unit tests, packaged application and HTTPS checks intact. Accessibility/UI/load WIP is archived, not silently promoted as a new web feature programme.
+**`apps/web` and the `apps/api` HTTP server stack are frozen/legacy.** Do not add web UI features, new server features or duplicate desktop product work there. The desktop application must never depend on a running web/API server: shared service functions currently located in `apps/api/app/services` are part of the local worker implementation (see the authoritative execution path above) and move only through an explicitly planned, compatibility-tested extraction. Security fixes and minimal compatibility corrections explicitly needed to preserve the existing CI/legacy interface remain allowed for both. Keep their required npm audit, unit tests, packaged application and HTTPS checks intact. Accessibility/UI/load WIP is archived, not silently promoted as a new web feature programme.
 
-`apps/api` remains a maintained legacy HTTP adapter and contains currently reused service functions. There is one shared simulation behavior, not a separately tuned web physics engine. Changes to shared services must preserve existing saved inputs and reports, with explicit provenance/schema compatibility.
+`apps/api` remains a maintained legacy HTTP adapter; there is one shared simulation behavior, not a separately tuned web physics engine. Changes to shared services must preserve existing saved inputs and reports, with explicit provenance/schema compatibility.
 
 ## Preserved pre-rename work
 

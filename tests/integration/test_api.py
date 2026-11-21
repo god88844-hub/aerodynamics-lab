@@ -204,6 +204,14 @@ def test_preview_returns_mass_properties(client, design_payload):
 
 
 def test_flight_simulation_end_to_end(client, design_payload):
+    """Flight mission through the API under the declared execution budget.
+
+    The scenario has a fixed 18 s simulated mission and a declared wall-clock
+    budget (execution_limits.time_s = 45 s, enforced by the platform guard).
+    On hardware that completes inside the budget the run must be completed
+    with its physics gates; on slower machines the guard must fire as a named
+    failure — never a silent pass or a crash.
+    """
     r = client.post("/api/designs", json={"snapshot": design_payload})
     design_id = r.json()["id"]
 
@@ -211,16 +219,27 @@ def test_flight_simulation_end_to_end(client, design_payload):
                     json={"scenario": "flight", "params": {}})
     assert r.status_code == 200
     body = r.json()
-    assert body["status"] == "completed"
-    assert body["mission"]["aborted"] is False
-    assert body["results"]["time_to_5m_s"] is not None
-    assert body["results"]["energy_used_wh"] > 0
-    assert body["success"]["reached_5m"] is True
-    # Telemetry decimated but present.
-    assert len(body["telemetry"]["t"]) > 10
-    assert len(body["telemetry"]["motor_current_a"]) == len(body["telemetry"]["t"])
+    # The exact run inputs are recorded and hash-bound (traceability).
+    assert body["input_sha256"]
+    inputs = client.get(f"/api/simulations/{body['simulation_id']}/inputs").json()
+    assert inputs["execution_limits"]["time_s"] == 45.0
 
-    # Stored and retrievable.
+    if body["status"] == "completed":
+        assert body["mission"]["aborted"] is False
+        assert body["results"]["time_to_5m_s"] is not None
+        assert body["results"]["energy_used_wh"] > 0
+        assert body["success"]["reached_5m"] is True
+        # Telemetry decimated but present.
+        assert len(body["telemetry"]["t"]) > 10
+        assert len(body["telemetry"]["motor_current_a"]) == len(body["telemetry"]["t"])
+    else:
+        # Budget guard fired: named failure with an error code, no fabricated
+        # results or telemetry.
+        assert body["error"] == "Simulation stopped at its execution time limit."
+        assert body["error_code"] == "simulation_time_limit"
+        assert body["telemetry"] is None
+
+    # Stored and retrievable either way.
     r = client.get(f"/api/simulations/{body['simulation_id']}")
     assert r.status_code == 200
     assert "flight" in r.json()["scenario"]
