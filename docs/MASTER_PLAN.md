@@ -8,7 +8,7 @@ Tracking: [master issue #127](https://github.com/god88844-hub/aerodynamics-lab/i
 
 ## Next action and execution rules
 
-**P0A-004 is complete** with the owner's actual authorization receipt. Merge/tag requires the three pre-merge checks and five green CI jobs; actual operation receipts are recorded afterward. **Stage 0A execution is active. P0A-006 is complete and merged; stop after reporting the P0A-007 plan to the owner - do not start P0A-007 (or any further packages/physics edits) without a new owner instruction.** The next future software task is **P0A-007**.
+**P0A-004 is complete** with the owner's actual authorization receipt. Merge/tag requires the three pre-merge checks and five green CI jobs; actual operation receipts are recorded afterward. **Stage 0A execution is active. P0A-007 is complete and merged; stop after reporting the P0A-008 plan to the owner - do not start P0A-008 (or any further packages/physics edits) without a new owner instruction.** The next future software task is **P0A-008**.
 
 1. Read `AGENTS.md`, this task's section, the linked fundamentals and acceptance ledger. Use only the canonical local workspace in `WORKSPACE.md`.
 2. When implementation is explicitly resumed, pick the first unchecked builder task in document order whose prerequisites are checked. A pending owner/custodian/reviewer task requires its real receipt; a builder cannot self-approve it or invent data.
@@ -137,22 +137,23 @@ Tasks with several WPs appear in each relevant issue but retain one canonical ID
   - Recorded evidence: [docs/acceptance/P0A-006.md](acceptance/P0A-006.md), [docs/campaigns/m21_sit_causal_repair_delta.json](campaigns/m21_sit_causal_repair_delta.json), [tests/acceptance/test_p0a_006.py](../tests/acceptance/test_p0a_006.py).
 
 <a name="p0a-007"></a>
-- [ ] **P0A-007 — Verify battery replay versus prospective endurance behavior** (WP5, WP11; actor: builder)
+- [x] **P0A-007 — Verify battery replay versus prospective endurance behavior** (WP5, WP11; actor: builder)
   - Prerequisites: P0A-004, P0A-006. Proof: [docs/acceptance/P0A-007.md](acceptance/P0A-007.md).
   - Acceptance: Separate measured-current replay from forecast demand; unchanged source rows are scored per run; cutoff misses/false alarms, endpoint error, charge/energy balances and timestep convergence are reported against frozen criteria. New physical acceptance stays open.
   - Language: Python.
   - Target files: `tests/acceptance/test_p0a_007.py`; `docs/acceptance/P0A-007.md`; `packages/physics/propulsion/battery.py`.
   - Todos:
-    - [ ] 1. Split the two scoring modes: measured-current replay (current is source data) and forecast demand (current is model output); never mix them in one score.
-    - [ ] 2. Score every unchanged source row: cutoff misses/false alarms, endpoint SOC/error, charge/energy balances.
-    - [ ] 3. Add timestep-convergence cases for the replay and forecast paths and record the convergence table.
-    - [ ] 4. Document per-run results and exclusions in docs/acceptance/P0A-007.md.
+    - [x] 1. Split the two scoring modes: measured-current replay (current is source data) and forecast demand (current is model output); never mix them in one score.
+    - [x] 2. Score every unchanged source row: cutoff misses/false alarms, endpoint SOC/error, charge/energy balances.
+    - [x] 3. Add timestep-convergence cases for the replay and forecast paths and record the convergence table.
+    - [x] 4. Document per-run results and exclusions in docs/acceptance/P0A-007.md.
   - Verify: `pytest tests/acceptance/test_p0a_007.py -q` | `pytest tests/acceptance/test_p0a_005.py tests/acceptance/test_p0a_006.py -q`
   - Planned verification: `pytest tests/acceptance/test_p0a_007.py`; required current-head CI.
+  - Recorded evidence: [docs/acceptance/P0A-007.md](acceptance/P0A-007.md), [docs/campaigns/m21_p0a_007_row_scores.json](campaigns/m21_p0a_007_row_scores.json), [tests/acceptance/test_p0a_007.py](../tests/acceptance/test_p0a_007.py).
 
 <a name="p0a-008"></a>
 - [ ] **P0A-008 — Diagnose the UIUC signed-thrust disagreement** (WP5; actor: builder)
-  - Prerequisites: P0A-007. Proof: [docs/acceptance/P0A-008.md](acceptance/P0A-008.md).
+  - Prerequisites: P0A-004, P0A-007. Proof: [docs/acceptance/P0A-008.md](acceptance/P0A-008.md).
   - Acceptance: Reproduce the signed CT case with source hashes; inspect axes, advance ratio, RPM, units, power definition and near-zero measurement resolution. Record evidence for the cause; do not assume a sign flip is correct.
   - Language: Python.
   - Target files: `tests/acceptance/test_p0a_008.py`; `docs/acceptance/P0A-008.md`; `data/research/registry.json`.
@@ -1265,4 +1266,4 @@ Tasks with several WPs appear in each relevant issue but retain one canonical ID
   - Prerequisites: P4-007. Proof: [docs/acceptance/P4-008.md](acceptance/P4-008.md).
   - Acceptance: Qualified independent review accepts the stated limited uses; source/rights/security, reproducible distributions, compatibility and recovery gates close the phase.
 
-Unique task count: **150**; checked **6**, unchecked **144**. These are planning tasks, not a count of physically validated milestones. All ten legacy major acceptance families and all twelve broad Phase 0 package issues remain open until their own actual exit evidence exists.
+Unique task count: **150**; checked **7**, unchecked **143**. These are planning tasks, not a count of physically validated milestones. All ten legacy major acceptance families and all twelve broad Phase 0 package issues remain open until their own actual exit evidence exists.

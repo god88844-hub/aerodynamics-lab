@@ -6,7 +6,7 @@
   "review_pr": 126,
   "proposed_tag": "v0.0-plan-locked",
   "authorization_task": "P0A-004",
-  "first_build_task": "P0A-007",
+  "first_build_task": "P0A-008",
   "work_packages": [
     {
       "number": 1,
@@ -399,13 +399,17 @@
         "P0A-006"
       ],
       "actor": "builder",
-      "status": "todo",
+      "status": "done",
       "acceptance": "Separate measured-current replay from forecast demand; unchanged source rows are scored per run; cutoff misses/false alarms, endpoint error, charge/energy balances and timestep convergence are reported against frozen criteria. New physical acceptance stays open.",
       "proof_file": "docs/acceptance/P0A-007.md",
       "planned_tests": [
         "tests/acceptance/test_p0a_007.py"
       ],
-      "completion_evidence": [],
+      "completion_evidence": [
+        "docs/acceptance/P0A-007.md",
+        "docs/campaigns/m21_p0a_007_row_scores.json",
+        "tests/acceptance/test_p0a_007.py"
+      ],
       "gate": null,
       "language": [
         "Python"
@@ -434,6 +438,7 @@
         5
       ],
       "dependencies": [
+        "P0A-004",
         "P0A-007"
       ],
       "actor": "builder",
@@ -4066,5 +4071,5 @@
       ]
     }
   ],
-  "execution_hold": "Stage 0A execution is active. P0A-006 is complete and merged; stop after reporting the P0A-007 plan to the owner - do not start P0A-007 (or any further packages/physics edits) without a new owner instruction."
+  "execution_hold": "Stage 0A execution is active. P0A-007 is complete and merged; stop after reporting the P0A-008 plan to the owner - do not start P0A-008 (or any further packages/physics edits) without a new owner instruction."
 }
