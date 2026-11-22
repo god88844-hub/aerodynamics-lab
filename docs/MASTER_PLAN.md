@@ -8,7 +8,7 @@ Tracking: [master issue #127](https://github.com/god88844-hub/aerodynamics-lab/i
 
 ## Next action and execution rules
 
-**P0A-004 is complete** with the owner's actual authorization receipt. Merge/tag requires the three pre-merge checks and five green CI jobs; actual operation receipts are recorded afterward. **Stage 0A execution is active. P0A-009 is complete and merged; stop after reporting the P0A-010 plan to the owner - do not start P0A-010 (or any further packages/physics edits) without a new owner instruction.** The next future software task is **P0A-010**.
+**P0A-004 is complete** with the owner's actual authorization receipt. Merge/tag requires the three pre-merge checks and five green CI jobs; actual operation receipts are recorded afterward. **Stage 0A execution is active. P0A-010 is complete and merged; stop after reporting the P0A-011 plan to the owner - do not start P0A-011 (or any further detector/physics edits) without a new owner instruction.** The next future software task is **P0A-011**.
 
 1. Read `AGENTS.md`, this task's section, the linked fundamentals and acceptance ledger. Use only the canonical local workspace in `WORKSPACE.md`.
 2. When implementation is explicitly resumed, pick the first unchecked builder task in document order whose prerequisites are checked. A pending owner/custodian/reviewer task requires its real receipt; a builder cannot self-approve it or invent data.
@@ -182,22 +182,23 @@ Tasks with several WPs appear in each relevant issue but retain one canonical ID
   - Recorded evidence: [docs/acceptance/P0A-009.md](acceptance/P0A-009.md), [docs/campaigns/m24_uiuc_signed_regime_delta.json](campaigns/m24_uiuc_signed_regime_delta.json), [tests/acceptance/test_p0a_009.py](../tests/acceptance/test_p0a_009.py), [packages/physics/aerodynamics/axial_prop.py](../packages/physics/aerodynamics/axial_prop.py).
 
 <a name="p0a-010"></a>
-- [ ] **P0A-010 — Reproduce M25 misses and healthy-flight false alarms** (WP5; actor: builder)
+- [x] **P0A-010 — Reproduce M25 misses and healthy-flight false alarms** (WP5; actor: builder)
   - Prerequisites: P0A-004, P0A-009. Proof: [docs/acceptance/P0A-010.md](acceptance/P0A-010.md).
   - Acceptance: Reproduce UAV-FD rotor-order and ESC-power decisions per whole recording; preserve exclusions, labels and thresholds; identify missed classes and false alarms without using labels as detector inputs.
   - Language: Python.
   - Target files: `tests/acceptance/test_p0a_010.py`; `docs/acceptance/P0A-010.md`.
   - Todos:
-    - [ ] 1. Reproduce the M25 decisions per WHOLE recording: rotor-order classes and ESC-power anomalies with the frozen thresholds.
-    - [ ] 2. Preserve all source exclusions and labels exactly; no label may leak into features.
-    - [ ] 3. Tabulate missed classes and false alarms per recording and identify the systematic causes.
-    - [ ] 4. Freeze the failure reproduction before any detector change (fixes are P0A-011).
+    - [x] 1. Reproduce the M25 decisions per WHOLE recording: rotor-order classes and ESC-power anomalies with the frozen thresholds.
+    - [x] 2. Preserve all source exclusions and labels exactly; no label may leak into features.
+    - [x] 3. Tabulate missed classes and false alarms per recording and identify the systematic causes.
+    - [x] 4. Freeze the failure reproduction before any detector change (fixes are P0A-011).
   - Verify: `pytest tests/acceptance/test_p0a_010.py -q`
   - Planned verification: `pytest tests/acceptance/test_p0a_010.py`; required current-head CI.
+  - Recorded evidence: [docs/acceptance/P0A-010.md](acceptance/P0A-010.md), [tests/acceptance/test_p0a_010.py](../tests/acceptance/test_p0a_010.py).
 
 <a name="p0a-011"></a>
 - [ ] **P0A-011 — Correct fault detection without data leakage** (WP5, WP11; actor: builder)
-  - Prerequisites: P0A-010. Proof: [docs/acceptance/P0A-011.md](acceptance/P0A-011.md).
+  - Prerequisites: P0A-004, P0A-010. Proof: [docs/acceptance/P0A-011.md](acceptance/P0A-011.md).
   - Acceptance: Detection, no-alert and INCONCLUSIVE are explicit; whole-flight class/deadline/false-alarm regression cases pass; training and evaluation data remain grouped and disjoint; confirmatory performance is not inferred from development tuning.
   - Language: Python.
   - Target files: `tests/acceptance/test_p0a_011.py`; `docs/acceptance/P0A-011.md`.
@@ -1268,4 +1269,4 @@ Tasks with several WPs appear in each relevant issue but retain one canonical ID
   - Prerequisites: P4-007. Proof: [docs/acceptance/P4-008.md](acceptance/P4-008.md).
   - Acceptance: Qualified independent review accepts the stated limited uses; source/rights/security, reproducible distributions, compatibility and recovery gates close the phase.
 
-Unique task count: **150**; checked **9**, unchecked **141**. These are planning tasks, not a count of physically validated milestones. All ten legacy major acceptance families and all twelve broad Phase 0 package issues remain open until their own actual exit evidence exists.
+Unique task count: **150**; checked **10**, unchecked **140**. These are planning tasks, not a count of physically validated milestones. All ten legacy major acceptance families and all twelve broad Phase 0 package issues remain open until their own actual exit evidence exists.

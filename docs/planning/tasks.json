@@ -6,7 +6,7 @@
   "review_pr": 126,
   "proposed_tag": "v0.0-plan-locked",
   "authorization_task": "P0A-004",
-  "first_build_task": "P0A-010",
+  "first_build_task": "P0A-011",
   "work_packages": [
     {
       "number": 1,
@@ -530,13 +530,16 @@
         "P0A-009"
       ],
       "actor": "builder",
-      "status": "todo",
+      "status": "done",
       "acceptance": "Reproduce UAV-FD rotor-order and ESC-power decisions per whole recording; preserve exclusions, labels and thresholds; identify missed classes and false alarms without using labels as detector inputs.",
       "proof_file": "docs/acceptance/P0A-010.md",
       "planned_tests": [
         "tests/acceptance/test_p0a_010.py"
       ],
-      "completion_evidence": [],
+      "completion_evidence": [
+        "docs/acceptance/P0A-010.md",
+        "tests/acceptance/test_p0a_010.py"
+      ],
       "gate": null,
       "language": [
         "Python"
@@ -564,6 +567,7 @@
         11
       ],
       "dependencies": [
+        "P0A-004",
         "P0A-010"
       ],
       "actor": "builder",
@@ -4082,5 +4086,5 @@
       ]
     }
   ],
-  "execution_hold": "Stage 0A execution is active. P0A-009 is complete and merged; stop after reporting the P0A-010 plan to the owner - do not start P0A-010 (or any further packages/physics edits) without a new owner instruction."
+  "execution_hold": "Stage 0A execution is active. P0A-010 is complete and merged; stop after reporting the P0A-011 plan to the owner - do not start P0A-011 (or any further detector/physics edits) without a new owner instruction."
 }
