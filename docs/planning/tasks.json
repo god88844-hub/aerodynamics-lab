@@ -6,7 +6,7 @@
   "review_pr": 126,
   "proposed_tag": "v0.0-plan-locked",
   "authorization_task": "P0A-004",
-  "first_build_task": "P0A-009",
+  "first_build_task": "P0A-010",
   "work_packages": [
     {
       "number": 1,
@@ -486,13 +486,18 @@
         "P0A-008"
       ],
       "actor": "builder",
-      "status": "todo",
+      "status": "done",
       "acceptance": "Analytical frame/force checks pass, source sign is preserved, extrapolation is refused or labeled, and all DEVELOPMENT sweep residuals/exclusions are published. M24 acceptance uses predeclared sign-resolution and uncertainty rules.",
       "proof_file": "docs/acceptance/P0A-009.md",
       "planned_tests": [
         "tests/acceptance/test_p0a_009.py"
       ],
-      "completion_evidence": [],
+      "completion_evidence": [
+        "docs/acceptance/P0A-009.md",
+        "docs/campaigns/m24_uiuc_signed_regime_delta.json",
+        "tests/acceptance/test_p0a_009.py",
+        "packages/physics/aerodynamics/axial_prop.py"
+      ],
       "gate": null,
       "language": [
         "Python"
@@ -521,6 +526,7 @@
         5
       ],
       "dependencies": [
+        "P0A-004",
         "P0A-009"
       ],
       "actor": "builder",
@@ -4076,5 +4082,5 @@
       ]
     }
   ],
-  "execution_hold": "Stage 0A execution is active. P0A-008 is complete and merged; stop after reporting the P0A-009 plan to the owner - do not start P0A-009 (or any further packages/physics edits) without a new owner instruction."
+  "execution_hold": "Stage 0A execution is active. P0A-009 is complete and merged; stop after reporting the P0A-010 plan to the owner - do not start P0A-010 (or any further packages/physics edits) without a new owner instruction."
 }

@@ -8,7 +8,7 @@ Tracking: [master issue #127](https://github.com/god88844-hub/aerodynamics-lab/i
 
 ## Next action and execution rules
 
-**P0A-004 is complete** with the owner's actual authorization receipt. Merge/tag requires the three pre-merge checks and five green CI jobs; actual operation receipts are recorded afterward. **Stage 0A execution is active. P0A-008 is complete and merged; stop after reporting the P0A-009 plan to the owner - do not start P0A-009 (or any further packages/physics edits) without a new owner instruction.** The next future software task is **P0A-009**.
+**P0A-004 is complete** with the owner's actual authorization receipt. Merge/tag requires the three pre-merge checks and five green CI jobs; actual operation receipts are recorded afterward. **Stage 0A execution is active. P0A-009 is complete and merged; stop after reporting the P0A-010 plan to the owner - do not start P0A-010 (or any further packages/physics edits) without a new owner instruction.** The next future software task is **P0A-010**.
 
 1. Read `AGENTS.md`, this task's section, the linked fundamentals and acceptance ledger. Use only the canonical local workspace in `WORKSPACE.md`.
 2. When implementation is explicitly resumed, pick the first unchecked builder task in document order whose prerequisites are checked. A pending owner/custodian/reviewer task requires its real receipt; a builder cannot self-approve it or invent data.
@@ -167,22 +167,23 @@ Tasks with several WPs appear in each relevant issue but retain one canonical ID
   - Recorded evidence: [docs/acceptance/P0A-008.md](acceptance/P0A-008.md), [docs/campaigns/m24_uiuc_sign_disagreement_diagnosis.json](campaigns/m24_uiuc_sign_disagreement_diagnosis.json), [tests/acceptance/test_p0a_008.py](../tests/acceptance/test_p0a_008.py).
 
 <a name="p0a-009"></a>
-- [ ] **P0A-009 — Correct and verify the supported signed aerodynamic regime** (WP5, WP11; actor: builder)
+- [x] **P0A-009 — Correct and verify the supported signed aerodynamic regime** (WP5, WP11; actor: builder)
   - Prerequisites: P0A-004, P0A-008. Proof: [docs/acceptance/P0A-009.md](acceptance/P0A-009.md).
   - Acceptance: Analytical frame/force checks pass, source sign is preserved, extrapolation is refused or labeled, and all DEVELOPMENT sweep residuals/exclusions are published. M24 acceptance uses predeclared sign-resolution and uncertainty rules.
   - Language: Python.
   - Target files: `packages/physics/aerodynamics/`; `tests/acceptance/test_p0a_009.py`; `docs/acceptance/P0A-009.md`.
   - Todos:
-    - [ ] 1. Implement the corrected supported signed-thrust/signed-speed regime with explicit analytic frame/force checks (sign preservation end to end).
-    - [ ] 2. Refuse or explicitly label any extrapolation outside the supported signed regime.
-    - [ ] 3. Publish all DEVELOPMENT sweep residuals and exclusions; M24 acceptance uses only the supported envelope.
-    - [ ] 4. Re-run the P0A-008 diagnosis against the corrected model and record the agreement.
+    - [x] 1. Implement the corrected supported signed-thrust/signed-speed regime with explicit analytic frame/force checks (sign preservation end to end).
+    - [x] 2. Refuse or explicitly label any extrapolation outside the supported signed regime.
+    - [x] 3. Publish all DEVELOPMENT sweep residuals and exclusions; M24 acceptance uses only the supported envelope.
+    - [x] 4. Re-run the P0A-008 diagnosis against the corrected model and record the agreement.
   - Verify: `pytest tests/acceptance/test_p0a_009.py -q` | `pytest packages/physics -q 2>/dev/null; pytest tests/physics -q`
   - Planned verification: `pytest tests/acceptance/test_p0a_009.py`; required current-head CI.
+  - Recorded evidence: [docs/acceptance/P0A-009.md](acceptance/P0A-009.md), [docs/campaigns/m24_uiuc_signed_regime_delta.json](campaigns/m24_uiuc_signed_regime_delta.json), [tests/acceptance/test_p0a_009.py](../tests/acceptance/test_p0a_009.py), [packages/physics/aerodynamics/axial_prop.py](../packages/physics/aerodynamics/axial_prop.py).
 
 <a name="p0a-010"></a>
 - [ ] **P0A-010 — Reproduce M25 misses and healthy-flight false alarms** (WP5; actor: builder)
-  - Prerequisites: P0A-009. Proof: [docs/acceptance/P0A-010.md](acceptance/P0A-010.md).
+  - Prerequisites: P0A-004, P0A-009. Proof: [docs/acceptance/P0A-010.md](acceptance/P0A-010.md).
   - Acceptance: Reproduce UAV-FD rotor-order and ESC-power decisions per whole recording; preserve exclusions, labels and thresholds; identify missed classes and false alarms without using labels as detector inputs.
   - Language: Python.
   - Target files: `tests/acceptance/test_p0a_010.py`; `docs/acceptance/P0A-010.md`.
@@ -1267,4 +1268,4 @@ Tasks with several WPs appear in each relevant issue but retain one canonical ID
   - Prerequisites: P4-007. Proof: [docs/acceptance/P4-008.md](acceptance/P4-008.md).
   - Acceptance: Qualified independent review accepts the stated limited uses; source/rights/security, reproducible distributions, compatibility and recovery gates close the phase.
 
-Unique task count: **150**; checked **8**, unchecked **142**. These are planning tasks, not a count of physically validated milestones. All ten legacy major acceptance families and all twelve broad Phase 0 package issues remain open until their own actual exit evidence exists.
+Unique task count: **150**; checked **9**, unchecked **141**. These are planning tasks, not a count of physically validated milestones. All ten legacy major acceptance families and all twelve broad Phase 0 package issues remain open until their own actual exit evidence exists.
