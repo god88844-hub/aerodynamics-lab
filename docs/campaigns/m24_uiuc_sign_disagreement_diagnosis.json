@@ -1,0 +1,94 @@
+{
+  "plan": "m24-uiuc-sign-disagreement-diagnosis-v1",
+  "source": {
+    "url": "https://m-selig.ae.illinois.edu/props/volume-1/data/",
+    "offending_file": "apce_10x5_kt0824_6018.txt",
+    "offending_file_sha256": "9f8a6f9c8775a8cf2334b7b8a6f75b9c4ebbd0ad7474da4938de05557c0278bb",
+    "freeze_sha256_normalized": "f06e2d5abc4f1886d560cb973fb1642072c1a5ca1edffa3cc3e48c214d927530"
+  },
+  "row": {
+    "rpm": 6018.0,
+    "j": 0.671,
+    "measured_ct": -0.0001,
+    "measured_cp": 0.0085
+  },
+  "predictions": {
+    "axial_interpolator_ct": 0.00021784451527975509,
+    "advance_ratio_only_ct": -0.0007705882352941193,
+    "static_reference_ct": 0.09802274368231047,
+    "signed_error_axial_ct": 0.0003178445152797551
+  },
+  "interpolation_inputs": {
+    "low_plane": {
+      "rpm": 4005.0,
+      "bracket_j_ct": [
+        [
+          0.65,
+          0.0011
+        ],
+        [
+          0.684,
+          -0.0052
+        ]
+      ],
+      "interpolated_ct": -0.0027911764705882353
+    },
+    "high_plane": {
+      "rpm": 6708.5,
+      "bracket_j_ct": [
+        [
+          0.667,
+          0.002
+        ],
+        [
+          0.691,
+          -0.0025
+        ]
+      ],
+      "interpolated_ct": 0.0012499999999999963
+    },
+    "rpm_blend_weight": 0.7445903458479749
+  },
+  "zero_ct_crossings_j": {
+    "low_plane": 0.6559365079365079,
+    "high_plane": 0.6776666666666666,
+    "measured_6018_sweep": 0.6704666666666667,
+    "rpm_blended_model": 0.6721165743407282,
+    "model_minus_measured": 0.0016499076740615903
+  },
+  "neighbors": [
+    [
+      0.647,
+      0.0044
+    ],
+    [
+      0.671,
+      -0.0001
+    ],
+    [
+      0.697,
+      -0.0048
+    ]
+  ],
+  "resolution": {
+    "table_ct_decimal_places": 4,
+    "one_count_ct": 0.0001,
+    "measured_ct_in_counts": -1.0,
+    "note": "the recorded -0.0001 is exactly -1 count of the source's 4-decimal format"
+  },
+  "physical_scale_unverified_estimate": {
+    "assumed_density_kg_m3": 1.225,
+    "rev_per_s": 100.3,
+    "diameter_m": 0.254,
+    "one_count_thrust_n": 0.005129473862896273,
+    "signed_error_thrust_n": 0.016303751335924387,
+    "marked": "UNVERIFIED_ESTIMATE - rho assumed (standard sea level); scale illustration only"
+  },
+  "root_cause": "resolution_limited_zero_crossing_straddle",
+  "root_cause_statement": "Not a code/sign/unit defect: the benchmark interpolates the publisher's own signed CT/J columns without any unit or axis conversion, so conventions cannot alter the sign. The 6018 RPM sweep crosses zero thrust at J~0.6705; the RPM-blended calibration interpolator places the crossing at J~0.6721 (delta-J ~0.0017, 0.25%), interpolating between planes measured at 4005 and 6708.5 RPM. At J=0.671 - one table count below the model crossing - the model predicts +0.000218 CT (~+1.4 gf assumed density) and the measurement records -0.0001 (exactly -1 count of the 4-decimal format, ~-0.5 gf): both are zero within the source's resolution. The disagreement is a small-|CT| straddle of CT=0, not a sign error.",
+  "repair_spec_for_p0a_009": [
+    "Classify sign disagreements with resolution awareness: a disagreement where |measured CT| <= 1 table count AND |predicted CT| <= 10 counts is reported as sign_disagreements_resolution_limited, not as a hard disagreement.",
+    "Record per-row predicted values in the results artifact so future audits do not re-derive them.",
+    "Predeclare the sign-resolution rule and uncertainty band before scoring (M24 acceptance uses only the supported envelope; extrapolation outside it is refused or labeled)."
+  ]
+}

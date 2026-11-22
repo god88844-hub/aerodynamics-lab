@@ -21,8 +21,8 @@
   "source_catalogs": [
     {
       "path": "data/research/registry.json",
-      "bytes_hashed": 101199,
-      "sha256": "73411a96d159781dd9d58643e6d2703d26b41ba69087294785d6b6137adbeb40",
+      "bytes_hashed": 101535,
+      "sha256": "06b3db40f6b72090c051269c9b5204303b780e5ddf8bc489983bd7832cd5ad87",
       "hash_semantics": "LF_NORMALIZED_REPOSITORY_TEXT"
     },
     {
@@ -693,7 +693,7 @@
         "VALIDATION"
       ],
       "kind": "measured_wind_tunnel_component",
-      "checked_at": "2026-11-19",
+      "checked_at": "2026-11-22",
       "urls": [
         "https://m-selig.ae.illinois.edu/props/propDB.html",
         "https://m-selig.ae.illinois.edu/props/volume-1/propDB-volume-1.html"
@@ -716,7 +716,8 @@
       ],
       "uncertainty_and_gaps": [
         "Static/axial component observations do not validate an assembled aircraft.",
-        "Apply volume-specific measurement uncertainty and tested inflow/RPM limits."
+        "Apply volume-specific measurement uncertainty and tested inflow/RPM limits.",
+        "P0A-008 diagnosis: the single M24 CT sign disagreement (6018 RPM, J=0.671, measured CT -0.0001 = -1 count of the 4-decimal source format vs predicted +0.000218) is a resolution-limited zero-crossing straddle (measured crossing J~0.6705 vs model ~0.6721), not a sign-convention or unit defect; see docs/acceptance/P0A-008.md."
       ],
       "access": {
         "provider_status": "public_primary_source_reviewed",
@@ -7483,8 +7484,8 @@
     },
     {
       "path": "data/research/registry.json",
-      "bytes_hashed": 101199,
-      "sha256": "73411a96d159781dd9d58643e6d2703d26b41ba69087294785d6b6137adbeb40",
+      "bytes_hashed": 101535,
+      "sha256": "06b3db40f6b72090c051269c9b5204303b780e5ddf8bc489983bd7832cd5ad87",
       "hash_semantics": "LF_NORMALIZED_REPOSITORY_TEXT"
     },
     {
