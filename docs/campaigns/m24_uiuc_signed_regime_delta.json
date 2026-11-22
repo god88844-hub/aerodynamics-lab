@@ -1,0 +1,1315 @@
+{
+  "plan": "m24-uiuc-signed-regime-delta-v1",
+  "source": {
+    "url": "https://m-selig.ae.illinois.edu/props/volume-1/data/",
+    "plan_sha256_normalized": "f06e2d5abc4f1886d560cb973fb1642072c1a5ca1edffa3cc3e48c214d927530",
+    "source_files": {
+      "apce_10x5_pg0820_4005.txt": "088add9d07eae933fb0098c187c980427e5f21525239791095e0dbb4ce2780ee",
+      "apce_10x5_kt0825_6707.txt": "5ca121ee2ee1f69809cbaeb20601a12c43f7040b8e7bce9e2eda1c1a21723e73",
+      "apce_10x5_kt0826_6710.txt": "ac7bef0903f53c227883c68b3e44867242ae00beb27ab6c27a7d8b76ac30b8e3",
+      "apce_10x5_kt0821_5000.txt": "3df32a75d9b09452a6cd22f4853a7ce4c09b51e412fda3c6bea247dd7ce09c61",
+      "apce_10x5_kt0823_6005.txt": "1db2ff99dc611079a5aa91f73ed13fb48a1ebe6874b294789e0872b9756c41e6",
+      "apce_10x5_kt0824_6018.txt": "9f8a6f9c8775a8cf2334b7b8a6f75b9c4ebbd0ad7474da4938de05557c0278bb"
+    },
+    "static_file_sha256_normalized": "9d4f0434c5e31f6c53082e8551426d2dba40def4a60ee5aca5eeee60a514f2dd",
+    "low_plane_rpm": 4005,
+    "high_plane_rpm": 6708.5,
+    "seam_j": 0.388,
+    "calibration_knots_low": [
+      [
+        0.146,
+        0.0867,
+        0.0385
+      ],
+      [
+        0.181,
+        0.0823,
+        0.0385
+      ],
+      [
+        0.213,
+        0.0768,
+        0.0378
+      ],
+      [
+        0.256,
+        0.0669,
+        0.0357
+      ],
+      [
+        0.288,
+        0.0601,
+        0.0337
+      ],
+      [
+        0.329,
+        0.0528,
+        0.0314
+      ],
+      [
+        0.358,
+        0.0486,
+        0.03
+      ],
+      [
+        0.397,
+        0.043,
+        0.0281
+      ],
+      [
+        0.427,
+        0.0386,
+        0.0265
+      ],
+      [
+        0.469,
+        0.0324,
+        0.0242
+      ],
+      [
+        0.51,
+        0.0259,
+        0.0213
+      ],
+      [
+        0.549,
+        0.019,
+        0.0183
+      ],
+      [
+        0.584,
+        0.0126,
+        0.0154
+      ],
+      [
+        0.617,
+        0.0069,
+        0.0125
+      ],
+      [
+        0.65,
+        0.0011,
+        0.0096
+      ],
+      [
+        0.684,
+        -0.0052,
+        0.0064
+      ]
+    ],
+    "calibration_knots_high": [
+      [
+        0.087,
+        0.096,
+        0.039
+      ],
+      [
+        0.108,
+        0.0946,
+        0.0392
+      ],
+      [
+        0.128,
+        0.0932,
+        0.0394
+      ],
+      [
+        0.149,
+        0.0918,
+        0.0396
+      ],
+      [
+        0.173,
+        0.0899,
+        0.0399
+      ],
+      [
+        0.195,
+        0.0881,
+        0.0401
+      ],
+      [
+        0.216,
+        0.0862,
+        0.0403
+      ],
+      [
+        0.237,
+        0.084,
+        0.0404
+      ],
+      [
+        0.258,
+        0.0815,
+        0.0404
+      ],
+      [
+        0.279,
+        0.0784,
+        0.0402
+      ],
+      [
+        0.3,
+        0.0749,
+        0.0396
+      ],
+      [
+        0.321,
+        0.0706,
+        0.0386
+      ],
+      [
+        0.342,
+        0.0658,
+        0.0373
+      ],
+      [
+        0.367,
+        0.0591,
+        0.0351
+      ],
+      [
+        0.388,
+        0.0546,
+        0.0335
+      ],
+      [
+        0.407,
+        0.0503,
+        0.032
+      ],
+      [
+        0.43,
+        0.0453,
+        0.0298
+      ],
+      [
+        0.449,
+        0.0416,
+        0.0284
+      ],
+      [
+        0.473,
+        0.0373,
+        0.0265
+      ],
+      [
+        0.492,
+        0.0339,
+        0.0251
+      ],
+      [
+        0.512,
+        0.0308,
+        0.0239
+      ],
+      [
+        0.537,
+        0.0262,
+        0.0218
+      ],
+      [
+        0.557,
+        0.0227,
+        0.0202
+      ],
+      [
+        0.584,
+        0.0177,
+        0.0178
+      ],
+      [
+        0.603,
+        0.0143,
+        0.0162
+      ],
+      [
+        0.627,
+        0.0095,
+        0.0137
+      ],
+      [
+        0.64,
+        0.0071,
+        0.0124
+      ],
+      [
+        0.667,
+        0.002,
+        0.0096
+      ],
+      [
+        0.691,
+        -0.0025,
+        0.0069
+      ]
+    ],
+    "static_table_in_repo": "data\\benchmarks\\uiuc\\apce_10x5_static_pg0819.txt"
+  },
+  "canonical_module": "packages/physics/aerodynamics/axial_prop.py",
+  "envelope": {
+    "j": [
+      0.146,
+      0.684
+    ],
+    "rpm": [
+      4005,
+      6708.5
+    ],
+    "provenance": "frozen M24 calibration envelope (docs/campaigns/m24_uiuc_axial_sweeps_freeze.json)"
+  },
+  "diameter_m": 0.254,
+  "declared_rho_kg_m3": 1.225,
+  "predeclared_tolerances": {
+    "ct_mae": 0.001,
+    "cp_mae": 0.0005,
+    "source": "docs/VALIDATION_TOLERANCES.md policy v1.0.0 (PROSPECTIVE_PENDING_OWNER_AND_QUALIFIED_REVIEW)"
+  },
+  "measurement_sign_resolution": {
+    "table_ct_decimal_places": 4,
+    "delta_res_ct": 0.0001,
+    "rule": "measurement sign indeterminate iff |CT_meas| <= delta_res; prediction quality is judged separately against the predeclared M24 CT tolerance; there is NO predicted-side count threshold (P0A-008 reviewer guardrail)",
+    "protocol_status": "DEVELOPMENT protocol revision locked prospectively for future confirmatory holdouts; no M24 physical acceptance claimed"
+  },
+  "calibration_knots": {
+    "low_plane_rpm": 4005,
+    "high_plane_rpm": 6708.5,
+    "seam_j": 0.388,
+    "low": [
+      [
+        0.146,
+        0.0867,
+        0.0385
+      ],
+      [
+        0.181,
+        0.0823,
+        0.0385
+      ],
+      [
+        0.213,
+        0.0768,
+        0.0378
+      ],
+      [
+        0.256,
+        0.0669,
+        0.0357
+      ],
+      [
+        0.288,
+        0.0601,
+        0.0337
+      ],
+      [
+        0.329,
+        0.0528,
+        0.0314
+      ],
+      [
+        0.358,
+        0.0486,
+        0.03
+      ],
+      [
+        0.397,
+        0.043,
+        0.0281
+      ],
+      [
+        0.427,
+        0.0386,
+        0.0265
+      ],
+      [
+        0.469,
+        0.0324,
+        0.0242
+      ],
+      [
+        0.51,
+        0.0259,
+        0.0213
+      ],
+      [
+        0.549,
+        0.019,
+        0.0183
+      ],
+      [
+        0.584,
+        0.0126,
+        0.0154
+      ],
+      [
+        0.617,
+        0.0069,
+        0.0125
+      ],
+      [
+        0.65,
+        0.0011,
+        0.0096
+      ],
+      [
+        0.684,
+        -0.0052,
+        0.0064
+      ]
+    ],
+    "high": [
+      [
+        0.087,
+        0.096,
+        0.039
+      ],
+      [
+        0.108,
+        0.0946,
+        0.0392
+      ],
+      [
+        0.128,
+        0.0932,
+        0.0394
+      ],
+      [
+        0.149,
+        0.0918,
+        0.0396
+      ],
+      [
+        0.173,
+        0.0899,
+        0.0399
+      ],
+      [
+        0.195,
+        0.0881,
+        0.0401
+      ],
+      [
+        0.216,
+        0.0862,
+        0.0403
+      ],
+      [
+        0.237,
+        0.084,
+        0.0404
+      ],
+      [
+        0.258,
+        0.0815,
+        0.0404
+      ],
+      [
+        0.279,
+        0.0784,
+        0.0402
+      ],
+      [
+        0.3,
+        0.0749,
+        0.0396
+      ],
+      [
+        0.321,
+        0.0706,
+        0.0386
+      ],
+      [
+        0.342,
+        0.0658,
+        0.0373
+      ],
+      [
+        0.367,
+        0.0591,
+        0.0351
+      ],
+      [
+        0.388,
+        0.0546,
+        0.0335
+      ],
+      [
+        0.407,
+        0.0503,
+        0.032
+      ],
+      [
+        0.43,
+        0.0453,
+        0.0298
+      ],
+      [
+        0.449,
+        0.0416,
+        0.0284
+      ],
+      [
+        0.473,
+        0.0373,
+        0.0265
+      ],
+      [
+        0.492,
+        0.0339,
+        0.0251
+      ],
+      [
+        0.512,
+        0.0308,
+        0.0239
+      ],
+      [
+        0.537,
+        0.0262,
+        0.0218
+      ],
+      [
+        0.557,
+        0.0227,
+        0.0202
+      ],
+      [
+        0.584,
+        0.0177,
+        0.0178
+      ],
+      [
+        0.603,
+        0.0143,
+        0.0162
+      ],
+      [
+        0.627,
+        0.0095,
+        0.0137
+      ],
+      [
+        0.64,
+        0.0071,
+        0.0124
+      ],
+      [
+        0.667,
+        0.002,
+        0.0096
+      ],
+      [
+        0.691,
+        -0.0025,
+        0.0069
+      ]
+    ]
+  },
+  "rows": [
+    {
+      "rpm": 5000,
+      "j": 0.174,
+      "ct_meas": 0.0864,
+      "cp_meas": 0.0389,
+      "ct_pred": 0.08562312591421894,
+      "cp_pred": 0.03901860383005195,
+      "ct_error": -0.0007768740857810597,
+      "cp_error": 0.00011860383005195263,
+      "envelope_class": "supported",
+      "measurement_sign_indeterminate": false,
+      "ct_error_within_predeclared": true,
+      "cp_error_within_predeclared": true,
+      "thrust_n_declared_rho": 3.0317929729454494,
+      "torque_n_m_declared_rho": 0.055851396508561094,
+      "power_w_declared_rho": 29.24372282733769
+    },
+    {
+      "rpm": 5000,
+      "j": 0.2,
+      "ct_meas": 0.0834,
+      "cp_meas": 0.0389,
+      "ct_pred": 0.082204405637093,
+      "cp_pred": 0.03884373428514183,
+      "ct_error": -0.0011955943629070043,
+      "cp_error": -5.6265714858165505e-05,
+      "envelope_class": "supported",
+      "measurement_sign_indeterminate": false,
+      "ct_error_within_predeclared": false,
+      "cp_error_within_predeclared": true,
+      "thrust_n_declared_rho": 2.9107409557247688,
+      "torque_n_m_declared_rho": 0.055601087493595165,
+      "power_w_declared_rho": 29.112661333580316
+    },
+    {
+      "rpm": 5000,
+      "j": 0.233,
+      "ct_meas": 0.0786,
+      "cp_meas": 0.0387,
+      "ct_pred": 0.0766941763896151,
+      "cp_pred": 0.03813263553807551,
+      "ct_error": -0.0019058236103848963,
+      "cp_error": -0.0005673644619244855,
+      "envelope_class": "supported",
+      "measurement_sign_indeterminate": false,
+      "ct_error_within_predeclared": false,
+      "cp_error_within_predeclared": false,
+      "thrust_n_declared_rho": 2.7156315838880216,
+      "torque_n_m_declared_rho": 0.054583217703786,
+      "power_w_declared_rho": 28.57970595791774
+    },
+    {
+      "rpm": 5000,
+      "j": 0.26,
+      "ct_meas": 0.0734,
+      "cp_meas": 0.0378,
+      "ct_pred": 0.07162758020907642,
+      "cp_pred": 0.037264794754595015,
+      "ct_error": -0.0017724197909235878,
+      "cp_error": -0.0005352052454049849,
+      "envelope_class": "supported",
+      "measurement_sign_indeterminate": false,
+      "ct_error_within_predeclared": false,
+      "cp_error_within_predeclared": false,
+      "thrust_n_declared_rho": 2.536230627278487,
+      "torque_n_m_declared_rho": 0.053340986692251485,
+      "power_w_declared_rho": 27.92927532126803
+    },
+    {
+      "rpm": 5000,
+      "j": 0.291,
+      "ct_meas": 0.0662,
+      "cp_meas": 0.036,
+      "ct_pred": 0.06576151691348613,
+      "cp_pred": 0.03585972964456322,
+      "ct_error": -0.0004384830865138689,
+      "cp_error": -0.00014027035543677513,
+      "envelope_class": "supported",
+      "measurement_sign_indeterminate": false,
+      "ct_error_within_predeclared": true,
+      "cp_error_within_predeclared": true,
+      "thrust_n_declared_rho": 2.328521678457332,
+      "torque_n_m_declared_rho": 0.05132977048055582,
+      "power_w_declared_rho": 26.876204975360732
+    },
+    {
+      "rpm": 5000,
+      "j": 0.316,
+      "ct_meas": 0.0612,
+      "cp_meas": 0.0347,
+      "ct_pred": 0.0611906946237155,
+      "cp_pred": 0.034598394540393394,
+      "ct_error": -9.305376284497735e-06,
+      "cp_error": -0.00010160545960660738,
+      "envelope_class": "supported",
+      "measurement_sign_indeterminate": false,
+      "ct_error_within_predeclared": true,
+      "cp_error_within_predeclared": true,
+      "thrust_n_declared_rho": 2.166675369405355,
+      "torque_n_m_declared_rho": 0.04952429001436606,
+      "power_w_declared_rho": 25.93085761389713
+    },
+    {
+      "rpm": 5000,
+      "j": 0.346,
+      "ct_meas": 0.0543,
+      "cp_meas": 0.0323,
+      "ct_pred": 0.0556340725623872,
+      "cp_pred": 0.03292325197859735,
+      "ct_error": 0.001334072562387198,
+      "cp_error": 0.0006232519785973473,
+      "envelope_class": "supported",
+      "measurement_sign_indeterminate": false,
+      "ct_error_within_predeclared": false,
+      "cp_error_within_predeclared": false,
+      "thrust_n_declared_rho": 1.9699232940872171,
+      "torque_n_m_declared_rho": 0.047126483782376306,
+      "power_w_declared_rho": 24.675369206705323
+    },
+    {
+      "rpm": 5000,
+      "j": 0.375,
+      "ct_meas": 0.0489,
+      "cp_meas": 0.0305,
+      "ct_pred": 0.050290879750913044,
+      "cp_pred": 0.031129289938222802,
+      "ct_error": 0.0013908797509130447,
+      "cp_error": 0.0006292899382228032,
+      "envelope_class": "supported",
+      "measurement_sign_indeterminate": false,
+      "ct_error_within_predeclared": false,
+      "cp_error_within_predeclared": false,
+      "thrust_n_declared_rho": 1.7807284446122125,
+      "torque_n_m_declared_rho": 0.04455859884024273,
+      "power_w_declared_rho": 23.330827795126872
+    },
+    {
+      "rpm": 5000,
+      "j": 0.401,
+      "ct_meas": 0.0451,
+      "cp_meas": 0.0291,
+      "ct_pred": 0.04581571491146953,
+      "cp_pred": 0.0295748791527552,
+      "ct_error": 0.000715714911469531,
+      "cp_error": 0.00047487915275519835,
+      "envelope_class": "supported",
+      "measurement_sign_indeterminate": false,
+      "ct_error_within_predeclared": true,
+      "cp_error_within_predeclared": true,
+      "thrust_n_declared_rho": 1.62226922967313,
+      "torque_n_m_declared_rho": 0.042333608589580046,
+      "power_w_declared_rho": 22.16582562416174
+    },
+    {
+      "rpm": 5000,
+      "j": 0.432,
+      "ct_meas": 0.0401,
+      "cp_meas": 0.0272,
+      "ct_pred": 0.04045608950246895,
+      "cp_pred": 0.027487262751849106,
+      "ct_error": 0.00035608950246895227,
+      "cp_error": 0.0002872627518491072,
+      "envelope_class": "supported",
+      "measurement_sign_indeterminate": false,
+      "ct_error_within_predeclared": true,
+      "cp_error_within_predeclared": true,
+      "thrust_n_declared_rho": 1.432492525317497,
+      "torque_n_m_declared_rho": 0.03934538553904179,
+      "power_w_declared_rho": 20.601195693685295
+    },
+    {
+      "rpm": 5000,
+      "j": 0.466,
+      "ct_meas": 0.0345,
+      "cp_meas": 0.025,
+      "ct_pred": 0.03494485565448668,
+      "cp_pred": 0.025354273340555008,
+      "ct_error": 0.00044485565448667413,
+      "cp_error": 0.0003542733405550065,
+      "envelope_class": "supported",
+      "measurement_sign_indeterminate": false,
+      "ct_error_within_predeclared": true,
+      "cp_error_within_predeclared": true,
+      "thrust_n_declared_rho": 1.237347582007304,
+      "torque_n_m_declared_rho": 0.03629221536725324,
+      "power_w_declared_rho": 19.002559530043563
+    },
+    {
+      "rpm": 5000,
+      "j": 0.493,
+      "ct_meas": 0.0297,
+      "cp_meas": 0.0229,
+      "ct_pred": 0.03049049042117941,
+      "cp_pred": 0.023436366588929437,
+      "ct_error": 0.0007904904211794087,
+      "cp_error": 0.0005363665889294364,
+      "envelope_class": "supported",
+      "measurement_sign_indeterminate": false,
+      "ct_error_within_predeclared": true,
+      "cp_error_within_predeclared": false,
+      "thrust_n_declared_rho": 1.0796248515056976,
+      "torque_n_m_declared_rho": 0.03354691543499415,
+      "power_w_declared_rho": 17.56512384686261
+    },
+    {
+      "rpm": 5000,
+      "j": 0.519,
+      "ct_meas": 0.0254,
+      "cp_meas": 0.021,
+      "ct_pred": 0.02622309314136945,
+      "cp_pred": 0.021602989571922436,
+      "ct_error": 0.0008230931413694513,
+      "cp_error": 0.0006029895719224347,
+      "envelope_class": "supported",
+      "measurement_sign_indeterminate": false,
+      "ct_error_within_predeclared": true,
+      "cp_error_within_predeclared": false,
+      "thrust_n_declared_rho": 0.9285223900205132,
+      "torque_n_m_declared_rho": 0.03092261172662631,
+      "power_w_declared_rho": 16.191041638363135
+    },
+    {
+      "rpm": 5000,
+      "j": 0.548,
+      "ct_meas": 0.0204,
+      "cp_meas": 0.0188,
+      "ct_pred": 0.021053226586618488,
+      "cp_pred": 0.019312880738643637,
+      "ct_error": 0.0006532265866184862,
+      "cp_error": 0.0005128807386436361,
+      "envelope_class": "supported",
+      "measurement_sign_indeterminate": false,
+      "ct_error_within_predeclared": true,
+      "cp_error_within_predeclared": false,
+      "thrust_n_declared_rho": 0.7454647765030793,
+      "torque_n_m_declared_rho": 0.02764454014179169,
+      "power_w_declared_rho": 14.474647370220152
+    },
+    {
+      "rpm": 5000,
+      "j": 0.581,
+      "ct_meas": 0.0145,
+      "cp_meas": 0.0162,
+      "ct_pred": 0.015028153158310364,
+      "cp_pred": 0.01653853065250513,
+      "ct_error": 0.000528153158310363,
+      "cp_error": 0.00033853065250512987,
+      "envelope_class": "supported",
+      "measurement_sign_indeterminate": false,
+      "ct_error_within_predeclared": true,
+      "cp_error_within_predeclared": true,
+      "thrust_n_declared_rho": 0.5321255052911711,
+      "torque_n_m_declared_rho": 0.02367332355522742,
+      "power_w_declared_rho": 12.395323227859445
+    },
+    {
+      "rpm": 6005,
+      "j": 0.146,
+      "ct_meas": 0.091,
+      "cp_meas": 0.0392,
+      "ct_pred": 0.0906208433512114,
+      "cp_pred": 0.03929262331897805,
+      "ct_error": -0.0003791566487885978,
+      "cp_error": 9.262331897805232e-05,
+      "envelope_class": "supported",
+      "measurement_sign_indeterminate": false,
+      "ct_error_within_predeclared": true,
+      "cp_error_within_predeclared": true,
+      "thrust_n_declared_rho": 4.628311465930952,
+      "torque_n_m_declared_rho": 0.08112586696957139,
+      "power_w_declared_rho": 51.01536294215628
+    },
+    {
+      "rpm": 6005,
+      "j": 0.17,
+      "ct_meas": 0.0892,
+      "cp_meas": 0.0394,
+      "ct_pred": 0.08845788422415388,
+      "cp_pred": 0.03950795265396708,
+      "ct_error": -0.000742115775846125,
+      "cp_error": 0.00010795265396708331,
+      "envelope_class": "supported",
+      "measurement_sign_indeterminate": false,
+      "ct_error_within_predeclared": true,
+      "cp_error_within_predeclared": true,
+      "thrust_n_declared_rho": 4.517841863597831,
+      "torque_n_m_declared_rho": 0.08157044861135068,
+      "power_w_declared_rho": 51.29493460850651
+    },
+    {
+      "rpm": 6005,
+      "j": 0.194,
+      "ct_meas": 0.0868,
+      "cp_meas": 0.0396,
+      "ct_pred": 0.08606983671209038,
+      "cp_pred": 0.039602925973485546,
+      "ct_error": -0.0007301632879096187,
+      "cp_error": 2.925973485543021e-06,
+      "envelope_class": "supported",
+      "measurement_sign_indeterminate": false,
+      "ct_error_within_predeclared": true,
+      "cp_error_within_predeclared": true,
+      "thrust_n_declared_rho": 4.395876239878842,
+      "torque_n_m_declared_rho": 0.0817665361268715,
+      "power_w_declared_rho": 51.418242699333724
+    },
+    {
+      "rpm": 6005,
+      "j": 0.218,
+      "ct_meas": 0.0843,
+      "cp_meas": 0.0398,
+      "ct_pred": 0.08329939314137103,
+      "cp_pred": 0.03959295828937551,
+      "ct_error": -0.0010006068586289746,
+      "cp_error": -0.00020704171062449483,
+      "envelope_class": "supported",
+      "measurement_sign_indeterminate": false,
+      "ct_error_within_predeclared": false,
+      "cp_error_within_predeclared": true,
+      "thrust_n_declared_rho": 4.254380362441681,
+      "torque_n_m_declared_rho": 0.08174595625851958,
+      "power_w_declared_rho": 51.4053012110946
+    },
+    {
+      "rpm": 6005,
+      "j": 0.241,
+      "ct_meas": 0.0814,
+      "cp_meas": 0.0397,
+      "ct_pred": 0.08009665179115462,
+      "cp_pred": 0.039367599279142886,
+      "ct_error": -0.0013033482088453813,
+      "cp_error": -0.00033240072085711364,
+      "envelope_class": "supported",
+      "measurement_sign_indeterminate": false,
+      "ct_error_within_predeclared": false,
+      "cp_error_within_predeclared": true,
+      "thrust_n_declared_rho": 4.090805582452398,
+      "torque_n_m_declared_rho": 0.0812806667578388,
+      "power_w_declared_rho": 51.1127075706555
+    },
+    {
+      "rpm": 6005,
+      "j": 0.266,
+      "ct_meas": 0.0778,
+      "cp_meas": 0.0395,
+      "ct_pred": 0.07627420297321814,
+      "cp_pred": 0.03895797357041578,
+      "ct_error": -0.00152579702678185,
+      "cp_error": -0.0005420264295842234,
+      "envelope_class": "supported",
+      "measurement_sign_indeterminate": false,
+      "ct_error_within_predeclared": false,
+      "cp_error_within_predeclared": false,
+      "thrust_n_declared_rho": 3.8955802563822766,
+      "torque_n_m_declared_rho": 0.08043492936627447,
+      "power_w_declared_rho": 50.58087226835187
+    },
+    {
+      "rpm": 6005,
+      "j": 0.291,
+      "ct_meas": 0.0732,
+      "cp_meas": 0.0387,
+      "ct_pred": 0.07201944814084722,
+      "cp_pred": 0.038211149181374776,
+      "ct_error": -0.0011805518591527786,
+      "cp_error": -0.0004888508186252222,
+      "envelope_class": "supported",
+      "measurement_sign_indeterminate": false,
+      "ct_error_within_predeclared": false,
+      "cp_error_within_predeclared": true,
+      "thrust_n_declared_rho": 3.678275607174063,
+      "torque_n_m_declared_rho": 0.07889299169662266,
+      "power_w_declared_rho": 49.61123690062169
+    },
+    {
+      "rpm": 6005,
+      "j": 0.314,
+      "ct_meas": 0.0679,
+      "cp_meas": 0.0373,
+      "ct_pred": 0.06772344236092628,
+      "cp_pred": 0.037191986750087586,
+      "ct_error": -0.00017655763907371835,
+      "cp_error": -0.00010801324991241423,
+      "envelope_class": "supported",
+      "measurement_sign_indeterminate": false,
+      "ct_error_within_predeclared": true,
+      "cp_error_within_predeclared": true,
+      "thrust_n_declared_rho": 3.458864133239155,
+      "torque_n_m_declared_rho": 0.0767887688467053,
+      "power_w_declared_rho": 48.28801292275065
+    },
+    {
+      "rpm": 6005,
+      "j": 0.335,
+      "ct_meas": 0.0633,
+      "cp_meas": 0.036,
+      "ct_pred": 0.06337469308622921,
+      "cp_pred": 0.03600991094983302,
+      "ct_error": 7.469308622921889e-05,
+      "cp_error": 9.910949833019655e-06,
+      "envelope_class": "supported",
+      "measurement_sign_indeterminate": false,
+      "ct_error_within_predeclared": true,
+      "cp_error_within_predeclared": true,
+      "thrust_n_declared_rho": 3.236758871511083,
+      "torque_n_m_declared_rho": 0.07434818544913191,
+      "power_w_declared_rho": 46.753271261813985
+    },
+    {
+      "rpm": 6005,
+      "j": 0.357,
+      "ct_meas": 0.0578,
+      "cp_meas": 0.0342,
+      "ct_pred": 0.05838801043347385,
+      "cp_pred": 0.0344364572106401,
+      "ct_error": 0.000588010433473854,
+      "cp_error": 0.00023645721064009806,
+      "envelope_class": "supported",
+      "measurement_sign_indeterminate": false,
+      "ct_error_within_predeclared": true,
+      "cp_error_within_predeclared": true,
+      "thrust_n_declared_rho": 2.98207220511958,
+      "torque_n_m_declared_rho": 0.07109954008146857,
+      "power_w_declared_rho": 44.710386190843195
+    },
+    {
+      "rpm": 6005,
+      "j": 0.38,
+      "ct_meas": 0.0527,
+      "cp_meas": 0.0324,
+      "ct_pred": 0.053484865162579234,
+      "cp_pred": 0.03276125020408357,
+      "ct_error": 0.0007848651625792374,
+      "cp_error": 0.00036125020408356995,
+      "envelope_class": "supported",
+      "measurement_sign_indeterminate": false,
+      "ct_error_within_predeclared": true,
+      "cp_error_within_predeclared": true,
+      "thrust_n_declared_rho": 2.7316520739753987,
+      "torque_n_m_declared_rho": 0.06764080891818786,
+      "power_w_declared_rho": 42.535390320780024
+    },
+    {
+      "rpm": 6005,
+      "j": 0.406,
+      "ct_meas": 0.0474,
+      "cp_meas": 0.0304,
+      "ct_pred": 0.04822434310299513,
+      "cp_pred": 0.030918647951485887,
+      "ct_error": 0.0008243431029951315,
+      "cp_error": 0.0005186479514858872,
+      "envelope_class": "supported",
+      "measurement_sign_indeterminate": false,
+      "ct_error_within_predeclared": true,
+      "cp_error_within_predeclared": false,
+      "thrust_n_declared_rho": 2.4629795074357674,
+      "torque_n_m_declared_rho": 0.06383646365957356,
+      "power_w_declared_rho": 40.143057747024294
+    },
+    {
+      "rpm": 6005,
+      "j": 0.428,
+      "ct_meas": 0.0433,
+      "cp_meas": 0.0289,
+      "ct_pred": 0.043839768898609695,
+      "cp_pred": 0.02906855324418427,
+      "ct_error": 0.0005397688986096966,
+      "cp_error": 0.00016855324418427187,
+      "envelope_class": "supported",
+      "measurement_sign_indeterminate": false,
+      "ct_error_within_predeclared": true,
+      "cp_error_within_predeclared": true,
+      "thrust_n_declared_rho": 2.239044545975151,
+      "torque_n_m_declared_rho": 0.06001664903718956,
+      "power_w_declared_rho": 37.74099738561371
+    },
+    {
+      "rpm": 6005,
+      "j": 0.452,
+      "ct_meas": 0.0392,
+      "cp_meas": 0.0272,
+      "ct_pred": 0.039461383391899384,
+      "cp_pred": 0.027373636027371924,
+      "ct_error": 0.0002613833918993849,
+      "cp_error": 0.0001736360273719255,
+      "envelope_class": "supported",
+      "measurement_sign_indeterminate": false,
+      "ct_error_within_predeclared": true,
+      "cp_error_within_predeclared": true,
+      "thrust_n_declared_rho": 2.015425662133651,
+      "torque_n_m_declared_rho": 0.05651722301161436,
+      "power_w_declared_rho": 35.54041087168583
+    },
+    {
+      "rpm": 6005,
+      "j": 0.484,
+      "ct_meas": 0.0338,
+      "cp_meas": 0.0249,
+      "ct_pred": 0.033949916988224034,
+      "cp_pred": 0.025025800268895,
+      "ct_error": 0.00014991698822403726,
+      "cp_error": 0.00012580026889500232,
+      "envelope_class": "supported",
+      "measurement_sign_indeterminate": false,
+      "ct_error_within_predeclared": true,
+      "cp_error_within_predeclared": true,
+      "thrust_n_declared_rho": 1.7339365233561448,
+      "torque_n_m_declared_rho": 0.051669742865980875,
+      "power_w_declared_rho": 32.49211113422793
+    },
+    {
+      "rpm": 6018,
+      "j": 0.406,
+      "ct_meas": 0.0472,
+      "cp_meas": 0.0304,
+      "ct_pred": 0.0482668813331646,
+      "cp_pred": 0.030940089163170544,
+      "ct_error": 0.0010668813331645988,
+      "cp_error": 0.0005400891631705436,
+      "envelope_class": "supported",
+      "measurement_sign_indeterminate": false,
+      "ct_error_within_predeclared": false,
+      "cp_error_within_predeclared": false,
+      "thrust_n_declared_rho": 2.4758370624198385,
+      "torque_n_m_declared_rho": 0.06415761785378353,
+      "power_w_declared_rho": 40.43235444480629
+    },
+    {
+      "rpm": 6018,
+      "j": 0.429,
+      "ct_meas": 0.0431,
+      "cp_meas": 0.0288,
+      "ct_pred": 0.04367521612387286,
+      "cp_pred": 0.029000396388241454,
+      "ct_error": 0.0005752161238728598,
+      "cp_error": 0.00020039638824145486,
+      "envelope_class": "supported",
+      "measurement_sign_indeterminate": false,
+      "ct_error_within_predeclared": true,
+      "cp_error_within_predeclared": true,
+      "thrust_n_declared_rho": 2.2403087956375165,
+      "torque_n_m_declared_rho": 0.06013545530760122,
+      "power_w_declared_rho": 37.89757358569624
+    },
+    {
+      "rpm": 6018,
+      "j": 0.456,
+      "ct_meas": 0.0385,
+      "cp_meas": 0.0269,
+      "ct_pred": 0.03880653407839925,
+      "cp_pred": 0.02709647965159802,
+      "ct_error": 0.00030653407839924957,
+      "cp_error": 0.000196479651598018,
+      "envelope_class": "supported",
+      "measurement_sign_indeterminate": false,
+      "ct_error_within_predeclared": true,
+      "cp_error_within_predeclared": true,
+      "thrust_n_declared_rho": 1.990571022647424,
+      "torque_n_m_declared_rho": 0.056187478242286426,
+      "power_w_declared_rho": 35.409544675262495
+    },
+    {
+      "rpm": 6018,
+      "j": 0.476,
+      "ct_meas": 0.0352,
+      "cp_meas": 0.0255,
+      "ct_pred": 0.03536532282476028,
+      "cp_pred": 0.025621505213728316,
+      "ct_error": 0.00016532282476027643,
+      "cp_error": 0.00012150521372831721,
+      "envelope_class": "supported",
+      "measurement_sign_indeterminate": false,
+      "ct_error_within_predeclared": true,
+      "cp_error_within_predeclared": true,
+      "thrust_n_declared_rho": 1.8140549908249686,
+      "torque_n_m_declared_rho": 0.05312895937927077,
+      "power_w_declared_rho": 33.48205542484479
+    },
+    {
+      "rpm": 6018,
+      "j": 0.503,
+      "ct_meas": 0.0302,
+      "cp_meas": 0.0233,
+      "ct_pred": 0.03087063864818415,
+      "cp_pred": 0.023764472612286692,
+      "ct_error": 0.0006706386481841499,
+      "cp_error": 0.0004644726122866906,
+      "envelope_class": "supported",
+      "measurement_sign_indeterminate": false,
+      "ct_error_within_predeclared": true,
+      "cp_error_within_predeclared": true,
+      "thrust_n_declared_rho": 1.5835013407677614,
+      "torque_n_m_declared_rho": 0.04927820163397214,
+      "power_w_declared_rho": 31.055294468821923
+    },
+    {
+      "rpm": 6018,
+      "j": 0.524,
+      "ct_meas": 0.0268,
+      "cp_meas": 0.0219,
+      "ct_pred": 0.027271807144584655,
+      "cp_pred": 0.022210331279964718,
+      "ct_error": 0.00047180714458465445,
+      "cp_error": 0.00031033127996471857,
+      "envelope_class": "supported",
+      "measurement_sign_indeterminate": false,
+      "ct_error_within_predeclared": true,
+      "cp_error_within_predeclared": true,
+      "thrust_n_declared_rho": 1.3989002194209483,
+      "torque_n_m_declared_rho": 0.04605552166158949,
+      "power_w_declared_rho": 29.024350314964597
+    },
+    {
+      "rpm": 6018,
+      "j": 0.556,
+      "ct_meas": 0.021,
+      "cp_meas": 0.0193,
+      "ct_pred": 0.021558363232846312,
+      "cp_pred": 0.019626151285370815,
+      "ct_error": 0.0005583632328463109,
+      "cp_error": 0.000326151285370814,
+      "envelope_class": "supported",
+      "measurement_sign_indeterminate": false,
+      "ct_error_within_predeclared": true,
+      "cp_error_within_predeclared": true,
+      "thrust_n_declared_rho": 1.1058306072970916,
+      "torque_n_m_declared_rho": 0.04069694523072705,
+      "power_w_declared_rho": 25.64735676657589
+    },
+    {
+      "rpm": 6018,
+      "j": 0.573,
+      "ct_meas": 0.0181,
+      "cp_meas": 0.0179,
+      "ct_pred": 0.018427907151517296,
+      "cp_pred": 0.018147848379966008,
+      "ct_error": 0.00032790715151729405,
+      "cp_error": 0.0002478483799660085,
+      "envelope_class": "supported",
+      "measurement_sign_indeterminate": false,
+      "ct_error_within_predeclared": true,
+      "cp_error_within_predeclared": true,
+      "thrust_n_declared_rho": 0.9452546808158728,
+      "torque_n_m_declared_rho": 0.03763152443064748,
+      "power_w_declared_rho": 23.715517891358214
+    },
+    {
+      "rpm": 6018,
+      "j": 0.6,
+      "ct_meas": 0.0131,
+      "cp_meas": 0.0156,
+      "ct_pred": 0.013559671628926883,
+      "cp_pred": 0.015824657858308194,
+      "ct_error": 0.00045967162892688283,
+      "cp_error": 0.00022465785830819499,
+      "envelope_class": "supported",
+      "measurement_sign_indeterminate": false,
+      "ct_error_within_predeclared": true,
+      "cp_error_within_predeclared": true,
+      "thrust_n_declared_rho": 0.6955398121003659,
+      "torque_n_m_declared_rho": 0.0328141378709644,
+      "power_w_declared_rho": 20.679584086542455
+    },
+    {
+      "rpm": 6018,
+      "j": 0.619,
+      "ct_meas": 0.0098,
+      "cp_meas": 0.0138,
+      "ct_pred": 0.009937499089283814,
+      "cp_pred": 0.013969110188252042,
+      "ct_error": 0.00013749908928381398,
+      "cp_error": 0.00016911018825204252,
+      "envelope_class": "supported",
+      "measurement_sign_indeterminate": false,
+      "ct_error_within_predeclared": true,
+      "cp_error_within_predeclared": true,
+      "thrust_n_declared_rho": 0.5097414184103685,
+      "torque_n_m_declared_rho": 0.028966459291335452,
+      "power_w_declared_rho": 18.25476363145955
+    },
+    {
+      "rpm": 6018,
+      "j": 0.647,
+      "ct_meas": 0.0044,
+      "cp_meas": 0.011,
+      "ct_pred": 0.0047176987182720505,
+      "cp_pred": 0.011211670804587393,
+      "ct_error": 0.0003176987182720503,
+      "cp_error": 0.00021167080458739385,
+      "envelope_class": "supported",
+      "measurement_sign_indeterminate": false,
+      "ct_error_within_predeclared": true,
+      "cp_error_within_predeclared": true,
+      "thrust_n_declared_rho": 0.2419931226839573,
+      "torque_n_m_declared_rho": 0.023248610797132845,
+      "power_w_declared_rho": 14.651355576220041
+    },
+    {
+      "rpm": 6018,
+      "j": 0.671,
+      "ct_meas": -0.0001,
+      "cp_meas": 0.0085,
+      "ct_pred": 0.00021784451527975509,
+      "cp_pred": 0.008760124674985582,
+      "ct_error": 0.0003178445152797551,
+      "cp_error": 0.0002601246749855818,
+      "envelope_class": "supported",
+      "measurement_sign_indeterminate": true,
+      "ct_error_within_predeclared": true,
+      "cp_error_within_predeclared": true,
+      "thrust_n_declared_rho": 0.011174277473028115,
+      "torque_n_m_declared_rho": 0.018165065015980437,
+      "power_w_declared_rho": 11.44768730212073
+    }
+  ],
+  "excluded_rows": [
+    {
+      "rpm": 5000,
+      "j": 0.113,
+      "ct_meas": 0.0912,
+      "cp_meas": 0.0381,
+      "envelope_class": "out_of_envelope: J 0.113 outside the calibration envelope [0.146, 0.684]"
+    },
+    {
+      "rpm": 5000,
+      "j": 0.145,
+      "ct_meas": 0.089,
+      "cp_meas": 0.0386,
+      "envelope_class": "out_of_envelope: J 0.145 outside the calibration envelope [0.146, 0.684]"
+    },
+    {
+      "rpm": 6005,
+      "j": 0.093,
+      "ct_meas": 0.0942,
+      "cp_meas": 0.0385,
+      "envelope_class": "out_of_envelope: J 0.093 outside the calibration envelope [0.146, 0.684]"
+    },
+    {
+      "rpm": 6005,
+      "j": 0.121,
+      "ct_meas": 0.0922,
+      "cp_meas": 0.0388,
+      "envelope_class": "out_of_envelope: J 0.121 outside the calibration envelope [0.146, 0.684]"
+    },
+    {
+      "rpm": 6018,
+      "j": 0.697,
+      "ct_meas": -0.0048,
+      "cp_meas": 0.0058,
+      "envelope_class": "out_of_envelope: J 0.697 outside the calibration envelope [0.146, 0.684]"
+    }
+  ],
+  "sign_disagreement_row_classifications": {
+    "row": {
+      "rpm": 6018.0,
+      "j": 0.671,
+      "measured_ct": -0.0001
+    },
+    "models": {
+      "axial_interpolator": {
+        "predicted_ct": 0.00021784451527975509,
+        "sign_disagreement": true,
+        "measurement_sign_indeterminate": true,
+        "prediction_magnitude_error": 0.0003178445152797551,
+        "magnitude_within_predeclared_ct_tolerance": true
+      },
+      "advance_ratio_only": {
+        "predicted_ct": -0.0007705882352941193,
+        "sign_disagreement": false,
+        "measurement_sign_indeterminate": true,
+        "prediction_magnitude_error": 0.0006705882352941192,
+        "magnitude_within_predeclared_ct_tolerance": true
+      },
+      "static_reference": {
+        "predicted_ct": 0.09802274368231047,
+        "sign_disagreement": true,
+        "measurement_sign_indeterminate": true,
+        "prediction_magnitude_error": 0.09812274368231047,
+        "magnitude_within_predeclared_ct_tolerance": false
+      }
+    }
+  },
+  "before": {
+    "rows_scored": 42,
+    "rows_outside_calibration_j": 5,
+    "ct_mae": 0.0006850414,
+    "cp_mae": 0.0003006659,
+    "sign_disagreements": {
+      "axial_interpolator": 1,
+      "advance_ratio_only": 0,
+      "static_reference": 1
+    }
+  },
+  "after": {
+    "rows_scored": 42,
+    "rows_excluded_envelope": 5,
+    "ct_mae": 0.0006850414,
+    "cp_mae": 0.0003006659,
+    "sign_classification": {
+      "hard_sign_disagreements": 0,
+      "measurement_sign_indeterminate_disagreements": 2,
+      "magnitude_failures_at_disagreements": 1
+    },
+    "ct_mae_within_predeclared": true,
+    "cp_mae_within_predeclared": true
+  }
+}
