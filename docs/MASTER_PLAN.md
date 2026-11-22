@@ -8,7 +8,7 @@ Tracking: [master issue #127](https://github.com/god88844-hub/aerodynamics-lab/i
 
 ## Next action and execution rules
 
-**P0A-004 is complete** with the owner's actual authorization receipt. Merge/tag requires the three pre-merge checks and five green CI jobs; actual operation receipts are recorded afterward. **Stage 0A execution is active. P0A-007 is complete and merged; stop after reporting the P0A-008 plan to the owner - do not start P0A-008 (or any further packages/physics edits) without a new owner instruction.** The next future software task is **P0A-008**.
+**P0A-004 is complete** with the owner's actual authorization receipt. Merge/tag requires the three pre-merge checks and five green CI jobs; actual operation receipts are recorded afterward. **Stage 0A execution is active. P0A-008 is complete and merged; stop after reporting the P0A-009 plan to the owner - do not start P0A-009 (or any further packages/physics edits) without a new owner instruction.** The next future software task is **P0A-009**.
 
 1. Read `AGENTS.md`, this task's section, the linked fundamentals and acceptance ledger. Use only the canonical local workspace in `WORKSPACE.md`.
 2. When implementation is explicitly resumed, pick the first unchecked builder task in document order whose prerequisites are checked. A pending owner/custodian/reviewer task requires its real receipt; a builder cannot self-approve it or invent data.
@@ -152,22 +152,23 @@ Tasks with several WPs appear in each relevant issue but retain one canonical ID
   - Recorded evidence: [docs/acceptance/P0A-007.md](acceptance/P0A-007.md), [docs/campaigns/m21_p0a_007_row_scores.json](campaigns/m21_p0a_007_row_scores.json), [tests/acceptance/test_p0a_007.py](../tests/acceptance/test_p0a_007.py).
 
 <a name="p0a-008"></a>
-- [ ] **P0A-008 — Diagnose the UIUC signed-thrust disagreement** (WP5; actor: builder)
+- [x] **P0A-008 — Diagnose the UIUC signed-thrust disagreement** (WP5; actor: builder)
   - Prerequisites: P0A-004, P0A-007. Proof: [docs/acceptance/P0A-008.md](acceptance/P0A-008.md).
   - Acceptance: Reproduce the signed CT case with source hashes; inspect axes, advance ratio, RPM, units, power definition and near-zero measurement resolution. Record evidence for the cause; do not assume a sign flip is correct.
   - Language: Python.
   - Target files: `tests/acceptance/test_p0a_008.py`; `docs/acceptance/P0A-008.md`; `data/research/registry.json`.
   - Todos:
-    - [ ] 1. Reproduce the signed-CT disagreement case with original source hashes and the exact pinned rows (no repaired data).
-    - [ ] 2. Inspect, one at a time and recorded: coordinate axes/normal conventions, advance-ratio handling, RPM units, thrust/power sign definitions, and the near-zero measurement resolution of the source instrument.
-    - [ ] 3. Write the evidence-backed cause (or the shortlist with the discriminating experiment) into docs/acceptance/P0A-008.md.
-    - [ ] 4. Change no model behavior in this task — diagnosis only.
+    - [x] 1. Reproduce the signed-CT disagreement case with original source hashes and the exact pinned rows (no repaired data).
+    - [x] 2. Inspect, one at a time and recorded: coordinate axes/normal conventions, advance-ratio handling, RPM units, thrust/power sign definitions, and the near-zero measurement resolution of the source instrument.
+    - [x] 3. Write the evidence-backed cause (or the shortlist with the discriminating experiment) into docs/acceptance/P0A-008.md.
+    - [x] 4. Change no model behavior in this task — diagnosis only.
   - Verify: `pytest tests/acceptance/test_p0a_008.py -q` | `python scripts/reconcile_registry.py --check`
   - Planned verification: `pytest tests/acceptance/test_p0a_008.py`; required current-head CI.
+  - Recorded evidence: [docs/acceptance/P0A-008.md](acceptance/P0A-008.md), [docs/campaigns/m24_uiuc_sign_disagreement_diagnosis.json](campaigns/m24_uiuc_sign_disagreement_diagnosis.json), [tests/acceptance/test_p0a_008.py](../tests/acceptance/test_p0a_008.py).
 
 <a name="p0a-009"></a>
 - [ ] **P0A-009 — Correct and verify the supported signed aerodynamic regime** (WP5, WP11; actor: builder)
-  - Prerequisites: P0A-008. Proof: [docs/acceptance/P0A-009.md](acceptance/P0A-009.md).
+  - Prerequisites: P0A-004, P0A-008. Proof: [docs/acceptance/P0A-009.md](acceptance/P0A-009.md).
   - Acceptance: Analytical frame/force checks pass, source sign is preserved, extrapolation is refused or labeled, and all DEVELOPMENT sweep residuals/exclusions are published. M24 acceptance uses predeclared sign-resolution and uncertainty rules.
   - Language: Python.
   - Target files: `packages/physics/aerodynamics/`; `tests/acceptance/test_p0a_009.py`; `docs/acceptance/P0A-009.md`.
@@ -1266,4 +1267,4 @@ Tasks with several WPs appear in each relevant issue but retain one canonical ID
   - Prerequisites: P4-007. Proof: [docs/acceptance/P4-008.md](acceptance/P4-008.md).
   - Acceptance: Qualified independent review accepts the stated limited uses; source/rights/security, reproducible distributions, compatibility and recovery gates close the phase.
 
-Unique task count: **150**; checked **7**, unchecked **143**. These are planning tasks, not a count of physically validated milestones. All ten legacy major acceptance families and all twelve broad Phase 0 package issues remain open until their own actual exit evidence exists.
+Unique task count: **150**; checked **8**, unchecked **142**. These are planning tasks, not a count of physically validated milestones. All ten legacy major acceptance families and all twelve broad Phase 0 package issues remain open until their own actual exit evidence exists.

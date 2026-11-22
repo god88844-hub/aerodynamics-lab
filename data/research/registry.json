@@ -653,7 +653,7 @@
         "VALIDATION"
       ],
       "kind": "measured_wind_tunnel_component",
-      "checked_at": "2026-11-19",
+      "checked_at": "2026-11-22",
       "urls": [
         "https://m-selig.ae.illinois.edu/props/propDB.html",
         "https://m-selig.ae.illinois.edu/props/volume-1/propDB-volume-1.html"
@@ -676,7 +676,8 @@
       ],
       "uncertainty_and_gaps": [
         "Static/axial component observations do not validate an assembled aircraft.",
-        "Apply volume-specific measurement uncertainty and tested inflow/RPM limits."
+        "Apply volume-specific measurement uncertainty and tested inflow/RPM limits.",
+        "P0A-008 diagnosis: the single M24 CT sign disagreement (6018 RPM, J=0.671, measured CT -0.0001 = -1 count of the 4-decimal source format vs predicted +0.000218) is a resolution-limited zero-crossing straddle (measured crossing J~0.6705 vs model ~0.6721), not a sign-convention or unit defect; see docs/acceptance/P0A-008.md."
       ],
       "access": {
         "provider_status": "public_primary_source_reviewed",
