@@ -179,14 +179,36 @@ def main() -> None:
     if not args.originals or not Path(args.originals).is_dir():
         p.error("AEROFORGE_UAV_FD_DIR must identify eight pinned publisher MAT files")
     report = reproduce(Path(args.originals))
+    before, frozen = before_rows()
+    if {n: row["before"] for n, row in report["holdouts"].items()} != before:
+        raise ValueError("Frozen P0A-010 before classifications drifted")
+    delta = {
+        "plan": PLAN,
+        "scientific_status": "DEVELOPMENT",
+        "physical_acceptance": False,
+        "train_recordings": sorted(detector.TRAIN_IDS),
+        "holdout_recordings": sorted(HOLDOUTS),
+        "frozen_baseline": frozen,
+        "before": before,
+        "after_status": "REPRODUCED_FROM_PINNED_PUBLISHER_BYTES",
+        "after": report["holdouts"],
+        "calibration": report["calibration"],
+        "calibration_canonical_sha256": report["calibration_canonical_sha256"],
+        "live_result": report,
+        "limitation": (
+            "DEVELOPMENT retrospective on one rig; shared-IMU motor-frequency "
+            "attribution is not physical isolation; no fault-onset timestamp "
+            "permits measured detection-deadline compliance."
+        ),
+    }
     if args.check:
-        old = json.loads(args.output.read_text(encoding="utf-8"))
-        if report != old:
-            raise SystemExit("P0A-011 delta is NOT bit-identical to verified publisher replay")
-        print("P0A-011 live result bit-identical to the committed DEVELOPMENT delta")
+        committed = json.loads(args.output.read_text(encoding="utf-8"))
+        if delta != committed:
+            raise SystemExit("P0A-011 delta differs from pinned publisher replay")
+        print("P0A-011 live result bit-identical to committed DEVELOPMENT delta")
     else:
-        args.output.write_text(json.dumps(report, indent=2, allow_nan=False) + "\n", encoding="utf-8")
-        print(f"wrote DEVELOPMENT comparison: {args.output}")
+        args.output.write_text(json.dumps(delta, indent=2, allow_nan=False) + "\n", encoding="utf-8")
+        print(f"wrote DEVELOPMENT before/after comparison: {args.output}")
 
 
 if __name__ == "__main__":
