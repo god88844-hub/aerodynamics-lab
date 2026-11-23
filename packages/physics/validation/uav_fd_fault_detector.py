@@ -233,6 +233,7 @@ def evaluate(
     expected_vibration_windows: int,
     onset_s: float | None = None,
     deadline_s: float | None = None,
+    unsupported_telemetry_observed: bool = False,
 ) -> dict:
     """Evaluate exactly the same fit/logic in desktop streams or offline MAT.
 
@@ -270,6 +271,8 @@ def evaluate(
                     "eligible_vibration_windows": len(vvalid)}
         if support_lost:
             return {"state": "INCONCLUSIVE", "reason": "OUTSIDE_TRAIN_RPM_SUPPORT"}
+        if unsupported_telemetry_observed:
+            return {"state": "INCONCLUSIVE", "reason": "UNSUPPORTED_TELEMETRY_EXCLUDED"}
         if len(evalid) < MIN_ELIGIBLE or len(vvalid) < MIN_ELIGIBLE:
             return {"state": "INCONCLUSIVE", "reason": "INSUFFICIENT_ELIGIBLE_WINDOWS"}
         if (len(evalid) / max(1, expected_electrical_windows) < MIN_COVERAGE
