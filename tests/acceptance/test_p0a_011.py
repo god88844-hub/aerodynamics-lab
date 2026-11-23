@@ -111,7 +111,7 @@ def test_hysteresis_reset_rejects_nonpersistent_spikes(trained):
     e = list(f.electrical)
     # A genuine return to train-only center resets confirmation.
     assert e[3].normalized_power[0] == trained["electrical_centers"][0]
-    assert assess(trained, f)["state"] == "DETECT" if False else True
+    assert assess(trained, f)["state"] == "DETECT"  # low intervening load must not erase evidence
     # A separate spike at index 8 is outside window span.
     assert assess(trained, patch_e(flight(bias=True), (2, 8)))["state"] == "NO-ALERT"
 
@@ -208,7 +208,6 @@ def test_delta_artifact_integrity_and_honest_status():
                     reason="pinned UAV-FD MAT originals are external; opt-in locally")
 def test_live_zenodo_delta_byte_identity():
     from scripts.benchmark_p0a_011_uav_fd import reproduce, sha
-    import benchmark_p0a_011_uav_fd as runner
     old = json.loads(DELTA.read_text(encoding="utf-8"))
     live = reproduce(Path(os.environ["AEROFORGE_UAV_FD_DIR"]))
     assert old["after_status"] == "REPRODUCED_FROM_PINNED_PUBLISHER_BYTES"
