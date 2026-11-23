@@ -145,6 +145,16 @@ def test_inconclusive_fail_closed(trained, reason, modifier):
     assert result == {"state": "INCONCLUSIVE", "reason": reason}
 
 
+def test_out_of_envelope_exclusions_fail_closed(trained):
+    f = flight(bias=True)
+    result = d.evaluate(
+        trained, f.electrical, f.vibration,
+        expected_electrical_windows=12, expected_vibration_windows=12,
+        unsupported_telemetry_observed=True)
+    assert result == {"state": "INCONCLUSIVE",
+                      "reason": "UNSUPPORTED_TELEMETRY_EXCLUDED"}
+
+
 def test_calibration_forbids_any_holdout_and_needs_both_whole_training_recordings(trained):
     f = flight()
     with pytest.raises(ValueError, match="exactly"):
