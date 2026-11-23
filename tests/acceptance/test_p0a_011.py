@@ -9,9 +9,11 @@ from pathlib import Path
 
 import pytest
 
-from packages.physics.validation import uav_fd_fault_detector as d
+import sys
 
 ROOT = Path(__file__).resolve().parents[2]
+sys.path[:0] = [str(ROOT / "packages"), str(ROOT / "scripts")]
+from physics.validation import uav_fd_fault_detector as d  # noqa: E402
 MODULE = ROOT / "packages/physics/validation/uav_fd_fault_detector.py"
 RUNNER = ROOT / "scripts/benchmark_p0a_011_uav_fd.py"
 DELTA = ROOT / "docs/campaigns/m25_p0a_011_detector_delta.json"
