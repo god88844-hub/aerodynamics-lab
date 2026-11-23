@@ -186,7 +186,7 @@ def test_frozen_p0a010_reproduction_is_preserved():
 
 
 def test_delta_artifact_integrity_and_honest_status():
-    from scripts.benchmark_p0a_011_uav_fd import before_rows, sha
+    from benchmark_p0a_011_uav_fd import before_rows, sha
     delta = json.loads(DELTA.read_text(encoding="utf-8"))
     before, pins = before_rows()
     assert delta["scientific_status"] == "DEVELOPMENT"
@@ -209,7 +209,7 @@ def test_delta_artifact_integrity_and_honest_status():
 @pytest.mark.skipif(not os.getenv("AEROFORGE_UAV_FD_DIR"),
                     reason="pinned UAV-FD MAT originals are external; opt-in locally")
 def test_live_zenodo_delta_byte_identity():
-    from scripts.benchmark_p0a_011_uav_fd import reproduce, sha
+    from benchmark_p0a_011_uav_fd import reproduce, sha
     old = json.loads(DELTA.read_text(encoding="utf-8"))
     live = reproduce(Path(os.environ["AEROFORGE_UAV_FD_DIR"]))
     assert old["after_status"] == "REPRODUCED_FROM_PINNED_PUBLISHER_BYTES"
