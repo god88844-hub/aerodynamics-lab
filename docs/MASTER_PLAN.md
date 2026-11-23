@@ -8,7 +8,7 @@ Tracking: [master issue #127](https://github.com/god88844-hub/aerodynamics-lab/i
 
 ## Next action and execution rules
 
-**P0A-004 is complete** with the owner's actual authorization receipt. Merge/tag requires the three pre-merge checks and five green CI jobs; actual operation receipts are recorded afterward. **Stage 0A execution is active. P0A-010 is complete and merged; stop after reporting the P0A-011 plan to the owner - do not start P0A-011 (or any further detector/physics edits) without a new owner instruction.** The next future software task is **P0A-011**.
+**P0A-004 is complete** with the owner's actual authorization receipt. Merge/tag requires the three pre-merge checks and five green CI jobs; actual operation receipts are recorded afterward. **Stage 0A execution is active. P0A-011 is complete as DEVELOPMENT-only detector software with two persistent healthy-flight false alerts, no physical isolation or prospective acceptance; stop before P0A-012 unless the owner gives a new instruction.** The next future software task is **P0A-012**.
 
 1. Read `AGENTS.md`, this task's section, the linked fundamentals and acceptance ledger. Use only the canonical local workspace in `WORKSPACE.md`.
 2. When implementation is explicitly resumed, pick the first unchecked builder task in document order whose prerequisites are checked. A pending owner/custodian/reviewer task requires its real receipt; a builder cannot self-approve it or invent data.
@@ -197,18 +197,19 @@ Tasks with several WPs appear in each relevant issue but retain one canonical ID
   - Recorded evidence: [docs/acceptance/P0A-010.md](acceptance/P0A-010.md), [tests/acceptance/test_p0a_010.py](../tests/acceptance/test_p0a_010.py).
 
 <a name="p0a-011"></a>
-- [ ] **P0A-011 — Correct fault detection without data leakage** (WP5, WP11; actor: builder)
+- [x] **P0A-011 — Correct fault detection without data leakage** (WP5, WP11; actor: builder)
   - Prerequisites: P0A-004, P0A-010. Proof: [docs/acceptance/P0A-011.md](acceptance/P0A-011.md).
   - Acceptance: Detection, no-alert and INCONCLUSIVE are explicit; whole-flight class/deadline/false-alarm regression cases pass; training and evaluation data remain grouped and disjoint; confirmatory performance is not inferred from development tuning.
   - Language: Python.
-  - Target files: `packages/physics/validation/uav_fd_fault_detector.py`; `scripts/benchmark_p0a_011_uav_fd.py`; `docs/campaigns/m25_p0a_011_detector_delta.json`; `tests/acceptance/test_p0a_011.py`; `docs/acceptance/P0A-011.md`.
+  - Target files: `packages/physics/validation/uav_fd_fault_detector.py`; `scripts/benchmark_p0a_011_uav_fd.py`; `scripts/p0a011_download_verified.py`; `scripts/check_master_plan.py`; `docs/campaigns/m25_p0a_011_detector_delta.json`; `tests/acceptance/test_p0a_011.py`; `docs/acceptance/P0A-011.md`.
   - Todos:
-    - [ ] 1. Make DETECT / NO-ALERT / INCONCLUSIVE explicit outcomes of the detector contract (an alert must name its class and deadline).
-    - [ ] 2. Correct the detection logic with grouped, disjoint training/evaluation recordings — no whole-recording leakage in either direction.
-    - [ ] 3. Add confirmation/hysteresis rules so single-sample false alarms cannot raise an alert.
-    - [ ] 4. Re-run the P0A-010 reproduction and record the per-class improvements and remaining misses.
+    - [x] 1. Make DETECT / NO-ALERT / INCONCLUSIVE explicit outcomes of the detector contract (an alert must name its class and deadline).
+    - [x] 2. Correct the detection logic with grouped, disjoint training/evaluation recordings — no whole-recording leakage in either direction.
+    - [x] 3. Add confirmation/hysteresis rules so single-sample false alarms cannot raise an alert.
+    - [x] 4. Re-run the P0A-010 reproduction and record the per-class improvements and remaining misses.
   - Verify: `pytest tests/acceptance/test_p0a_010.py tests/acceptance/test_p0a_011.py -q` | `pytest tests/physics -q` | `python scripts/export_contracts.py --check` | `python scripts/reconcile_registry.py --check` | `python scripts/check_master_plan.py --check`
   - Planned verification: `pytest tests/acceptance/test_p0a_011.py`; required current-head CI.
+  - Recorded evidence: [docs/acceptance/P0A-011.md](acceptance/P0A-011.md), [docs/campaigns/m25_p0a_011_detector_delta.json](campaigns/m25_p0a_011_detector_delta.json), [packages/physics/validation/uav_fd_fault_detector.py](../packages/physics/validation/uav_fd_fault_detector.py), [scripts/benchmark_p0a_011_uav_fd.py](../scripts/benchmark_p0a_011_uav_fd.py), [scripts/p0a011_download_verified.py](../scripts/p0a011_download_verified.py), [tests/acceptance/test_p0a_011.py](../tests/acceptance/test_p0a_011.py), [https://github.com/god88844-hub/aerodynamics-lab/actions/runs/45254467995](https://github.com/god88844-hub/aerodynamics-lab/actions/runs/45254467995).
 
 <a name="p0a-012"></a>
 - [ ] **P0A-012 — Propagate per-rotor electrical and supported actuator failures** (WP5; actor: builder)
@@ -1269,4 +1270,4 @@ Tasks with several WPs appear in each relevant issue but retain one canonical ID
   - Prerequisites: P4-007. Proof: [docs/acceptance/P4-008.md](acceptance/P4-008.md).
   - Acceptance: Qualified independent review accepts the stated limited uses; source/rights/security, reproducible distributions, compatibility and recovery gates close the phase.
 
-Unique task count: **150**; checked **10**, unchecked **140**. These are planning tasks, not a count of physically validated milestones. All ten legacy major acceptance families and all twelve broad Phase 0 package issues remain open until their own actual exit evidence exists.
+Unique task count: **150**; checked **11**, unchecked **139**. These are planning tasks, not a count of physically validated milestones. All ten legacy major acceptance families and all twelve broad Phase 0 package issues remain open until their own actual exit evidence exists.
