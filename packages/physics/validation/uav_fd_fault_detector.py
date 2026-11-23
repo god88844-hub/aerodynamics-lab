@@ -209,10 +209,11 @@ def _scan(channel: str, windows: Sequence[ElectricalWindow] | Sequence[Vibration
             # Equal-to-training-high is not an exceedance. The lower release
             # bound prevents a marginal return from resetting a live channel;
             # the k-of-W window remains bounded by recording window index.
-            if score <= high * RELEASE_FRACTION:
-                pending.pop(key, None)
-                continue
             if score <= high:
+                # A low intervening window is not an alert; it also must not
+                # erase earlier independent exceedances inside the bounded
+                # k-of-W horizon (the exact M1 failure diagnosed in P0A-010).
+                # RELEASE_FRACTION is a post-confirmation latch/release value.
                 continue
             queue = pending.setdefault(key, [])
             queue[:] = [(i, t) for i, t in queue if w.index - i < CONFIRM_W]
@@ -258,6 +259,7 @@ def evaluate(
             return lo <= median(w.rpm) <= hi
         evalid = [w for w in electrical if in_support(w)]
         vvalid = [w for w in vibration if in_support(w)]
+        support_lost = len(evalid) != len(electrical) or len(vvalid) != len(vibration)
         events = [x for x in (
             _scan("electrical", evalid, fit, onset_s=onset_s, deadline_s=deadline_s),
             _scan("vibration", vvalid, fit, onset_s=onset_s, deadline_s=deadline_s),
@@ -266,6 +268,8 @@ def evaluate(
             return {**min(events, key=lambda e: (e["confirmation_time_s"], e["channel"])),
                     "eligible_electrical_windows": len(evalid),
                     "eligible_vibration_windows": len(vvalid)}
+        if support_lost:
+            return {"state": "INCONCLUSIVE", "reason": "OUTSIDE_TRAIN_RPM_SUPPORT"}
         if len(evalid) < MIN_ELIGIBLE or len(vvalid) < MIN_ELIGIBLE:
             return {"state": "INCONCLUSIVE", "reason": "INSUFFICIENT_ELIGIBLE_WINDOWS"}
         if (len(evalid) / max(1, expected_electrical_windows) < MIN_COVERAGE
