@@ -44,12 +44,10 @@ def _own_1p(t: np.ndarray, acceleration: np.ndarray, rpm: np.ndarray) -> tuple[f
     design = np.column_stack((np.ones(len(local)), local))
     centered = acceleration - design @ np.linalg.lstsq(design, acceleration, rcond=None)[0]
     frequencies = np.arange(55.0, 136.0)
-    if frequencies[-1] >= 0.4 / float(np.median(np.diff(t))):
-        raise ValueError("1P outside measured IMU frequency support")
     union = (np.abs(frequencies[:, None] - rpm / 60.0) <= vib.ROTOR_NEIGHBORHOOD_HZ).any(axis=1)
     frequencies = frequencies[union]
-    if not len(frequencies):
-        raise ValueError("no supported 1P rotor bins")
+    if not len(frequencies) or frequencies[-1] >= 0.4 / float(np.median(np.diff(t))):
+        raise ValueError("1P motor bands outside measured IMU frequency support")
     power = sum(lombscargle(local, axis, 2 * np.pi * frequencies) for axis in centered.T)
     result = []
     for r in rpm:
