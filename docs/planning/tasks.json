@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0",
-  "updated": "2026-11-21",
+  "updated": "2026-11-24",
   "repository": "god88844-hub/aerodynamics-lab",
   "plan_issue": 127,
   "review_pr": 126,
@@ -571,13 +571,21 @@
         "P0A-010"
       ],
       "actor": "builder",
-      "status": "todo",
+      "status": "done",
       "acceptance": "Detection, no-alert and INCONCLUSIVE are explicit; whole-flight class/deadline/false-alarm regression cases pass; training and evaluation data remain grouped and disjoint; confirmatory performance is not inferred from development tuning.",
       "proof_file": "docs/acceptance/P0A-011.md",
       "planned_tests": [
         "tests/acceptance/test_p0a_011.py"
       ],
-      "completion_evidence": [],
+      "completion_evidence": [
+        "docs/acceptance/P0A-011.md",
+        "docs/campaigns/m25_p0a_011_detector_delta.json",
+        "packages/physics/validation/uav_fd_fault_detector.py",
+        "scripts/benchmark_p0a_011_uav_fd.py",
+        "scripts/p0a011_download_verified.py",
+        "tests/acceptance/test_p0a_011.py",
+        "https://github.com/god88844-hub/aerodynamics-lab/actions/runs/45254467995"
+      ],
       "gate": null,
       "language": [
         "Python"
@@ -585,6 +593,8 @@
       "target_files": [
         "packages/physics/validation/uav_fd_fault_detector.py",
         "scripts/benchmark_p0a_011_uav_fd.py",
+        "scripts/p0a011_download_verified.py",
+        "scripts/check_master_plan.py",
         "docs/campaigns/m25_p0a_011_detector_delta.json",
         "tests/acceptance/test_p0a_011.py",
         "docs/acceptance/P0A-011.md"
@@ -4093,5 +4103,6 @@
       ]
     }
   ],
-  "execution_hold": "Stage 0A execution is active. P0A-010 is complete and merged; stop after reporting the P0A-011 plan to the owner - do not start P0A-011 (or any further detector/physics edits) without a new owner instruction."
+  "execution_hold": "Stage 0A execution is active. P0A-011 is complete as DEVELOPMENT-only detector software with two persistent healthy-flight false alerts, no physical isolation or prospective acceptance; stop before P0A-012 unless the owner gives a new instruction.",
+  "next_build_task": "P0A-012"
 }
