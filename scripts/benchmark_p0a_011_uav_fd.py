@@ -18,12 +18,11 @@ import numpy as np
 from scipy.signal import lombscargle
 
 ROOT = Path(__file__).resolve().parents[1]
-sys.path.insert(0, str(ROOT))
-sys.path.insert(0, str(ROOT / "scripts"))
+sys.path[:0] = [str(ROOT / "packages"), str(ROOT / "scripts")]
 
 import benchmark_uav_fd_rotor_order as vib  # noqa: E402
 import benchmark_uav_fd_esc_power as esc  # noqa: E402
-from packages.physics.validation import uav_fd_fault_detector as detector  # noqa: E402
+from physics.validation import uav_fd_fault_detector as detector  # noqa: E402
 
 PLAN = "p0a-011-uavfd-detector-development-v1"
 FINGERPRINTS = {**vib.FILES, **esc.NEW_FILES}
