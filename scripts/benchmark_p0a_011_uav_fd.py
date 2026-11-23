@@ -125,10 +125,20 @@ def reproduce(directory: Path) -> dict:
     out = {}
     for name in sorted(HOLDOUTS):
         flight, coverage = windows(directory, name)
+        unsupported = any(
+            coverage[channel].get(reason, 0) > 0
+            for channel, reasons in (
+                ("electrical_exclusions", (
+                    "rotor_speed_or_nonpositive_electrical_input",)),
+                ("vibration_exclusions", (
+                    "outside_rotor_speed_scope", "outside_frequency_support")))
+            for reason in reasons
+        )
         result = detector.evaluate(
             fit, flight.electrical, flight.vibration,
             expected_electrical_windows=coverage["electrical_total_windows"],
-            expected_vibration_windows=coverage["vibration_total_windows"])
+            expected_vibration_windows=coverage["vibration_total_windows"],
+            unsupported_telemetry_observed=unsupported)
         # The only label read is here, AFTER all scoring and decisions.
         truth = HOLDOUTS[name]
         after = ("TP" if truth else "FP") if result["state"] == "DETECT" else (
