@@ -583,6 +583,9 @@
         "Python"
       ],
       "target_files": [
+        "packages/physics/validation/uav_fd_fault_detector.py",
+        "scripts/benchmark_p0a_011_uav_fd.py",
+        "docs/campaigns/m25_p0a_011_detector_delta.json",
         "tests/acceptance/test_p0a_011.py",
         "docs/acceptance/P0A-011.md"
       ],
@@ -593,7 +596,11 @@
         "4. Re-run the P0A-010 reproduction and record the per-class improvements and remaining misses."
       ],
       "verify_commands": [
-        "pytest tests/acceptance/test_p0a_010.py tests/acceptance/test_p0a_011.py -q"
+        "pytest tests/acceptance/test_p0a_010.py tests/acceptance/test_p0a_011.py -q",
+        "pytest tests/physics -q",
+        "python scripts/export_contracts.py --check",
+        "python scripts/reconcile_registry.py --check",
+        "python scripts/check_master_plan.py --check"
       ]
     },
     {
