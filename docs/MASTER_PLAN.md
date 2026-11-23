@@ -201,13 +201,13 @@ Tasks with several WPs appear in each relevant issue but retain one canonical ID
   - Prerequisites: P0A-004, P0A-010. Proof: [docs/acceptance/P0A-011.md](acceptance/P0A-011.md).
   - Acceptance: Detection, no-alert and INCONCLUSIVE are explicit; whole-flight class/deadline/false-alarm regression cases pass; training and evaluation data remain grouped and disjoint; confirmatory performance is not inferred from development tuning.
   - Language: Python.
-  - Target files: `tests/acceptance/test_p0a_011.py`; `docs/acceptance/P0A-011.md`.
+  - Target files: `packages/physics/validation/uav_fd_fault_detector.py`; `scripts/benchmark_p0a_011_uav_fd.py`; `docs/campaigns/m25_p0a_011_detector_delta.json`; `tests/acceptance/test_p0a_011.py`; `docs/acceptance/P0A-011.md`.
   - Todos:
     - [ ] 1. Make DETECT / NO-ALERT / INCONCLUSIVE explicit outcomes of the detector contract (an alert must name its class and deadline).
     - [ ] 2. Correct the detection logic with grouped, disjoint training/evaluation recordings — no whole-recording leakage in either direction.
     - [ ] 3. Add confirmation/hysteresis rules so single-sample false alarms cannot raise an alert.
     - [ ] 4. Re-run the P0A-010 reproduction and record the per-class improvements and remaining misses.
-  - Verify: `pytest tests/acceptance/test_p0a_010.py tests/acceptance/test_p0a_011.py -q`
+  - Verify: `pytest tests/acceptance/test_p0a_010.py tests/acceptance/test_p0a_011.py -q` | `pytest tests/physics -q` | `python scripts/export_contracts.py --check` | `python scripts/reconcile_registry.py --check` | `python scripts/check_master_plan.py --check`
   - Planned verification: `pytest tests/acceptance/test_p0a_011.py`; required current-head CI.
 
 <a name="p0a-012"></a>
