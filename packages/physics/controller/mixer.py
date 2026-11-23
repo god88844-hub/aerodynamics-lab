@@ -41,6 +41,11 @@ class Mixer:
             a[2, j] = -rp[0]  # tau_y
             a[3, j] = -rotor.spin_direction * plant.rotor_torque_per_thrust  # tau_z
         self.matrix = a
+        # Nominal allocator with explicit branch inhibition, NOT a new
+        # fault-tolerant redistribution or recovery controller.
+        self.disabled_rotors: tuple[int, ...] = ()
+        self.last_requested_wrench: np.ndarray | None = None
+        self.last_status: dict[str, bool] = {}
 
     def mix(
         self, total_thrust: float, torque_body: np.ndarray
@@ -65,6 +70,10 @@ class Mixer:
         else:
             thrusts = np.clip(unconstrained, 0.0, limit)
 
+        self.last_requested_wrench = wrench.copy()
+        if self.disabled_rotors:
+            thrusts[list(self.disabled_rotors)] = 0.0
+            above_limit = True
         residual = self.matrix @ thrusts - wrench
         status = {
             "clipped_negative": negative,
@@ -72,4 +81,5 @@ class Mixer:
             "collective_residual": bool(abs(residual[0]) > RESIDUAL_TOLERANCE),
             "torque_residual": bool(np.linalg.norm(residual[1:]) > RESIDUAL_TOLERANCE),
         }
+        self.last_status = status.copy()
         return thrusts, status

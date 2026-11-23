@@ -414,6 +414,7 @@ def run_flight(design: DroneDesign, data_dir: Path | None = None) -> dict:
             "profile": "takeoff -> 5 m hold -> land",
             "duration_s": float(res.times[-1]) if len(res.times) else 0.0,
             "aborted": res.aborted,
+            "flight_verdict": res.flight_verdict,
             "abort_event": res.abort_event.message if res.abort_event else None,
         },
         "component_verdicts": res.component_verdicts,
@@ -428,7 +429,10 @@ def run_flight(design: DroneDesign, data_dir: Path | None = None) -> dict:
             "structural_margin_min": res.structural_margin_min,
         },
         "events": [
-            {"t_s": e.t_s, "kind": e.kind, "critical": e.critical, "message": e.message}
+            {"t_s": e.t_s, "kind": e.kind, "critical": e.critical, "message": e.message,
+             "branch_ids": list(e.branch_ids), "component": e.component,
+             "limit_name": e.limit_name, "observed": e.observed, "limit": e.limit,
+             "verdict": e.verdict}
             for e in res.events
         ],
         "success": res.success,
