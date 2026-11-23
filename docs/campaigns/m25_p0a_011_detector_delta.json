@@ -1,0 +1,94 @@
+{
+  "plan": "p0a-011-uavfd-detector-development-v1",
+  "scientific_status": "DEVELOPMENT",
+  "physical_acceptance": false,
+  "train_recordings": [
+    "NO_FAULT1.mat",
+    "NO_FAULT4.mat"
+  ],
+  "holdout_recordings": [
+    "FAULT_M1_10.mat",
+    "FAULT_M3_10.mat",
+    "FAULT_M4_10.mat",
+    "FAULT_M5_10.mat",
+    "NO_FAULT5.mat",
+    "NO_FAULT6.mat"
+  ],
+  "frozen_baseline": {
+    "rotor_order_frozen_results_sha256": "e1e8da88ca7f1e7bca4ffc8d4e8ca83c638da457ca0e42c9aa99b29fcb9c99b2",
+    "esc_power_frozen_results_sha256": "27f610592fd05e793c60bede53b4db467bd111fa428d108e8f8245626fc947f4"
+  },
+  "before": {
+    "NO_FAULT5.mat": {
+      "rotor_order": "NO_ALERT_ON_HEALTHY_SOURCE",
+      "broad_accel_rms": "FALSE_ALERT",
+      "speed_normalized_power": null,
+      "combined": null,
+      "exclusions": {
+        "altitude_or_ground_context": 47,
+        "outside_rotor_speed_scope": 1,
+        "imu_gap_or_count": 1,
+        "outside_calibration_median_rpm_support": 2
+      }
+    },
+    "FAULT_M3_10.mat": {
+      "rotor_order": "MISSED",
+      "broad_accel_rms": "MISSED",
+      "speed_normalized_power": null,
+      "combined": null,
+      "exclusions": {
+        "altitude_or_ground_context": 21,
+        "imu_gap_or_count": 1,
+        "outside_calibration_median_rpm_support": 0
+      }
+    },
+    "FAULT_M4_10.mat": {
+      "rotor_order": "DETECTED",
+      "broad_accel_rms": "MISSED",
+      "speed_normalized_power": null,
+      "combined": null,
+      "exclusions": {
+        "altitude_or_ground_context": 17,
+        "esc_gap_or_count": 3,
+        "outside_calibration_median_rpm_support": 0
+      }
+    },
+    "NO_FAULT6.mat": {
+      "rotor_order": "NO_ALERT_ON_HEALTHY_SOURCE",
+      "broad_accel_rms": null,
+      "speed_normalized_power": "FALSE_ALERT",
+      "combined": "FALSE_ALERT",
+      "exclusions": {
+        "unsupported_altitude_or_attitude": 26,
+        "rotor_speed_or_nonpositive_electrical_input": 3,
+        "outside_healthy_median_rpm": 1
+      }
+    },
+    "FAULT_M1_10.mat": {
+      "rotor_order": "MISSED",
+      "broad_accel_rms": null,
+      "speed_normalized_power": "MISSED",
+      "combined": "MISSED",
+      "exclusions": {
+        "unsupported_altitude_or_attitude": 24,
+        "rotor_speed_or_nonpositive_electrical_input": 1,
+        "outside_healthy_median_rpm": 1
+      }
+    },
+    "FAULT_M5_10.mat": {
+      "rotor_order": "DETECTED",
+      "broad_accel_rms": null,
+      "speed_normalized_power": "MISSED",
+      "combined": "DETECTED",
+      "exclusions": {
+        "unsupported_altitude_or_attitude": 24,
+        "rotor_speed_or_nonpositive_electrical_input": 1,
+        "outside_healthy_median_rpm": 1
+      }
+    }
+  },
+  "after_status": "NOT_REEXECUTED_RAW_MAT_UNAVAILABLE",
+  "after": null,
+  "calibration": null,
+  "limitation": "Not a before-vs-after measured comparison. Raw pinned publisher MAT recordings unavailable in this execution environment; no after scores, claims, fault improvements or main merge are asserted. Run scripts/benchmark_p0a_011_uav_fd.py with AEROFORGE_UAV_FD_DIR, commit regenerated delta and verify before merging."
+}
