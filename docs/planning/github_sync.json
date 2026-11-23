@@ -1,6 +1,6 @@
 {
   "checked_utc": "2026-11-22T08:55:58.894Z",
-  "plan_sha256_lf": "6d107be2cd08de44fa83976a835fa2ea913abb4ff94846ade1c99fab36f355db",
+  "plan_sha256_lf": "c5269900eca89dd29fae517310aecb428b68410b629b32c9125ce1cbe6daa8e1",
   "unique_tasks": 150,
   "scope": "P0A-011 implementation in progress; todo until verified publisher MAT replay and 5/5 final-head CI; issue checkboxes unchanged",
   "issues": {
