@@ -111,7 +111,7 @@ def local_link(path):
 def render(plan):
     approved = next(t for t in plan["tasks"] if t["id"] == plan["authorization_task"])["status"] == "done"
     state = "owner authorization recorded; implementation held" if approved else "owner approval pending"
-    next_action = (f"**{plan['authorization_task']} is complete** with the owner's actual authorization receipt. Merge/tag requires the three pre-merge checks and five green CI jobs; actual operation receipts are recorded afterward. **{plan.get('execution_hold', 'Do not begin implementation without a new owner request.')}** The next future software task is **{plan['first_build_task']}**."
+    next_action = (f"**{plan['authorization_task']} is complete** with the owner's actual authorization receipt. Merge/tag requires the three pre-merge checks and five green CI jobs; actual operation receipts are recorded afterward. **{plan.get('execution_hold', 'Do not begin implementation without a new owner request.')}** The next future software task is **{plan.get('next_build_task', plan['first_build_task'])}**."
                    if approved else f"The next action is **{plan['authorization_task']}**, owner approval/merge/tag. No implementation may begin before approval.")
     lines = ["# Master task and execution plan", "", f"21 November 2026. **Full standalone software plan; {state}.**",
              "", "Qualification is complete. The primary product is `apps/desktop/`, the standalone Godot 3D application; shared engineering services remain usable without an HTTP server. `apps/web/` is frozen legacy (security and minimal compatibility only). Historical qualification receipts remain evidence, not a recurring development stage.",
@@ -179,7 +179,7 @@ def render(plan):
 
 def issue_blocks(plan):
     approved = next(t for t in plan["tasks"] if t["id"] == plan["authorization_task"])["status"] == "done"
-    authorization = (f"Owner authorization **{plan['authorization_task']} is complete** with its receipt. Merge/tag still requires pre-merge checks and five green CI jobs; operation receipts are recorded afterward. **Stop before {plan['first_build_task']}**; implementation requires a new owner instruction."
+    authorization = (f"Owner authorization **{plan['authorization_task']} is complete** with its receipt. Merge/tag still requires pre-merge checks and five green CI jobs; operation receipts are recorded afterward. **Stop before {plan.get('next_build_task', plan['first_build_task'])}**; implementation requires a new owner instruction."
                      if approved else f"Owner approval is **{plan['authorization_task']}**; no implementation is authorized yet.")
     mapping = {}
     for p in plan["work_packages"]:

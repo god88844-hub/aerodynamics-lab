@@ -1,0 +1,811 @@
+{
+  "after": {
+    "FAULT_M1_10.mat": {
+      "after": {
+        "attribution": "MEASURED_ESC_CHANNEL",
+        "channel": "electrical",
+        "confirmation_time_s": 12,
+        "confusion": "TP",
+        "deadline_compliance": "NOT_ASSESSABLE_NO_FAULT_ONSET",
+        "deadline_s": null,
+        "eligible_electrical_windows": 41,
+        "eligible_vibration_windows": 41,
+        "fault_class": "POWER_DEFICIT",
+        "first_exceedance_time_s": 10,
+        "source_channel": "ESC_0",
+        "state": "DETECT",
+        "time_reference": "SECONDS_RELATIVE_TO_THIS_CHANNEL_RECORDING_START"
+      },
+      "before": {
+        "broad_accel_rms": null,
+        "combined": "MISSED",
+        "exclusions": {
+          "outside_healthy_median_rpm": 1,
+          "rotor_speed_or_nonpositive_electrical_input": 1,
+          "unsupported_altitude_or_attitude": 24
+        },
+        "rotor_order": "MISSED",
+        "speed_normalized_power": "MISSED"
+      },
+      "ground_truth_fault_type": "FAULT_M1_10",
+      "publisher_label": "FAULT",
+      "sha256": "5bfcc4846cc265fa2fe58d65561f09260644090a3f5cd02582a10fb4ea86a840",
+      "source_exclusions_after": {
+        "electrical_exclusions": {
+          "rotor_speed_or_nonpositive_electrical_input": 1,
+          "unsupported_altitude_or_attitude": 24
+        },
+        "electrical_total_windows": 67,
+        "vibration_exclusions": {
+          "altitude_or_ground_context": 23,
+          "esc_gap_or_count": 1,
+          "imu_gap_or_count": 1,
+          "outside_rotor_speed_scope": 1
+        },
+        "vibration_total_windows": 67
+      }
+    },
+    "FAULT_M3_10.mat": {
+      "after": {
+        "attribution": "MEASURED_ESC_CHANNEL",
+        "channel": "electrical",
+        "confirmation_time_s": 12,
+        "confusion": "TP",
+        "deadline_compliance": "NOT_ASSESSABLE_NO_FAULT_ONSET",
+        "deadline_s": null,
+        "eligible_electrical_windows": 35,
+        "eligible_vibration_windows": 34,
+        "fault_class": "POWER_DEFICIT",
+        "first_exceedance_time_s": 10,
+        "source_channel": "ESC_5",
+        "state": "DETECT",
+        "time_reference": "SECONDS_RELATIVE_TO_THIS_CHANNEL_RECORDING_START"
+      },
+      "before": {
+        "broad_accel_rms": "MISSED",
+        "combined": null,
+        "exclusions": {
+          "altitude_or_ground_context": 21,
+          "imu_gap_or_count": 1,
+          "outside_calibration_median_rpm_support": 0
+        },
+        "rotor_order": "MISSED",
+        "speed_normalized_power": null
+      },
+      "ground_truth_fault_type": "FAULT_M3_10",
+      "publisher_label": "FAULT",
+      "sha256": "9bd3284274615b2c1db7168ff930a2474abdda7a0686f4dba09f2cef46efa46b",
+      "source_exclusions_after": {
+        "electrical_exclusions": {
+          "unsupported_altitude_or_attitude": 20
+        },
+        "electrical_total_windows": 55,
+        "vibration_exclusions": {
+          "altitude_or_ground_context": 21,
+          "imu_gap_or_count": 1
+        },
+        "vibration_total_windows": 56
+      }
+    },
+    "FAULT_M4_10.mat": {
+      "after": {
+        "attribution": "ROTOR_FREQUENCY_ASSOCIATION_NOT_CAUSAL_ISOLATION",
+        "channel": "vibration",
+        "confirmation_time_s": 12,
+        "confusion": "TP",
+        "deadline_compliance": "NOT_ASSESSABLE_NO_FAULT_ONSET",
+        "deadline_s": null,
+        "eligible_electrical_windows": 31,
+        "eligible_vibration_windows": 31,
+        "fault_class": "ROTOR_1P_VIBRATION",
+        "first_exceedance_time_s": 10,
+        "source_channel": "ESC_4",
+        "state": "DETECT",
+        "time_reference": "SECONDS_RELATIVE_TO_THIS_CHANNEL_RECORDING_START"
+      },
+      "before": {
+        "broad_accel_rms": "MISSED",
+        "combined": null,
+        "exclusions": {
+          "altitude_or_ground_context": 17,
+          "esc_gap_or_count": 3,
+          "outside_calibration_median_rpm_support": 0
+        },
+        "rotor_order": "DETECTED",
+        "speed_normalized_power": null
+      },
+      "ground_truth_fault_type": "FAULT_M4_10",
+      "publisher_label": "FAULT",
+      "sha256": "1e99ccf414ac483d1945982a79b966caed5fe3385d0967b126d4624d0ff1a913",
+      "source_exclusions_after": {
+        "electrical_exclusions": {
+          "incomplete_esc_windows": 1,
+          "unsupported_altitude_or_attitude": 19
+        },
+        "electrical_total_windows": 51,
+        "vibration_exclusions": {
+          "altitude_or_ground_context": 17,
+          "esc_gap_or_count": 3
+        },
+        "vibration_total_windows": 51
+      }
+    },
+    "FAULT_M5_10.mat": {
+      "after": {
+        "attribution": "ROTOR_FREQUENCY_ASSOCIATION_NOT_CAUSAL_ISOLATION",
+        "channel": "vibration",
+        "confirmation_time_s": 8,
+        "confusion": "TP",
+        "deadline_compliance": "NOT_ASSESSABLE_NO_FAULT_ONSET",
+        "deadline_s": null,
+        "eligible_electrical_windows": 36,
+        "eligible_vibration_windows": 37,
+        "fault_class": "ROTOR_1P_VIBRATION",
+        "first_exceedance_time_s": 6,
+        "source_channel": "ESC_2",
+        "state": "DETECT",
+        "time_reference": "SECONDS_RELATIVE_TO_THIS_CHANNEL_RECORDING_START"
+      },
+      "before": {
+        "broad_accel_rms": null,
+        "combined": "DETECTED",
+        "exclusions": {
+          "outside_healthy_median_rpm": 1,
+          "rotor_speed_or_nonpositive_electrical_input": 1,
+          "unsupported_altitude_or_attitude": 24
+        },
+        "rotor_order": "DETECTED",
+        "speed_normalized_power": "MISSED"
+      },
+      "ground_truth_fault_type": "FAULT_M5_10",
+      "publisher_label": "FAULT",
+      "sha256": "503844932d09b0ab8c243e6b986c2f979271843af3de7709f15a172f09a45d53",
+      "source_exclusions_after": {
+        "electrical_exclusions": {
+          "rotor_speed_or_nonpositive_electrical_input": 1,
+          "unsupported_altitude_or_attitude": 24
+        },
+        "electrical_total_windows": 62,
+        "vibration_exclusions": {
+          "altitude_or_ground_context": 23,
+          "imu_gap_or_count": 1,
+          "outside_rotor_speed_scope": 1
+        },
+        "vibration_total_windows": 62
+      }
+    },
+    "NO_FAULT5.mat": {
+      "after": {
+        "attribution": "MEASURED_ESC_CHANNEL",
+        "channel": "electrical",
+        "confirmation_time_s": 86,
+        "confusion": "FP",
+        "deadline_compliance": "NOT_ASSESSABLE_NO_FAULT_ONSET",
+        "deadline_s": null,
+        "eligible_electrical_windows": 25,
+        "eligible_vibration_windows": 23,
+        "fault_class": "POWER_DEFICIT",
+        "first_exceedance_time_s": 84,
+        "source_channel": "ESC_1",
+        "state": "DETECT",
+        "time_reference": "SECONDS_RELATIVE_TO_THIS_CHANNEL_RECORDING_START"
+      },
+      "before": {
+        "broad_accel_rms": "FALSE_ALERT",
+        "combined": null,
+        "exclusions": {
+          "altitude_or_ground_context": 47,
+          "imu_gap_or_count": 1,
+          "outside_calibration_median_rpm_support": 2,
+          "outside_rotor_speed_scope": 1
+        },
+        "rotor_order": "NO_ALERT_ON_HEALTHY_SOURCE",
+        "speed_normalized_power": null
+      },
+      "ground_truth_fault_type": null,
+      "publisher_label": "NO_FAULT",
+      "sha256": "85349d743ae4ea17aeb8bb4ac3c74fbe4c3f33ab8dc21b5ae29464e398c14cc2",
+      "source_exclusions_after": {
+        "electrical_exclusions": {
+          "rotor_speed_or_nonpositive_electrical_input": 2,
+          "unsupported_altitude_or_attitude": 46
+        },
+        "electrical_total_windows": 73,
+        "vibration_exclusions": {
+          "altitude_or_ground_context": 47,
+          "imu_gap_or_count": 1,
+          "outside_rotor_speed_scope": 1
+        },
+        "vibration_total_windows": 74
+      }
+    },
+    "NO_FAULT6.mat": {
+      "after": {
+        "attribution": "MEASURED_ESC_CHANNEL",
+        "channel": "electrical",
+        "confirmation_time_s": 44,
+        "confusion": "FP",
+        "deadline_compliance": "NOT_ASSESSABLE_NO_FAULT_ONSET",
+        "deadline_s": null,
+        "eligible_electrical_windows": 26,
+        "eligible_vibration_windows": 26,
+        "fault_class": "INCREASED_LOAD",
+        "first_exceedance_time_s": 42,
+        "source_channel": "ESC_5",
+        "state": "DETECT",
+        "time_reference": "SECONDS_RELATIVE_TO_THIS_CHANNEL_RECORDING_START"
+      },
+      "before": {
+        "broad_accel_rms": null,
+        "combined": "FALSE_ALERT",
+        "exclusions": {
+          "outside_healthy_median_rpm": 1,
+          "rotor_speed_or_nonpositive_electrical_input": 3,
+          "unsupported_altitude_or_attitude": 26
+        },
+        "rotor_order": "NO_ALERT_ON_HEALTHY_SOURCE",
+        "speed_normalized_power": "FALSE_ALERT"
+      },
+      "ground_truth_fault_type": null,
+      "publisher_label": "NO_FAULT",
+      "sha256": "fe5d6f3f02fc8a99a076ba5d251f7f341c7ff7c5759bc42283c971b9aff52cab",
+      "source_exclusions_after": {
+        "electrical_exclusions": {
+          "rotor_speed_or_nonpositive_electrical_input": 3,
+          "unsupported_altitude_or_attitude": 26
+        },
+        "electrical_total_windows": 56,
+        "vibration_exclusions": {
+          "altitude_or_ground_context": 27,
+          "outside_rotor_speed_scope": 3
+        },
+        "vibration_total_windows": 57
+      }
+    }
+  },
+  "after_status": "REPRODUCED_FROM_PINNED_PUBLISHER_BYTES",
+  "before": {
+    "FAULT_M1_10.mat": {
+      "broad_accel_rms": null,
+      "combined": "MISSED",
+      "exclusions": {
+        "outside_healthy_median_rpm": 1,
+        "rotor_speed_or_nonpositive_electrical_input": 1,
+        "unsupported_altitude_or_attitude": 24
+      },
+      "rotor_order": "MISSED",
+      "speed_normalized_power": "MISSED"
+    },
+    "FAULT_M3_10.mat": {
+      "broad_accel_rms": "MISSED",
+      "combined": null,
+      "exclusions": {
+        "altitude_or_ground_context": 21,
+        "imu_gap_or_count": 1,
+        "outside_calibration_median_rpm_support": 0
+      },
+      "rotor_order": "MISSED",
+      "speed_normalized_power": null
+    },
+    "FAULT_M4_10.mat": {
+      "broad_accel_rms": "MISSED",
+      "combined": null,
+      "exclusions": {
+        "altitude_or_ground_context": 17,
+        "esc_gap_or_count": 3,
+        "outside_calibration_median_rpm_support": 0
+      },
+      "rotor_order": "DETECTED",
+      "speed_normalized_power": null
+    },
+    "FAULT_M5_10.mat": {
+      "broad_accel_rms": null,
+      "combined": "DETECTED",
+      "exclusions": {
+        "outside_healthy_median_rpm": 1,
+        "rotor_speed_or_nonpositive_electrical_input": 1,
+        "unsupported_altitude_or_attitude": 24
+      },
+      "rotor_order": "DETECTED",
+      "speed_normalized_power": "MISSED"
+    },
+    "NO_FAULT5.mat": {
+      "broad_accel_rms": "FALSE_ALERT",
+      "combined": null,
+      "exclusions": {
+        "altitude_or_ground_context": 47,
+        "imu_gap_or_count": 1,
+        "outside_calibration_median_rpm_support": 2,
+        "outside_rotor_speed_scope": 1
+      },
+      "rotor_order": "NO_ALERT_ON_HEALTHY_SOURCE",
+      "speed_normalized_power": null
+    },
+    "NO_FAULT6.mat": {
+      "broad_accel_rms": null,
+      "combined": "FALSE_ALERT",
+      "exclusions": {
+        "outside_healthy_median_rpm": 1,
+        "rotor_speed_or_nonpositive_electrical_input": 3,
+        "unsupported_altitude_or_attitude": 26
+      },
+      "rotor_order": "NO_ALERT_ON_HEALTHY_SOURCE",
+      "speed_normalized_power": "FALSE_ALERT"
+    }
+  },
+  "calibration": {
+    "confirmation": {
+      "k": 2,
+      "release_fraction": 0.8,
+      "window_span": 5
+    },
+    "development_only": true,
+    "electrical_centers": [
+      56.43041762884922,
+      51.938409250606796,
+      51.79953965711069,
+      55.495250606653585,
+      53.846549143994984,
+      57.73028298125257
+    ],
+    "median_rpm_support": [
+      5377.5,
+      6148.75
+    ],
+    "minimum_coverage": 0.25,
+    "minimum_eligible_windows": 6,
+    "policy": "p0a-011-development-v1",
+    "thresholds": {
+      "electrical:INCREASED_LOAD:ESC_0": 0.05940916792198925,
+      "electrical:INCREASED_LOAD:ESC_1": 0.22939386419107644,
+      "electrical:INCREASED_LOAD:ESC_2": 0.09483306811837133,
+      "electrical:INCREASED_LOAD:ESC_3": 0.05719972568475762,
+      "electrical:INCREASED_LOAD:ESC_4": 0.04478116259321285,
+      "electrical:INCREASED_LOAD:ESC_5": 0.05116876344349364,
+      "electrical:POWER_DEFICIT:ESC_0": 0.04374227373085349,
+      "electrical:POWER_DEFICIT:ESC_1": 0.07449819413866898,
+      "electrical:POWER_DEFICIT:ESC_2": 0.09529766688223751,
+      "electrical:POWER_DEFICIT:ESC_3": 0.0829173864670325,
+      "electrical:POWER_DEFICIT:ESC_4": 0.053122457504441334,
+      "electrical:POWER_DEFICIT:ESC_5": 0.05873485269756551,
+      "vibration:ROTOR_1P_VIBRATION:ESC_0": 0.4457511207810141,
+      "vibration:ROTOR_1P_VIBRATION:ESC_1": 1.327191461846493,
+      "vibration:ROTOR_1P_VIBRATION:ESC_2": 0.5569157297752234,
+      "vibration:ROTOR_1P_VIBRATION:ESC_3": 1.3550247787881156,
+      "vibration:ROTOR_1P_VIBRATION:ESC_4": 0.7678710386222793,
+      "vibration:ROTOR_1P_VIBRATION:ESC_5": 0.7144234964421334
+    },
+    "train_recordings": [
+      "NO_FAULT1.mat",
+      "NO_FAULT4.mat"
+    ],
+    "training_windows": {
+      "NO_FAULT1.mat": {
+        "electrical": 20,
+        "vibration": 20
+      },
+      "NO_FAULT4.mat": {
+        "electrical": 23,
+        "vibration": 21
+      }
+    },
+    "vibration_centers": [
+      0.05185315833576871,
+      0.034449696179736,
+      0.05279232103115233,
+      0.04304181311281533,
+      0.033298242433590246,
+      0.043761825653198624
+    ]
+  },
+  "calibration_canonical_sha256": "cc2587ac7727c9ebd9f3904a0a023533e4c9eaa5b633d62c046817df5aaf4633",
+  "frozen_baseline": {
+    "esc_power_frozen_results_sha256": "27f610592fd05e793c60bede53b4db467bd111fa428d108e8f8245626fc947f4",
+    "rotor_order_frozen_results_sha256": "e1e8da88ca7f1e7bca4ffc8d4e8ca83c638da457ca0e42c9aa99b29fcb9c99b2"
+  },
+  "holdout_recordings": [
+    "FAULT_M1_10.mat",
+    "FAULT_M3_10.mat",
+    "FAULT_M4_10.mat",
+    "FAULT_M5_10.mat",
+    "NO_FAULT5.mat",
+    "NO_FAULT6.mat"
+  ],
+  "limitation": "DEVELOPMENT retrospective on one rig; shared-IMU motor-frequency attribution is not physical isolation; no fault-onset timestamp permits measured detection-deadline compliance.",
+  "live_result": {
+    "calibration": {
+      "confirmation": {
+        "k": 2,
+        "release_fraction": 0.8,
+        "window_span": 5
+      },
+      "development_only": true,
+      "electrical_centers": [
+        56.43041762884922,
+        51.938409250606796,
+        51.79953965711069,
+        55.495250606653585,
+        53.846549143994984,
+        57.73028298125257
+      ],
+      "median_rpm_support": [
+        5377.5,
+        6148.75
+      ],
+      "minimum_coverage": 0.25,
+      "minimum_eligible_windows": 6,
+      "policy": "p0a-011-development-v1",
+      "thresholds": {
+        "electrical:INCREASED_LOAD:ESC_0": 0.05940916792198925,
+        "electrical:INCREASED_LOAD:ESC_1": 0.22939386419107644,
+        "electrical:INCREASED_LOAD:ESC_2": 0.09483306811837133,
+        "electrical:INCREASED_LOAD:ESC_3": 0.05719972568475762,
+        "electrical:INCREASED_LOAD:ESC_4": 0.04478116259321285,
+        "electrical:INCREASED_LOAD:ESC_5": 0.05116876344349364,
+        "electrical:POWER_DEFICIT:ESC_0": 0.04374227373085349,
+        "electrical:POWER_DEFICIT:ESC_1": 0.07449819413866898,
+        "electrical:POWER_DEFICIT:ESC_2": 0.09529766688223751,
+        "electrical:POWER_DEFICIT:ESC_3": 0.0829173864670325,
+        "electrical:POWER_DEFICIT:ESC_4": 0.053122457504441334,
+        "electrical:POWER_DEFICIT:ESC_5": 0.05873485269756551,
+        "vibration:ROTOR_1P_VIBRATION:ESC_0": 0.4457511207810141,
+        "vibration:ROTOR_1P_VIBRATION:ESC_1": 1.327191461846493,
+        "vibration:ROTOR_1P_VIBRATION:ESC_2": 0.5569157297752234,
+        "vibration:ROTOR_1P_VIBRATION:ESC_3": 1.3550247787881156,
+        "vibration:ROTOR_1P_VIBRATION:ESC_4": 0.7678710386222793,
+        "vibration:ROTOR_1P_VIBRATION:ESC_5": 0.7144234964421334
+      },
+      "train_recordings": [
+        "NO_FAULT1.mat",
+        "NO_FAULT4.mat"
+      ],
+      "training_windows": {
+        "NO_FAULT1.mat": {
+          "electrical": 20,
+          "vibration": 20
+        },
+        "NO_FAULT4.mat": {
+          "electrical": 23,
+          "vibration": 21
+        }
+      },
+      "vibration_centers": [
+        0.05185315833576871,
+        0.034449696179736,
+        0.05279232103115233,
+        0.04304181311281533,
+        0.033298242433590246,
+        0.043761825653198624
+      ]
+    },
+    "calibration_canonical_sha256": "cc2587ac7727c9ebd9f3904a0a023533e4c9eaa5b633d62c046817df5aaf4633",
+    "deadline_claim": "NOT_ASSESSABLE_FROM_RECORDING_LEVEL_PUBLISHER_LABELS",
+    "frozen_baseline": {
+      "esc_power_frozen_results_sha256": "27f610592fd05e793c60bede53b4db467bd111fa428d108e8f8245626fc947f4",
+      "rotor_order_frozen_results_sha256": "e1e8da88ca7f1e7bca4ffc8d4e8ca83c638da457ca0e42c9aa99b29fcb9c99b2"
+    },
+    "holdout_recordings": [
+      "FAULT_M1_10.mat",
+      "FAULT_M3_10.mat",
+      "FAULT_M4_10.mat",
+      "FAULT_M5_10.mat",
+      "NO_FAULT5.mat",
+      "NO_FAULT6.mat"
+    ],
+    "holdouts": {
+      "FAULT_M1_10.mat": {
+        "after": {
+          "attribution": "MEASURED_ESC_CHANNEL",
+          "channel": "electrical",
+          "confirmation_time_s": 12,
+          "confusion": "TP",
+          "deadline_compliance": "NOT_ASSESSABLE_NO_FAULT_ONSET",
+          "deadline_s": null,
+          "eligible_electrical_windows": 41,
+          "eligible_vibration_windows": 41,
+          "fault_class": "POWER_DEFICIT",
+          "first_exceedance_time_s": 10,
+          "source_channel": "ESC_0",
+          "state": "DETECT",
+          "time_reference": "SECONDS_RELATIVE_TO_THIS_CHANNEL_RECORDING_START"
+        },
+        "before": {
+          "broad_accel_rms": null,
+          "combined": "MISSED",
+          "exclusions": {
+            "outside_healthy_median_rpm": 1,
+            "rotor_speed_or_nonpositive_electrical_input": 1,
+            "unsupported_altitude_or_attitude": 24
+          },
+          "rotor_order": "MISSED",
+          "speed_normalized_power": "MISSED"
+        },
+        "ground_truth_fault_type": "FAULT_M1_10",
+        "publisher_label": "FAULT",
+        "sha256": "5bfcc4846cc265fa2fe58d65561f09260644090a3f5cd02582a10fb4ea86a840",
+        "source_exclusions_after": {
+          "electrical_exclusions": {
+            "rotor_speed_or_nonpositive_electrical_input": 1,
+            "unsupported_altitude_or_attitude": 24
+          },
+          "electrical_total_windows": 67,
+          "vibration_exclusions": {
+            "altitude_or_ground_context": 23,
+            "esc_gap_or_count": 1,
+            "imu_gap_or_count": 1,
+            "outside_rotor_speed_scope": 1
+          },
+          "vibration_total_windows": 67
+        }
+      },
+      "FAULT_M3_10.mat": {
+        "after": {
+          "attribution": "MEASURED_ESC_CHANNEL",
+          "channel": "electrical",
+          "confirmation_time_s": 12,
+          "confusion": "TP",
+          "deadline_compliance": "NOT_ASSESSABLE_NO_FAULT_ONSET",
+          "deadline_s": null,
+          "eligible_electrical_windows": 35,
+          "eligible_vibration_windows": 34,
+          "fault_class": "POWER_DEFICIT",
+          "first_exceedance_time_s": 10,
+          "source_channel": "ESC_5",
+          "state": "DETECT",
+          "time_reference": "SECONDS_RELATIVE_TO_THIS_CHANNEL_RECORDING_START"
+        },
+        "before": {
+          "broad_accel_rms": "MISSED",
+          "combined": null,
+          "exclusions": {
+            "altitude_or_ground_context": 21,
+            "imu_gap_or_count": 1,
+            "outside_calibration_median_rpm_support": 0
+          },
+          "rotor_order": "MISSED",
+          "speed_normalized_power": null
+        },
+        "ground_truth_fault_type": "FAULT_M3_10",
+        "publisher_label": "FAULT",
+        "sha256": "9bd3284274615b2c1db7168ff930a2474abdda7a0686f4dba09f2cef46efa46b",
+        "source_exclusions_after": {
+          "electrical_exclusions": {
+            "unsupported_altitude_or_attitude": 20
+          },
+          "electrical_total_windows": 55,
+          "vibration_exclusions": {
+            "altitude_or_ground_context": 21,
+            "imu_gap_or_count": 1
+          },
+          "vibration_total_windows": 56
+        }
+      },
+      "FAULT_M4_10.mat": {
+        "after": {
+          "attribution": "ROTOR_FREQUENCY_ASSOCIATION_NOT_CAUSAL_ISOLATION",
+          "channel": "vibration",
+          "confirmation_time_s": 12,
+          "confusion": "TP",
+          "deadline_compliance": "NOT_ASSESSABLE_NO_FAULT_ONSET",
+          "deadline_s": null,
+          "eligible_electrical_windows": 31,
+          "eligible_vibration_windows": 31,
+          "fault_class": "ROTOR_1P_VIBRATION",
+          "first_exceedance_time_s": 10,
+          "source_channel": "ESC_4",
+          "state": "DETECT",
+          "time_reference": "SECONDS_RELATIVE_TO_THIS_CHANNEL_RECORDING_START"
+        },
+        "before": {
+          "broad_accel_rms": "MISSED",
+          "combined": null,
+          "exclusions": {
+            "altitude_or_ground_context": 17,
+            "esc_gap_or_count": 3,
+            "outside_calibration_median_rpm_support": 0
+          },
+          "rotor_order": "DETECTED",
+          "speed_normalized_power": null
+        },
+        "ground_truth_fault_type": "FAULT_M4_10",
+        "publisher_label": "FAULT",
+        "sha256": "1e99ccf414ac483d1945982a79b966caed5fe3385d0967b126d4624d0ff1a913",
+        "source_exclusions_after": {
+          "electrical_exclusions": {
+            "incomplete_esc_windows": 1,
+            "unsupported_altitude_or_attitude": 19
+          },
+          "electrical_total_windows": 51,
+          "vibration_exclusions": {
+            "altitude_or_ground_context": 17,
+            "esc_gap_or_count": 3
+          },
+          "vibration_total_windows": 51
+        }
+      },
+      "FAULT_M5_10.mat": {
+        "after": {
+          "attribution": "ROTOR_FREQUENCY_ASSOCIATION_NOT_CAUSAL_ISOLATION",
+          "channel": "vibration",
+          "confirmation_time_s": 8,
+          "confusion": "TP",
+          "deadline_compliance": "NOT_ASSESSABLE_NO_FAULT_ONSET",
+          "deadline_s": null,
+          "eligible_electrical_windows": 36,
+          "eligible_vibration_windows": 37,
+          "fault_class": "ROTOR_1P_VIBRATION",
+          "first_exceedance_time_s": 6,
+          "source_channel": "ESC_2",
+          "state": "DETECT",
+          "time_reference": "SECONDS_RELATIVE_TO_THIS_CHANNEL_RECORDING_START"
+        },
+        "before": {
+          "broad_accel_rms": null,
+          "combined": "DETECTED",
+          "exclusions": {
+            "outside_healthy_median_rpm": 1,
+            "rotor_speed_or_nonpositive_electrical_input": 1,
+            "unsupported_altitude_or_attitude": 24
+          },
+          "rotor_order": "DETECTED",
+          "speed_normalized_power": "MISSED"
+        },
+        "ground_truth_fault_type": "FAULT_M5_10",
+        "publisher_label": "FAULT",
+        "sha256": "503844932d09b0ab8c243e6b986c2f979271843af3de7709f15a172f09a45d53",
+        "source_exclusions_after": {
+          "electrical_exclusions": {
+            "rotor_speed_or_nonpositive_electrical_input": 1,
+            "unsupported_altitude_or_attitude": 24
+          },
+          "electrical_total_windows": 62,
+          "vibration_exclusions": {
+            "altitude_or_ground_context": 23,
+            "imu_gap_or_count": 1,
+            "outside_rotor_speed_scope": 1
+          },
+          "vibration_total_windows": 62
+        }
+      },
+      "NO_FAULT5.mat": {
+        "after": {
+          "attribution": "MEASURED_ESC_CHANNEL",
+          "channel": "electrical",
+          "confirmation_time_s": 86,
+          "confusion": "FP",
+          "deadline_compliance": "NOT_ASSESSABLE_NO_FAULT_ONSET",
+          "deadline_s": null,
+          "eligible_electrical_windows": 25,
+          "eligible_vibration_windows": 23,
+          "fault_class": "POWER_DEFICIT",
+          "first_exceedance_time_s": 84,
+          "source_channel": "ESC_1",
+          "state": "DETECT",
+          "time_reference": "SECONDS_RELATIVE_TO_THIS_CHANNEL_RECORDING_START"
+        },
+        "before": {
+          "broad_accel_rms": "FALSE_ALERT",
+          "combined": null,
+          "exclusions": {
+            "altitude_or_ground_context": 47,
+            "imu_gap_or_count": 1,
+            "outside_calibration_median_rpm_support": 2,
+            "outside_rotor_speed_scope": 1
+          },
+          "rotor_order": "NO_ALERT_ON_HEALTHY_SOURCE",
+          "speed_normalized_power": null
+        },
+        "ground_truth_fault_type": null,
+        "publisher_label": "NO_FAULT",
+        "sha256": "85349d743ae4ea17aeb8bb4ac3c74fbe4c3f33ab8dc21b5ae29464e398c14cc2",
+        "source_exclusions_after": {
+          "electrical_exclusions": {
+            "rotor_speed_or_nonpositive_electrical_input": 2,
+            "unsupported_altitude_or_attitude": 46
+          },
+          "electrical_total_windows": 73,
+          "vibration_exclusions": {
+            "altitude_or_ground_context": 47,
+            "imu_gap_or_count": 1,
+            "outside_rotor_speed_scope": 1
+          },
+          "vibration_total_windows": 74
+        }
+      },
+      "NO_FAULT6.mat": {
+        "after": {
+          "attribution": "MEASURED_ESC_CHANNEL",
+          "channel": "electrical",
+          "confirmation_time_s": 44,
+          "confusion": "FP",
+          "deadline_compliance": "NOT_ASSESSABLE_NO_FAULT_ONSET",
+          "deadline_s": null,
+          "eligible_electrical_windows": 26,
+          "eligible_vibration_windows": 26,
+          "fault_class": "INCREASED_LOAD",
+          "first_exceedance_time_s": 42,
+          "source_channel": "ESC_5",
+          "state": "DETECT",
+          "time_reference": "SECONDS_RELATIVE_TO_THIS_CHANNEL_RECORDING_START"
+        },
+        "before": {
+          "broad_accel_rms": null,
+          "combined": "FALSE_ALERT",
+          "exclusions": {
+            "outside_healthy_median_rpm": 1,
+            "rotor_speed_or_nonpositive_electrical_input": 3,
+            "unsupported_altitude_or_attitude": 26
+          },
+          "rotor_order": "NO_ALERT_ON_HEALTHY_SOURCE",
+          "speed_normalized_power": "FALSE_ALERT"
+        },
+        "ground_truth_fault_type": null,
+        "publisher_label": "NO_FAULT",
+        "sha256": "fe5d6f3f02fc8a99a076ba5d251f7f341c7ff7c5759bc42283c971b9aff52cab",
+        "source_exclusions_after": {
+          "electrical_exclusions": {
+            "rotor_speed_or_nonpositive_electrical_input": 3,
+            "unsupported_altitude_or_attitude": 26
+          },
+          "electrical_total_windows": 56,
+          "vibration_exclusions": {
+            "altitude_or_ground_context": 27,
+            "outside_rotor_speed_scope": 3
+          },
+          "vibration_total_windows": 57
+        }
+      }
+    },
+    "limitation": "Shared IMU 1P bands can overlap; ESC-index evidence is not physical rotor isolation.",
+    "no_fault_onset_timestamp": true,
+    "physical_acceptance": false,
+    "pinned_source_files": {
+      "FAULT_M1_10.mat": {
+        "bytes": 18742480,
+        "sha256": "5bfcc4846cc265fa2fe58d65561f09260644090a3f5cd02582a10fb4ea86a840"
+      },
+      "FAULT_M3_10.mat": {
+        "bytes": 15650896,
+        "sha256": "9bd3284274615b2c1db7168ff930a2474abdda7a0686f4dba09f2cef46efa46b"
+      },
+      "FAULT_M4_10.mat": {
+        "bytes": 14544382,
+        "sha256": "1e99ccf414ac483d1945982a79b966caed5fe3385d0967b126d4624d0ff1a913"
+      },
+      "FAULT_M5_10.mat": {
+        "bytes": 17520095,
+        "sha256": "503844932d09b0ab8c243e6b986c2f979271843af3de7709f15a172f09a45d53"
+      },
+      "NO_FAULT1.mat": {
+        "bytes": 31477776,
+        "sha256": "8fa683680232dae902d7c906853fb80f5b89ffb6b43ff8e97b708bd8f8473ba5"
+      },
+      "NO_FAULT4.mat": {
+        "bytes": 43712272,
+        "sha256": "2a41050325fb9315cd2fd12429a31d3d7b1b2fef2a4802dada2eaea57ea3fcd3"
+      },
+      "NO_FAULT5.mat": {
+        "bytes": 41697864,
+        "sha256": "85349d743ae4ea17aeb8bb4ac3c74fbe4c3f33ab8dc21b5ae29464e398c14cc2"
+      },
+      "NO_FAULT6.mat": {
+        "bytes": 45466208,
+        "sha256": "fe5d6f3f02fc8a99a076ba5d251f7f341c7ff7c5759bc42283c971b9aff52cab"
+      }
+    },
+    "plan": "p0a-011-uavfd-detector-development-v1",
+    "recordings_are_not_independent_prospective_validation": true,
+    "scientific_status": "DEVELOPMENT",
+    "train_recordings": [
+      "NO_FAULT1.mat",
+      "NO_FAULT4.mat"
+    ]
+  },
+  "physical_acceptance": false,
+  "plan": "p0a-011-uavfd-detector-development-v1",
+  "scientific_status": "DEVELOPMENT",
+  "train_recordings": [
+    "NO_FAULT1.mat",
+    "NO_FAULT4.mat"
+  ]
+}
