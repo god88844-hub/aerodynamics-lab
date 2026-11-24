@@ -676,13 +676,18 @@
         "P0A-012"
       ],
       "actor": "builder",
-      "status": "todo",
+      "status": "done",
       "acceptance": "Reproduce original versus battery-aware MPC observations and conditional-model failure; identify the 14 V line as study-specific, and mark logged auxiliary/drive commands as measurements rather than independently predicted commands.",
       "proof_file": "docs/acceptance/P0A-013.md",
       "planned_tests": [
         "tests/acceptance/test_p0a_013.py"
       ],
-      "completion_evidence": [],
+      "completion_evidence": [
+        "docs/acceptance/P0A-013.md",
+        "tests/acceptance/test_p0a_013.py",
+        "data/research/registry.json",
+        "data/registry.json"
+      ],
       "gate": null,
       "language": [
         "Python"
@@ -690,7 +695,9 @@
       "target_files": [
         "tests/acceptance/test_p0a_013.py",
         "docs/acceptance/P0A-013.md",
-        "data/research/registry.json"
+        "data/research/registry.json",
+        "scripts/reconcile_registry.py",
+        "data/registry.json"
       ],
       "todos": [
         "1. Reproduce the QDrone original-vs-battery-aware MPC observations and the conditional-model failure from the frozen source rows.",
@@ -700,7 +707,10 @@
       ],
       "verify_commands": [
         "pytest tests/acceptance/test_p0a_013.py -q",
-        "python scripts/reconcile_registry.py --check"
+        "pytest tests/physics -q",
+        "python scripts/export_contracts.py --check",
+        "python scripts/reconcile_registry.py --check",
+        "python scripts/check_master_plan.py --check"
       ]
     },
     {
@@ -4117,6 +4127,6 @@
       ]
     }
   ],
-  "execution_hold": "P0A-012 branch failure and derating software verification is complete. Stop before P0A-013 unless the owner gives a new instruction.",
-  "next_build_task": "P0A-013"
+  "execution_hold": "P0A-013 QDrone diagnosis and conditional regression freeze is complete as DEVELOPMENT. Stop before P0A-014 unless the owner gives a new instruction.",
+  "next_build_task": "P0A-014"
 }

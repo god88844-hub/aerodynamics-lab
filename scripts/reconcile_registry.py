@@ -69,6 +69,9 @@ def generated(root=ROOT):
         "Nine transcribed published points, not raw sensor files; MN1010 motor and installation differ from P80 III. Published 3234 W row conflicts with 46.2 V * 0.7 A = 32.34 W; preserve original anomaly.")
     campaigns = []
     artifacts = set(CATALOGS)
+    reproductions = research.get("development_reproductions", {})
+    if reproductions.keys() - {descriptor["id"] for descriptor in index["campaigns"]}:
+        raise ValueError("Development reproduction references an unknown campaign")
     for descriptor in index["campaigns"]:
         prefix = descriptor["id"]
         paths = sorted(p.relative_to(root).as_posix() for p in (root / "docs/campaigns").glob(prefix + "*.json"))
@@ -89,6 +92,8 @@ def generated(root=ROOT):
                           "artifacts": paths, "recorded_hash_references": pins,
                           "historical_partitions": historical,
                           "limits": "Historical inspected comparison; not confirmatory under policy 1.0.0. See report for inputs, hardware, uncertainty and exclusions."})
+        if prefix in reproductions:
+            campaigns[-1]["development_reproduction"] = reproductions[prefix]
     artifacts.update(a["path"] for a in research["local_custody"]["repository_artifacts"])
     artifacts.update(p.relative_to(root).as_posix() for p in (root / "data/benchmarks").rglob("*.json"))
     artifacts.update(["data/benchmarks/public/quadplane_2022/BATT.csv",
