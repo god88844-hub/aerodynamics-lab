@@ -8,7 +8,7 @@ Tracking: [master issue #127](https://github.com/god88844-hub/aerodynamics-lab/i
 
 ## Next action and execution rules
 
-**P0A-004 is complete** with the owner's actual authorization receipt. Merge/tag requires the three pre-merge checks and five green CI jobs; actual operation receipts are recorded afterward. **P0A-012 branch failure and derating software verification is complete. Stop before P0A-013 unless the owner gives a new instruction.** The next future software task is **P0A-013**.
+**P0A-004 is complete** with the owner's actual authorization receipt. Merge/tag requires the three pre-merge checks and five green CI jobs; actual operation receipts are recorded afterward. **P0A-013 QDrone diagnosis and conditional regression freeze is complete as DEVELOPMENT. Stop before P0A-014 unless the owner gives a new instruction.** The next future software task is **P0A-014**.
 
 1. Read `AGENTS.md`, this task's section, the linked fundamentals and acceptance ledger. Use only the canonical local workspace in `WORKSPACE.md`.
 2. When implementation is explicitly resumed, pick the first unchecked builder task in document order whose prerequisites are checked. A pending owner/custodian/reviewer task requires its real receipt; a builder cannot self-approve it or invent data.
@@ -227,18 +227,19 @@ Tasks with several WPs appear in each relevant issue but retain one canonical ID
   - Recorded evidence: [docs/acceptance/P0A-012.md](acceptance/P0A-012.md), [tests/acceptance/test_p0a_012.py](../tests/acceptance/test_p0a_012.py), [packages/physics/scenarios/runner.py](../packages/physics/scenarios/runner.py), [packages/physics/propulsion/branches.py](../packages/physics/propulsion/branches.py).
 
 <a name="p0a-013"></a>
-- [ ] **P0A-013 — Freeze the QDrone collapse and command-provenance regression** (WP5; actor: builder)
+- [x] **P0A-013 — Freeze the QDrone collapse and command-provenance regression** (WP5; actor: builder)
   - Prerequisites: P0A-012. Proof: [docs/acceptance/P0A-013.md](acceptance/P0A-013.md).
   - Acceptance: Reproduce original versus battery-aware MPC observations and conditional-model failure; identify the 14 V line as study-specific, and mark logged auxiliary/drive commands as measurements rather than independently predicted commands.
   - Language: Python.
-  - Target files: `tests/acceptance/test_p0a_013.py`; `docs/acceptance/P0A-013.md`; `data/research/registry.json`.
+  - Target files: `tests/acceptance/test_p0a_013.py`; `docs/acceptance/P0A-013.md`; `data/research/registry.json`; `scripts/reconcile_registry.py`; `data/registry.json`.
   - Todos:
-    - [ ] 1. Reproduce the QDrone original-vs-battery-aware MPC observations and the conditional-model failure from the frozen source rows.
-    - [ ] 2. Identify and record the 14 V line as study-specific (not a pack property).
-    - [ ] 3. Mark logged auxiliary/drive commands as measured inputs (not free model outputs) in the registry and evidence.
-    - [ ] 4. Freeze the regression before any controller-coupling change (P0A-014).
-  - Verify: `pytest tests/acceptance/test_p0a_013.py -q` | `python scripts/reconcile_registry.py --check`
+    - [x] 1. Reproduce the QDrone original-vs-battery-aware MPC observations and the conditional-model failure from the frozen source rows.
+    - [x] 2. Identify and record the 14 V line as study-specific (not a pack property).
+    - [x] 3. Mark logged auxiliary/drive commands as measured inputs (not free model outputs) in the registry and evidence.
+    - [x] 4. Freeze the regression before any controller-coupling change (P0A-014).
+  - Verify: `pytest tests/acceptance/test_p0a_013.py -q` | `pytest tests/physics -q` | `python scripts/export_contracts.py --check` | `python scripts/reconcile_registry.py --check` | `python scripts/check_master_plan.py --check`
   - Planned verification: `pytest tests/acceptance/test_p0a_013.py`; required current-head CI.
+  - Recorded evidence: [docs/acceptance/P0A-013.md](acceptance/P0A-013.md), [tests/acceptance/test_p0a_013.py](../tests/acceptance/test_p0a_013.py), [data/research/registry.json](../data/research/registry.json), [data/registry.json](../data/registry.json).
 
 <a name="p0a-014"></a>
 - [ ] **P0A-014 — Couple causal bus, propulsion and controller response** (WP5, WP6; actor: builder)
@@ -1271,4 +1272,4 @@ Tasks with several WPs appear in each relevant issue but retain one canonical ID
   - Prerequisites: P4-007. Proof: [docs/acceptance/P4-008.md](acceptance/P4-008.md).
   - Acceptance: Qualified independent review accepts the stated limited uses; source/rights/security, reproducible distributions, compatibility and recovery gates close the phase.
 
-Unique task count: **150**; checked **12**, unchecked **138**. These are planning tasks, not a count of physically validated milestones. All ten legacy major acceptance families and all twelve broad Phase 0 package issues remain open until their own actual exit evidence exists.
+Unique task count: **150**; checked **13**, unchecked **137**. These are planning tasks, not a count of physically validated milestones. All ten legacy major acceptance families and all twelve broad Phase 0 package issues remain open until their own actual exit evidence exists.

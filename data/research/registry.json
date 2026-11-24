@@ -76,6 +76,83 @@
     "interactive/offline solver jobs using the same versioned project snapshot",
     "uncertainty, independent holdouts, measured/derived/simulated channel labels and immutable evidence receipts"
   ],
+  "development_reproductions": {
+    "m26_qdrone_voltage": {
+      "milestone": "P0A-013",
+      "evidence_role": "DEVELOPMENT",
+      "physical_acceptance": "UNVALIDATED",
+      "publisher_doi": "10.5281/zenodo.19464105",
+      "source_replay_env": "AEROFORGE_QDRONE_DATA_DIR",
+      "threshold": {
+        "value_v": 14.0,
+        "role": "STUDY_SPECIFIC_THRESHOLD",
+        "comparison": "FIRST_EXPORTED_SAMPLE_STRICTLY_BELOW",
+        "scope": "QDrone 2 M26.50-M26.54 benchmark only. Does not specify a universal battery or vehicle cutoff, a protection event, or a firmware trigger time."
+      },
+      "channel_roles": {
+        "zauxd (m)": {
+          "role": "MEASURED_INPUT",
+          "scope": "Logged auxiliary altitude reference used for MPC-DBAR conditional replay."
+        },
+        "m1 (V)": {
+          "role": "MEASURED_INPUT",
+          "scope": "Logged drive command used for the conditional squared-drive sag proxy."
+        },
+        "m2 (V)": {
+          "role": "MEASURED_INPUT",
+          "scope": "Logged drive command used for the conditional squared-drive sag proxy."
+        },
+        "m3 (V)": {
+          "role": "MEASURED_INPUT",
+          "scope": "Logged drive command used for the conditional squared-drive sag proxy."
+        },
+        "m4 (V)": {
+          "role": "MEASURED_INPUT",
+          "scope": "Logged drive command used for the conditional squared-drive sag proxy."
+        },
+        "zd (m)": {
+          "role": "EXOGENOUS_MISSION_REFERENCE",
+          "scope": "Logged nominal altitude reference. Drives original MPC replay and scores the observed tracking of both flights."
+        }
+      },
+      "repository_sha256_lf": {
+        "manifest": "7fefbbb4c0874696968ad2100a33a1b3b52176b045e9f6b0a6bf8e870b12a66c",
+        "freeze": "e0b0a18c54df3084b66e99a3ecd3c5e387c87625fbb2b8d9dc9a133acf048fa7",
+        "results": "b3110efa03fb1d4408db67ac689c0ec9b05a24da3819448e0cc83b14bdf28fae"
+      },
+      "publisher_sha256_exact": {
+        "12b": "8015f8318a0c1c150dd5f41925e2f9cb86acab480bad3cb9c54f6732dfa0d760",
+        "12a": "17181f0e85e9071cbb0ea7c916f17d9d02bf26376065c1c3f56c9c0d8c590b7e",
+        "11a": "896901bf7dcf44b6c710c058e132751620bccb55206e486d5dceed2ebcbaafcd",
+        "11b": "26e6da59ef373beef1590d4d5b156c7e568835a71c218781ad65e1333ad7c462",
+        "9b": "551f03d25c47e0ea8b4859bd17fa8388bc63757067d663e79160be018bb00b49",
+        "9a": "ebe17e32d8dc8fd236d1d0c8e064b6004bc94882542d87379eefbf426143d434"
+      },
+      "original_mpc_collapse": {
+        "definition": "First altitude sample strictly below the 0-0.5 s measured hover median after the post-baseline measured altitude peak. The diagnostic window includes that sample through the final source row.",
+        "pre_maneuver_hover_m": 0.703516536,
+        "peak_time_s": 1.97,
+        "peak_measured_altitude_m": 1.772749953,
+        "start_s": 2.5575,
+        "end_s": 7.0,
+        "samples": 1778,
+        "start_measured_altitude_m": 0.677647762,
+        "start_predicted_altitude_m": 1.703400118,
+        "end_predicted_minus_measured_m": 1.702789158,
+        "window_altitude_error_m": {
+          "mae": 1.659103168,
+          "mean_signed_error": 1.659103168,
+          "maximum_absolute_error": 1.703516535
+        }
+      },
+      "limitations": [
+        "Auxiliary and drive commands contain logged in-flight information. They are conditioning/replay inputs and do not establish autonomous controller prediction.",
+        "One reserved low-voltage flight per controller in one vertical maneuver. Both comparisons have already been inspected.",
+        "No independently calibrated current channel, protection flag or firmware cutoff timestamp in the pinned exports. Crossing and later altitude loss do not identify a causal shutdown mechanism.",
+        "Power/energy agreement checks the internal consistency of published reports. It is not independent energy validation."
+      ]
+    }
+  },
   "entries": [
     {
       "id": "nasa_7009",
