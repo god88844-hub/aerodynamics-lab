@@ -25,7 +25,7 @@ from dataclasses import dataclass
 
 import numpy as np
 
-from physics.controller.mixer import ALLOCATION_FLAGS, Mixer
+from physics.controller.mixer import ALLOCATION_FLAGS, BOUND_TOLERANCE_N, RESIDUAL_TOLERANCE, Mixer
 from physics.controller.pid import PID
 from physics.dynamics.quadrotor import MultirotorPlant
 from physics.dynamics.quaternion import rotation_matrix
@@ -130,6 +130,7 @@ class QuadcopterController:
         self._ff_vy = 0.0
         self._ff_vz = 0.0
         self.allocation_counts = dict.fromkeys(ALLOCATION_FLAGS, 0)
+        self._last_mix_status = dict.fromkeys(ALLOCATION_FLAGS, False)
 
     def reset(self) -> None:
         for pid in (self.rate_roll, self.rate_pitch, self.rate_yaw, self.altitude_i):
@@ -137,6 +138,7 @@ class QuadcopterController:
         self._last_accel_cmd = 0.0
         self._ff_vx = self._ff_vy = self._ff_vz = 0.0
         self.allocation_counts = dict.fromkeys(ALLOCATION_FLAGS, 0)
+        self._last_mix_status = dict.fromkeys(ALLOCATION_FLAGS, False)
 
     @staticmethod
     def _slew(current: float, target: float, dt: float) -> float:
@@ -203,9 +205,23 @@ class QuadcopterController:
         total_thrust = mass * (9.80665 + accel_cmd) / cos_tilt
 
         thrusts, mix_status = self.mixer.mix(total_thrust, np.array([tx, ty, tz]))
+        self._last_mix_status = mix_status
         for flag, occurred in mix_status.items():
             self.allocation_counts[flag] += occurred
         return thrusts
+
+    def record_delivery(self, nominal: np.ndarray, delivered: np.ndarray) -> np.ndarray:
+        """Use the plant's actual delivery to report the final allocation errors."""
+        residual = self.mixer.delivery_residual(nominal, delivered)
+        final_flags = {
+            "saturated_max": self._last_mix_status["saturated_max"]
+            or bool(np.any(nominal - delivered > BOUND_TOLERANCE_N)),
+            "collective_residual": bool(abs(residual[0]) > RESIDUAL_TOLERANCE),
+            "torque_residual": bool(np.linalg.norm(residual[1:]) > RESIDUAL_TOLERANCE),
+        }
+        for flag, occurred in final_flags.items():
+            self.allocation_counts[flag] += int(occurred) - int(self._last_mix_status[flag])
+        return residual
 
     @staticmethod
     def _euler_zyx(R: np.ndarray) -> tuple[float, float, float]:

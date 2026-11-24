@@ -41,6 +41,7 @@ class Mixer:
             a[2, j] = -rp[0]  # tau_y
             a[3, j] = -rotor.spin_direction * plant.rotor_torque_per_thrust  # tau_z
         self.matrix = a
+        self.requested_wrench: np.ndarray | None = None
 
     def mix(
         self, total_thrust: float, torque_body: np.ndarray
@@ -50,6 +51,7 @@ class Mixer:
         if torque.shape != (3,) or not np.isfinite(total_thrust) or not np.all(np.isfinite(torque)):
             raise ValueError("control allocation requires a finite thrust and three finite torques")
         wrench = np.concatenate(([total_thrust], torque))
+        self.requested_wrench = wrench
         limit = self.max_thrust_per_rotor_n if self.max_thrust_per_rotor_n is not None else np.inf
         unconstrained = np.linalg.lstsq(self.matrix, wrench, rcond=None)[0]
         negative = bool(np.any(unconstrained < -BOUND_TOLERANCE_N))
@@ -73,3 +75,19 @@ class Mixer:
             "torque_residual": bool(np.linalg.norm(residual[1:]) > RESIDUAL_TOLERANCE),
         }
         return thrusts, status
+
+
+    @staticmethod
+    def project_branch(requested_n: float, ceiling_n: float) -> float:
+        """Bound a nominal allocation by this branch's actual capability.
+
+        A zero ceiling enforces cutout. Surviving requests are retained so
+        this projection never introduces a fault-tolerant reallocator.
+        """
+        return min(requested_n, ceiling_n)
+
+    def delivery_residual(self, nominal: np.ndarray, delivered: np.ndarray) -> np.ndarray:
+        requested = self.requested_wrench
+        if requested is None:
+            requested = self.matrix @ nominal
+        return self.matrix @ delivered - requested

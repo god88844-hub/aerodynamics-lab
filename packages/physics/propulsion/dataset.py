@@ -218,12 +218,14 @@ class PowertrainDataset:
         res.value *= GF_TO_N
         return res
 
+    @property
+    def supported_voltage_range(self) -> tuple[float, float]:
+        return (self._v_min * VOLTAGE_EXTRAP_LOW_FRAC,
+                self._v_max * VOLTAGE_EXTRAP_HIGH_FRAC)
+
     def _voltage_allowed(self, voltage: float) -> bool:
-        return (
-            self._v_min * VOLTAGE_EXTRAP_LOW_FRAC
-            <= voltage
-            <= self._v_max * VOLTAGE_EXTRAP_HIGH_FRAC
-        )
+        lo, hi = self.supported_voltage_range
+        return lo <= voltage <= hi
 
     def _voltage_extrapolated(self, voltage: float) -> bool:
         return voltage < self._v_min or voltage > self._v_max
@@ -365,6 +367,14 @@ class PowertrainDataset:
             note="rpm scaled proportionally with voltage (empirically supported "
             "by two-plane data; flagged extrapolation)",
         )
+
+    def attainable_static_thrust_n(self, voltage: float) -> float:
+        """Full-throttle thrust ceiling at branch voltage, capped to measured RPM."""
+        rpm = self.rpm_at_throttle(1.0, voltage).value
+        rpm_min, rpm_max = float(self._merged_rpm[0]), float(self._merged_rpm[-1])
+        if rpm < rpm_min:
+            return self.thrust_n(rpm_min).value * (max(rpm, 0.0) / rpm_min) ** 2
+        return self.thrust_n(min(rpm, rpm_max)).value
 
     def thrust_at_throttle(self, throttle: float, voltage: float) -> QueryResult:
         rpm_res = self.rpm_at_throttle(throttle, voltage)

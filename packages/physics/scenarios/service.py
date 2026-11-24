@@ -414,6 +414,8 @@ def run_flight(design: DroneDesign, data_dir: Path | None = None) -> dict:
             "profile": "takeoff -> 5 m hold -> land",
             "duration_s": float(res.times[-1]) if len(res.times) else 0.0,
             "aborted": res.aborted,
+            "verdict": res.flight_verdict,
+            "success_all": res.success_all,
             "abort_event": res.abort_event.message if res.abort_event else None,
         },
         "component_verdicts": res.component_verdicts,
@@ -442,18 +444,17 @@ def run_flight(design: DroneDesign, data_dir: Path | None = None) -> dict:
             "structure": structure,
             "powertrain": {
                 "status": "sourced bench data in the loop (model of record)",
-                "caveat": "quasi-static bus solve; motor thermal rule is the "
-                "datasheet continuous-current/duration statement; below-table "
-                "thrust points are declared extrapolations",
+                "caveat": "quasi-static branch voltage limits attainable static thrust. "
+                "Thermal dwell uses the motor's declared current/duration rating. "
+                "Below-table thrust points are declared extrapolations.",
             },
             "failure_policy": {
                 "status": "declared in physics/scenarios/runner.py",
-                "caveat": "critical events abort the run with a named cause at "
-                "their bracketed crossing time; warnings are logged once at "
-                "their crossing; component_verdicts record declared hard-limit "
-                "breaches (FAIL) vs no breach (NO_MODELED_LIMIT_BREACHED — "
-                "not a fitness claim); a demanded bus power above the pack's "
-                "constant-power collapse boundary is refused, not simulated",
+                "caveat": "Hard limits abort at their recorded tick or in-tick crossing. "
+                "A supported cutout records branch FAIL and exercises the existing "
+                "controller against the disabled actuator. Unsupported behavior "
+                "terminates as INCONCLUSIVE. Healthy telemetry records "
+                "NO_MODELED_LIMIT_BREACHED within the modeled scope.",
             },
             "controller": {
                 "status": "deterministic closed loop, perfect state knowledge",

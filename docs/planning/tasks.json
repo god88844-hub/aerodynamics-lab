@@ -624,20 +624,29 @@
         "P0A-011"
       ],
       "actor": "builder",
-      "status": "todo",
+      "status": "done",
       "acceptance": "Unequal branch current, voltage, RPM, thermal or actuator limits produce FAIL on the affected component; supported loss/derating changes control authority; unknown post-failure behavior cannot create a successful trajectory.",
       "proof_file": "docs/acceptance/P0A-012.md",
       "planned_tests": [
         "tests/acceptance/test_p0a_012.py"
       ],
-      "completion_evidence": [],
+      "completion_evidence": [
+        "docs/acceptance/P0A-012.md",
+        "tests/acceptance/test_p0a_012.py",
+        "packages/physics/scenarios/runner.py",
+        "packages/physics/propulsion/branches.py"
+      ],
       "gate": null,
       "language": [
         "Python"
       ],
       "target_files": [
-        "packages/physics/propulsion/",
-        "packages/physics/controller/",
+        "packages/physics/propulsion/branches.py",
+        "packages/physics/propulsion/dataset.py",
+        "packages/physics/controller/mixer.py",
+        "packages/physics/controller/attitude.py",
+        "packages/physics/scenarios/runner.py",
+        "packages/physics/scenarios/service.py",
         "tests/acceptance/test_p0a_012.py",
         "docs/acceptance/P0A-012.md"
       ],
@@ -648,7 +657,12 @@
         "4. Extend the acceptance tests for each supported failure class."
       ],
       "verify_commands": [
-        "pytest tests/acceptance/test_p0a_012.py -q"
+        "pytest tests/acceptance/test_p0a_012.py -q",
+        "pytest tests/acceptance/test_p0a_005.py tests/acceptance/test_p0a_006.py tests/acceptance/test_p0a_007.py tests/acceptance/test_p0a_008.py tests/acceptance/test_p0a_009.py tests/acceptance/test_p0a_010.py tests/acceptance/test_p0a_011.py -q",
+        "pytest tests/physics -q",
+        "python scripts/export_contracts.py --check",
+        "python scripts/reconcile_registry.py --check",
+        "python scripts/check_master_plan.py --check"
       ]
     },
     {
@@ -4103,6 +4117,6 @@
       ]
     }
   ],
-  "execution_hold": "Stage 0A execution is active. P0A-011 is complete as DEVELOPMENT-only detector software with two persistent healthy-flight false alerts, no physical isolation or prospective acceptance; stop before P0A-012 unless the owner gives a new instruction.",
-  "next_build_task": "P0A-012"
+  "execution_hold": "P0A-012 branch failure and derating software verification is complete. Stop before P0A-013 unless the owner gives a new instruction.",
+  "next_build_task": "P0A-013"
 }
