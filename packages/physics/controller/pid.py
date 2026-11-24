@@ -33,7 +33,7 @@ class PID:
         self._d_filtered = 0.0
         self._prev_measurement = None
 
-    def step(self, error: float, measurement: float, dt: float) -> float:
+    def step(self, error: float, measurement: float, dt: float, *, integrate: bool = True) -> float:
         """One control step. Derivative acts on the measurement (derivative-on-
         measurement), which avoids setpoint-derivative kicks; an optional
         first-order low-pass (``derivative_filter_tau_s``) attenuates
@@ -54,7 +54,8 @@ class PID:
 
         # Integral accumulation (anti-windup tracking may overwrite it below
         # when the output saturates).
-        self.integral += error * dt
+        if integrate:
+            self.integral += error * dt
 
         u_unsat = self.kp * error + self.ki * self.integral + self.kd * d
 

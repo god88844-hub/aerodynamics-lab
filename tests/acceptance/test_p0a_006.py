@@ -112,6 +112,7 @@ def _hover_scenario(duration_s: float = 6.0, altitude_m: float = 2.0) -> Scenari
     return Scenario(
         name="p0a006_hover",
         duration_s=duration_s,
+        reference_mode="planned",
         altitude_waypoints=[(0.0, 0.0), (1.0, altitude_m),
                             (duration_s, altitude_m)],
         success_criteria=[],

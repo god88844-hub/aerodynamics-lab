@@ -8,7 +8,7 @@ Tracking: [master issue #127](https://github.com/god88844-hub/aerodynamics-lab/i
 
 ## Next action and execution rules
 
-**P0A-004 is complete** with the owner's actual authorization receipt. Merge/tag requires the three pre-merge checks and five green CI jobs; actual operation receipts are recorded afterward. **P0A-013 QDrone diagnosis and conditional regression freeze is complete as DEVELOPMENT. Stop before P0A-014 unless the owner gives a new instruction.** The next future software task is **P0A-014**.
+**P0A-004 is complete** with the owner's actual authorization receipt. Merge/tag requires the three pre-merge checks and five green CI jobs; actual operation receipts are recorded afterward. **P0A-014 causal controller-plant coupling passed software verification as DEVELOPMENT. Stop before P0A-015 unless the owner gives a new instruction.** The next future software task is **P0A-015**.
 
 1. Read `AGENTS.md`, this task's section, the linked fundamentals and acceptance ledger. Use only the canonical local workspace in `WORKSPACE.md`.
 2. When implementation is explicitly resumed, pick the first unchecked builder task in document order whose prerequisites are checked. A pending owner/custodian/reviewer task requires its real receipt; a builder cannot self-approve it or invent data.
@@ -242,18 +242,19 @@ Tasks with several WPs appear in each relevant issue but retain one canonical ID
   - Recorded evidence: [docs/acceptance/P0A-013.md](acceptance/P0A-013.md), [tests/acceptance/test_p0a_013.py](../tests/acceptance/test_p0a_013.py), [data/research/registry.json](../data/research/registry.json), [data/registry.json](../data/registry.json).
 
 <a name="p0a-014"></a>
-- [ ] **P0A-014 — Couple causal bus, propulsion and controller response** (WP5, WP6; actor: builder)
+- [x] **P0A-014 — Couple causal bus, propulsion and controller response** (WP5, WP6; actor: builder)
   - Prerequisites: P0A-013. Proof: [docs/acceptance/P0A-014.md](acceptance/P0A-014.md).
   - Acceptance: Demand, voltage/current, attainable thrust, saturation and supported controller/actuator dynamics share one plant/clock; generated commands do not depend on future telemetry; known limit violations retain FAIL and unsupported collapse remains INCONCLUSIVE.
   - Language: Python.
-  - Target files: `packages/physics/controller/`; `packages/physics/propulsion/`; `packages/desktop_worker/engine.py`; `tests/acceptance/test_p0a_014.py`; `docs/acceptance/P0A-014.md`.
+  - Target files: `packages/physics/controller/attitude.py`; `packages/physics/controller/pid.py`; `packages/physics/scenarios/runner.py`; `packages/physics/scenarios/service.py`; `scripts/run_capstone.py`; `tests/audit/test_m9_failure_modes.py`; `tests/acceptance/test_p0a_006.py`; `tests/acceptance/test_p0a_012.py`; `tests/acceptance/test_p0a_014.py`; `docs/acceptance/P0A-014.md`.
   - Todos:
-    - [ ] 1. Couple demand, bus voltage/current, attainable thrust, saturation and the supported controller/actuator dynamics on ONE plant state and ONE declared clock.
-    - [ ] 2. Prove no generated command depends on future telemetry (causality test over reordered/stepped clocks).
-    - [ ] 3. Cover the known limit interactions: bus sag -> attainable thrust -> saturation -> controller response, with boundary brackets.
-    - [ ] 4. Extend tests/acceptance/test_p0a_014.py for each coupling edge and the shared-clock guarantee.
-  - Verify: `pytest tests/acceptance/test_p0a_014.py -q` | `pytest tests/acceptance/test_p0a_006.py tests/acceptance/test_p0a_012.py -q`
+    - [x] 1. Couple demand, bus voltage/current, attainable thrust, saturation and the supported controller/actuator dynamics on ONE plant state and ONE declared clock.
+    - [x] 2. Prove no generated command depends on future telemetry (causality test over reordered/stepped clocks).
+    - [x] 3. Cover the known limit interactions: bus sag -> attainable thrust -> saturation -> controller response, with boundary brackets.
+    - [x] 4. Extend tests/acceptance/test_p0a_014.py for each coupling edge and the shared-clock guarantee.
+  - Verify: `pytest tests/acceptance/test_p0a_014.py tests/acceptance/test_p0a_006.py tests/acceptance/test_p0a_012.py -q` | `pytest tests/physics -q` | `python scripts/export_contracts.py --check` | `python scripts/reconcile_registry.py --check` | `python scripts/check_master_plan.py --check`
   - Planned verification: `pytest tests/acceptance/test_p0a_014.py`; required current-head CI.
+  - Recorded evidence: [docs/acceptance/P0A-014.md](acceptance/P0A-014.md), [tests/acceptance/test_p0a_014.py](../tests/acceptance/test_p0a_014.py), [packages/physics/scenarios/runner.py](../packages/physics/scenarios/runner.py), [packages/physics/scenarios/service.py](../packages/physics/scenarios/service.py).
 
 <a name="p0a-015"></a>
 - [ ] **P0A-015 — Verify the corrected multirotor numerical model** (WP5, WP11; actor: builder)
@@ -1272,4 +1273,4 @@ Tasks with several WPs appear in each relevant issue but retain one canonical ID
   - Prerequisites: P4-007. Proof: [docs/acceptance/P4-008.md](acceptance/P4-008.md).
   - Acceptance: Qualified independent review accepts the stated limited uses; source/rights/security, reproducible distributions, compatibility and recovery gates close the phase.
 
-Unique task count: **150**; checked **13**, unchecked **137**. These are planning tasks, not a count of physically validated milestones. All ten legacy major acceptance families and all twelve broad Phase 0 package issues remain open until their own actual exit evidence exists.
+Unique task count: **150**; checked **14**, unchecked **136**. These are planning tasks, not a count of physically validated milestones. All ten legacy major acceptance families and all twelve broad Phase 0 package issues remain open until their own actual exit evidence exists.

@@ -62,12 +62,9 @@ def _states_telemetry(times, states, thrusts, currents=None, v_bus=None, soc=Non
         "vz": s[:, 5].tolist(),
         "motor_thrusts_n": np.asarray(thrusts)[idx].tolist(),
     }
-    if currents is not None:
-        out["motor_current_a"] = np.asarray(currents)[idx].tolist()
-    if v_bus is not None:
-        out["v_bus_v"] = np.asarray(v_bus)[idx].tolist()
-    if soc is not None:
-        out["soc_pct"] = np.asarray(soc)[idx].tolist()
+    for key, values in (("motor_current_a", currents), ("v_bus_v", v_bus), ("soc_pct", soc)):
+        if values is not None:
+            out[key] = [values[i].tolist() if i < len(values) else None for i in idx]
     if alt_cmd is not None:
         out["altitude_accel_cmd_m_s2"] = np.asarray(alt_cmd)[idx].tolist()
     return out
@@ -370,6 +367,7 @@ def run_flight(design: DroneDesign, data_dir: Path | None = None) -> dict:
 
     scenario = Scenario(
         name="flight_takeoff_hover_land",
+        reference_mode="planned",
         duration_s=18.0,
         altitude_waypoints=[
             (0.0, 0.0), (1.5, 3.75), (2.5, 5.0),
@@ -385,6 +383,29 @@ def run_flight(design: DroneDesign, data_dir: Path | None = None) -> dict:
     )
     res = run_scenario(design, scenario, library)
     _, mass_props = build_multirotor(design)
+    clock = res.clock
+    indices = _decimate(np.arange(len(res.times)))
+    telemetry = _states_telemetry(
+        res.times, res.states, res.thrusts,
+        currents=res.per_motor_current_a, v_bus=res.v_bus, soc=res.soc_pct,
+    )
+    telemetry.update({
+        "state_time_s": clock.state_time_s[indices].tolist(),
+        "soc_time_s": clock.electrical_time_s[indices].tolist(),
+        "requested_rotor_wrench_n_nm": clock.command_wrench[indices].tolist(),
+        "applied_rotor_wrench_n_nm": clock.applied_rotor_wrench[indices].tolist(),
+        "nominal_motor_thrusts_n": clock.nominal_thrust_n[indices].tolist(),
+        "previous_wrench_residual_n_nm": clock.previous_wrench_residual[indices].tolist(),
+        "integrated": clock.integrated[indices].tolist(),
+    })
+    for key, values in (
+        ("attainable_motor_thrusts_n", res.attainable_thrust_n),
+        ("motor_rpm", res.per_motor_rpm),
+        ("branch_voltage_v", res.branch_voltage_v),
+    ):
+        telemetry[key] = [
+            values[i].tolist() if values is not None and i < len(values) else None for i in indices
+        ]
 
     max_current = (float(np.nanmax(res.per_motor_current_a))
                    if res.per_motor_current_a is not None else None)
@@ -412,7 +433,9 @@ def run_flight(design: DroneDesign, data_dir: Path | None = None) -> dict:
         },
         "mission": {
             "profile": "takeoff -> 5 m hold -> land",
-            "duration_s": float(res.times[-1]) if len(res.times) else 0.0,
+            "duration_s": res.abort_event.t_s if res.abort_event else float(clock.state_time_s[-1]),
+            "control": "autonomous",
+            "reference_mode": scenario.reference_mode,
             "aborted": res.aborted,
             "verdict": res.flight_verdict,
             "success_all": res.success_all,
@@ -436,10 +459,7 @@ def run_flight(design: DroneDesign, data_dir: Path | None = None) -> dict:
         "success": res.success,
         "allocation_control_steps": res.allocation_counts,
         "model_notes": res.notes,
-        "telemetry": _states_telemetry(
-            res.times, res.states, res.thrusts,
-            currents=res.per_motor_current_a, v_bus=res.v_bus, soc=res.soc_pct,
-        ),
+        "telemetry": telemetry,
         "trustworthiness": {
             "structure": structure,
             "powertrain": {

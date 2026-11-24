@@ -41,7 +41,9 @@ claim).
 
 from __future__ import annotations
 
+from bisect import bisect_right
 from dataclasses import asdict, dataclass, field
+from typing import Literal
 
 import numpy as np
 from scipy.optimize import brentq
@@ -110,6 +112,28 @@ class BranchSupportError(PowertrainError):
     def __init__(self, branch_id: int, message: str) -> None:
         super().__init__(f"rotor {branch_id}: unsupported branch electrical state ({message})")
         self.branch_id = branch_id
+
+
+@dataclass(frozen=True)
+class BatteryLimitFinding:
+    battery_id: str
+    limit: str
+    observed: float
+    threshold: float
+    unit: str
+
+
+class DemandedPowerLimitError(VoltageCollapseError):
+    def __init__(self, finding: BatteryLimitFinding) -> None:
+        self.finding = finding
+        super().__init__(
+            f"requested {finding.observed:.2f} W exceeds the pack's constant-power "
+            f"limit {finding.threshold:.2f} W at this tick"
+        )
+
+
+class BusOperatingPointError(PowertrainError):
+    """The model cannot resolve the loaded operating point within its support."""
 
 
 class LoopPowertrain:
@@ -205,6 +229,27 @@ class LoopPowertrain:
         v_bus = self._v_bus_seed if self._v_bus_seed is not None else v_oc
         currents, rpms, delivered, ceilings, voltages = np.zeros((5, n))
         converged = False
+
+        def demand_limit() -> DemandedPowerLimitError | None:
+            # A fixed request at OCV can prove a named constant-power limit.
+            # Failed numerical iterates alone cannot prove that limit.
+            lo, hi = self.dataset.supported_voltage_range
+            if not lo <= v_oc <= hi or rejected or any(b.series_resistance_ohm for b in branches or ()):
+                return None
+            try:
+                demand_w = v_oc * sum(
+                    operating_point(float(request), v_oc, self.max_thrust_n)[2]
+                    for i, request in enumerate(thrusts) if i != cutout
+                )
+            except OutOfEnvelopeError:
+                return None
+            limit_w = self.battery.max_deliverable_power_w(soc_pre)
+            if demand_w > limit_w:
+                return DemandedPowerLimitError(BatteryLimitFinding(
+                    self.battery.spec.id, "constant_power_demand", demand_w, limit_w, "W",
+                ))
+            return None
+
         try:
             for _ in range(BUS_SOLVE_MAX_ITERATIONS):
                 shared_ceiling = (self.dataset.attainable_static_thrust_n(v_bus)
@@ -248,19 +293,21 @@ class LoopPowertrain:
                     converged = True
                     break
                 v_bus = 0.5 * (v_bus + v_new)
-        except OutOfEnvelopeError as exc:
-            raise VoltageCollapseError(
-                "bus voltage left the measured motor-data voltage excursion "
-                f"during the solve at {soc_pre:.1f}% SOC ({exc}) — the demanded "
-                "operating point is not attainable on measured data "
-                "(fail closed)"
+        except (OutOfEnvelopeError, VoltageCollapseError) as exc:
+            if branches is None:
+                # Preserve the fixed-demand primitive's established refusal.
+                raise VoltageCollapseError(str(exc)) from exc
+            exceeded = demand_limit()
+            if exceeded is not None:
+                raise exceeded from exc
+            raise BusOperatingPointError(
+                f"loaded bus left model support at {soc_pre:.1f}% SOC: {exc}"
             ) from exc
         if not converged:
-            raise PowertrainError(
+            raise BusOperatingPointError(
                 f"bus voltage solve did not converge in {BUS_SOLVE_MAX_ITERATIONS} "
                 f"iterations at {soc_pre:.1f}% SOC (last v_bus={v_bus:.3f} V, OCV "
-                f"{v_oc:.2f} V) — the demanded operating point has no stable "
-                "quasi-static solution at this clock"
+                f"{v_oc:.2f} V)"
             )
         self._v_bus_seed = v_bus
         if np.any((delivered > 0.0) & (delivered < thrust_min_n)):
@@ -277,13 +324,9 @@ class LoopPowertrain:
         demanded_power_w = v_bus * total_current
         max_power_w = self.battery.max_deliverable_power_w(soc_pre)
         if demanded_power_w > max_power_w:
-            raise VoltageCollapseError(
-                f"demanded bus power {demanded_power_w:.1f} W exceeds the pack's "
-                f"maximum deliverable power {max_power_w:.1f} W at {soc_pre:.1f}% SOC "
-                f"(OCV {v_oc:.2f} V, R {self.battery.spec.internal_resistance_ohm:.4f} "
-                "ohm) — voltage collapse; the commanded propulsion output is not "
-                "attainable"
-            )
+            raise DemandedPowerLimitError(BatteryLimitFinding(
+                self.battery.spec.id, "constant_power_demand", demanded_power_w, max_power_w, "W",
+            ))
 
         # Battery drain over the tick, then threshold brackets: the loaded
         # cell voltage is evaluated on the start-of-tick state and bracketed
@@ -323,6 +366,12 @@ class LoopPowertrain:
                     "draw) — pack depleted; no post-cutoff thrust is simulated"
                 ),
                 "t_s": tau_cut,
+                "battery": BatteryLimitFinding(
+                    self.battery.spec.id, "loaded_cell_cutoff",
+                    v_new / self.battery.spec.cells_series if tau_cut == 0.0
+                    else self.battery.spec.cutoff_cell_voltage_v,
+                    self.battery.spec.cutoff_cell_voltage_v, "V",
+                ),
             })
 
         def add_finding(kind: str, finding: BranchFinding, message: str,
@@ -422,6 +471,7 @@ class FailureEvent:
     critical: bool
     message: str
     branch: BranchFinding | None = None
+    battery: BatteryLimitFinding | None = None
 
 
 def check_attitude(state: np.ndarray, t: float, limit_deg: float = 45.0) -> FailureEvent | None:
@@ -502,6 +552,23 @@ class Scenario:
     success_criteria: list = field(default_factory=list)  # (name, callable(res))
     branch_limits: dict[int, BranchLimits] = field(default_factory=dict)
     branch_failure: BranchFailure | None = None
+    # Streamed values enter at their timestamps. Planned routes are entirely
+    # authored and available before the run, including their segment slopes.
+    reference_mode: Literal["streamed", "planned"] = "streamed"
+
+
+@dataclass(frozen=True)
+class FlightClockTrace:
+    """One row per attempted controller tick, with explicit state sample clocks."""
+
+    state_start: np.ndarray
+    state_time_s: np.ndarray
+    electrical_time_s: np.ndarray
+    command_wrench: np.ndarray
+    nominal_thrust_n: np.ndarray
+    applied_rotor_wrench: np.ndarray
+    previous_wrench_residual: np.ndarray
+    integrated: np.ndarray
 
 
 @dataclass
@@ -534,6 +601,7 @@ class ScenarioResult:
     branch_voltage_v: np.ndarray | None = None
     per_motor_rpm: np.ndarray | None = None
     wrench_residual: np.ndarray | None = None
+    clock: FlightClockTrace | None = None
 
 
 # Component owning each critical limit event (P0A-006 verdict propagation).
@@ -548,6 +616,44 @@ _COMPONENT_OF_EVENT: dict[str, str] = {
 }
 
 
+def _ordered_waypoints(points, label: str):
+    ordered = sorted(points, key=lambda point: point[0])
+    if any(not np.isfinite(t) or t < 0 or not np.all(np.isfinite(value)) for t, value in ordered):
+        raise ValueError(f"{label} references must have finite values and nonnegative times")
+    if any(a[0] == b[0] for a, b in zip(ordered, ordered[1:])):
+        raise ValueError(f"{label} reference timestamps must be unique")
+    return ordered
+
+
+def _target_source(scenario: Scenario):
+    altitude = _ordered_waypoints(scenario.altitude_waypoints, "altitude")
+    position = _ordered_waypoints(scenario.position_waypoints or [], "position")
+    if not altitude:
+        raise ValueError("scenario must have at least one altitude reference")
+    if scenario.reference_mode == "planned":
+        # These piecewise-linear routes are given to the controller at run
+        # initialization. No live future samples are read to construct them.
+        def planned(t: float) -> ControlTargets:
+            pos, vel = _position_velocity_at(position, t) if position else (None, None)
+            return ControlTargets(altitude_at(altitude, t), position_xy=pos, velocity_xy=vel,
+                                  velocity_z=_altitude_velocity_at(altitude, t))
+        return planned
+    if scenario.reference_mode != "streamed":
+        raise ValueError("reference_mode must be 'streamed' or 'planned'")
+    altitude_times = [t for t, _ in altitude]
+    position_times = [t for t, _ in position]
+
+    def streamed(t: float) -> ControlTargets:
+        iz = bisect_right(altitude_times, t) - 1
+        ixy = bisect_right(position_times, t) - 1
+        return ControlTargets(
+            altitude[iz][1] if iz >= 0 else scenario.initial_altitude_m,
+            position_xy=position[ixy][1] if ixy >= 0 else None,
+        )
+
+    return streamed
+
+
 def run_scenario(
     design,
     scenario: Scenario,
@@ -558,7 +664,10 @@ def run_scenario(
     """Run a scenario on the design; aborts on critical failure events."""
     from physics.dynamics.design_adapter import build_multirotor
 
-    plant, mass_props = build_multirotor(design)
+    if not np.isfinite(control_dt_s) or control_dt_s <= 0.0 or type(substeps) is not int or substeps < 1:
+        raise ValueError("flight clock requires a finite positive period and at least one substep")
+    targets_at = _target_source(scenario)
+    plant, _ = build_multirotor(design)
     controller = QuadcopterController(plant)
     count = len(plant.rotors)
     fault = scenario.branch_failure
@@ -626,11 +735,15 @@ def run_scenario(
     )
     body = plant.body
     dt = control_dt_s / substeps
+    if not np.isfinite(scenario.duration_s) or scenario.duration_s <= 0.0:
+        raise ValueError("scenario duration must be finite and positive")
     n_steps = int(round(scenario.duration_s / control_dt_s))
 
     times, states, thrusts_log = [], [], []
     cur_log, vbus_log, soc_log = [], [], []
     ceilings_log, branch_v_log, rpm_log, residual_log = [], [], [], []
+    state_start_log, state_time_log, electrical_time_log = [], [], []
+    command_log, nominal_log, applied_log, previous_log, integrated_log = [], [], [], [], []
     cutout = None
     events: list[FailureEvent] = []
     abort_event: FailureEvent | None = None
@@ -664,6 +777,7 @@ def run_scenario(
     if scenario.sensor_config is None:
         notes.append("perfect state knowledge (sensor noise/latency disabled)")
 
+    z_max_cmd = scenario.initial_altitude_m
     if n_steps <= 0:
         raise ValueError("scenario must cover at least one control tick")
 
@@ -695,17 +809,15 @@ def run_scenario(
                 events.append(abort_event)
             break
 
-        # Time-parameterized targets from the profiles.
-        z_t = altitude_at(scenario.altitude_waypoints, t)
-        vz_t = _altitude_velocity_at(scenario.altitude_waypoints, t)
-        pos_t = vel_t = None
-        if scenario.position_waypoints is not None:
-            pos_t, vel_t = _position_velocity_at(scenario.position_waypoints, t)
-        targets = ControlTargets(altitude_m=z_t, position_xy=pos_t,
-                                 velocity_xy=vel_t, velocity_z=vz_t)
-
+        state_start_log.append(state.copy())
+        previous_log.append(controller.delivery_feedback.copy())
         measured = sensors.measure(state, t) if sensors else state
+        targets = targets_at(t)
+        z_max_cmd = max(z_max_cmd, targets.altitude_m)
         nominal = controller.step(measured, targets, control_dt_s)
+        wrench = controller.mixer.requested_wrench
+        command_log.append((controller.mixer.matrix @ nominal if wrench is None else wrench).copy())
+        nominal_log.append(nominal.copy())
         thrusts = nominal.copy()
         if cutout is not None:
             thrusts[cutout] = controller.mixer.project_branch(thrusts[cutout], 0.0)
@@ -713,12 +825,15 @@ def run_scenario(
         event_start = len(events)
         aux = None
         if loop_pt is not None:
+            soc_before, energy_before = loop_pt.soc, loop_pt.energy_wh
             try:
                 aux = loop_pt.step(nominal, control_dt_s, branches=branches, cutout=cutout)
             except PowertrainError as exc:
                 branch = None
                 if isinstance(exc, VoltageCollapseError):
                     kind = "battery_voltage_collapse"
+                elif isinstance(exc, BusOperatingPointError):
+                    kind = "bus_operating_point_unsupported"
                 elif isinstance(exc, OutOfSupportError):
                     kind = "battery_out_of_support"
                 elif isinstance(exc, BranchSupportError):
@@ -728,7 +843,8 @@ def run_scenario(
                     )
                 else:
                     kind = "powertrain_refused"
-                events.append(FailureEvent(t, kind, True, str(exc), branch))
+                battery_finding = exc.finding if isinstance(exc, DemandedPowerLimitError) else None
+                events.append(FailureEvent(t, kind, True, str(exc), branch, battery_finding))
                 # Retain the pre-tick state with zero applied propulsion.
                 thrusts = np.zeros_like(nominal)
             else:
@@ -737,7 +853,7 @@ def run_scenario(
                     offset = ev["t_s"]
                     events.append(FailureEvent(
                         t if offset is None else t + offset, ev["kind"], ev["critical"],
-                        ev["message"], ev.get("branch"),
+                        ev["message"], ev.get("branch"), ev.get("battery"),
                     ))
         residual_log.append(controller.record_delivery(nominal, thrusts))
 
@@ -759,7 +875,11 @@ def run_scenario(
         tick_events = sorted(events[event_start:], key=lambda e: e.t_s)
         events[event_start:] = tick_events
         abort_event = next((e for e in tick_events if e.critical), None)
+        stop = (k + 1) * control_dt_s if abort_event is None else abort_event.t_s
         if aux is not None:
+            if abort_event is not None and abort_event.kind in {"ground_crash", "attitude_loss", "structure_yield"}:
+                loop_pt.soc, loop_pt.energy_wh = soc_before, energy_before
+                aux.soc_pct = soc_before
             cur_log.append(aux.per_motor_current_a)
             vbus_log.append(aux.v_bus)
             soc_log.append(aux.soc_pct)
@@ -767,29 +887,35 @@ def run_scenario(
             branch_v_log.append(aux.branch_voltage_v)
             rpm_log.append(aux.per_motor_rpm)
             energy_wh = loop_pt.energy_wh
+        electrical_time_log.append(stop if aux is not None else t)
+        integrated_log.append(abort_event is None)
         if abort_event is not None:
+            state_time_log.append(t)
+            applied_log.append(np.zeros(4))
             times.append(t)
             states.append(state.copy())
             thrusts_log.append(thrusts.copy())
             break
 
-        # Integrate with disturbances (zero-order hold over the tick).
+        # Sample disturbances once at the tick boundary. RK stages may rotate
+        # the held force but cannot read a command/event from a later tick.
+        active = [d for d in scenario.disturbances if d.active(t)]
+
         def deriv(_t: float, x: np.ndarray) -> np.ndarray:
             fb, tb = plant.net_force_torque(x, thrusts)
-            for d in scenario.disturbances:
-                if d.active(_t):
-                    if d.force_world is not None:
-                        fb = fb + rotate(conjugate(x[6:10]), d.force_world)
-                    if d.torque_body is not None:
-                        tb = tb + np.asarray(d.torque_body, dtype=float)
+            for d in active:
+                if d.force_world is not None:
+                    fb = fb + rotate(conjugate(x[6:10]), d.force_world)
+                if d.torque_body is not None:
+                    tb = tb + np.asarray(d.torque_body, dtype=float)
             return body.derivs(x, fb, tb)
 
-        for _ in range(substeps):
-            state = rk4_step(deriv, t, state, dt)
-            state = normalize_state(state)
-            t += dt
+        for j in range(substeps):
+            state = normalize_state(rk4_step(deriv, t + j * dt, state, dt))
 
-        times.append(k * control_dt_s)
+        state_time_log.append(stop)
+        applied_log.append(controller.mixer.matrix @ thrusts)
+        times.append(t)
         states.append(state.copy())
         thrusts_log.append(thrusts.copy())
 
@@ -797,18 +923,19 @@ def run_scenario(
     states_arr = np.array(states).reshape(-1, len(state))
     # Time to altitude: first time z >= 95% of the max commanded altitude,
     # staying there for >= 1 s.
-    z_max_cmd = max(z for _, z in scenario.altitude_waypoints)
+    if scenario.reference_mode == "planned":
+        z_max_cmd = max(z for _, z in scenario.altitude_waypoints)
     time_to_alt = None
     above = states_arr[:, 2] >= 0.95 * z_max_cmd
     for i in range(len(above) - int(1.0 / control_dt_s)):
         if above[i] and above[i:i + int(1.0 / control_dt_s)].all():
-            time_to_alt = float(times_arr[i])
+            time_to_alt = state_time_log[i]
             break
 
     success: dict[str, bool] = {}
     for name, fn in scenario.success_criteria:
         try:
-            success[name] = bool(fn(_ResultView(res=None, times=times_arr,
+            success[name] = bool(fn(_ResultView(res=None, times=np.array(state_time_log),
                                                 states=states_arr,
                                                 time_to_alt=time_to_alt,
                                                 energy_wh=energy_wh,
@@ -827,7 +954,8 @@ def run_scenario(
             component_verdicts[comp] = "NO_MODELED_LIMIT_BREACHED"
     if design.frame is not None:
         component_verdicts["frame"] = "NO_MODELED_LIMIT_BREACHED"
-    unknown_events = {"battery_out_of_support", "powertrain_refused", "branch_out_of_support",
+    unknown_events = {"battery_out_of_support", "bus_operating_point_unsupported",
+                      "powertrain_refused", "branch_out_of_support",
                       "unsupported_branch_failure", "branch_model_missing"}
     known_failure = False
     unknown = False
@@ -835,10 +963,15 @@ def run_scenario(
         comp = _COMPONENT_OF_EVENT.get(ev.kind)
         if comp is not None and ev.critical:
             component_verdicts[comp] = "FAIL"
-        elif ev.kind == "battery_out_of_support":
+        elif ev.kind in {"battery_out_of_support", "bus_operating_point_unsupported"}:
             component_verdicts["battery"] = "INCONCLUSIVE"
         elif ev.kind == "powertrain_refused":
             component_verdicts["powertrain"] = "INCONCLUSIVE"
+        if ev.battery is not None:
+            pack = component_verdicts.setdefault("battery:pack", {
+                "status": "FAIL", "component": "battery", "findings": [],
+            })
+            pack["findings"].append({**asdict(ev.battery), "t_s": ev.t_s})
         if ev.branch is not None:
             finding = ev.branch
             key = f"{finding.component}:{finding.branch_id}"
@@ -884,6 +1017,16 @@ def run_scenario(
         branch_voltage_v=np.array(branch_v_log) if branch_v_log else None,
         per_motor_rpm=np.array(rpm_log) if rpm_log else None,
         wrench_residual=np.array(residual_log).reshape(-1, 4),
+        clock=FlightClockTrace(
+            state_start=np.array(state_start_log).reshape(-1, len(state)),
+            state_time_s=np.array(state_time_log),
+            electrical_time_s=np.array(electrical_time_log),
+            command_wrench=np.array(command_log).reshape(-1, 4),
+            nominal_thrust_n=np.array(nominal_log).reshape(-1, count),
+            applied_rotor_wrench=np.array(applied_log).reshape(-1, 4),
+            previous_wrench_residual=np.array(previous_log).reshape(-1, 4),
+            integrated=np.array(integrated_log, dtype=bool),
+        ),
     )
 
 
@@ -944,6 +1087,7 @@ def takeoff_climb_scenario(hover_alt_m: float = 5.0, duration_s: float = 16.0) -
         name=f"takeoff_climb_{hover_alt_m:.0f}m",
         duration_s=duration_s,
         altitude_waypoints=waypoints,
+        reference_mode="planned",
         success_criteria=[("reached_altitude", reached),
                           ("no_critical_failure", lambda v: not any(e.critical for e in v.events))],
     )
@@ -963,6 +1107,7 @@ def landing_scenario(start_alt_m: float = 5.0, duration_s: float = 14.0) -> Scen
         name=f"landing_from_{start_alt_m:.0f}m",
         duration_s=duration_s,
         altitude_waypoints=waypoints,
+        reference_mode="planned",
         initial_altitude_m=start_alt_m,
         success_criteria=[("gentle_touchdown", gentle_touchdown),
                           ("no_critical_failure", lambda v: not any(e.critical for e in v.events))],
@@ -994,6 +1139,7 @@ def forward_flight_scenario(distance_m: float = 5.0, speed_m_s: float = 2.0) -> 
         name=f"forward_flight_{distance_m:.0f}m",
         duration_s=duration,
         altitude_waypoints=waypoints,
+        reference_mode="planned",
         position_waypoints=pos,
         success_criteria=[("arrived", arrived),
                           ("no_critical_failure", lambda v: not any(e.critical for e in v.events))],
@@ -1009,6 +1155,7 @@ def motor_failure_scenario(hover_alt_m: float = 2.0, failure_at_s: float = 4.0) 
         name="motor_failure_injection",
         duration_s=failure_at_s + 8.0,
         altitude_waypoints=waypoints,
+        reference_mode="planned",
         motor_failure_at_s=failure_at_s,
         success_criteria=[],
     )
