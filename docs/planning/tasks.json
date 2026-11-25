@@ -779,19 +779,25 @@
         "P0A-014"
       ],
       "actor": "builder",
-      "status": "todo",
+      "status": "done",
       "acceptance": "Analytic force/torque, energy/charge checks, quaternion/coordinate round trips, timestep convergence, deterministic seeded reruns and failure-boundary regressions pass with declared numerical tolerances.",
       "proof_file": "docs/acceptance/P0A-015.md",
       "planned_tests": [
         "tests/acceptance/test_p0a_015.py"
       ],
-      "completion_evidence": [],
+      "completion_evidence": [
+        "docs/acceptance/P0A-015.md",
+        "tests/acceptance/test_p0a_015.py",
+        "packages/physics/dynamics/quaternion.py",
+        "packages/physics/scenarios/runner.py"
+      ],
       "gate": null,
       "language": [
         "Python"
       ],
       "target_files": [
-        "packages/physics/",
+        "packages/physics/dynamics/quaternion.py",
+        "packages/physics/scenarios/runner.py",
         "tests/acceptance/test_p0a_015.py",
         "docs/acceptance/P0A-015.md"
       ],
@@ -804,7 +810,10 @@
       ],
       "verify_commands": [
         "pytest tests/acceptance/test_p0a_015.py -q",
-        "pytest tests/physics -q"
+        "pytest tests/physics -q",
+        "python scripts/export_contracts.py --check",
+        "python scripts/reconcile_registry.py --check",
+        "python scripts/check_master_plan.py --check"
       ]
     },
     {
@@ -4140,6 +4149,6 @@
       ]
     }
   ],
-  "execution_hold": "P0A-014 causal controller-plant coupling passed software verification as DEVELOPMENT. Stop before P0A-015 unless the owner gives a new instruction.",
-  "next_build_task": "P0A-015"
+  "execution_hold": "P0A-015 numerical code and solution verification is complete as DEVELOPMENT. Stop before P0A-016 unless the owner gives a new instruction.",
+  "next_build_task": "P0A-016"
 }
