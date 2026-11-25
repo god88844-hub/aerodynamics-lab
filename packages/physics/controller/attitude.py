@@ -14,8 +14,9 @@ Gains are derived from the assembled plant (mass/inertia) with sane defaults
 so both the 2 kg synthetic quad and the 3.7 kg MN3508 quad stabilize without
 hand tuning; explicit override is possible via ControlGains.
 
-Model status (M3): perfect state knowledge, ideal actuators, no sensor
-noise/delay (M4). Small-angle assumptions in the position/altitude cross-feed
+The flight runner can provide sensor observations and delivered-wrench
+feedback. Conditional integration prevents windup in the direction of an
+unfulfilled wrench from the previous tick. Small-angle assumptions in the position/altitude cross-feed
 are documented and valid for the near-hover regime this milestone targets.
 """
 
@@ -131,6 +132,7 @@ class QuadcopterController:
         self._ff_vz = 0.0
         self.allocation_counts = dict.fromkeys(ALLOCATION_FLAGS, 0)
         self._last_mix_status = dict.fromkeys(ALLOCATION_FLAGS, False)
+        self.delivery_feedback = np.zeros(4)  # previous tick's delivered minus requested wrench
 
     def reset(self) -> None:
         for pid in (self.rate_roll, self.rate_pitch, self.rate_yaw, self.altitude_i):
@@ -139,6 +141,7 @@ class QuadcopterController:
         self._ff_vx = self._ff_vy = self._ff_vz = 0.0
         self.allocation_counts = dict.fromkeys(ALLOCATION_FLAGS, 0)
         self._last_mix_status = dict.fromkeys(ALLOCATION_FLAGS, False)
+        self.delivery_feedback = np.zeros(4)  # previous tick's delivered minus requested wrench
 
     @staticmethod
     def _slew(current: float, target: float, dt: float) -> float:
@@ -185,16 +188,23 @@ class QuadcopterController:
         rate_z_des = float(np.clip(self.gains.kp_yaw_angle * (yaw_des - yaw), -self.gains.max_rate_rad_s, self.gains.max_rate_rad_s))
 
         # --- rate loops -> torques ------------------------------------------
-        tx = self.rate_roll.step(rate_x_des - w[0], w[0], dt)
-        ty = self.rate_pitch.step(rate_y_des - w[1], w[1], dt)
-        tz = self.rate_yaw.step(rate_z_des - w[2], w[2], dt)
+        torque = []
+        for axis, (pid, desired) in enumerate(zip(
+            (self.rate_roll, self.rate_pitch, self.rate_yaw), (rate_x_des, rate_y_des, rate_z_des),
+        )):
+            error = desired - w[axis]
+            torque.append(pid.step(
+                error, w[axis], dt, integrate=self._can_integrate(error, axis + 1),
+            ))
 
         # --- altitude: proper PD on height + velocity error -----------------
         cos_tilt = max(np.cos(roll) * np.cos(pitch), 0.5)  # guards near-90° tilt
         vz_des = targets.velocity_z if targets.velocity_z is not None else 0.0
         self._ff_vz = self._slew(self._ff_vz, vz_des, dt)
         e_z = targets.altitude_m - r[2]
-        i_term = self.altitude_i.step(e_z, 0.0, dt)
+        i_term = self.altitude_i.step(
+            e_z, 0.0, dt, integrate=self._can_integrate(e_z, 0),
+        )
         accel_cmd = (
             self.gains.kp_alt * e_z
             + self.gains.kd_alt * (self._ff_vz - v[2])
@@ -204,15 +214,20 @@ class QuadcopterController:
         self._last_accel_cmd = accel_cmd
         total_thrust = mass * (9.80665 + accel_cmd) / cos_tilt
 
-        thrusts, mix_status = self.mixer.mix(total_thrust, np.array([tx, ty, tz]))
+        thrusts, mix_status = self.mixer.mix(total_thrust, np.asarray(torque))
         self._last_mix_status = mix_status
         for flag, occurred in mix_status.items():
             self.allocation_counts[flag] += occurred
         return thrusts
 
+    def _can_integrate(self, error: float, axis: int) -> bool:
+        residual = self.delivery_feedback[axis]
+        return abs(residual) <= RESIDUAL_TOLERANCE or error * residual >= 0.0
+
     def record_delivery(self, nominal: np.ndarray, delivered: np.ndarray) -> np.ndarray:
         """Use the plant's actual delivery to report the final allocation errors."""
         residual = self.mixer.delivery_residual(nominal, delivered)
+        self.delivery_feedback = residual
         final_flags = {
             "saturated_max": self._last_mix_status["saturated_max"]
             or bool(np.any(nominal - delivered > BOUND_TOLERANCE_N)),

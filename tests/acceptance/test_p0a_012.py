@@ -32,6 +32,7 @@ def plant():
 def mission(**kwargs):
     return Scenario(
         "p0a012", 0.8, [(0.0, 2.0), (0.35, 4.0), (0.8, 4.0)],
+        reference_mode="planned",
         position_waypoints=[(0.0, (0.0, 0.0)), (0.5, (1.5, 0.0))],
         initial_altitude_m=2.0,
         success_criteria=[("climbed", lambda v: v.states[-1, 2] > 2.7)],

@@ -725,21 +725,31 @@
         "P0A-013"
       ],
       "actor": "builder",
-      "status": "todo",
+      "status": "done",
       "acceptance": "Demand, voltage/current, attainable thrust, saturation and supported controller/actuator dynamics share one plant/clock; generated commands do not depend on future telemetry; known limit violations retain FAIL and unsupported collapse remains INCONCLUSIVE.",
       "proof_file": "docs/acceptance/P0A-014.md",
       "planned_tests": [
         "tests/acceptance/test_p0a_014.py"
       ],
-      "completion_evidence": [],
+      "completion_evidence": [
+        "docs/acceptance/P0A-014.md",
+        "tests/acceptance/test_p0a_014.py",
+        "packages/physics/scenarios/runner.py",
+        "packages/physics/scenarios/service.py"
+      ],
       "gate": null,
       "language": [
         "Python"
       ],
       "target_files": [
-        "packages/physics/controller/",
-        "packages/physics/propulsion/",
-        "packages/desktop_worker/engine.py",
+        "packages/physics/controller/attitude.py",
+        "packages/physics/controller/pid.py",
+        "packages/physics/scenarios/runner.py",
+        "packages/physics/scenarios/service.py",
+        "scripts/run_capstone.py",
+        "tests/audit/test_m9_failure_modes.py",
+        "tests/acceptance/test_p0a_006.py",
+        "tests/acceptance/test_p0a_012.py",
         "tests/acceptance/test_p0a_014.py",
         "docs/acceptance/P0A-014.md"
       ],
@@ -750,8 +760,11 @@
         "4. Extend tests/acceptance/test_p0a_014.py for each coupling edge and the shared-clock guarantee."
       ],
       "verify_commands": [
-        "pytest tests/acceptance/test_p0a_014.py -q",
-        "pytest tests/acceptance/test_p0a_006.py tests/acceptance/test_p0a_012.py -q"
+        "pytest tests/acceptance/test_p0a_014.py tests/acceptance/test_p0a_006.py tests/acceptance/test_p0a_012.py -q",
+        "pytest tests/physics -q",
+        "python scripts/export_contracts.py --check",
+        "python scripts/reconcile_registry.py --check",
+        "python scripts/check_master_plan.py --check"
       ]
     },
     {
@@ -4127,6 +4140,6 @@
       ]
     }
   ],
-  "execution_hold": "P0A-013 QDrone diagnosis and conditional regression freeze is complete as DEVELOPMENT. Stop before P0A-014 unless the owner gives a new instruction.",
-  "next_build_task": "P0A-014"
+  "execution_hold": "P0A-014 causal controller-plant coupling passed software verification as DEVELOPMENT. Stop before P0A-015 unless the owner gives a new instruction.",
+  "next_build_task": "P0A-015"
 }

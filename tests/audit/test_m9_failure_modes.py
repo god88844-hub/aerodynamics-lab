@@ -41,6 +41,7 @@ def _hover_scenario(duration_s=10.0, altitude=3.0, **extra):
     return Scenario(
         name="m9_hover",
         duration_s=duration_s,
+        reference_mode="planned",
         altitude_waypoints=[(0.0, 0.0), (2.0, altitude), (duration_s, altitude)],
         position_waypoints=[(0.0, (0.0, 0.0)), (duration_s, (0.0, 0.0))],
         **extra,
@@ -102,6 +103,7 @@ def test_esc_saturation_causes_thrust_shortfall(design, library):
     scenario = Scenario(
         name="m9_thrust_shortfall",
         duration_s=12.0,
+        reference_mode="planned",
         altitude_waypoints=[(0.0, 0.0), (0.8, 8.0), (12.0, 8.0)],
     )
     res = run_scenario(design, scenario, library)

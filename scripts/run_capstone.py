@@ -122,6 +122,7 @@ def run_capstone(design: DroneDesign, library: ComponentLibrary, uq_samples: int
     maneuver = Scenario(
         name="capstone_forward_maneuver",
         duration_s=26.0,
+        reference_mode="planned",
         altitude_waypoints=[(0.0, 0.0), (4.0, 5.0), (14.0, 5.0), (20.0, 0.0), (26.0, 0.0)],
         position_waypoints=[
             (0.0, (0.0, 0.0)), (6.0, (0.0, 0.0)), (11.0, (6.0, 0.0)),
@@ -149,6 +150,7 @@ def run_capstone(design: DroneDesign, library: ComponentLibrary, uq_samples: int
     gust = Scenario(
         name="capstone_wind_gust",
         duration_s=16.0,
+        reference_mode="planned",
         altitude_waypoints=[(0.0, 0.0), (2.0, 5.0), (16.0, 5.0)],
         disturbances=[
             Disturbance(t_start=6.0, t_end=7.5, force_world=np.array([gust_force, 0.0, 0.0])),
@@ -174,6 +176,7 @@ def run_capstone(design: DroneDesign, library: ComponentLibrary, uq_samples: int
     fail = Scenario(
         name="capstone_motor_failure",
         duration_s=14.0,
+        reference_mode="planned",
         altitude_waypoints=[(0.0, 0.0), (4.0, 5.0), (14.0, 5.0)],
         motor_failure_at_s=6.0,
         success_criteria=[],
