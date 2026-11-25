@@ -167,8 +167,10 @@ class LoopPowertrain:
         motor = dataset.motor
         self.max_continuous_a = motor.max_continuous_current_a
         self.continuous_duration_s = motor.max_continuous_duration_s
-        self._over_current_time = np.zeros(1)  # resized per unit count
-        self._branch_over_current_time = np.zeros(1)
+        self._motor_hot_since_s = np.full(1, np.nan)  # resized per unit count
+        self._branch_hot_since_s = np.full(1, np.nan)
+        self._clock_s = 0.0
+        self._clock_correction_s = 0.0
         self._warning_latched = False
         self._v_bus_seed: float | None = None  # previous tick's converged bus
         self.energy_wh = 0.0
@@ -177,12 +179,22 @@ class LoopPowertrain:
         self, thrusts: np.ndarray, dt: float, *,
         branches: tuple[BranchLimits, ...] | None = None,
         cutout: int | None = None,
+        tick_times_s: tuple[float, float] | None = None,
     ) -> LoopAux:
         """Resolve one tick. With no branches supplied, solve fixed load demand."""
         n = len(thrusts)
-        if len(self._over_current_time) != n:
-            self._over_current_time = np.zeros(n)
-            self._branch_over_current_time = np.zeros(n)
+        if len(self._motor_hot_since_s) != n:
+            self._motor_hot_since_s = np.full(n, np.nan)
+            self._branch_hot_since_s = np.full(n, np.nan)
+        if tick_times_s is None:
+            # Direct variable-step diagnostics retain a local clock. Use
+            # compensated addition so constant-dt boundaries do not drift.
+            tick_start_s = self._clock_s
+            adjusted = dt - self._clock_correction_s
+            tick_end_s = tick_start_s + adjusted
+            self._clock_correction_s = (tick_end_s - tick_start_s) - adjusted
+        else:
+            tick_start_s, tick_end_s = tick_times_s
         events: list[dict] = []
         rpm_lo, rpm_hi = self.dataset.envelope()["rpm_range_merged"]
         thrust_min_n = float(self.dataset.thrust_n(float(rpm_lo)).value)
@@ -380,20 +392,24 @@ class LoopPowertrain:
                            "message": message, "t_s": offset})
 
         def check_thermal(i: int, current: float, threshold: float | None,
-                          duration: float | None, elapsed: np.ndarray, component: str) -> None:
+                          duration: float | None, hot_since: np.ndarray, component: str) -> None:
             if threshold is None or duration is None or current <= threshold:
-                elapsed[i] = 0.0
+                hot_since[i] = np.nan
                 return
-            previous = elapsed[i]
-            elapsed[i] += dt
-            if elapsed[i] >= duration:
-                offset = max(0.0, min(dt, duration - previous))
+            if np.isnan(hot_since[i]):
+                hot_since[i] = tick_start_s
+            # Compare the absolute deadline with the authoritative boundary,
+            # rather than summing dt once per above-current sample.
+            deadline = float(hot_since[i]) + duration
+            if deadline <= tick_end_s:
+                offset = max(0.0, min(dt, deadline - tick_start_s))
                 add_finding(
                     "motor_burnout" if component == "motor" else "branch_thermal_limit",
                     BranchFinding(i, component, "thermal_current_duration", duration, duration, "s"),
                     f"rotor {i}: above {threshold:.2f} A for {duration:.4f} s",
                     offset,
                 )
+                events[-1]["absolute_t_s"] = deadline
 
         for i, current in enumerate(currents):
             if i == cutout:
@@ -407,7 +423,7 @@ class LoopPowertrain:
                 )
             else:
                 check_thermal(i, current, self.max_continuous_a, self.continuous_duration_s,
-                              self._over_current_time, "motor")
+                              self._motor_hot_since_s, "motor")
             issue = self.esc.current_issue(current)
             if issue:
                 add_finding(
@@ -428,7 +444,7 @@ class LoopPowertrain:
             if branches is not None:
                 limits = branches[i]
                 check_thermal(i, current, limits.thermal_current_a, limits.thermal_duration_s,
-                              self._branch_over_current_time, "esc")
+                              self._branch_hot_since_s, "esc")
                 for finding in limit_findings(i, limits, float(current), voltage,
                                               float(rpms[i]), float(delivered[i])):
                     add_finding(finding.limit, finding,
@@ -446,6 +462,7 @@ class LoopPowertrain:
             elapsed = dt  # fixed-demand primitive retains its full-tick accounting
         self.soc = self.battery.soc_after(soc_pre, total_current, elapsed)
         self.energy_wh += v_bus * total_current * elapsed / 3600.0
+        self._clock_s = tick_end_s
 
         return LoopAux(
             v_bus=v_bus,
@@ -784,6 +801,7 @@ def run_scenario(
     for k in range(n_steps):
         check_time_limit()
         t = k * control_dt_s
+        t_next = (k + 1) * control_dt_s
 
         if fault is not None and cutout is None and t >= fault.at_s:
             component = {"motor_cutout": "motor", "esc_cutout": "esc"}.get(fault.kind)
@@ -827,7 +845,9 @@ def run_scenario(
         if loop_pt is not None:
             soc_before, energy_before = loop_pt.soc, loop_pt.energy_wh
             try:
-                aux = loop_pt.step(nominal, control_dt_s, branches=branches, cutout=cutout)
+                aux = loop_pt.step(
+                    nominal, control_dt_s, branches=branches, cutout=cutout, tick_times_s=(t, t_next),
+                )
             except PowertrainError as exc:
                 branch = None
                 if isinstance(exc, VoltageCollapseError):
@@ -852,7 +872,8 @@ def run_scenario(
                 for ev in aux.events:
                     offset = ev["t_s"]
                     events.append(FailureEvent(
-                        t if offset is None else t + offset, ev["kind"], ev["critical"],
+                        ev.get("absolute_t_s", t if offset is None else t + offset),
+                        ev["kind"], ev["critical"],
                         ev["message"], ev.get("branch"), ev.get("battery"),
                     ))
         residual_log.append(controller.record_delivery(nominal, thrusts))
@@ -875,7 +896,7 @@ def run_scenario(
         tick_events = sorted(events[event_start:], key=lambda e: e.t_s)
         events[event_start:] = tick_events
         abort_event = next((e for e in tick_events if e.critical), None)
-        stop = (k + 1) * control_dt_s if abort_event is None else abort_event.t_s
+        stop = t_next if abort_event is None else abort_event.t_s
         if aux is not None:
             if abort_event is not None and abort_event.kind in {"ground_crash", "attitude_loss", "structure_yield"}:
                 loop_pt.soc, loop_pt.energy_wh = soc_before, energy_before

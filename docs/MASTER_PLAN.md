@@ -8,7 +8,7 @@ Tracking: [master issue #127](https://github.com/god88844-hub/aerodynamics-lab/i
 
 ## Next action and execution rules
 
-**P0A-004 is complete** with the owner's actual authorization receipt. Merge/tag requires the three pre-merge checks and five green CI jobs; actual operation receipts are recorded afterward. **P0A-014 causal controller-plant coupling passed software verification as DEVELOPMENT. Stop before P0A-015 unless the owner gives a new instruction.** The next future software task is **P0A-015**.
+**P0A-004 is complete** with the owner's actual authorization receipt. Merge/tag requires the three pre-merge checks and five green CI jobs; actual operation receipts are recorded afterward. **P0A-015 numerical code and solution verification is complete as DEVELOPMENT. Stop before P0A-016 unless the owner gives a new instruction.** The next future software task is **P0A-016**.
 
 1. Read `AGENTS.md`, this task's section, the linked fundamentals and acceptance ledger. Use only the canonical local workspace in `WORKSPACE.md`.
 2. When implementation is explicitly resumed, pick the first unchecked builder task in document order whose prerequisites are checked. A pending owner/custodian/reviewer task requires its real receipt; a builder cannot self-approve it or invent data.
@@ -257,19 +257,20 @@ Tasks with several WPs appear in each relevant issue but retain one canonical ID
   - Recorded evidence: [docs/acceptance/P0A-014.md](acceptance/P0A-014.md), [tests/acceptance/test_p0a_014.py](../tests/acceptance/test_p0a_014.py), [packages/physics/scenarios/runner.py](../packages/physics/scenarios/runner.py), [packages/physics/scenarios/service.py](../packages/physics/scenarios/service.py).
 
 <a name="p0a-015"></a>
-- [ ] **P0A-015 — Verify the corrected multirotor numerical model** (WP5, WP11; actor: builder)
+- [x] **P0A-015 — Verify the corrected multirotor numerical model** (WP5, WP11; actor: builder)
   - Prerequisites: P0A-014. Proof: [docs/acceptance/P0A-015.md](acceptance/P0A-015.md).
   - Acceptance: Analytic force/torque, energy/charge checks, quaternion/coordinate round trips, timestep convergence, deterministic seeded reruns and failure-boundary regressions pass with declared numerical tolerances.
   - Language: Python.
-  - Target files: `packages/physics/`; `tests/acceptance/test_p0a_015.py`; `docs/acceptance/P0A-015.md`.
+  - Target files: `packages/physics/dynamics/quaternion.py`; `packages/physics/scenarios/runner.py`; `tests/acceptance/test_p0a_015.py`; `docs/acceptance/P0A-015.md`.
   - Todos:
-    - [ ] 1. Verify analytic force/torque identities for the corrected plant (sum of rotor contributions vs plant output).
-    - [ ] 2. Verify energy and charge balances over closed integrations (consumed charge == integral of current within declared numerical tolerance).
-    - [ ] 3. Verify quaternion/coordinate round trips (body<->world, wxyz convention) for randomized attitudes.
-    - [ ] 4. Add timestep-convergence and deterministic seeded-rerun cases; cover the failure-boundary regressions from P0A-012.
-    - [ ] 5. Publish the declared numerical tolerances in docs/acceptance/P0A-015.md.
-  - Verify: `pytest tests/acceptance/test_p0a_015.py -q` | `pytest tests/physics -q`
+    - [x] 1. Verify analytic force/torque identities for the corrected plant (sum of rotor contributions vs plant output).
+    - [x] 2. Verify energy and charge balances over closed integrations (consumed charge == integral of current within declared numerical tolerance).
+    - [x] 3. Verify quaternion/coordinate round trips (body<->world, wxyz convention) for randomized attitudes.
+    - [x] 4. Add timestep-convergence and deterministic seeded-rerun cases; cover the failure-boundary regressions from P0A-012.
+    - [x] 5. Publish the declared numerical tolerances in docs/acceptance/P0A-015.md.
+  - Verify: `pytest tests/acceptance/test_p0a_015.py -q` | `pytest tests/physics -q` | `python scripts/export_contracts.py --check` | `python scripts/reconcile_registry.py --check` | `python scripts/check_master_plan.py --check`
   - Planned verification: `pytest tests/acceptance/test_p0a_015.py`; required current-head CI.
+  - Recorded evidence: [docs/acceptance/P0A-015.md](acceptance/P0A-015.md), [tests/acceptance/test_p0a_015.py](../tests/acceptance/test_p0a_015.py), [packages/physics/dynamics/quaternion.py](../packages/physics/dynamics/quaternion.py), [packages/physics/scenarios/runner.py](../packages/physics/scenarios/runner.py).
 
 <a name="p0a-016"></a>
 - [ ] **P0A-016 — Make component sources and parameter uncertainty explicit** (WP1, WP5, WP11; actor: builder)
@@ -1273,4 +1274,4 @@ Tasks with several WPs appear in each relevant issue but retain one canonical ID
   - Prerequisites: P4-007. Proof: [docs/acceptance/P4-008.md](acceptance/P4-008.md).
   - Acceptance: Qualified independent review accepts the stated limited uses; source/rights/security, reproducible distributions, compatibility and recovery gates close the phase.
 
-Unique task count: **150**; checked **14**, unchecked **136**. These are planning tasks, not a count of physically validated milestones. All ten legacy major acceptance families and all twelve broad Phase 0 package issues remain open until their own actual exit evidence exists.
+Unique task count: **150**; checked **15**, unchecked **135**. These are planning tasks, not a count of physically validated milestones. All ten legacy major acceptance families and all twelve broad Phase 0 package issues remain open until their own actual exit evidence exists.

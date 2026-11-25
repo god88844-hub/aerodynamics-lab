@@ -15,11 +15,13 @@ IDENTITY: np.ndarray = np.array([1.0, 0.0, 0.0, 0.0])
 
 
 def normalize(q: np.ndarray) -> np.ndarray:
-    """Return ``q`` normalized to unit length (raises on the zero quaternion)."""
+    """Normalize a quaternion with finite, nonzero norm."""
     q = np.asarray(q, dtype=float)
     n = float(np.linalg.norm(q))
     if n == 0.0:
         raise ValueError("cannot normalize zero quaternion")
+    if not np.isfinite(n):
+        raise ValueError("cannot normalize a non-finite quaternion norm")
     return q / n
 
 
