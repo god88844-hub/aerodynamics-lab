@@ -17,6 +17,7 @@ class LabEngineering : public RefCounted {
 protected:
     static void _bind_methods() {
         ClassDB::bind_method(D_METHOD("mass_properties", "parts"), &LabEngineering::mass_properties);
+        ClassDB::bind_method(D_METHOD("check_clearance", "rotors", "minimum_required_m"), &LabEngineering::check_clearance);
     }
 
 public:
@@ -56,6 +57,42 @@ public:
             output["ok"] = true;
             output["mass_kg"] = result.mass_kg;
             output["center_of_mass_m"] = center;
+        } catch (const std::exception &error) {
+            output["ok"] = false;
+            output["error"] = String(error.what());
+        }
+        return output;
+    }
+
+    Dictionary check_clearance(const Array &rotors, double minimum_required_m) const {
+        Dictionary output;
+        try {
+            std::vector<lab::RotorDisk> disks;
+            for (int64_t index = 0; index < rotors.size(); ++index) {
+                if (rotors[index].get_type() != Variant::DICTIONARY) {
+                    throw std::invalid_argument("Each rotor must be a dictionary");
+                }
+                const Dictionary r = rotors[index];
+                const Variant rad = r.get("radius_m", Variant());
+                const Variant coords = r.get("position_m", Variant());
+                if ((rad.get_type() != Variant::FLOAT && rad.get_type() != Variant::INT)
+                    || coords.get_type() != Variant::ARRAY) {
+                    throw std::invalid_argument("A rotor needs radius_m and position_m");
+                }
+                const Array pos = coords;
+                if (pos.size() != 3) {
+                    throw std::invalid_argument("A position needs three coordinates");
+                }
+                lab::Vector3 p;
+                for (int axis = 0; axis < 3; ++axis) {
+                    p[axis] = double(pos[axis]);
+                }
+                disks.push_back({p, double(rad)});
+            }
+            const auto res = lab::evaluate_rotor_pair_clearance(disks, minimum_required_m);
+            output["ok"] = true;
+            output["clear"] = res.clear;
+            output["minimum_tip_clearance_m"] = res.minimum_tip_clearance_m;
         } catch (const std::exception &error) {
             output["ok"] = false;
             output["error"] = String(error.what());
