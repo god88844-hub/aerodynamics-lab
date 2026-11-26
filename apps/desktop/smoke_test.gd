@@ -280,6 +280,41 @@ func _run() -> void:
 			quit(43)
 			return
 		print("Desktop resource refusal, project preservation and limit recovery checks passed")
+		# P0A-018: blade edit, transform edit, undo/redo, and CAD PBR material preset checks
+		desktop.call("_open_blade_editor")
+		desktop.get("blade_dialog").hide()
+		desktop.get("blade_fields")["tip_chord_m"].value = 0.022
+		desktop.call("_rebuild_blade")
+		if not await _wait_for_job(desktop):
+			quit(44)
+			return
+		var blade_before_tf: Dictionary = desktop.get("project").duplicate(true)
+		desktop.call("_open_transform_editor")
+		desktop.get("transform_dialog").hide()
+		desktop.get("transform_fields")["x"].value = 0.25
+		desktop.get("transform_fields")["yaw_deg"].value = 45.0
+		desktop.call("_apply_node_transform")
+		if not await _wait_for_job(desktop):
+			quit(45)
+			return
+		var blade_after_tf: Dictionary = desktop.get("project").duplicate(true)
+		if not is_equal_approx(float(blade_after_tf["vehicle"]["nodes"][0]["position_m"][0]), 0.25):
+			push_error("Transform editor did not update assembly node position")
+			quit(46)
+			return
+		desktop.call("_undo_edit")
+		if desktop.get("project") != blade_before_tf:
+			push_error("Undo did not restore pre-transform authoritative CAD project")
+			quit(47)
+			return
+		desktop.call("_redo_edit")
+		if desktop.get("project") != blade_after_tf:
+			push_error("Redo did not restore transformed authoritative CAD project")
+			quit(48)
+			return
+		desktop.call("_on_cad_material_selected", 1)
+		desktop.call("_toggle_lighting_mode")
+		print("P0A-018 blade edit, transform edit, undo/redo, and CAD PBR checks passed")
 	var assembly_fixture: String = desktop.call("repository_root").path_join("data/benchmarks/assembly-200/project.json")
 	desktop.call("_start_job", "validate", assembly_fixture)
 	if not await _wait_for_job(desktop):

@@ -54,6 +54,17 @@ var versions_tree: Tree
 var versions_status: Label
 var visual_profile_button: Button
 var visual_profile: String = "auto"
+var lighting_mode: String = "studio"
+var lighting_button: Button
+var cad_material_select: OptionButton
+var cad_material_preset: String = "anodized_blue"
+var blade_dialog: AcceptDialog
+var blade_fields: Dictionary = {}
+var blade_density_enabled: CheckButton
+var transform_dialog: AcceptDialog
+var transform_fields: Dictionary = {}
+var undo_stack: Array = []
+var redo_stack: Array = []
 var world_env: WorldEnvironment
 var key_light: DirectionalLight3D
 var fill_light: DirectionalLight3D
@@ -135,9 +146,24 @@ func _build_interface() -> void:
 	_add_button(toolbar, "Build blade example", func():
 		_start_job("build-blade", repository_root().path_join("data/cad/blade-example.json")))
 	_add_button(toolbar, "Build blade recipe", _open_blade_recipe)
+	_add_button(toolbar, "Edit blade geometry", _open_blade_editor)
 	_add_button(toolbar, "New / edit test body", _open_body_editor)
+	_add_button(toolbar, "Edit transform", _open_transform_editor)
+	_add_button(toolbar, "Undo", _undo_edit)
+	_add_button(toolbar, "Redo", _redo_edit)
 	_add_button(toolbar, "Run applied-torque experiment", _run_cad_torque)
 	_add_button(toolbar, "Worker limits", _open_limits)
+	cad_material_select = OptionButton.new()
+	cad_material_select.add_item("CAD Mat: Anodized Blue")
+	cad_material_select.add_item("CAD Mat: Alu 6061-T6")
+	cad_material_select.add_item("CAD Mat: CFRP Quasi-Iso")
+	cad_material_select.add_item("CAD Mat: PA12 Nylon")
+	cad_material_select.item_selected.connect(_on_cad_material_selected)
+	toolbar.add_child(cad_material_select)
+	lighting_button = Button.new()
+	lighting_button.text = "Light: Studio"
+	lighting_button.pressed.connect(_toggle_lighting_mode)
+	toolbar.add_child(lighting_button)
 	visual_profile_button = Button.new()
 	visual_profile_button.text = "Visual: Auto"
 	visual_profile_button.pressed.connect(_cycle_visual_profile)
@@ -321,6 +347,41 @@ func _build_interface() -> void:
 			versions_dialog.hide()
 			_recover_last_valid())
 	add_child(versions_dialog)
+	blade_dialog = AcceptDialog.new()
+	blade_dialog.title = "Supported parametric blade CAD (Open CASCADE)"
+	blade_dialog.ok_button_text = "Rebuild exact blade"
+	var blade_form: VBoxContainer = VBoxContainer.new()
+	blade_dialog.add_child(blade_form)
+	var blade_note: Label = Label.new()
+	blade_note.text = "Supported parametric two-station blade loft (not full freeform CAD).\nTip radius must exceed root radius."
+	blade_form.add_child(blade_note)
+	blade_fields["root_radius_m"] = _numeric_field(blade_form, "Root radius (m)", 0.005, 1.0, 0.005, 0.025)
+	blade_fields["root_chord_m"] = _numeric_field(blade_form, "Root chord (m)", 0.005, 0.5, 0.002, 0.032)
+	blade_fields["root_twist_deg"] = _numeric_field(blade_form, "Root twist (deg)", -45.0, 45.0, 0.5, 22.0)
+	blade_fields["tip_radius_m"] = _numeric_field(blade_form, "Tip radius (m)", 0.02, 2.0, 0.005, 0.19)
+	blade_fields["tip_chord_m"] = _numeric_field(blade_form, "Tip chord (m)", 0.005, 0.5, 0.002, 0.016)
+	blade_fields["tip_twist_deg"] = _numeric_field(blade_form, "Tip twist (deg)", -45.0, 45.0, 0.5, 8.0)
+	blade_fields["thickness_to_chord"] = _numeric_field(blade_form, "Thickness / chord", 0.04, 0.30, 0.01, 0.12)
+	blade_density_enabled = CheckButton.new()
+	blade_density_enabled.text = "Assume homogeneous blade density"
+	blade_density_enabled.button_pressed = true
+	blade_form.add_child(blade_density_enabled)
+	blade_fields["material_density_kg_m3"] = _numeric_field(blade_form, "Density (kg/m³)", 100.0, 10000.0, 10.0, 1550.0)
+	blade_dialog.confirmed.connect(_rebuild_blade)
+	add_child(blade_dialog)
+	transform_dialog = AcceptDialog.new()
+	transform_dialog.title = "Assembly node transform (SI right-handed Z-up)"
+	transform_dialog.ok_button_text = "Apply transform"
+	var tf_form: VBoxContainer = VBoxContainer.new()
+	transform_dialog.add_child(tf_form)
+	transform_fields["x"] = _numeric_field(tf_form, "Position X (m)", -10.0, 10.0, 0.01, 0.0)
+	transform_fields["y"] = _numeric_field(tf_form, "Position Y (m)", -10.0, 10.0, 0.01, 0.0)
+	transform_fields["z"] = _numeric_field(tf_form, "Position Z (m)", -10.0, 10.0, 0.01, 0.0)
+	transform_fields["roll_deg"] = _numeric_field(tf_form, "Roll (deg)", -180.0, 180.0, 1.0, 0.0)
+	transform_fields["pitch_deg"] = _numeric_field(tf_form, "Pitch (deg)", -180.0, 180.0, 1.0, 0.0)
+	transform_fields["yaw_deg"] = _numeric_field(tf_form, "Yaw (deg)", -180.0, 180.0, 1.0, 0.0)
+	transform_dialog.confirmed.connect(_apply_node_transform)
+	add_child(transform_dialog)
 	_update_camera()
 
 
@@ -396,6 +457,171 @@ func _rebuild_body() -> void:
 		recipe["material_density_kg_m3"] = null
 	var path: String = _write_payload(recipe)
 	_start_job("build-body", path)
+
+
+func _blade_recipe() -> Dictionary:
+	if project.is_empty():
+		return {}
+	for asset in project.get("assets", []):
+		if asset["id"] == "blade_recipe":
+			var metadata: Variant = JSON.parse_string(FileAccess.get_file_as_string(project_asset_root.path_join(asset["path"])))
+			if metadata is Dictionary and metadata.get("recipe_type") == "blade_1":
+				return metadata["recipe"]
+	return {}
+
+
+func _open_blade_editor() -> void:
+	if job_pid > 0:
+		return
+	var recipe: Dictionary = _blade_recipe()
+	var stations: Array = recipe.get("stations", [])
+	if stations.size() >= 2:
+		var root_s: Dictionary = stations[0]
+		var tip_s: Dictionary = stations[-1]
+		blade_fields["root_radius_m"].value = float(root_s.get("radius_m", 0.025))
+		blade_fields["root_chord_m"].value = float(root_s.get("chord_m", 0.032))
+		blade_fields["root_twist_deg"].value = float(root_s.get("twist_deg", 22.0))
+		blade_fields["tip_radius_m"].value = float(tip_s.get("radius_m", 0.19))
+		blade_fields["tip_chord_m"].value = float(tip_s.get("chord_m", 0.016))
+		blade_fields["tip_twist_deg"].value = float(tip_s.get("twist_deg", 8.0))
+		blade_fields["thickness_to_chord"].value = float(root_s.get("thickness_to_chord", 0.12))
+		blade_density_enabled.button_pressed = recipe.get("material_density_kg_m3") != null
+		if recipe.get("material_density_kg_m3") != null:
+			blade_fields["material_density_kg_m3"].value = float(recipe["material_density_kg_m3"])
+	blade_dialog.popup_centered(Vector2i(560, 440))
+
+
+func _rebuild_blade() -> void:
+	if job_pid > 0:
+		return
+	var r0: float = blade_fields["root_radius_m"].value
+	var r1: float = blade_fields["tip_radius_m"].value
+	if r1 <= r0:
+		status_label.text = "Constraint refused: blade tip radius must exceed root radius."
+		return
+	var tc: float = blade_fields["thickness_to_chord"].value
+	var recipe: Dictionary = {
+		"name": "Parametric blade",
+		"stations": [
+			{"radius_m": r0, "chord_m": blade_fields["root_chord_m"].value, "twist_deg": blade_fields["root_twist_deg"].value, "thickness_to_chord": tc},
+			{"radius_m": r1, "chord_m": blade_fields["tip_chord_m"].value, "twist_deg": blade_fields["tip_twist_deg"].value, "thickness_to_chord": tc},
+		],
+		"profile_samples": 48,
+		"mesh_deflection_m": 0.00025,
+		"material_density_kg_m3": blade_fields["material_density_kg_m3"].value if blade_density_enabled.button_pressed else null,
+	}
+	var path: String = _write_payload(recipe)
+	_start_job("build-blade", path)
+
+
+func _open_transform_editor() -> void:
+	if job_pid > 0 or project.is_empty():
+		return
+	if project.get("vehicle", {}).get("format") != "assembly_1":
+		status_label.text = "Select an assembly project to edit node transforms."
+		return
+	var nodes: Array = project["vehicle"].get("nodes", [])
+	if nodes.is_empty():
+		return
+	var node: Dictionary = nodes[0]
+	var selected: TreeItem = components.get_selected()
+	if selected != null and selected.get_metadata(0) is Dictionary and selected.get_metadata(0).has("node"):
+		node = selected.get_metadata(0)["node"]
+	var pos: Array = node.get("position_m", [0.0, 0.0, 0.0])
+	transform_fields["x"].value = float(pos[0])
+	transform_fields["y"].value = float(pos[1])
+	transform_fields["z"].value = float(pos[2])
+	transform_fields["roll_deg"].value = 0.0
+	transform_fields["pitch_deg"].value = 0.0
+	transform_fields["yaw_deg"].value = 0.0
+	transform_dialog.popup_centered(Vector2i(460, 340))
+
+
+func _euler_deg_to_wxyz(roll_deg: float, pitch_deg: float, yaw_deg: float) -> Array:
+	var hr: float = deg_to_rad(roll_deg) * 0.5
+	var hp: float = deg_to_rad(pitch_deg) * 0.5
+	var hy: float = deg_to_rad(yaw_deg) * 0.5
+	var cr: float = cos(hr)
+	var sr: float = sin(hr)
+	var cp: float = cos(hp)
+	var sp: float = sin(hp)
+	var cy: float = cos(hy)
+	var sy: float = sin(hy)
+	var w: float = cr * cp * cy + sr * sp * sy
+	var x: float = sr * cp * cy - cr * sp * sy
+	var y: float = cr * sp * cy + sr * cp * sy
+	var z: float = cr * cp * sy - sr * sp * cy
+	var n: float = sqrt(w * w + x * x + y * y + z * z)
+	return [w / n, x / n, y / n, z / n]
+
+
+func _apply_node_transform() -> void:
+	if job_pid > 0 or project.is_empty() or project.get("vehicle", {}).get("format") != "assembly_1":
+		return
+	var nodes: Array = project["vehicle"].get("nodes", [])
+	if nodes.is_empty():
+		return
+	var target_id: String = str(nodes[0]["id"])
+	var selected: TreeItem = components.get_selected()
+	if selected != null and selected.get_metadata(0) is Dictionary and selected.get_metadata(0).has("node"):
+		target_id = str(selected.get_metadata(0)["node"]["id"])
+	var edited: Dictionary = project.duplicate(true)
+	for node in edited["vehicle"]["nodes"]:
+		if str(node["id"]) == target_id:
+			node["position_m"] = [transform_fields["x"].value, transform_fields["y"].value, transform_fields["z"].value]
+			node["orientation_wxyz"] = _euler_deg_to_wxyz(
+				transform_fields["roll_deg"].value,
+				transform_fields["pitch_deg"].value,
+				transform_fields["yaw_deg"].value)
+	var path: String = _write_payload(edited)
+	_start_job("edit-transform", path)
+
+
+func _push_undo_state() -> void:
+	if project.is_empty():
+		return
+	undo_stack.append({
+		"project": project.duplicate(true),
+		"asset_root": project_asset_root,
+		"document_json": project_document_json,
+	})
+	if undo_stack.size() > 32:
+		undo_stack.pop_front()
+	redo_stack.clear()
+
+
+func _undo_edit() -> void:
+	if job_pid > 0 or undo_stack.is_empty():
+		status_label.text = "Nothing to undo."
+		return
+	var current_state: Dictionary = {
+		"project": project.duplicate(true),
+		"asset_root": project_asset_root,
+		"document_json": project_document_json,
+	}
+	var prior: Dictionary = undo_stack.pop_back()
+	if _adopt_project(prior["project"], str(prior["asset_root"])):
+		redo_stack.append(current_state)
+		project_document_json = str(prior["document_json"])
+		project_document_view = project.duplicate(true)
+		status_label.text = "Undo applied (%d remaining). Exact solids and LOD restored." % undo_stack.size()
+
+
+func _redo_edit() -> void:
+	if job_pid > 0 or redo_stack.is_empty():
+		status_label.text = "Nothing to redo."
+		return
+	var current_state: Dictionary = {
+		"project": project.duplicate(true),
+		"asset_root": project_asset_root,
+		"document_json": project_document_json,
+	}
+	var nxt: Dictionary = redo_stack.pop_back()
+	if _adopt_project(nxt["project"], str(nxt["asset_root"])):
+		undo_stack.append(current_state)
+		project_document_json = str(nxt["document_json"])
+		project_document_view = project.duplicate(true)
+		status_label.text = "Redo applied (%d remaining). Exact solids and LOD restored." % redo_stack.size()
 
 
 func _run_cad_torque() -> void:
@@ -498,7 +724,7 @@ func _refresh_project() -> bool:
 				assembly_node.add_child(marker)
 				item.set_metadata(0, {"marker": marker, "node": node})
 		metrics_label.text = "Assembly geometry loaded. Simulation backend is unassigned."
-		scope_label.text = "CAD geometry · physical validation pending"
+		scope_label.text = "Supported parametric body & blade CAD (Open CASCADE) · not full freeform sketcher · physical validation pending"
 		_fit_camera()
 		return true
 	var parts: Array = vehicle["snapshot"]["parts"]
@@ -607,20 +833,86 @@ func _display_mesh(asset: Dictionary) -> MeshInstance3D:
 	var marker: MeshInstance3D = MeshInstance3D.new()
 	marker.mesh = importer.get_mesh()
 	marker.set_meta("display_lod_count", importer.get_surface_lod_count(0))
-	var material: StandardMaterial3D = StandardMaterial3D.new()
-	material.albedo_color = Color(0.2, 0.75, 0.9)
-	material.metallic = 0.35
-	material.roughness = 0.42
+	var material: StandardMaterial3D = _make_cad_material(false)
 	marker.material_override = material
 	return marker
 
 
+func _make_cad_material(selected_state: bool) -> StandardMaterial3D:
+	var material: StandardMaterial3D = StandardMaterial3D.new()
+	if selected_state:
+		material.albedo_color = Color(1.0, 0.7, 0.25)
+		material.metallic = 0.25
+		material.roughness = 0.35
+		material.rim_enabled = true
+		material.rim = 0.6
+		material.rim_tint = 0.5
+		return material
+	match cad_material_preset:
+		"alu_6061_t6":
+			material.albedo_color = Color(0.74, 0.78, 0.82)
+			material.metallic = 0.85
+			material.roughness = 0.28
+		"cfrp_quasi_iso":
+			material.albedo_color = Color(0.14, 0.16, 0.19)
+			material.metallic = 0.15
+			material.roughness = 0.38
+			material.clearcoat_enabled = true
+			material.clearcoat = 0.45
+		"pa12_nylon":
+			material.albedo_color = Color(0.28, 0.30, 0.33)
+			material.metallic = 0.0
+			material.roughness = 0.68
+		_:
+			material.albedo_color = Color(0.2, 0.75, 0.9)
+			material.metallic = 0.35
+			material.roughness = 0.42
+	material.rim_enabled = true
+	material.rim = 0.35
+	material.rim_tint = 0.5
+	return material
+
+
+func _on_cad_material_selected(index: int) -> void:
+	var presets: Array[String] = ["anodized_blue", "alu_6061_t6", "cfrp_quasi_iso", "pa12_nylon"]
+	cad_material_preset = presets[clampi(index, 0, presets.size() - 1)]
+	_apply_cad_material_preset()
+	status_label.text = "Display material preset: %s (display-only; exact CAD/physics unchanged)." % cad_material_preset
+
+
+func _apply_cad_material_preset() -> void:
+	if components == null or components.get_root() == null:
+		return
+	var selected: TreeItem = components.get_selected()
+	var item: TreeItem = components.get_root().get_first_child()
+	while item != null:
+		var metadata: Variant = item.get_metadata(0)
+		if metadata is Dictionary and metadata.has("marker"):
+			var marker: MeshInstance3D = metadata["marker"]
+			marker.material_override = _make_cad_material(item == selected)
+		item = item.get_next()
+
+
 func _adopt_project(next_project: Dictionary, asset_root: String) -> bool:
+	return _adopt_project_with_undo(next_project, asset_root, false)
+
+
+func _adopt_project_with_undo(next_project: Dictionary, asset_root: String, record_undo: bool) -> bool:
 	var previous_project: Dictionary = project
 	var previous_root: String = project_asset_root
+	var previous_doc: String = project_document_json
 	project = next_project
 	project_asset_root = asset_root
 	if _refresh_project():
+		if record_undo and not previous_project.is_empty():
+			undo_stack.append({
+				"project": previous_project.duplicate(true),
+				"asset_root": previous_root,
+				"document_json": previous_doc,
+			})
+			if undo_stack.size() > 32:
+				undo_stack.pop_front()
+			redo_stack.clear()
 		return true
 	var reason: String = status_label.text
 	project = previous_project
@@ -640,7 +932,7 @@ func _select_component() -> void:
 		var metadata: Variant = item.get_metadata(0)
 		if metadata is Dictionary:
 			var marker: MeshInstance3D = metadata["marker"]
-			marker.material_override.albedo_color = Color(1.0, 0.7, 0.25) if item == selected else Color(0.2, 0.75, 0.9)
+			marker.material_override = _make_cad_material(item == selected)
 		item = item.get_next()
 	var metadata: Dictionary = selected.get_metadata(0)
 	if metadata.has("part"):
@@ -658,10 +950,16 @@ func _apply_visual_profile() -> void:
 	var use_pbr: bool = (visual_profile == "forward_plus") or (visual_profile == "auto" and has_rd)
 	if use_pbr and has_rd:
 		var sky_mat: ProceduralSkyMaterial = ProceduralSkyMaterial.new()
-		sky_mat.sky_top_color = Color(0.14, 0.24, 0.38)
-		sky_mat.sky_horizon_color = Color(0.42, 0.52, 0.64)
-		sky_mat.ground_bottom_color = Color(0.06, 0.08, 0.1)
-		sky_mat.ground_horizon_color = Color(0.22, 0.26, 0.3)
+		if lighting_mode == "outdoor":
+			sky_mat.sky_top_color = Color(0.18, 0.42, 0.78)
+			sky_mat.sky_horizon_color = Color(0.68, 0.78, 0.90)
+			sky_mat.ground_bottom_color = Color(0.10, 0.14, 0.12)
+			sky_mat.ground_horizon_color = Color(0.35, 0.40, 0.38)
+		else:
+			sky_mat.sky_top_color = Color(0.14, 0.24, 0.38)
+			sky_mat.sky_horizon_color = Color(0.42, 0.52, 0.64)
+			sky_mat.ground_bottom_color = Color(0.06, 0.08, 0.1)
+			sky_mat.ground_horizon_color = Color(0.22, 0.26, 0.3)
 		var sky: Sky = Sky.new()
 		sky.sky_material = sky_mat
 		env.background_mode = Environment.BG_SKY
@@ -692,6 +990,14 @@ func _apply_visual_profile() -> void:
 			fill_light.visible = true
 		if visual_profile_button != null:
 			visual_profile_button.text = "Visual: Compatibility"
+
+
+func _toggle_lighting_mode() -> void:
+	lighting_mode = "outdoor" if lighting_mode == "studio" else "studio"
+	if lighting_button != null:
+		lighting_button.text = "Light: Outdoor" if lighting_mode == "outdoor" else "Light: Studio"
+	_apply_visual_profile()
+	status_label.text = "HDRI-style lighting mode: %s (display-only; engineering unchanged)." % lighting_mode
 
 
 func _cycle_visual_profile() -> void:
@@ -899,11 +1205,12 @@ func _start_job(action: String, input_path: String, output_path: String = "") ->
 	job_error = ProjectSettings.globalize_path(stem + "-error.json")
 	job_completion = ProjectSettings.globalize_path(stem + "-complete.json")
 	job_started = ProjectSettings.globalize_path(stem + "-started.json")
+	var cli_action: String = "validate" if action == "edit-transform" else action
 	var arguments: PackedStringArray = [
-		repository_root().path_join("scripts/lab_project.py"), action, input_path, job_output,
+		repository_root().path_join("scripts/lab_project.py"), cli_action, input_path, job_output,
 		"--error-output", job_error, "--completion-output", job_completion]
-	job_asset_root = project_asset_root if (action == "package" or action == "save-version") else input_path.get_base_dir()
-	if action == "validate" or action == "package" or action == "save-version":
+	job_asset_root = project_asset_root if (action in ["package", "save-version", "edit-transform"]) else input_path.get_base_dir()
+	if action in ["validate", "package", "save-version", "edit-transform"]:
 		arguments.append_array(["--asset-root", job_asset_root])
 	if action == "recover" and not current_project_path.is_empty():
 		arguments.append_array(["--restore-to", current_project_path])
@@ -1006,7 +1313,7 @@ func _process(delta: float) -> void:
 					last_valid_project_path = job_output
 					_remember_project_document(job_output)
 					status_label.text = "Project version saved. Geometry asset checks passed." if job_action == "save-version" else "Project saved. Geometry asset checks passed."
-				elif _adopt_project(next_project, next_root):
+				elif _adopt_project_with_undo(next_project, next_root, job_action in ["build-blade", "build-body", "edit-transform"]):
 					var doc_path: String = str(output["project_path"]) if job_action.begins_with("build-") else job_output
 					_remember_project_document(doc_path)
 					if job_action in ["create", "validate", "package", "save-version"]:

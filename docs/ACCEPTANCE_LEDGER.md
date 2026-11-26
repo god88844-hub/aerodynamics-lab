@@ -77,6 +77,7 @@ Each remains **OPEN**. “Measured comparison” below describes source-specific
 12. P0A-015: analytic force/moment and power, charge/energy, randomized frames, three-level convergence, repeatability and adjacent-float failure-boundary verification passed. Fixed thermal dwell clock drift and nonfinite quaternion normalization. Code and solution verification only. Proof: [P0A-015](acceptance/P0A-015.md).
 13. P0A-016: component provenance, parameter-level uncertainty (`UNVERIFIED_ESTIMATE`), operating limits, and fail-closed density/source mass-property checks. DEVELOPMENT software verification only; no physical validation claimed. Proof: [P0A-016](acceptance/P0A-016.md).
 14. P0A-017: standalone desktop create/import/open/save/version/recover workflow without an HTTP server, typed asset/version refusal, and Godot 4.7 Forward+ PBR / `gl_compatibility` dual visual profile. DEVELOPMENT software verification only. Proof: [P0A-017](acceptance/P0A-017.md).
-15. P0A-018: build supported multirotor geometry through the 3D editor.
+15. P0A-018: 3D CAD editor parametric body/blade/transform editing, undo/redo, display-only Fusion-style CAD PBR presets and Studio/Outdoor lighting, and exact-geometry edit -> save -> reload identity. DEVELOPMENT software verification only. Proof: [P0A-018](acceptance/P0A-018.md).
+16. P0A-019: connect component layout, materials, BOM and mass properties.
 
 The master plan contains 150 unique numbered tasks (118 Phase 0, 32 future), with separate software/physical exits. All 12 broad Phase 0 package issues and ten legacy major acceptance families remain open. Documentation/qualification alone does not close them. Phases 1–4 stay contracts/registries only until their entry gates. All local development uses [WORKSPACE](WORKSPACE.md).
