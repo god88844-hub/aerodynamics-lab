@@ -1,0 +1,87 @@
+{
+  "schema_version": "0.1",
+  "id": "silicone_awg12_bus",
+  "name": "12 AWG Silicone-Insulated Stranded Copper Power Bus Cable",
+  "physical_identity": {
+    "gauge_awg": 12,
+    "conductor_material": "tinned_copper",
+    "insulation": "silicone_rubber",
+    "stranding": "680x0.08mm_class"
+  },
+  "units": {
+    "cross_section_m2": "m^2",
+    "resistance_ohm_per_m": "ohm/m",
+    "mass_kg_per_m": "kg/m",
+    "max_continuous_current_a": "A",
+    "max_voltage_v": "V",
+    "max_temperature_c": "degC"
+  },
+  "conductor_material": "copper",
+  "awg": 12,
+  "cross_section_m2": 3.31e-06,
+  "resistance_ohm_per_m": 0.00521,
+  "mass_kg_per_m": 0.042,
+  "max_continuous_current_a": 60.0,
+  "max_voltage_v": 600.0,
+  "max_temperature_c": 200.0,
+  "operating_limits": {
+    "max_continuous_current_a": 60.0,
+    "max_voltage_v": 600.0,
+    "max_temperature_c": 200.0,
+    "min_temperature_c": -60.0
+  },
+  "source": {
+    "source": "ASTM B258 standard 12 AWG copper resistance + typical silicone UAV hookup wire ampacity/mass band",
+    "url": "https://www.astm.org/b0258-18.html",
+    "evidence_id": "astm_b258_12awg_silicone",
+    "retrieved": "2026-11-26",
+    "uncertainty_pct": 10.0,
+    "estimated": true,
+    "status": "UNVERIFIED_ESTIMATE",
+    "notes": "DC resistance at 20 C follows ASTM B258 copper cross-section; installed ampacity (60 A) and jacket mass/m depend on airflow/bundling and are UNVERIFIED_ESTIMATE until measured on the exact harness."
+  },
+  "parameter_provenance": {
+    "cross_section_m2": {
+      "unit": "m^2",
+      "source": "ASTM B258 nominal 12 AWG area (3.31 mm^2)",
+      "uncertainty_pct": 2.0,
+      "estimated": false,
+      "status": "SOURCED",
+      "evidence_id": "astm_b258_12awg_silicone"
+    },
+    "resistance_ohm_per_m": {
+      "unit": "ohm/m",
+      "source": "ASTM B258 annealed copper nominal 5.21 mOhm/m at 20 C",
+      "uncertainty_pct": 3.0,
+      "estimated": false,
+      "status": "SOURCED",
+      "evidence_id": "astm_b258_12awg_silicone"
+    },
+    "mass_kg_per_m": {
+      "unit": "kg/m",
+      "source": "Typical 12 AWG silicone-jacketed UAV cable mass estimate",
+      "uncertainty_pct": 15.0,
+      "estimated": true,
+      "status": "UNVERIFIED_ESTIMATE",
+      "evidence_id": "astm_b258_12awg_silicone",
+      "notes": "Jacket thickness varies by vendor; UNVERIFIED_ESTIMATE until weighed."
+    },
+    "max_continuous_current_a": {
+      "unit": "A",
+      "source": "Assumed free-air silicone wire ampacity rating",
+      "uncertainty_pct": 20.0,
+      "estimated": true,
+      "status": "UNVERIFIED_ESTIMATE",
+      "evidence_id": "astm_b258_12awg_silicone",
+      "notes": "Thermal ampacity depends on bundling and airflow; UNVERIFIED_ESTIMATE."
+    },
+    "max_voltage_v": {
+      "unit": "V",
+      "source": "Typical 600 V silicone jacket insulation rating",
+      "uncertainty_pct": 10.0,
+      "estimated": true,
+      "status": "UNVERIFIED_ESTIMATE",
+      "evidence_id": "astm_b258_12awg_silicone"
+    }
+  }
+}

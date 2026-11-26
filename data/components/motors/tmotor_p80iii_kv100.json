@@ -2,6 +2,24 @@
   "schema_version": "0.1",
   "id": "tmotor_p80iii_kv100",
   "name": "T-Motor P80 III KV100 (agricultural UAV motor)",
+  "physical_identity": {
+    "manufacturer": "T-Motor",
+    "part_number": "P80-III-KV100-without-pin",
+    "stator_rotor_slots": "36N42P"
+  },
+  "units": {
+    "kv_rpm_per_v": "rpm/V",
+    "internal_resistance_ohm": "ohm",
+    "idle_current_a": "A",
+    "idle_current_voltage_v": "V",
+    "max_continuous_current_a": "A",
+    "max_continuous_power_w": "W",
+    "max_continuous_duration_s": "s",
+    "mass_kg": "kg",
+    "cells_min": "1",
+    "cells_max": "1",
+    "max_winding_temp_c": "degC"
+  },
   "kv_rpm_per_v": 100,
   "internal_resistance_ohm": 0.048,
   "idle_current_a": 1.6,
@@ -13,14 +31,74 @@
   "cells_min": 6,
   "cells_max": 12,
   "configuration": "36N42P",
+  "operating_limits": {
+    "max_continuous_current_a": 60.0,
+    "max_continuous_power_w": 2700.0,
+    "max_continuous_duration_s": 180.0,
+    "cells_min": 6,
+    "cells_max": 12,
+    "max_winding_temp_c": 120.0
+  },
   "source": {
     "source": "T-Motor official product page: P80 III (without pin) KV100 \u2014 specifications and load-testing data (DC bench, G30*10.5 CF propeller), static bench",
     "url": "https://store.tmotor.com/product/P80-v3-without-pin-kv100-p-type.html",
     "report_id": "tmotor-p80iii-kv100-page",
+    "evidence_id": "tmotor-p80iii-kv100-page",
     "retrieved": "2026-11-15",
     "uncertainty_pct": 3.0,
     "estimated": false,
+    "status": "SOURCED",
     "notes": "Table transcribed from the published load-testing rows; every row verified internally consistent: thrust/power equals the published efficiency AND power equals V*I at the row's measured voltage. Row voltages sag 47.91 -> 47.15 V across the sweep; normalized to 47.9 V nominal (+/-1.6%, absorbed by dataset uncertainty). Torque column published per row (used for the rotor reaction-torque parameter). Internal resistance 45-51 mOhm published; 48 mOhm midpoint used."
+  },
+  "parameter_provenance": {
+    "kv_rpm_per_v": {
+      "unit": "rpm/V",
+      "source": "T-Motor P80 III KV100 product page specification (KV 100)",
+      "uncertainty_pct": 3.0,
+      "estimated": false,
+      "status": "SOURCED",
+      "evidence_id": "tmotor-p80iii-kv100-page"
+    },
+    "internal_resistance_ohm": {
+      "unit": "ohm",
+      "source": "T-Motor P80 III KV100 published range 45-51 mOhm (48 mOhm midpoint)",
+      "uncertainty_pct": 6.25,
+      "estimated": false,
+      "status": "SOURCED",
+      "evidence_id": "tmotor-p80iii-kv100-page"
+    },
+    "max_continuous_current_a": {
+      "unit": "A",
+      "source": "T-Motor P80 III KV100 product page (60 A, 180 s)",
+      "uncertainty_pct": 3.0,
+      "estimated": false,
+      "status": "SOURCED",
+      "evidence_id": "tmotor-p80iii-kv100-page"
+    },
+    "max_continuous_power_w": {
+      "unit": "W",
+      "source": "T-Motor P80 III KV100 product page (2700 W, 180 s)",
+      "uncertainty_pct": 3.0,
+      "estimated": false,
+      "status": "SOURCED",
+      "evidence_id": "tmotor-p80iii-kv100-page"
+    },
+    "mass_kg": {
+      "unit": "kg",
+      "source": "T-Motor P80 III KV100 product page (649 g)",
+      "uncertainty_pct": 3.0,
+      "estimated": false,
+      "status": "SOURCED",
+      "evidence_id": "tmotor-p80iii-kv100-page"
+    },
+    "max_winding_temp_c": {
+      "unit": "degC",
+      "source": "Assumed enameled copper winding thermal ceiling (120 C, unlisted on product page)",
+      "uncertainty_pct": 15.0,
+      "estimated": true,
+      "status": "UNVERIFIED_ESTIMATE",
+      "evidence_id": "tmotor-p80iii-kv100-page"
+    }
   },
   "test_data": [
     {

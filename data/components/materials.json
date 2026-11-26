@@ -1,60 +1,277 @@
 {
   "$schema": "aeroforge/materials@0.1",
-  "description": "Structural material properties used by frame stress checks. All values are sourced and carry an explicit uncertainty; a component check that needs a material not listed here must have that material added with a source, or the check must fail closed (report 'unknown property', not 'pass').",
+  "description": "Structural material properties used by frame stress checks and mass-property assemblies. All values carry units, physical identity, operating limits, source citations, and parameter-level provenance; typical/assumed entries are flagged UNVERIFIED_ESTIMATE and missing density or source fails closed.",
   "units": {
     "density_kg_m3": "kg/m^3",
     "youngs_modulus_pa": "Pa",
     "yield_strength_pa": "Pa",
-    "ultimate_tensile_strength_pa": "Pa"
+    "ultimate_tensile_strength_pa": "Pa",
+    "min_service_temp_c": "degC",
+    "max_service_temp_c": "degC"
   },
   "materials": [
     {
       "id": "alu_6061_t6",
       "name": "Aluminum 6061-T6",
       "category": "metal",
+      "physical_identity": {
+        "alloy": "AA6061",
+        "temper": "T6",
+        "specification": "AMS 4027 / ASTM B209"
+      },
+      "units": {
+        "density_kg_m3": "kg/m^3",
+        "youngs_modulus_pa": "Pa",
+        "yield_strength_pa": "Pa",
+        "ultimate_tensile_strength_pa": "Pa",
+        "min_service_temp_c": "degC",
+        "max_service_temp_c": "degC"
+      },
       "density_kg_m3": 2700,
       "youngs_modulus_pa": 68900000000,
       "yield_strength_pa": 276000000,
       "ultimate_tensile_strength_pa": 310000000,
-      "notes": "Common for machined motor mounts and booms.",
+      "operating_limits": {
+        "min_service_temp_c": -60.0,
+        "max_service_temp_c": 150.0
+      },
+      "notes": "Common for machined motor mounts and booms. Handbook nominal values with assumed 2% lot/measurement band.",
       "source": "ASM Metals Handbook / MatWeb standard published values (T6 temper)",
-      "uncertainty_pct": 2
+      "evidence_id": "asm_matweb_6061_t6",
+      "uncertainty_pct": 2,
+      "estimated": true,
+      "status": "UNVERIFIED_ESTIMATE",
+      "parameter_provenance": {
+        "density_kg_m3": {
+          "unit": "kg/m^3",
+          "source": "ASM Metals Handbook 6061-T6 reference density (2700 kg/m^3)",
+          "uncertainty_pct": 2.0,
+          "estimated": true,
+          "status": "UNVERIFIED_ESTIMATE",
+          "evidence_id": "asm_matweb_6061_t6",
+          "notes": "Nominal density is sourced; 2% uncertainty band is an assumed lot allowance."
+        },
+        "youngs_modulus_pa": {
+          "unit": "Pa",
+          "source": "ASM Metals Handbook 6061-T6 elastic modulus (68.9 GPa)",
+          "uncertainty_pct": 2.0,
+          "estimated": true,
+          "status": "UNVERIFIED_ESTIMATE",
+          "evidence_id": "asm_matweb_6061_t6"
+        },
+        "yield_strength_pa": {
+          "unit": "Pa",
+          "source": "ASM Metals Handbook 6061-T6 tensile yield strength (276 MPa)",
+          "uncertainty_pct": 5.0,
+          "estimated": true,
+          "status": "UNVERIFIED_ESTIMATE",
+          "evidence_id": "asm_matweb_6061_t6"
+        },
+        "ultimate_tensile_strength_pa": {
+          "unit": "Pa",
+          "source": "ASM Metals Handbook 6061-T6 UTS (310 MPa)",
+          "uncertainty_pct": 5.0,
+          "estimated": true,
+          "status": "UNVERIFIED_ESTIMATE",
+          "evidence_id": "asm_matweb_6061_t6"
+        }
+      }
     },
     {
       "id": "cfrp_quasi_iso",
       "name": "Quasi-isotropic CFRP laminate (epoxy)",
       "category": "composite",
+      "physical_identity": {
+        "fiber": "carbon_standard_modulus",
+        "matrix": "epoxy",
+        "layup": "[0/45/-45/90]s_typical"
+      },
+      "units": {
+        "density_kg_m3": "kg/m^3",
+        "youngs_modulus_pa": "Pa",
+        "yield_strength_pa": "Pa",
+        "ultimate_tensile_strength_pa": "Pa",
+        "min_service_temp_c": "degC",
+        "max_service_temp_c": "degC"
+      },
       "density_kg_m3": 1550,
       "youngs_modulus_pa": 45000000000,
       "yield_strength_pa": 500000000,
       "ultimate_tensile_strength_pa": 550000000,
+      "operating_limits": {
+        "min_service_temp_c": -40.0,
+        "max_service_temp_c": 85.0
+      },
       "notes": "Layup-dependent: values represent a typical [0/45/-45/90]s carbon/epoxy laminate. 'yield' is approximate (composites do not yield like metals); used as the allowable strength for frame checks.",
       "source": "Typical quasi-isotropic laminate properties, Composite Materials Handbook series / manufacturer laminate data sheets",
-      "uncertainty_pct": 20
+      "evidence_id": "cmh17_typical_cfrp",
+      "uncertainty_pct": 20,
+      "estimated": true,
+      "status": "UNVERIFIED_ESTIMATE",
+      "parameter_provenance": {
+        "density_kg_m3": {
+          "unit": "kg/m^3",
+          "source": "Typical carbon/epoxy laminate density (UNVERIFIED_ESTIMATE without coupon/lot data)",
+          "uncertainty_pct": 10.0,
+          "estimated": true,
+          "status": "UNVERIFIED_ESTIMATE",
+          "evidence_id": "cmh17_typical_cfrp"
+        },
+        "youngs_modulus_pa": {
+          "unit": "Pa",
+          "source": "Typical quasi-isotropic laminate in-plane modulus",
+          "uncertainty_pct": 20.0,
+          "estimated": true,
+          "status": "UNVERIFIED_ESTIMATE",
+          "evidence_id": "cmh17_typical_cfrp"
+        },
+        "yield_strength_pa": {
+          "unit": "Pa",
+          "source": "Typical approximate composite allowable (no coupon test)",
+          "uncertainty_pct": 20.0,
+          "estimated": true,
+          "status": "UNVERIFIED_ESTIMATE",
+          "evidence_id": "cmh17_typical_cfrp"
+        },
+        "ultimate_tensile_strength_pa": {
+          "unit": "Pa",
+          "source": "Typical quasi-isotropic laminate UTS",
+          "uncertainty_pct": 20.0,
+          "estimated": true,
+          "status": "UNVERIFIED_ESTIMATE",
+          "evidence_id": "cmh17_typical_cfrp"
+        }
+      }
     },
     {
       "id": "pa12_nylon",
       "name": "Nylon PA12 (SLS / MJF print)",
       "category": "polymer",
+      "physical_identity": {
+        "polymer": "Polyamide-12",
+        "process": "SLS_MJF_powder_bed_fusion"
+      },
+      "units": {
+        "density_kg_m3": "kg/m^3",
+        "youngs_modulus_pa": "Pa",
+        "yield_strength_pa": "Pa",
+        "ultimate_tensile_strength_pa": "Pa",
+        "min_service_temp_c": "degC",
+        "max_service_temp_c": "degC"
+      },
       "density_kg_m3": 1010,
       "youngs_modulus_pa": 1650000000,
       "yield_strength_pa": 45000000,
       "ultimate_tensile_strength_pa": 48000000,
+      "operating_limits": {
+        "min_service_temp_c": -20.0,
+        "max_service_temp_c": 80.0
+      },
       "notes": "Common for printed motor mounts and camera plates; sensitive to moisture and temperature.",
       "source": "Typical PA12 powder-bed fusion material datasheets (e.g., HP MJF PA12, EOS PA2200)",
-      "uncertainty_pct": 15
+      "evidence_id": "typical_pa12_pbf",
+      "uncertainty_pct": 15,
+      "estimated": true,
+      "status": "UNVERIFIED_ESTIMATE",
+      "parameter_provenance": {
+        "density_kg_m3": {
+          "unit": "kg/m^3",
+          "source": "Typical sintered PA12 density",
+          "uncertainty_pct": 5.0,
+          "estimated": true,
+          "status": "UNVERIFIED_ESTIMATE",
+          "evidence_id": "typical_pa12_pbf"
+        },
+        "youngs_modulus_pa": {
+          "unit": "Pa",
+          "source": "Typical PA12 tensile modulus (print-orientation dependent)",
+          "uncertainty_pct": 15.0,
+          "estimated": true,
+          "status": "UNVERIFIED_ESTIMATE",
+          "evidence_id": "typical_pa12_pbf"
+        },
+        "yield_strength_pa": {
+          "unit": "Pa",
+          "source": "Typical PA12 yield strength",
+          "uncertainty_pct": 15.0,
+          "estimated": true,
+          "status": "UNVERIFIED_ESTIMATE",
+          "evidence_id": "typical_pa12_pbf"
+        },
+        "ultimate_tensile_strength_pa": {
+          "unit": "Pa",
+          "source": "Typical PA12 UTS",
+          "uncertainty_pct": 15.0,
+          "estimated": true,
+          "status": "UNVERIFIED_ESTIMATE",
+          "evidence_id": "typical_pa12_pbf"
+        }
+      }
     },
     {
       "id": "pla_fdg",
       "name": "PLA (FDM print)",
       "category": "polymer",
+      "physical_identity": {
+        "polymer": "Polylactic_Acid",
+        "process": "FDM_filament_extrusion"
+      },
+      "units": {
+        "density_kg_m3": "kg/m^3",
+        "youngs_modulus_pa": "Pa",
+        "yield_strength_pa": "Pa",
+        "ultimate_tensile_strength_pa": "Pa",
+        "min_service_temp_c": "degC",
+        "max_service_temp_c": "degC"
+      },
       "density_kg_m3": 1240,
       "youngs_modulus_pa": 3500000000,
       "yield_strength_pa": 60000000,
       "ultimate_tensile_strength_pa": 60000000,
+      "operating_limits": {
+        "min_service_temp_c": -10.0,
+        "max_service_temp_c": 45.0
+      },
       "notes": "Prototype-grade; print orientation and infill strongly affect strength (uncertainty does not cover layer-adhesion knockdowns — flag as 'needs print-specific test data' for load-bearing parts).",
       "source": "Typical published PLA tensile properties (e.g., MatWeb generic PLA, manufacturer datasheets)",
-      "uncertainty_pct": 25
+      "evidence_id": "typical_pla_fdm",
+      "uncertainty_pct": 25,
+      "estimated": true,
+      "status": "UNVERIFIED_ESTIMATE",
+      "parameter_provenance": {
+        "density_kg_m3": {
+          "unit": "kg/m^3",
+          "source": "Typical neat PLA resin density (ignores infill fraction)",
+          "uncertainty_pct": 10.0,
+          "estimated": true,
+          "status": "UNVERIFIED_ESTIMATE",
+          "evidence_id": "typical_pla_fdm"
+        },
+        "youngs_modulus_pa": {
+          "unit": "Pa",
+          "source": "Typical published PLA modulus",
+          "uncertainty_pct": 25.0,
+          "estimated": true,
+          "status": "UNVERIFIED_ESTIMATE",
+          "evidence_id": "typical_pla_fdm"
+        },
+        "yield_strength_pa": {
+          "unit": "Pa",
+          "source": "Typical published PLA yield strength",
+          "uncertainty_pct": 25.0,
+          "estimated": true,
+          "status": "UNVERIFIED_ESTIMATE",
+          "evidence_id": "typical_pla_fdm"
+        },
+        "ultimate_tensile_strength_pa": {
+          "unit": "Pa",
+          "source": "Typical published PLA UTS",
+          "uncertainty_pct": 25.0,
+          "estimated": true,
+          "status": "UNVERIFIED_ESTIMATE",
+          "evidence_id": "typical_pla_fdm"
+        }
+      }
     }
   ]
 }

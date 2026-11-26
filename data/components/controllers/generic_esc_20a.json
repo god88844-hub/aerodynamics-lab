@@ -2,14 +2,59 @@
   "schema_version": "0.1",
   "id": "generic_esc_20a",
   "name": "Generic 20 A BLDC ESC (6S-capable)",
+  "physical_identity": {
+    "device_type": "BLDC_ESC",
+    "class_rating": "20A_6S_placeholder"
+  },
+  "units": {
+    "max_continuous_current_a": "A",
+    "max_voltage_v": "V",
+    "mass_kg": "kg",
+    "max_temp_c": "degC",
+    "min_temp_c": "degC"
+  },
   "max_continuous_current_a": 20.0,
   "max_voltage_v": 25.2,
   "mass_kg": 0.03,
+  "operating_limits": {
+    "max_continuous_current_a": 20.0,
+    "max_voltage_v": 25.2,
+    "min_temp_c": -10.0,
+    "max_temp_c": 85.0
+  },
   "source": {
     "source": "Placeholder ESC rating sized with headroom over the motor's 14 A max continuous current",
+    "evidence_id": "placeholder_esc_20a_6s",
     "retrieved": "2026-11-15",
     "uncertainty_pct": 20.0,
     "estimated": true,
+    "status": "UNVERIFIED_ESTIMATE",
     "notes": "No specific ESC datasheet captured yet; rating is an estimate. Replace with the actual ESC part (e.g. a sourced T-Motor/Hobbywing ESC) before any flight-worthiness claim."
+  },
+  "parameter_provenance": {
+    "max_continuous_current_a": {
+      "unit": "A",
+      "source": "Placeholder 20 A ESC rating sized above 14 A motor rating",
+      "uncertainty_pct": 20.0,
+      "estimated": true,
+      "status": "UNVERIFIED_ESTIMATE",
+      "evidence_id": "placeholder_esc_20a_6s"
+    },
+    "max_voltage_v": {
+      "unit": "V",
+      "source": "Assumed 6S LiPo full-charge ceiling (6 * 4.2 V = 25.2 V)",
+      "uncertainty_pct": 5.0,
+      "estimated": true,
+      "status": "UNVERIFIED_ESTIMATE",
+      "evidence_id": "placeholder_esc_20a_6s"
+    },
+    "mass_kg": {
+      "unit": "kg",
+      "source": "Typical 20 A 6S UAV ESC mass estimate",
+      "uncertainty_pct": 25.0,
+      "estimated": true,
+      "status": "UNVERIFIED_ESTIMATE",
+      "evidence_id": "placeholder_esc_20a_6s"
+    }
   }
 }

@@ -21,8 +21,8 @@
   "source_catalogs": [
     {
       "path": "data/research/registry.json",
-      "bytes_hashed": 105475,
-      "sha256": "1c044c7e489546698f4c492fc2368b29620d3ce9d1ac1e7bc8b6ea3766dca724",
+      "bytes_hashed": 113381,
+      "sha256": "742dbce5363116265c0de78d77dd215b82c39cfefedf2bc43ad71ee9491df0a0",
       "hash_semantics": "LF_NORMALIZED_REPOSITORY_TEXT"
     },
     {
@@ -1912,6 +1912,199 @@
       "catalog_reference": "data/research/registry.json#/entries/33",
       "campaigns": [],
       "policy_role": "NOT_APPLICABLE_REFERENCE_OR_TOOL",
+      "physical_acceptance": "UNVALIDATED",
+      "unacquired_original_sha256": null,
+      "original_hash_location": "Linked campaign pins and dated custody; null means unacquired/unidentified, not a missing hash to invent"
+    },
+    {
+      "id": "tmotor_mn00011",
+      "title": "T-Motor MN3508 KV380 Datasheet (MN.00011) and P15x5 CF Propeller Listing",
+      "phases": [
+        0
+      ],
+      "requirements": [
+        "ELEC",
+        "AIRCRAFT",
+        "VALIDATION"
+      ],
+      "kind": "component_datasheet",
+      "checked_at": "2026-11-26",
+      "urls": [
+        "https://modelavia.pro/assets/images/tds_motor/t-mn3508-kv.pdf"
+      ],
+      "license": {
+        "identifier": "PROPRIETARY_MANUFACTURER_DATASHEET",
+        "scope": "Public manufacturer specification sheet; transcribed parameters in data/components/",
+        "terms_url": "https://store.tmotor.com/",
+        "redistribution": "Citation and transcribed reference parameters only"
+      },
+      "hardware": [
+        "T-Motor MN3508 KV380",
+        "T-Motor P15*5 CF"
+      ],
+      "channels": [
+        "kv",
+        "winding_resistance",
+        "static_bench_thrust_current_rpm"
+      ],
+      "uncertainty_and_gaps": [
+        "Propeller mass and motor winding thermal ceiling are UNVERIFIED_ESTIMATE"
+      ],
+      "access": {
+        "provider_status": "public_primary_source_reviewed",
+        "research_record_cached": true,
+        "original_bytes_in_repository": false,
+        "external_local_originals_verified": false,
+        "acquisition": "cited_only"
+      },
+      "integration": "SEE_CAMPAIGNS_AND_CUSTODY_NOT_A_VALIDATION_CLAIM",
+      "catalog_reference": "data/research/registry.json#/entries/34",
+      "campaigns": [],
+      "policy_role": "UNASSIGNED_BEFORE_ACQUISITION_AND_PROTOCOL_REVIEW",
+      "physical_acceptance": "UNVALIDATED",
+      "unacquired_original_sha256": null,
+      "original_hash_location": "Linked campaign pins and dated custody; null means unacquired/unidentified, not a missing hash to invent"
+    },
+    {
+      "id": "tmotor-p80iii-kv100-page",
+      "title": "T-Motor P80 III KV100 Product Specification and G30x10.5 CF Bench Table",
+      "phases": [
+        0
+      ],
+      "requirements": [
+        "ELEC",
+        "AIRCRAFT",
+        "VALIDATION"
+      ],
+      "kind": "component_datasheet",
+      "checked_at": "2026-11-26",
+      "urls": [
+        "https://store.tmotor.com/product/P80-v3-without-pin-kv100-p-type.html"
+      ],
+      "license": {
+        "identifier": "PROPRIETARY_MANUFACTURER_DATASHEET",
+        "scope": "Public manufacturer product specification; transcribed parameters in data/components/",
+        "terms_url": "https://store.tmotor.com/",
+        "redistribution": "Citation and transcribed reference parameters only"
+      },
+      "hardware": [
+        "T-Motor P80 III KV100",
+        "T-Motor G30*10.5 CF"
+      ],
+      "channels": [
+        "kv",
+        "winding_resistance",
+        "static_bench_thrust_torque_current_rpm"
+      ],
+      "uncertainty_and_gaps": [
+        "Propeller mass and motor winding thermal ceiling are UNVERIFIED_ESTIMATE"
+      ],
+      "access": {
+        "provider_status": "public_primary_source_reviewed",
+        "research_record_cached": true,
+        "original_bytes_in_repository": false,
+        "external_local_originals_verified": false,
+        "acquisition": "cited_only"
+      },
+      "integration": "SEE_CAMPAIGNS_AND_CUSTODY_NOT_A_VALIDATION_CLAIM",
+      "catalog_reference": "data/research/registry.json#/entries/35",
+      "campaigns": [],
+      "policy_role": "UNASSIGNED_BEFORE_ACQUISITION_AND_PROTOCOL_REVIEW",
+      "physical_acceptance": "UNVALIDATED",
+      "unacquired_original_sha256": null,
+      "original_hash_location": "Linked campaign pins and dated custody; null means unacquired/unidentified, not a missing hash to invent"
+    },
+    {
+      "id": "astm_b258_12awg_silicone",
+      "title": "ASTM B258 Standard 12 AWG Copper Wire Specification and Silicone Bus Estimate",
+      "phases": [
+        0
+      ],
+      "requirements": [
+        "ELEC",
+        "VALIDATION"
+      ],
+      "kind": "standard",
+      "checked_at": "2026-11-26",
+      "urls": [
+        "https://www.astm.org/b0258-18.html"
+      ],
+      "license": {
+        "identifier": "PROPRIETARY_STANDARD_REFERENCE",
+        "scope": "Standard AWG cross-section/resistivity reference; ampacity and jacket mass are UNVERIFIED_ESTIMATE",
+        "terms_url": "https://www.astm.org/b0258-18.html",
+        "redistribution": "Citation only"
+      },
+      "hardware": [
+        "12 AWG silicone-insulated stranded copper bus"
+      ],
+      "channels": [
+        "cross_section_m2",
+        "resistance_ohm_per_m",
+        "ampacity_estimate"
+      ],
+      "uncertainty_and_gaps": [
+        "Installed ampacity, voltage rating, and cable mass/m are UNVERIFIED_ESTIMATE"
+      ],
+      "access": {
+        "provider_status": "public_primary_source_reviewed",
+        "research_record_cached": true,
+        "original_bytes_in_repository": false,
+        "external_local_originals_verified": false,
+        "acquisition": "cited_only"
+      },
+      "integration": "SEE_CAMPAIGNS_AND_CUSTODY_NOT_A_VALIDATION_CLAIM",
+      "catalog_reference": "data/research/registry.json#/entries/36",
+      "campaigns": [],
+      "policy_role": "NOT_APPLICABLE_REFERENCE_OR_TOOL",
+      "physical_acceptance": "UNVALIDATED",
+      "unacquired_original_sha256": null,
+      "original_hash_location": "Linked campaign pins and dated custody; null means unacquired/unidentified, not a missing hash to invent"
+    },
+    {
+      "id": "tdk_icm42688p_ds000347",
+      "title": "TDK InvenSense ICM-42688-P 6-Axis MEMS IMU Datasheet (DS-000347)",
+      "phases": [
+        0
+      ],
+      "requirements": [
+        "ELEC",
+        "AUTO",
+        "VALIDATION"
+      ],
+      "kind": "component_datasheet",
+      "checked_at": "2026-11-26",
+      "urls": [
+        "https://invensense.tdk.com/products/motion-tracking/6-axis/icm-42688-p/"
+      ],
+      "license": {
+        "identifier": "PROPRIETARY_MANUFACTURER_DATASHEET",
+        "scope": "Public IC datasheet specification; carrier PCB mass and SPI latency are UNVERIFIED_ESTIMATE",
+        "terms_url": "https://invensense.tdk.com/products/motion-tracking/6-axis/icm-42688-p/",
+        "redistribution": "Citation only"
+      },
+      "hardware": [
+        "TDK InvenSense ICM-42688-P"
+      ],
+      "channels": [
+        "sample_rate_hz",
+        "gyro_noise_density",
+        "operating_voltage_temp_limits"
+      ],
+      "uncertainty_and_gaps": [
+        "Bias instability, SPI latency, and carrier mass are UNVERIFIED_ESTIMATE"
+      ],
+      "access": {
+        "provider_status": "public_primary_source_reviewed",
+        "research_record_cached": true,
+        "original_bytes_in_repository": false,
+        "external_local_originals_verified": false,
+        "acquisition": "cited_only"
+      },
+      "integration": "SEE_CAMPAIGNS_AND_CUSTODY_NOT_A_VALIDATION_CLAIM",
+      "catalog_reference": "data/research/registry.json#/entries/37",
+      "campaigns": [],
+      "policy_role": "UNASSIGNED_BEFORE_ACQUISITION_AND_PROTOCOL_REVIEW",
       "physical_acceptance": "UNVALIDATED",
       "unacquired_original_sha256": null,
       "original_hash_location": "Linked campaign pins and dated custody; null means unacquired/unidentified, not a missing hash to invent"
@@ -7141,10 +7334,12 @@
       "source_metadata": {
         "source": "Community-measured LiPo voltage-vs-SOC charts (intofpv.com LiPo voltage quick chart; usedbytes.com measured discharge profile). OCV curve per cell; sag from pack internal resistance handled separately.",
         "url": "https://intofpv.com/t-lipo-voltage-quick-chart",
+        "evidence_id": "generic_lipo_12s_22000mah_chart",
         "retrieved": "2026-11-15",
-        "uncertainty_pct": 3.0,
-        "estimated": false,
-        "notes": "OCV-SOC shape is generic LiPo chemistry behavior. Capacity (22 Ah), mass (5.8 kg) and internal resistance (18 mOhm pack) are TYPICAL values for a 12S 22 Ah 25C-class pack: flagged estimated with wide uncertainty and must be replaced with the specific pack's datasheet/measurements for credible endurance numbers."
+        "uncertainty_pct": 10.0,
+        "estimated": true,
+        "status": "UNVERIFIED_ESTIMATE",
+        "notes": "OCV-SOC shape is generic LiPo chemistry behavior. Capacity (22 Ah), mass (5.8 kg) and internal resistance (18 mOhm pack) are TYPICAL values for a 12S 22 Ah 25C-class pack: flagged UNVERIFIED_ESTIMATE with wide uncertainty and must be replaced with the specific pack's datasheet/measurements for credible endurance numbers."
       },
       "policy_role": "CALIBRATION_OR_SCREENING_NOT_INDEPENDENT_VALIDATION",
       "physical_acceptance": "UNVALIDATED",
@@ -7157,10 +7352,12 @@
       "source_metadata": {
         "source": "Community-measured LiPo voltage-vs-SOC charts (intofpv.com LiPo voltage quick chart; usedbytes.com measured discharge profile). OCV curve per cell; sag from pack internal resistance handled separately.",
         "url": "https://intofpv.com/t-lipo-voltage-quick-chart",
+        "evidence_id": "generic_lipo_6s_16000mah_chart",
         "retrieved": "2026-11-15",
-        "uncertainty_pct": 3.0,
-        "estimated": false,
-        "notes": "OCV-SOC shape is generic LiPo chemistry behavior, not a specific pack's datasheet. Capacity, mass and internal resistance (20 mOhm pack) are TYPICAL values for a 16 Ah 6S 25C-class pack: flagged estimated with wide uncertainty and must be replaced with the specific pack's datasheet/measurements for credible endurance numbers."
+        "uncertainty_pct": 10.0,
+        "estimated": true,
+        "status": "UNVERIFIED_ESTIMATE",
+        "notes": "OCV-SOC shape is generic LiPo chemistry behavior, not a specific pack's datasheet. Capacity, mass and internal resistance (20 mOhm pack) are TYPICAL values for a 16 Ah 6S 25C-class pack: flagged UNVERIFIED_ESTIMATE with wide uncertainty and must be replaced with the specific pack's datasheet/measurements for credible endurance numbers."
       },
       "policy_role": "CALIBRATION_OR_SCREENING_NOT_INDEPENDENT_VALIDATION",
       "physical_acceptance": "UNVALIDATED",
@@ -7172,9 +7369,11 @@
       "id": "generic_esc_80a_12s",
       "source_metadata": {
         "source": "Placeholder ESC rating sized with headroom over the P80 III's 60 A peak (180 s) rating",
+        "evidence_id": "placeholder_esc_80a_12s",
         "retrieved": "2026-11-15",
         "uncertainty_pct": 20.0,
         "estimated": true,
+        "status": "UNVERIFIED_ESTIMATE",
         "notes": "No specific ESC datasheet captured yet; rating is an estimate. Replace with the actual ESC part before any flight-worthiness claim."
       },
       "policy_role": "CALIBRATION_OR_SCREENING_NOT_INDEPENDENT_VALIDATION",
@@ -7187,9 +7386,11 @@
       "id": "generic_esc_20a",
       "source_metadata": {
         "source": "Placeholder ESC rating sized with headroom over the motor's 14 A max continuous current",
+        "evidence_id": "placeholder_esc_20a_6s",
         "retrieved": "2026-11-15",
         "uncertainty_pct": 20.0,
         "estimated": true,
+        "status": "UNVERIFIED_ESTIMATE",
         "notes": "No specific ESC datasheet captured yet; rating is an estimate. Replace with the actual ESC part (e.g. a sourced T-Motor/Hobbywing ESC) before any flight-worthiness claim."
       },
       "policy_role": "CALIBRATION_OR_SCREENING_NOT_INDEPENDENT_VALIDATION",
@@ -7205,49 +7406,264 @@
           "id": "alu_6061_t6",
           "name": "Aluminum 6061-T6",
           "category": "metal",
+          "physical_identity": {
+            "alloy": "AA6061",
+            "temper": "T6",
+            "specification": "AMS 4027 / ASTM B209"
+          },
+          "units": {
+            "density_kg_m3": "kg/m^3",
+            "youngs_modulus_pa": "Pa",
+            "yield_strength_pa": "Pa",
+            "ultimate_tensile_strength_pa": "Pa",
+            "min_service_temp_c": "degC",
+            "max_service_temp_c": "degC"
+          },
           "density_kg_m3": 2700,
           "youngs_modulus_pa": 68900000000,
           "yield_strength_pa": 276000000,
           "ultimate_tensile_strength_pa": 310000000,
-          "notes": "Common for machined motor mounts and booms.",
+          "operating_limits": {
+            "min_service_temp_c": -60.0,
+            "max_service_temp_c": 150.0
+          },
+          "notes": "Common for machined motor mounts and booms. Handbook nominal values with assumed 2% lot/measurement band.",
           "source": "ASM Metals Handbook / MatWeb standard published values (T6 temper)",
-          "uncertainty_pct": 2
+          "evidence_id": "asm_matweb_6061_t6",
+          "uncertainty_pct": 2,
+          "estimated": true,
+          "status": "UNVERIFIED_ESTIMATE",
+          "parameter_provenance": {
+            "density_kg_m3": {
+              "unit": "kg/m^3",
+              "source": "ASM Metals Handbook 6061-T6 reference density (2700 kg/m^3)",
+              "uncertainty_pct": 2.0,
+              "estimated": true,
+              "status": "UNVERIFIED_ESTIMATE",
+              "evidence_id": "asm_matweb_6061_t6",
+              "notes": "Nominal density is sourced; 2% uncertainty band is an assumed lot allowance."
+            },
+            "youngs_modulus_pa": {
+              "unit": "Pa",
+              "source": "ASM Metals Handbook 6061-T6 elastic modulus (68.9 GPa)",
+              "uncertainty_pct": 2.0,
+              "estimated": true,
+              "status": "UNVERIFIED_ESTIMATE",
+              "evidence_id": "asm_matweb_6061_t6"
+            },
+            "yield_strength_pa": {
+              "unit": "Pa",
+              "source": "ASM Metals Handbook 6061-T6 tensile yield strength (276 MPa)",
+              "uncertainty_pct": 5.0,
+              "estimated": true,
+              "status": "UNVERIFIED_ESTIMATE",
+              "evidence_id": "asm_matweb_6061_t6"
+            },
+            "ultimate_tensile_strength_pa": {
+              "unit": "Pa",
+              "source": "ASM Metals Handbook 6061-T6 UTS (310 MPa)",
+              "uncertainty_pct": 5.0,
+              "estimated": true,
+              "status": "UNVERIFIED_ESTIMATE",
+              "evidence_id": "asm_matweb_6061_t6"
+            }
+          }
         },
         {
           "id": "cfrp_quasi_iso",
           "name": "Quasi-isotropic CFRP laminate (epoxy)",
           "category": "composite",
+          "physical_identity": {
+            "fiber": "carbon_standard_modulus",
+            "matrix": "epoxy",
+            "layup": "[0/45/-45/90]s_typical"
+          },
+          "units": {
+            "density_kg_m3": "kg/m^3",
+            "youngs_modulus_pa": "Pa",
+            "yield_strength_pa": "Pa",
+            "ultimate_tensile_strength_pa": "Pa",
+            "min_service_temp_c": "degC",
+            "max_service_temp_c": "degC"
+          },
           "density_kg_m3": 1550,
           "youngs_modulus_pa": 45000000000,
           "yield_strength_pa": 500000000,
           "ultimate_tensile_strength_pa": 550000000,
+          "operating_limits": {
+            "min_service_temp_c": -40.0,
+            "max_service_temp_c": 85.0
+          },
           "notes": "Layup-dependent: values represent a typical [0/45/-45/90]s carbon/epoxy laminate. 'yield' is approximate (composites do not yield like metals); used as the allowable strength for frame checks.",
           "source": "Typical quasi-isotropic laminate properties, Composite Materials Handbook series / manufacturer laminate data sheets",
-          "uncertainty_pct": 20
+          "evidence_id": "cmh17_typical_cfrp",
+          "uncertainty_pct": 20,
+          "estimated": true,
+          "status": "UNVERIFIED_ESTIMATE",
+          "parameter_provenance": {
+            "density_kg_m3": {
+              "unit": "kg/m^3",
+              "source": "Typical carbon/epoxy laminate density (UNVERIFIED_ESTIMATE without coupon/lot data)",
+              "uncertainty_pct": 10.0,
+              "estimated": true,
+              "status": "UNVERIFIED_ESTIMATE",
+              "evidence_id": "cmh17_typical_cfrp"
+            },
+            "youngs_modulus_pa": {
+              "unit": "Pa",
+              "source": "Typical quasi-isotropic laminate in-plane modulus",
+              "uncertainty_pct": 20.0,
+              "estimated": true,
+              "status": "UNVERIFIED_ESTIMATE",
+              "evidence_id": "cmh17_typical_cfrp"
+            },
+            "yield_strength_pa": {
+              "unit": "Pa",
+              "source": "Typical approximate composite allowable (no coupon test)",
+              "uncertainty_pct": 20.0,
+              "estimated": true,
+              "status": "UNVERIFIED_ESTIMATE",
+              "evidence_id": "cmh17_typical_cfrp"
+            },
+            "ultimate_tensile_strength_pa": {
+              "unit": "Pa",
+              "source": "Typical quasi-isotropic laminate UTS",
+              "uncertainty_pct": 20.0,
+              "estimated": true,
+              "status": "UNVERIFIED_ESTIMATE",
+              "evidence_id": "cmh17_typical_cfrp"
+            }
+          }
         },
         {
           "id": "pa12_nylon",
           "name": "Nylon PA12 (SLS / MJF print)",
           "category": "polymer",
+          "physical_identity": {
+            "polymer": "Polyamide-12",
+            "process": "SLS_MJF_powder_bed_fusion"
+          },
+          "units": {
+            "density_kg_m3": "kg/m^3",
+            "youngs_modulus_pa": "Pa",
+            "yield_strength_pa": "Pa",
+            "ultimate_tensile_strength_pa": "Pa",
+            "min_service_temp_c": "degC",
+            "max_service_temp_c": "degC"
+          },
           "density_kg_m3": 1010,
           "youngs_modulus_pa": 1650000000,
           "yield_strength_pa": 45000000,
           "ultimate_tensile_strength_pa": 48000000,
+          "operating_limits": {
+            "min_service_temp_c": -20.0,
+            "max_service_temp_c": 80.0
+          },
           "notes": "Common for printed motor mounts and camera plates; sensitive to moisture and temperature.",
           "source": "Typical PA12 powder-bed fusion material datasheets (e.g., HP MJF PA12, EOS PA2200)",
-          "uncertainty_pct": 15
+          "evidence_id": "typical_pa12_pbf",
+          "uncertainty_pct": 15,
+          "estimated": true,
+          "status": "UNVERIFIED_ESTIMATE",
+          "parameter_provenance": {
+            "density_kg_m3": {
+              "unit": "kg/m^3",
+              "source": "Typical sintered PA12 density",
+              "uncertainty_pct": 5.0,
+              "estimated": true,
+              "status": "UNVERIFIED_ESTIMATE",
+              "evidence_id": "typical_pa12_pbf"
+            },
+            "youngs_modulus_pa": {
+              "unit": "Pa",
+              "source": "Typical PA12 tensile modulus (print-orientation dependent)",
+              "uncertainty_pct": 15.0,
+              "estimated": true,
+              "status": "UNVERIFIED_ESTIMATE",
+              "evidence_id": "typical_pa12_pbf"
+            },
+            "yield_strength_pa": {
+              "unit": "Pa",
+              "source": "Typical PA12 yield strength",
+              "uncertainty_pct": 15.0,
+              "estimated": true,
+              "status": "UNVERIFIED_ESTIMATE",
+              "evidence_id": "typical_pa12_pbf"
+            },
+            "ultimate_tensile_strength_pa": {
+              "unit": "Pa",
+              "source": "Typical PA12 UTS",
+              "uncertainty_pct": 15.0,
+              "estimated": true,
+              "status": "UNVERIFIED_ESTIMATE",
+              "evidence_id": "typical_pa12_pbf"
+            }
+          }
         },
         {
           "id": "pla_fdg",
           "name": "PLA (FDM print)",
           "category": "polymer",
+          "physical_identity": {
+            "polymer": "Polylactic_Acid",
+            "process": "FDM_filament_extrusion"
+          },
+          "units": {
+            "density_kg_m3": "kg/m^3",
+            "youngs_modulus_pa": "Pa",
+            "yield_strength_pa": "Pa",
+            "ultimate_tensile_strength_pa": "Pa",
+            "min_service_temp_c": "degC",
+            "max_service_temp_c": "degC"
+          },
           "density_kg_m3": 1240,
           "youngs_modulus_pa": 3500000000,
           "yield_strength_pa": 60000000,
           "ultimate_tensile_strength_pa": 60000000,
+          "operating_limits": {
+            "min_service_temp_c": -10.0,
+            "max_service_temp_c": 45.0
+          },
           "notes": "Prototype-grade; print orientation and infill strongly affect strength (uncertainty does not cover layer-adhesion knockdowns — flag as 'needs print-specific test data' for load-bearing parts).",
           "source": "Typical published PLA tensile properties (e.g., MatWeb generic PLA, manufacturer datasheets)",
-          "uncertainty_pct": 25
+          "evidence_id": "typical_pla_fdm",
+          "uncertainty_pct": 25,
+          "estimated": true,
+          "status": "UNVERIFIED_ESTIMATE",
+          "parameter_provenance": {
+            "density_kg_m3": {
+              "unit": "kg/m^3",
+              "source": "Typical neat PLA resin density (ignores infill fraction)",
+              "uncertainty_pct": 10.0,
+              "estimated": true,
+              "status": "UNVERIFIED_ESTIMATE",
+              "evidence_id": "typical_pla_fdm"
+            },
+            "youngs_modulus_pa": {
+              "unit": "Pa",
+              "source": "Typical published PLA modulus",
+              "uncertainty_pct": 25.0,
+              "estimated": true,
+              "status": "UNVERIFIED_ESTIMATE",
+              "evidence_id": "typical_pla_fdm"
+            },
+            "yield_strength_pa": {
+              "unit": "Pa",
+              "source": "Typical published PLA yield strength",
+              "uncertainty_pct": 25.0,
+              "estimated": true,
+              "status": "UNVERIFIED_ESTIMATE",
+              "evidence_id": "typical_pla_fdm"
+            },
+            "ultimate_tensile_strength_pa": {
+              "unit": "Pa",
+              "source": "Typical published PLA UTS",
+              "uncertainty_pct": 25.0,
+              "estimated": true,
+              "status": "UNVERIFIED_ESTIMATE",
+              "evidence_id": "typical_pla_fdm"
+            }
+          }
         }
       ],
       "policy_role": "CALIBRATION_OR_SCREENING_NOT_INDEPENDENT_VALIDATION",
@@ -7262,9 +7678,11 @@
         "source": "T-Motor official test report MN.00011 (MN3508 KV380): specifications and load-testing data, DC power supply, static bench",
         "url": "https://modelavia.pro/assets/images/tds_motor/t-mn3508-kv.pdf",
         "report_id": "MN.00011",
+        "evidence_id": "tmotor_mn00011",
         "retrieved": "2026-11-15",
         "uncertainty_pct": 3.0,
         "estimated": false,
+        "status": "SOURCED",
         "notes": "Load table transcribed from datasheet page 3 ('Load Testing Data'); every row is internally consistent (thrust/power matches published efficiency). Internal resistance 205 mOhm is the manufacturer winding measurement. Datasheet note: temperature refers to motor surface at 100% throttle after 10 min run."
       },
       "policy_role": "CALIBRATION_OR_SCREENING_NOT_INDEPENDENT_VALIDATION",
@@ -7279,9 +7697,11 @@
         "source": "T-Motor official product page: P80 III (without pin) KV100 — specifications and load-testing data (DC bench, G30*10.5 CF propeller), static bench",
         "url": "https://store.tmotor.com/product/P80-v3-without-pin-kv100-p-type.html",
         "report_id": "tmotor-p80iii-kv100-page",
+        "evidence_id": "tmotor-p80iii-kv100-page",
         "retrieved": "2026-11-15",
         "uncertainty_pct": 3.0,
         "estimated": false,
+        "status": "SOURCED",
         "notes": "Table transcribed from the published load-testing rows; every row verified internally consistent: thrust/power equals the published efficiency AND power equals V*I at the row's measured voltage. Row voltages sag 47.91 -> 47.15 V across the sweep; normalized to 47.9 V nominal (+/-1.6%, absorbed by dataset uncertainty). Torque column published per row (used for the rotor reaction-torque parameter). Internal resistance 45-51 mOhm published; 48 mOhm midpoint used."
       },
       "policy_role": "CALIBRATION_OR_SCREENING_NOT_INDEPENDENT_VALIDATION",
@@ -7295,10 +7715,12 @@
       "source_metadata": {
         "source": "T-Motor G-series propeller product listing (geometry); used in the T-Motor P80 III KV100 load-testing table",
         "url": "https://store.tmotor.com/product/P80-v3-without-pin-kv100-p-type.html",
+        "evidence_id": "tmotor-p80iii-kv100-page",
         "retrieved": "2026-11-15",
         "uncertainty_pct": 30.0,
         "estimated": true,
-        "notes": "Prop mass is NOT in the bench table; 250 g is an estimate for a 30-inch CF prop and MUST be replaced with a measured value for mass-critical designs (flagged estimated, uncertainty 30%)."
+        "status": "UNVERIFIED_ESTIMATE",
+        "notes": "Prop mass is NOT in the bench table; 250 g is an estimate for a 30-inch CF prop and MUST be replaced with a measured value for mass-critical designs (flagged UNVERIFIED_ESTIMATE, uncertainty 30%)."
       },
       "policy_role": "CALIBRATION_OR_SCREENING_NOT_INDEPENDENT_VALIDATION",
       "physical_acceptance": "UNVALIDATED",
@@ -7311,10 +7733,49 @@
       "source_metadata": {
         "source": "T-Motor P-series propeller product listing (mass and geometry); used in T-Motor test report MN.00011 bench data",
         "url": "https://store.tmotor.com/",
+        "evidence_id": "tmotor_mn00011",
         "retrieved": "2026-11-15",
         "uncertainty_pct": 30.0,
         "estimated": true,
-        "notes": "Prop mass is NOT in the test report; 19 g is an estimate from the product listing and MUST be replaced with a measured value for any mass-critical design (flagged estimated, uncertainty 30%)."
+        "status": "UNVERIFIED_ESTIMATE",
+        "notes": "Prop mass is NOT in the test report; 19 g is an estimate from the product listing and MUST be replaced with a measured value for any mass-critical design (flagged UNVERIFIED_ESTIMATE, uncertainty 30%)."
+      },
+      "policy_role": "CALIBRATION_OR_SCREENING_NOT_INDEPENDENT_VALIDATION",
+      "physical_acceptance": "UNVALIDATED",
+      "license": "DATA_SPECIFIC_RIGHTS_UNRESOLVED_NOT_INHERITED_FROM_PROJECT",
+      "parameter_rule": "Unsourced/typical/generic parameters and assumed uncertainty bands are UNVERIFIED_ESTIMATE, even where a legacy source estimated flag is false; inspect parameter-level notes."
+    },
+    {
+      "artifact": "data/components/sensors/icm42688p_imu.json",
+      "id": "icm42688p_imu",
+      "source_metadata": {
+        "source": "TDK InvenSense ICM-42688-P Datasheet DS-000347 (gyro rate noise 0.0028 dps/sqrt(Hz), VDD 1.71-3.6 V, -40..+85 C); carrier PCB mass & board latency estimated",
+        "url": "https://invensense.tdk.com/products/motion-tracking/6-axis/icm-42688-p/",
+        "report_id": "DS-000347",
+        "evidence_id": "tdk_icm42688p_ds000347",
+        "retrieved": "2026-11-26",
+        "uncertainty_pct": 10.0,
+        "estimated": true,
+        "status": "UNVERIFIED_ESTIMATE",
+        "notes": "IC noise/electrical/thermal limits are from DS-000347; carrier board mass (2 g) and flight-controller SPI transport latency (1 ms) are UNVERIFIED_ESTIMATE until measured on target hardware."
+      },
+      "policy_role": "CALIBRATION_OR_SCREENING_NOT_INDEPENDENT_VALIDATION",
+      "physical_acceptance": "UNVALIDATED",
+      "license": "DATA_SPECIFIC_RIGHTS_UNRESOLVED_NOT_INHERITED_FROM_PROJECT",
+      "parameter_rule": "Unsourced/typical/generic parameters and assumed uncertainty bands are UNVERIFIED_ESTIMATE, even where a legacy source estimated flag is false; inspect parameter-level notes."
+    },
+    {
+      "artifact": "data/components/wiring/silicone_awg12_bus.json",
+      "id": "silicone_awg12_bus",
+      "source_metadata": {
+        "source": "ASTM B258 standard 12 AWG copper resistance + typical silicone UAV hookup wire ampacity/mass band",
+        "url": "https://www.astm.org/b0258-18.html",
+        "evidence_id": "astm_b258_12awg_silicone",
+        "retrieved": "2026-11-26",
+        "uncertainty_pct": 10.0,
+        "estimated": true,
+        "status": "UNVERIFIED_ESTIMATE",
+        "notes": "DC resistance at 20 C follows ASTM B258 copper cross-section; installed ampacity (60 A) and jacket mass/m depend on airflow/bundling and are UNVERIFIED_ESTIMATE until measured on the exact harness."
       },
       "policy_role": "CALIBRATION_OR_SCREENING_NOT_INDEPENDENT_VALIDATION",
       "physical_acceptance": "UNVALIDATED",
@@ -7493,56 +7954,68 @@
     },
     {
       "path": "data/components/batteries/generic_12s_22000mah.json",
-      "bytes_hashed": 1329,
-      "sha256": "68cba311d41e8d01d4d3b7e6f096211b4fd6b8d88f5d9c0c1e1c5972d7eea4ee",
+      "bytes_hashed": 3815,
+      "sha256": "69a2c1ee061cacf40baf1d232a1043be4d73a9106c10a9a9820d9cda3179e322",
       "hash_semantics": "LF_NORMALIZED_REPOSITORY_TEXT"
     },
     {
       "path": "data/components/batteries/generic_6s_lipo_16000mah.json",
-      "bytes_hashed": 1346,
-      "sha256": "d08d09e44201db5ccf4bfaaaef3b033cc1044a02001b0c47eb07694f971171a4",
+      "bytes_hashed": 3821,
+      "sha256": "69f02f172dceed4f46cbfe0a57b0dca53c52ca2a43d89640124ba267d0b50448",
       "hash_semantics": "LF_NORMALIZED_REPOSITORY_TEXT"
     },
     {
       "path": "data/components/controllers/esc_80a_12s.json",
-      "bytes_hashed": 543,
-      "sha256": "6b023f303a93b27a65f6c1e8c8377c414d573863165aef25775e99a41e054873",
+      "bytes_hashed": 1842,
+      "sha256": "e7ea4d45d4b2ee83e397e3703b8e71a5d4fccfda951b02cdf5b7e094509f9df2",
       "hash_semantics": "LF_NORMALIZED_REPOSITORY_TEXT"
     },
     {
       "path": "data/components/controllers/generic_esc_20a.json",
-      "bytes_hashed": 578,
-      "sha256": "51b19fa25dfc9540442b7c8a0e91e86545e03ba6123c3bf08bf46539ea9cec25",
+      "bytes_hashed": 1874,
+      "sha256": "9359cec714698e99bcd47066590a55e16f9f6e177b00c81cefbbd4bd273d2f44",
       "hash_semantics": "LF_NORMALIZED_REPOSITORY_TEXT"
     },
     {
       "path": "data/components/materials.json",
-      "bytes_hashed": 2727,
-      "sha256": "d5619fa3d074fc52d4f306f6b543a8a26bc06d7c690768310b0c9ca8414276de",
+      "bytes_hashed": 10143,
+      "sha256": "95c33073bf2c1445f73f30d901aa2020823130377784b0cb202784ab4059e1af",
       "hash_semantics": "LF_NORMALIZED_REPOSITORY_TEXT"
     },
     {
       "path": "data/components/motors/tmotor_mn3508_kv380.json",
-      "bytes_hashed": 4831,
-      "sha256": "629b579ffb88b6303252da78e5c10f87481dd59b3f5dfa4414e250c236e7600e",
+      "bytes_hashed": 7156,
+      "sha256": "2811696a909a6e903a261211d6304f15b85b55e4b716bbeee2ada3de81093294",
       "hash_semantics": "LF_NORMALIZED_REPOSITORY_TEXT"
     },
     {
       "path": "data/components/motors/tmotor_p80iii_kv100.json",
-      "bytes_hashed": 10420,
-      "sha256": "45b4a17a3d00e6671c06ed824285bc08a4259c3a9969f65c40ea39d662eb5fd8",
+      "bytes_hashed": 12837,
+      "sha256": "55b45f95b0ef7618e15aca7446caa04a2fe43f143368c69e8b633cd5a8b5b4bb",
       "hash_semantics": "LF_NORMALIZED_REPOSITORY_TEXT"
     },
     {
       "path": "data/components/propellers/tmotor_g30x105_cf.json",
-      "bytes_hashed": 783,
-      "sha256": "0bccce248cdf273b29bf659052852912fc498946f1c7b6467f2a175c6e12a5ef",
+      "bytes_hashed": 2078,
+      "sha256": "9592ec9382a3b447c336d53ba06f5d252d0a52b73431cdd837445e0d4f58b937",
       "hash_semantics": "LF_NORMALIZED_REPOSITORY_TEXT"
     },
     {
       "path": "data/components/propellers/tmotor_p15x5_cf.json",
-      "bytes_hashed": 736,
-      "sha256": "11856fc04b56f5fc9db82a65de84b842c55a2d350f7f5e28b1472934dcc72a46",
+      "bytes_hashed": 1977,
+      "sha256": "47c78744e79c1c68df5ed9eb0fe405a590634739850290b372c3b97e581b7db7",
+      "hash_semantics": "LF_NORMALIZED_REPOSITORY_TEXT"
+    },
+    {
+      "path": "data/components/sensors/icm42688p_imu.json",
+      "bytes_hashed": 3107,
+      "sha256": "abfbf8abe896a5f6581222881915ec9db8982a3a60d5fc6959f9e5e0b21d7b6f",
+      "hash_semantics": "LF_NORMALIZED_REPOSITORY_TEXT"
+    },
+    {
+      "path": "data/components/wiring/silicone_awg12_bus.json",
+      "bytes_hashed": 2979,
+      "sha256": "29ae86adf8abcf25b112d2d4cda9e8c766fe8af6c2871e4561fb497ddaa5db54",
       "hash_semantics": "LF_NORMALIZED_REPOSITORY_TEXT"
     },
     {
@@ -7559,8 +8032,8 @@
     },
     {
       "path": "data/research/registry.json",
-      "bytes_hashed": 105475,
-      "sha256": "1c044c7e489546698f4c492fc2368b29620d3ce9d1ac1e7bc8b6ea3766dca724",
+      "bytes_hashed": 113381,
+      "sha256": "742dbce5363116265c0de78d77dd215b82c39cfefedf2bc43ad71ee9491df0a0",
       "hash_semantics": "LF_NORMALIZED_REPOSITORY_TEXT"
     },
     {

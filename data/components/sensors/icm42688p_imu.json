@@ -1,0 +1,91 @@
+{
+  "schema_version": "0.1",
+  "id": "icm42688p_imu",
+  "name": "TDK InvenSense ICM-42688-P 6-Axis MEMS IMU",
+  "sensor_kind": "imu",
+  "physical_identity": {
+    "manufacturer": "TDK InvenSense",
+    "part_number": "ICM-42688-P",
+    "package": "LGA-14_2.5x3.0mm",
+    "axes": "3-axis_gyro_3-axis_accel"
+  },
+  "units": {
+    "sample_rate_hz": "Hz",
+    "latency_s": "s",
+    "noise_density": "rad/s/sqrt(Hz)",
+    "bias_instability": "rad/s",
+    "mass_kg": "kg",
+    "min_voltage_v": "V",
+    "max_voltage_v": "V",
+    "min_temp_c": "degC",
+    "max_temp_c": "degC"
+  },
+  "sample_rate_hz": 1000.0,
+  "latency_s": 0.001,
+  "noise_density": 4.89e-05,
+  "bias_instability": 1.45e-05,
+  "mass_kg": 0.002,
+  "operating_limits": {
+    "min_voltage_v": 1.71,
+    "max_voltage_v": 3.6,
+    "min_temp_c": -40.0,
+    "max_temp_c": 85.0,
+    "sample_rate_hz": 1000.0,
+    "max_gyro_rad_s": 34.9066,
+    "max_accel_m_s2": 156.9064
+  },
+  "source": {
+    "source": "TDK InvenSense ICM-42688-P Datasheet DS-000347 (gyro rate noise 0.0028 dps/sqrt(Hz), VDD 1.71-3.6 V, -40..+85 C); carrier PCB mass & board latency estimated",
+    "url": "https://invensense.tdk.com/products/motion-tracking/6-axis/icm-42688-p/",
+    "report_id": "DS-000347",
+    "evidence_id": "tdk_icm42688p_ds000347",
+    "retrieved": "2026-11-26",
+    "uncertainty_pct": 10.0,
+    "estimated": true,
+    "status": "UNVERIFIED_ESTIMATE",
+    "notes": "IC noise/electrical/thermal limits are from DS-000347; carrier board mass (2 g) and flight-controller SPI transport latency (1 ms) are UNVERIFIED_ESTIMATE until measured on target hardware."
+  },
+  "parameter_provenance": {
+    "sample_rate_hz": {
+      "unit": "Hz",
+      "source": "TDK DS-000347 ODR table (1 kHz configured rate within 32 kHz max)",
+      "uncertainty_pct": 1.0,
+      "estimated": false,
+      "status": "SOURCED",
+      "evidence_id": "tdk_icm42688p_ds000347"
+    },
+    "latency_s": {
+      "unit": "s",
+      "source": "Assumed flight-controller SPI + anti-alias filter transport delay",
+      "uncertainty_pct": 25.0,
+      "estimated": true,
+      "status": "UNVERIFIED_ESTIMATE",
+      "evidence_id": "tdk_icm42688p_ds000347"
+    },
+    "noise_density": {
+      "unit": "rad/s/sqrt(Hz)",
+      "source": "TDK DS-000347 gyro noise density 0.0028 dps/sqrt(Hz) = 4.89e-5 rad/s/sqrt(Hz)",
+      "uncertainty_pct": 15.0,
+      "estimated": true,
+      "status": "UNVERIFIED_ESTIMATE",
+      "evidence_id": "tdk_icm42688p_ds000347",
+      "notes": "Assumed 15% unit-to-unit and temperature-band margin over typical datasheet value."
+    },
+    "bias_instability": {
+      "unit": "rad/s",
+      "source": "Assumed Allan-variance floor from typical MEMS class (~3 deg/hr)",
+      "uncertainty_pct": 30.0,
+      "estimated": true,
+      "status": "UNVERIFIED_ESTIMATE",
+      "evidence_id": "tdk_icm42688p_ds000347"
+    },
+    "mass_kg": {
+      "unit": "kg",
+      "source": "Typical breakout/carrier board mass estimate",
+      "uncertainty_pct": 25.0,
+      "estimated": true,
+      "status": "UNVERIFIED_ESTIMATE",
+      "evidence_id": "tdk_icm42688p_ds000347"
+    }
+  }
+}
