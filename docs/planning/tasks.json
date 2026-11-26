@@ -1138,13 +1138,16 @@
         "P0A-014"
       ],
       "actor": "builder",
-      "status": "todo",
+      "status": "done",
       "acceptance": "A normal geometry/component/environment/mission edit changes the applicable simulated response; one double-precision integrator drives playback; pause/step/run/cancel/failure states and model limits are visible end to end.",
       "proof_file": "docs/acceptance/P0A-023.md",
       "planned_tests": [
         "tests/acceptance/test_p0a_023.py"
       ],
-      "completion_evidence": [],
+      "completion_evidence": [
+        "docs/acceptance/P0A-023.md",
+        "tests/acceptance/test_p0a_023.py"
+      ],
       "gate": null,
       "language": [
         "GDScript",
@@ -1182,13 +1185,16 @@
         "P0A-023"
       ],
       "actor": "builder",
-      "status": "todo",
+      "status": "done",
       "acceptance": "UI compares frozen runs and source measurements with units, frames, source/model hashes, operating envelope, exclusions and uncertainty; exported results distinguish calculated, measured and synthetic channels.",
       "proof_file": "docs/acceptance/P0A-024.md",
       "planned_tests": [
         "tests/acceptance/test_p0a_024.py"
       ],
-      "completion_evidence": [],
+      "completion_evidence": [
+        "docs/acceptance/P0A-024.md",
+        "tests/acceptance/test_p0a_024.py"
+      ],
       "gate": null,
       "language": [
         "GDScript",
@@ -1224,13 +1230,16 @@
         "P0A-023"
       ],
       "actor": "builder",
-      "status": "todo",
+      "status": "done",
       "acceptance": "Requested/effective timestep, backend, solver rates, numerical error and runtime budgets are recorded; interactive/offline runs of the same supported case agree within declared tolerance; cancellation and resource refusal preserve projects.",
       "proof_file": "docs/acceptance/P0A-025.md",
       "planned_tests": [
         "tests/acceptance/test_p0a_025.py"
       ],
-      "completion_evidence": [],
+      "completion_evidence": [
+        "docs/acceptance/P0A-025.md",
+        "tests/acceptance/test_p0a_025.py"
+      ],
       "gate": null,
       "language": [
         "GDScript",
@@ -1267,13 +1276,16 @@
         "P0A-016"
       ],
       "actor": "builder",
-      "status": "todo",
+      "status": "done",
       "acceptance": "Freeze model/controller/geometry versions, channels, instrument/clock uncertainties, calibration groups, held-out whole experiments, stopping rules and M21\u2013M27 tolerances before confirmatory reveal; qualified review is required for acceptance.",
       "proof_file": "docs/acceptance/P0A-026.md",
       "planned_tests": [
         "tests/acceptance/test_p0a_026.py"
       ],
-      "completion_evidence": [],
+      "completion_evidence": [
+        "docs/acceptance/P0A-026.md",
+        "tests/acceptance/test_p0a_026.py"
+      ],
       "gate": null,
       "language": [
         "Python"

@@ -74,6 +74,13 @@ var ground_fields: Dictionary = {}
 var ground_rain_check: CheckButton
 var mission_dialog: AcceptDialog
 var mission_fields: Dictionary = {}
+var twin_dialog: AcceptDialog
+var twin_report_label: Label
+var fidelity_dialog: AcceptDialog
+var fidelity_report_label: Label
+var protocol_dialog: AcceptDialog
+var protocol_report_label: Label
+var playback_state: String = "IDLE"
 var world_env: WorldEnvironment
 var ground_props: Node3D
 var key_light: DirectionalLight3D
@@ -165,6 +172,10 @@ func _build_interface() -> void:
 	_add_button(toolbar, "Check clearance", _run_clearance_check)
 	_add_button(toolbar, "Test ground", _open_test_ground_dialog)
 	_add_button(toolbar, "Mission / Seeds", _open_mission_dialog)
+	_add_button(toolbar, "Run authoritative", _run_authoritative_sim)
+	_add_button(toolbar, "Twin % / Compare", _open_twin_dialog)
+	_add_button(toolbar, "Fidelity / Budgets", _open_fidelity_dialog)
+	_add_button(toolbar, "Protocols", _open_protocol_catalog)
 	_add_button(toolbar, "Run applied-torque experiment", _run_cad_torque)
 	_add_button(toolbar, "Worker limits", _open_limits)
 	cad_material_select = OptionButton.new()
@@ -252,7 +263,8 @@ func _build_interface() -> void:
 	world.add_child(ground_props)
 	var replay: HBoxContainer = HBoxContainer.new()
 	layout.add_child(replay)
-	_add_button(replay, "Play / pause", func(): playing = not playing)
+	_add_button(replay, "Play / pause", _toggle_play_pause)
+	_add_button(replay, "Step +dt", _step_replay)
 	timeline = HSlider.new()
 	timeline.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	timeline.step = 0.001
@@ -456,6 +468,27 @@ func _build_interface() -> void:
 	mission_fields["seed"] = _numeric_field(m_form, "Experiment seed", 0, 1000000, 1, 42)
 	mission_dialog.confirmed.connect(_run_authored_mission)
 	add_child(mission_dialog)
+	twin_dialog = AcceptDialog.new()
+	twin_dialog.title = "Dual Digital-Twin % & Telemetry Comparison"
+	twin_report_label = Label.new()
+	twin_report_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	twin_report_label.custom_minimum_size = Vector2(540, 220)
+	twin_dialog.add_child(twin_report_label)
+	add_child(twin_dialog)
+	fidelity_dialog = AcceptDialog.new()
+	fidelity_dialog.title = "Numerical Fidelity & Execution Budgets"
+	fidelity_report_label = Label.new()
+	fidelity_report_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	fidelity_report_label.custom_minimum_size = Vector2(540, 220)
+	fidelity_dialog.add_child(fidelity_report_label)
+	add_child(fidelity_dialog)
+	protocol_dialog = AcceptDialog.new()
+	protocol_dialog.title = "Frozen Validation Protocols (M20 / P0A-026)"
+	protocol_report_label = Label.new()
+	protocol_report_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	protocol_report_label.custom_minimum_size = Vector2(560, 220)
+	protocol_dialog.add_child(protocol_report_label)
+	add_child(protocol_dialog)
 	_update_camera()
 
 
@@ -800,6 +833,100 @@ func _run_authored_mission() -> void:
 	}
 	var payload_str: String = '{"project":%s,"mission":%s}' % [doc_text, JSON.stringify(mission_spec, "", true, true)]
 	_start_job("author-mission", _write_json_text(payload_str))
+
+
+func _toggle_play_pause() -> void:
+	playing = not playing
+	playback_state = "RUNNING" if playing else "PAUSED"
+	status_label.text = "Playback %s at %.3f s" % [playback_state, replay_time]
+
+
+func _step_replay() -> void:
+	playing = false
+	playback_state = "PAUSED"
+	var telemetry: Variant = result.get("result", {}).get("telemetry")
+	var dt_step: float = 0.004
+	if result.get("execution_fidelity") is Dictionary:
+		dt_step = float(result["execution_fidelity"].get("effective_dt_s", 0.004))
+	elif telemetry is Dictionary and telemetry.get("t", []).size() >= 2:
+		dt_step = maxf(0.001, float(telemetry["t"][1]) - float(telemetry["t"][0]))
+	var target_t: float = minf(replay_time + dt_step, timeline.max_value)
+	timeline.set_value_no_signal(target_t)
+	_seek(target_t)
+	status_label.text = "Stepped +%0.4f s -> t=%.4f s (%s)" % [dt_step, replay_time, playback_state]
+
+
+func _run_authoritative_sim() -> void:
+	if job_pid > 0 or project.is_empty():
+		return
+	var doc_text: String = _frozen_project_json()
+	if doc_text.is_empty():
+		return
+	playback_state = "RUNNING"
+	_start_job("simulate", _write_json_text('{"project":%s}' % doc_text))
+
+
+func _open_twin_dialog() -> void:
+	if result.is_empty():
+		twin_report_label.text = "No simulation run recorded yet.\nRun an authoritative simulation first to inspect Dual Digital-Twin percentages."
+	else:
+		var twin: Dictionary = result.get("dual_digital_twin", {})
+		var pass_prob: Variant = twin.get("design_pass_fail_probability_pct")
+		var phys_match: Variant = twin.get("physical_evidence_match_pct")
+		twin_report_label.text = (
+			"Design Pass/Fail Probability: %s (%s)\n" +
+			"Physical Evidence Match: %s (%s)\n" +
+			"Project SHA-256: %s\n" +
+			"Model Env SHA-256: %s\n" +
+			"Unverified parameters: %s\n" +
+			"Missing evidence note: %s"
+		) % [
+			("%.2f%%" % float(pass_prob)) if pass_prob != null else "INCONCLUSIVE",
+			str(twin.get("design_verdict", "UNVERIFIED_ESTIMATE")),
+			("%.2f%%" % float(phys_match)) if phys_match != null else "UNVALIDATED",
+			str(twin.get("physical_validation_status", "UNVALIDATED")),
+			str(result.get("project_sha256", "")).left(16),
+			str(result.get("model_environment", {}).get("sha256", "")).left(16),
+			str(twin.get("unverified_parameters", [])),
+			str(twin.get("missing_physical_evidence_reason", "None")),
+		]
+	twin_dialog.popup_centered(Vector2i(580, 280))
+
+
+func _open_fidelity_dialog() -> void:
+	var fid: Variant = result.get("execution_fidelity") if not result.is_empty() else null
+	if not (fid is Dictionary) or fid.is_empty():
+		fidelity_report_label.text = "No recorded execution fidelity block in current result.\nUse 'Run authoritative' to record timestep, integrator, error estimate, and runtime budgets."
+	else:
+		fidelity_report_label.text = (
+			"Backend: %s (%s)\n" +
+			"Timestep requested vs effective: %s s vs %s s (%d steps / %d budget)\n" +
+			"Solver rate: %s Hz\n" +
+			"Numerical error estimate (RK4): %s\n" +
+			"Quaternion max norm drift: %s\n" +
+			"Wall elapsed vs budget: %s s / %s s (within_limit=%s)"
+		) % [
+			str(fid.get("backend_id")),
+			str(fid.get("integrator")),
+			str(fid.get("requested_dt_s")),
+			str(fid.get("effective_dt_s")),
+			int(fid.get("step_count", 0)),
+			int(fid.get("step_budget", 0)),
+			str(fid.get("solver_rate_hz")),
+			str(fid.get("numerical_error_estimate")),
+			str(fid.get("quaternion_max_norm_drift")),
+			str(fid.get("wall_elapsed_s")),
+			str(fid.get("wall_budget_s")),
+			str(fid.get("budget_within_limit")),
+		]
+	fidelity_dialog.popup_centered(Vector2i(580, 260))
+
+
+func _open_protocol_catalog() -> void:
+	if job_pid > 0:
+		return
+	var catalog_path: String = repository_root().path_join("data/research/frozen_protocols.json")
+	_start_job("register-protocol", _write_payload({"catalog_path": catalog_path}))
 
 
 func _run_cad_torque() -> void:
@@ -1438,7 +1565,7 @@ func _start_job(action: String, input_path: String, output_path: String = "") ->
 		arguments = [
 			repository_root().path_join("scripts/lab_project.py"), cli_action, input_path, job_output,
 			"--error-output", job_error, "--completion-output", job_completion]
-		job_asset_root = project_asset_root if (action in ["package", "save-version", "edit-transform", "author-ground", "author-mission", "run-mission"]) else input_path.get_base_dir()
+		job_asset_root = project_asset_root if (action in ["package", "save-version", "edit-transform", "author-ground", "author-mission", "run-mission", "simulate"]) else input_path.get_base_dir()
 		if action in ["validate", "package", "save-version", "edit-transform"]:
 			arguments.append_array(["--asset-root", job_asset_root])
 		if action == "recover" and not current_project_path.is_empty():
@@ -1468,6 +1595,7 @@ func _cancel_job() -> void:
 			else:
 				OS.kill(job_pid)
 		job_pid = -1
+		playback_state = "CANCELLED"
 		status_label.text = "Job cancelled. The current project is available."
 
 
@@ -1523,10 +1651,20 @@ func _process(delta: float) -> void:
 				result = output
 				status_label.text = "Mission completed (seed %s, sha %s) · physical validation pending." % [
 					str(output.get("seed")), str(output.get("mission_sha256", "")).left(12)]
-			elif job_action == "run" or job_action == "cad-torque":
+			elif job_action == "register-protocol":
+				var prots: Array = output.get("protocols", [])
+				var lines: Array = []
+				for pr in prots:
+					lines.append("%s · sha=%s · status=%s" % [str(pr.get("protocol_id")), str(pr.get("frozen_protocol_sha256", "")).left(12), str(pr.get("audit_status"))])
+				protocol_report_label.text = "\n".join(lines) if not lines.is_empty() else "No protocols registered."
+				protocol_dialog.popup_centered(Vector2i(620, 260))
+				status_label.text = "Loaded %d frozen validation protocol(s)." % prots.size()
+			elif job_action == "run" or job_action == "cad-torque" or job_action == "simulate":
 				result = output
 				replay_time = 0.0
 				playing = false
+				var run_status: String = str(result.get("result", {}).get("status", "failed"))
+				playback_state = "FAILED" if run_status == "failed" else "COMPLETED"
 				timeline.set_value_no_signal(0.0)
 				if job_action == "cad-torque":
 					_show_cad_properties(output["mass_properties"])
@@ -1534,10 +1672,11 @@ func _process(delta: float) -> void:
 				if telemetry is Dictionary and telemetry.get("t", []).size() > 0:
 					timeline.max_value = float(telemetry["t"][-1])
 					_seek(0)
-					status_label.text = "Experiment %s · %.2f seconds · physical validation pending" % [
-					result.get("result", {}).get("status", "failed"),
+					status_label.text = "Experiment %s (%s) · %.2f seconds · physical validation pending" % [
+					run_status, playback_state,
 					(Time.get_ticks_msec() - job_started_ms) / 1000.0]
 				else:
+					playback_state = "FAILED"
 					status_label.text = "Inconclusive: " + str(result.get("result", {}).get("reason", "No trajectory returned"))
 			else:
 				var next_project: Dictionary

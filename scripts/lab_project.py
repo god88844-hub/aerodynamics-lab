@@ -23,9 +23,12 @@ from desktop_worker.project_workflow import (  # noqa: E402
     save_and_version_project,
     write_recovery_snapshot,
 )
+from desktop_worker.twin_comparison import compare_frozen_run_and_source, export_labeled_comparison  # noqa: E402
 from physics.dynamics.assembly_layout import build_multirotor_layout_and_bom  # noqa: E402
 from physics.propulsion.loader import ComponentLibrary  # noqa: E402
+from physics.scenarios.desktop_runner import run_authoritative_desktop_simulation  # noqa: E402
 from physics.scenarios.mission_authoring import author_mission, run_authored_mission  # noqa: E402
+from physics.validation.protocol_registry import load_frozen_protocol_catalog, register_validation_protocol  # noqa: E402
 
 
 def main() -> int:
@@ -44,6 +47,9 @@ def main() -> int:
             "author-ground",
             "author-mission",
             "run-mission",
+            "simulate",
+            "compare-source",
+            "register-protocol",
             "run",
         ),
     )
@@ -103,6 +109,39 @@ def main() -> int:
                 mass_kg=float(spec.get("mass_kg", 1.5)) if isinstance(spec, dict) else 1.5,
                 render_fps_hint=float(spec.get("render_fps_hint", 60.0)) if isinstance(spec, dict) else 60.0,
             )
+            write_result(args.output, payload)
+        elif args.command == "simulate":
+            spec = json.loads(args.input.read_text(encoding="utf-8"))
+            proj_obj = spec["project"] if isinstance(spec, dict) and "project" in spec else spec
+            dt_val = spec.get("dt_s") if isinstance(spec, dict) else None
+            payload = run_authoritative_desktop_simulation(
+                proj_obj,
+                dt_s=float(dt_val) if dt_val is not None else None,
+            )
+            write_result(args.output, payload)
+        elif args.command == "compare-source":
+            spec = json.loads(args.input.read_text(encoding="utf-8"))
+            payload = compare_frozen_run_and_source(
+                spec["frozen_run"],
+                spec["source_record"],
+                channel=str(spec.get("channel", "z")),
+                unit=str(spec.get("unit", "m")),
+                tolerance_abs=float(spec.get("tolerance_abs", 0.25)),
+            )
+            if spec.get("export_csv_path"):
+                csv_out = Path(spec["export_csv_path"])
+                payload["exported"] = export_labeled_comparison(payload, args.output, csv_out)
+            write_result(args.output, payload)
+        elif args.command == "register-protocol":
+            spec = json.loads(args.input.read_text(encoding="utf-8"))
+            if spec.get("catalog_path"):
+                payload = load_frozen_protocol_catalog(Path(spec["catalog_path"]))
+            else:
+                payload = register_validation_protocol(
+                    spec["protocol"],
+                    tolerance_bindings=spec.get("tolerance_bindings", {}),
+                    frozen_sha256=spec.get("frozen_sha256"),
+                )
             write_result(args.output, payload)
         elif args.command == "import-legacy":
             raw = json.loads(args.input.read_text(encoding="utf-8"))

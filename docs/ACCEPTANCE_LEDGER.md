@@ -82,6 +82,10 @@ Each remains **OPEN**. “Measured comparison” below describes source-specific
 17. P0A-020: geometry clearance, datum transforms, LOD-independence, and native C++ clearance checks verified. DEVELOPMENT software verification only. Proof: [P0A-020](acceptance/P0A-020.md).
 18. P0A-021: repeatable engineering test-ground authoring, atmospheric/contact mechanism refusal, and display-only PBR pad/obstacle visual separation verified. DEVELOPMENT software verification only. Proof: [P0A-021](acceptance/P0A-021.md).
 19. P0A-022: fixed-clock deterministic mission authoring, sensor latency/noise serialization, and seed replay invariance verified. DEVELOPMENT software verification only. Proof: [P0A-022](acceptance/P0A-022.md).
-20. P0A-023: next builder task (`reference dynamics, propulsion, battery, ESC, motor and fault model integration into desktop`).
+20. P0A-023: authoritative double-precision RK4 desktop simulation, edit->response causality, propulsion/voltage limit FAIL gating, and playback state machine verified. DEVELOPMENT software verification only. Proof: [P0A-023](acceptance/P0A-023.md).
+21. P0A-024: frozen run vs source comparison, calculated/measured/interpolated CSV/JSON export, and Dual Digital-Twin percentages verified. DEVELOPMENT software verification only. Proof: [P0A-024](acceptance/P0A-024.md).
+22. P0A-025: numerical fidelity metrics, interactive-vs-offline solver agreement, and bounded execution budget refusal verified. DEVELOPMENT software verification only. Proof: [P0A-025](acceptance/P0A-025.md).
+23. P0A-026: fail-closed component and multirotor frozen validation protocol registration with M21–M27 tolerance bindings verified. DEVELOPMENT software verification only. Proof: [P0A-026](acceptance/P0A-026.md).
+24. P0A-034 / P0A-036: next ready software builder tasks.
 
 The master plan contains 150 unique numbered tasks (118 Phase 0, 32 future), with separate software/physical exits. All 12 broad Phase 0 package issues and ten legacy major acceptance families remain open. Documentation/qualification alone does not close them. Phases 1–4 stay contracts/registries only until their entry gates. All local development uses [WORKSPACE](WORKSPACE.md).
