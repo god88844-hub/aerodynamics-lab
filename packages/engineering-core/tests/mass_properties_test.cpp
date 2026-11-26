@@ -1,4 +1,5 @@
 #include "lab/mass_properties.hpp"
+#include "lab/flight_rk4.hpp"
 
 #include <array>
 #include <cmath>
@@ -50,5 +51,33 @@ int main() {
     }
 
     std::cout << "Engineering mass-property and clearance checks passed\n";
+
+    // Tier-0 / Mobile C++20 6-DoF RK4 verification: stationary hover, wind drag shift, propulsion abort
+    lab::MultirotorSimConfig hover_cfg;
+    hover_cfg.mass_kg = 2.0;
+    hover_cfg.max_total_thrust_n = 72.0;
+    hover_cfg.initial_altitude_m = 2.0;
+    hover_cfg.target_altitude_m = 2.0;
+    hover_cfg.duration_s = 0.2;
+    const auto hover_res = lab::run_multirotor_rk4(hover_cfg);
+    if (!hover_res.ok || hover_res.aborted || std::abs(hover_res.final_position_m[2] - 2.0) > 1e-9) {
+        std::cerr << "C++20 RK4 stationary hover drifted beyond 1e-9 m\n";
+        return 7;
+    }
+    lab::MultirotorSimConfig wind_cfg = hover_cfg;
+    wind_cfg.wind_world_m_s = {5.0, 0.0, 0.0};
+    const auto wind_res = lab::run_multirotor_rk4(wind_cfg);
+    if (wind_res.final_position_m[0] <= 0.0) {
+        std::cerr << "C++20 RK4 wind drag did not shift X position\n";
+        return 8;
+    }
+    lab::MultirotorSimConfig over_cfg = hover_cfg;
+    over_cfg.target_altitude_m = 50.0;
+    const auto over_res = lab::run_multirotor_rk4(over_cfg);
+    if (!over_res.aborted) {
+        std::cerr << "C++20 RK4 over-thrust demand failed to abort cleanly\n";
+        return 9;
+    }
+    std::cout << "C++20 6-DoF RK4 multirotor kernel checks passed\n";
     return 0;
 }

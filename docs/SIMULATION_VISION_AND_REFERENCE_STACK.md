@@ -35,16 +35,16 @@ To express virtual-vs-physical reliability clearly in percentages **without mask
 
 ---
 
-## 3. High-End 3D Look & Rendering Architecture (Godot 4.7 Dual-Profile)
+## 3. High-End 3D Look & Cross-Device Graphics Scaling (PC, Integrated Laptops, & Phones)
 
-High visual fidelity comes from **physically based rendering (PBR), calibrated HDRI lighting, shader craftsmanship, and GPU acceleration**—without sacrificing baseline laptop usability or CI portability:
+Like a modern 3D game paired with an engineering kernel (**Shapr3D / Open CASCADE CAD Assistant + Godot 4.7**), Aerodynamics Lab renders cleanly on **flagship GPU laptops, student integrated-GPU laptops, AND mobile phones** from one shared codebase by scaling graphics while locking double-precision physics:
 
-| Capability | Tier 2 / Dedicated-GPU Profile (`Forward+` Vulkan) | Tier 1 / Baseline Laptop & Headless CI (`gl_compatibility`) |
-| --- | --- | --- |
-| **Rendering Backend** | Godot 4.7 `Forward+` (Vulkan) | Godot 4.7 `gl_compatibility` (OpenGL/ANGLE; used by `ubuntu-latest` CI `xvfb-run`) |
-| **Materials & CAD Clarity** | PBR metal/roughness/clearcoat presets (machined Al 6061-T6, woven CFRP, PA12, anodized aluminum) + Fusion 360-style clean silhouette/edge & selection highlights | Clean PBR/Lambertian presets + deterministic selection/gizmo clarity |
-| **Lighting & Environment** | Studio & outdoor HDRI maps, directional sun + contact shadows, SDFGI / reflection probes, subtle bloom & ACES tone mapping | Fast directional + ambient hemisphere lighting, optional shadows off |
-| **Physics / CAD Separation** | **Strict separation:** Exact Open CASCADE B-rep solids compute mass/inertia; procedural ImporterMesh LODs & shaders are display-only and never alter engineering inputs (`docs/HARDWARE_AND_FIDELITY.md`) | Same exact Open CASCADE solids and double-precision physics; adaptive coarser display tessellation only |
+| Capability | Tier 0: Phone / Tablet (`Mobile / Low`) | Tier 1: Integrated Laptop (`Compatibility / Med`) | Tier 2: Dedicated GPU (`Forward+ High / Ultra`) |
+| --- | --- | --- | --- |
+| **Rendering Backend & Resolution** | Godot `Mobile` / `gl_compatibility`, `0.75x` 3D scale, MSAA off | Godot `gl_compatibility`, `1.0x` scale, `2x` MSAA | Godot `Forward+` Vulkan, `1.0x` scale, `2x`/`4x` MSAA |
+| **Materials & Lighting** | Clean tile-friendly directional PBR, shadow/bloom/SSAO off, touch orbit & pinch-zoom | Ambient + dual directional PBR, crisp selection highlights | Studio/Outdoor `ProceduralSkyMaterial` HDRI lighting, ACES tone mapping, SSAO, bloom, shadows |
+| **Compute Kernel** | Pure **C++20 GDExtension** (`packages/engineering-core/` + ARM64 OCCT roadmap, zero Python subprocess) | C++20 GDExtension + bounded local Python/OCCT worker (`1` job at a time) | Full local C++20 + Open CASCADE + multi-worker CFD/FEA/synthetic sensors |
+| **Physics / CAD Separation** | **Strict separation:** Exact geometry/math never scales down when visual quality drops to Low/Mobile | Identical double-precision RK4/mass/clearance equations | Identical equations; display LODs & shaders are purely cosmetic |
 
 **Why Godot 4.7 instead of bundling Unreal Engine 5:** Full Unreal Engine or Omniverse/Isaac Sim runtimes add multi-GB dependencies, heavy RTX GPU floors, and break lightweight offline distribution and headless Linux CI. Godot 4.7 gives us native `Forward+` PBR visuals on GPU laptops *plus* `gl_compatibility` portability on 8 GB laptops and CI, all in one standalone Windows executable.
 
