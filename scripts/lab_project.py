@@ -1,4 +1,4 @@
-"""Import, create, validate, package, version, recover or simulate an Aerodynamics Lab project."""
+"""Import, create, validate, package, version, recover, author, or simulate an Aerodynamics Lab project."""
 
 import argparse
 from hashlib import sha256
@@ -12,6 +12,7 @@ sys.path[:0] = [str(ROOT / "apps/api"), str(ROOT / "packages"), str(ROOT / "pack
 from aeroforge_schemas.project import EngineeringProject, import_legacy_project  # noqa: E402
 from app.services.project_assets import copy_assets  # noqa: E402
 from app.services.project_service import run_project  # noqa: E402
+from desktop_worker.environment_authoring import author_test_ground  # noqa: E402
 from desktop_worker.io import write_result, write_started  # noqa: E402
 from desktop_worker.project_workflow import (  # noqa: E402
     ProjectWorkflowError,
@@ -22,13 +23,29 @@ from desktop_worker.project_workflow import (  # noqa: E402
     save_and_version_project,
     write_recovery_snapshot,
 )
+from physics.dynamics.assembly_layout import build_multirotor_layout_and_bom  # noqa: E402
+from physics.propulsion.loader import ComponentLibrary  # noqa: E402
+from physics.scenarios.mission_authoring import author_mission, run_authored_mission  # noqa: E402
 
 
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument(
         "command",
-        choices=("import-legacy", "create", "validate", "package", "save-version", "list-versions", "recover", "run"),
+        choices=(
+            "import-legacy",
+            "create",
+            "validate",
+            "package",
+            "save-version",
+            "list-versions",
+            "recover",
+            "layout-bom",
+            "author-ground",
+            "author-mission",
+            "run-mission",
+            "run",
+        ),
     )
     parser.add_argument("input", type=Path)
     parser.add_argument("output", type=Path)
@@ -63,6 +80,30 @@ def main() -> int:
         elif args.command == "recover":
             payload = recover_last_valid_project(args.input, restore_to=args.restore_to)
             write_result(args.output, payload)
+        elif args.command == "layout-bom":
+            spec = json.loads(args.input.read_text(encoding="utf-8"))
+            library = ComponentLibrary(ROOT / "data" / "components")
+            payload = build_multirotor_layout_and_bom(spec, library)
+            write_result(args.output, payload)
+        elif args.command == "author-ground":
+            spec = json.loads(args.input.read_text(encoding="utf-8"))
+            project = EngineeringProject.model_validate(spec["project"])
+            updated = author_test_ground(project, spec["test_ground"])
+            write_result(args.output, updated.model_dump(mode="json"))
+        elif args.command == "author-mission":
+            spec = json.loads(args.input.read_text(encoding="utf-8"))
+            project = EngineeringProject.model_validate(spec["project"])
+            updated = author_mission(project, spec["mission"])
+            write_result(args.output, updated.model_dump(mode="json"))
+        elif args.command == "run-mission":
+            spec = json.loads(args.input.read_text(encoding="utf-8"))
+            project = EngineeringProject.model_validate(spec["project"] if "project" in spec else spec)
+            payload = run_authored_mission(
+                project,
+                mass_kg=float(spec.get("mass_kg", 1.5)) if isinstance(spec, dict) else 1.5,
+                render_fps_hint=float(spec.get("render_fps_hint", 60.0)) if isinstance(spec, dict) else 60.0,
+            )
+            write_result(args.output, payload)
         elif args.command == "import-legacy":
             raw = json.loads(args.input.read_text(encoding="utf-8"))
             project = import_legacy_project(raw)
@@ -83,10 +124,9 @@ def main() -> int:
                 payload = result["project"]
             elif args.command == "run":
                 payload = run_project(project)
+                write_result(args.output, payload)
             else:
                 payload = project.model_dump(mode="json")
-                write_result(args.output, payload)
-            if args.command == "run":
                 write_result(args.output, payload)
         if args.completion_output:
             write_result(args.completion_output, {"output_sha256": sha256(args.output.read_bytes()).hexdigest()})

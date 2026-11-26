@@ -28,6 +28,27 @@ int main() {
         return 3;
     } catch (const std::invalid_argument &) {
     }
-    std::cout << "Engineering mass-property checks passed\n";
+
+    // P0A-020: datum transform and rotor clearance checks
+    const double s = std::sqrt(0.5);
+    const lab::Vector3 rotated = lab::transform_point_wxyz({1.0, 2.0, 3.0}, {s, 0.0, 0.0, s}, {0.5, 0.0, 0.0});
+    if (std::abs(rotated[0] - 1.0) > 1e-12 || std::abs(rotated[1] - 2.5) > 1e-12 || std::abs(rotated[2] - 3.0) > 1e-12) {
+        std::cerr << "Datum transform disagrees with 90 deg yaw analytic point\n";
+        return 4;
+    }
+    const std::array<lab::RotorDisk, 2> clear_rotors = {{{{0.0, 0.0, 0.0}, 0.15}, {{0.35, 0.0, 0.0}, 0.15}}};
+    const auto clear_res = lab::evaluate_rotor_pair_clearance(clear_rotors, 0.02);
+    if (!clear_res.clear || std::abs(clear_res.minimum_tip_clearance_m - 0.05) > 1e-12) {
+        std::cerr << "Clearance check disagrees with expected 0.05 m tip gap\n";
+        return 5;
+    }
+    const std::array<lab::RotorDisk, 2> overlap_rotors = {{{{0.0, 0.0, 0.0}, 0.20}, {{0.30, 0.0, 0.0}, 0.20}}};
+    const auto overlap_res = lab::evaluate_rotor_pair_clearance(overlap_rotors, 0.02);
+    if (overlap_res.clear || std::abs(overlap_res.minimum_tip_clearance_m + 0.10) > 1e-12) {
+        std::cerr << "Overlap clearance check disagrees with expected -0.10 m overlap\n";
+        return 6;
+    }
+
+    std::cout << "Engineering mass-property and clearance checks passed\n";
     return 0;
 }
