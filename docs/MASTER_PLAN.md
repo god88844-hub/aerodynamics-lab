@@ -8,7 +8,7 @@ Tracking: [master issue #127](https://github.com/god88844-hub/aerodynamics-lab/i
 
 ## Next action and execution rules
 
-**P0A-004 is complete** with the owner's actual authorization receipt. Merge/tag requires the three pre-merge checks and five green CI jobs; actual operation receipts are recorded afterward. **P0A-016 component provenance, UNVERIFIED_ESTIMATE surfacing, and fail-closed mass-property checks are complete as DEVELOPMENT. Implementation proceeds to P0A-017.** The next future software task is **P0A-017**.
+**P0A-004 is complete** with the owner's actual authorization receipt. Merge/tag requires the three pre-merge checks and five green CI jobs; actual operation receipts are recorded afterward. **P0A-017 standalone desktop project workflow and dual visual profile complete as DEVELOPMENT. Implementation proceeds to P0A-018.** The next future software task is **P0A-018**.
 
 1. Read `AGENTS.md`, this task's section, the linked fundamentals, `docs/SIMULATION_VISION_AND_REFERENCE_STACK.md` and the acceptance ledger. Use only the canonical local workspace in `WORKSPACE.md`.
 2. When implementation is explicitly resumed, pick the first unchecked builder task in document order whose prerequisites are checked. A pending owner/custodian/reviewer task requires its real receipt; a builder cannot self-approve it or invent data.
@@ -288,19 +288,20 @@ Tasks with several WPs appear in each relevant issue but retain one canonical ID
   - Recorded evidence: [docs/acceptance/P0A-016.md](acceptance/P0A-016.md), [tests/acceptance/test_p0a_016.py](../tests/acceptance/test_p0a_016.py).
 
 <a name="p0a-017"></a>
-- [ ] **P0A-017 — Deliver the standalone desktop project workflow** (WP2; actor: builder)
+- [x] **P0A-017 — Deliver the standalone desktop project workflow** (WP2; actor: builder)
   - Prerequisites: P0A-015. Proof: [docs/acceptance/P0A-017.md](acceptance/P0A-017.md).
   - Acceptance: Normal Godot UI creates/imports/opens/saves/versions/reopens a supported project without an HTTP server; corrupt/missing assets and incompatible versions are handled; recovery preserves the last valid project.
   - Language: GDScript, Python.
   - Target files: `apps/desktop/main.gd`; `apps/desktop/main.tscn`; `scripts/lab_project.py`; `packages/desktop_worker/`; `tests/acceptance/test_p0a_017.py`; `docs/acceptance/P0A-017.md`.
   - Todos:
-    - [ ] 1. Implement the normal Godot UI workflow: create, import, open, save, version and reopen a supported project entirely through the local worker (no HTTP server).
-    - [ ] 2. Handle corrupt/missing assets and incompatible project versions with explicit recovery or refusal paths.
-    - [ ] 3. Preserve project numeric identity through desktop round trips (existing JSON-authoritative tests stay green).
-    - [ ] 4. Add acceptance tests driving the worker contract from the UI entry points.
-    - [ ] 5. Configure the Godot 4.7 Forward+ PBR desktop profile alongside gl_compatibility fallback for Tier 1 laptops and headless Linux CI (see docs/SIMULATION_VISION_AND_REFERENCE_STACK.md).
+    - [x] 1. Implement the normal Godot UI workflow: create, import, open, save, version and reopen a supported project entirely through the local worker (no HTTP server).
+    - [x] 2. Handle corrupt/missing assets and incompatible project versions with explicit recovery or refusal paths.
+    - [x] 3. Preserve project numeric identity through desktop round trips (existing JSON-authoritative tests stay green).
+    - [x] 4. Add acceptance tests driving the worker contract from the UI entry points.
+    - [x] 5. Configure the Godot 4.7 Forward+ PBR desktop profile alongside gl_compatibility fallback for Tier 1 laptops and headless Linux CI (see docs/SIMULATION_VISION_AND_REFERENCE_STACK.md).
   - Verify: `pytest tests/acceptance/test_p0a_017.py -q` | `pytest tests/integration -q`
   - Planned verification: `pytest tests/acceptance/test_p0a_017.py`; required current-head CI.
+  - Recorded evidence: [docs/acceptance/P0A-017.md](acceptance/P0A-017.md), [tests/acceptance/test_p0a_017.py](../tests/acceptance/test_p0a_017.py).
 
 <a name="p0a-018"></a>
 - [ ] **P0A-018 — Build supported multirotor geometry through the 3D editor** (WP2, WP3; actor: builder)
@@ -1282,4 +1283,4 @@ Tasks with several WPs appear in each relevant issue but retain one canonical ID
   - Prerequisites: P4-007. Proof: [docs/acceptance/P4-008.md](acceptance/P4-008.md).
   - Acceptance: Qualified independent review accepts the stated limited uses; source/rights/security, reproducible distributions, compatibility and recovery gates close the phase.
 
-Unique task count: **150**; checked **16**, unchecked **134**. These are planning tasks, not a count of physically validated milestones. All ten legacy major acceptance families and all twelve broad Phase 0 package issues remain open until their own actual exit evidence exists.
+Unique task count: **150**; checked **17**, unchecked **133**. These are planning tasks, not a count of physically validated milestones. All ten legacy major acceptance families and all twelve broad Phase 0 package issues remain open until their own actual exit evidence exists.
