@@ -86,6 +86,10 @@ Each remains **OPEN**. “Measured comparison” below describes source-specific
 21. P0A-024: frozen run vs source comparison, calculated/measured/interpolated CSV/JSON export, and Dual Digital-Twin percentages verified. DEVELOPMENT software verification only. Proof: [P0A-024](acceptance/P0A-024.md).
 22. P0A-025: numerical fidelity metrics, interactive-vs-offline solver agreement, and bounded execution budget refusal verified. DEVELOPMENT software verification only. Proof: [P0A-025](acceptance/P0A-025.md).
 23. P0A-026: fail-closed component and multirotor frozen validation protocol registration with M21–M27 tolerance bindings verified. DEVELOPMENT software verification only. Proof: [P0A-026](acceptance/P0A-026.md).
-24. P0A-034 / P0A-036: next ready software builder tasks.
+24. P0A-034: guided learning workflow, hypothesis/equations/assumptions reference, and bit-identical saved experiment reproduction verified. DEVELOPMENT software verification only. Proof: [P0A-034](acceptance/P0A-034.md).
+25. P0A-035: deterministic bounded parameter sweeps retaining infeasible candidates, constraints, seeds, and explicit Pareto caveats verified. DEVELOPMENT software verification only. Proof: [P0A-035](acceptance/P0A-035.md).
+26. P0A-036: standalone offline Windows package layout, notices, failed-update rollback, and corrupt project recovery verified. DEVELOPMENT software verification only. Proof: [P0A-036](acceptance/P0A-036.md).
+27. P0A-037: regression, security audit invariants, legacy migration, resource budgets, and headless/API compatibility verified. DEVELOPMENT software verification only. Proof: [P0A-037](acceptance/P0A-037.md).
+28. Next Slice 0A gates: `P0A-038` (distinct 8 GB / 16 GB integrated-GPU + Tier 2 hardware measurements), `P0A-039` (Slice 0A software exit), and external custodian/reviewer tracks (`P0A-027`–`P0A-033`, `P0A-040`).
 
 The master plan contains 150 unique numbered tasks (118 Phase 0, 32 future), with separate software/physical exits. All 12 broad Phase 0 package issues and ten legacy major acceptance families remain open. Documentation/qualification alone does not close them. Phases 1–4 stay contracts/registries only until their entry gates. All local development uses [WORKSPACE](WORKSPACE.md).
