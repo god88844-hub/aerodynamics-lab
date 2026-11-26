@@ -25,8 +25,13 @@ from desktop_worker.project_workflow import (  # noqa: E402
     write_recovery_snapshot,
 )
 from desktop_worker.twin_comparison import compare_frozen_run_and_source, export_labeled_comparison  # noqa: E402
+from geometry.fixed_wing_cad import ParametricWingSpec, compute_wing_geometry_properties  # noqa: E402
 from optimization.bounded_sweep import run_bounded_sweep  # noqa: E402
+from physics.aerodynamics.fixed_wing import run_fixed_wing_mission  # noqa: E402
+from physics.aerodynamics.rotorcraft_vtol import run_vtol_transition_corridor  # noqa: E402
+from physics.autonomy.sitl_and_swarms import run_multi_drone_swarm  # noqa: E402
 from physics.dynamics.assembly_layout import build_multirotor_layout_and_bom  # noqa: E402
+from physics.environment.adverse_weather import evaluate_icing_and_shedding, evaluate_rain_wet_effects  # noqa: E402
 from physics.propulsion.loader import ComponentLibrary  # noqa: E402
 from physics.scenarios.desktop_runner import run_authoritative_desktop_simulation  # noqa: E402
 from physics.scenarios.mission_authoring import author_mission, run_authored_mission  # noqa: E402
@@ -54,6 +59,10 @@ def main() -> int:
             "register-protocol",
             "guided-experiment",
             "bounded-sweep",
+            "fixed-wing-sim",
+            "vtol-transition",
+            "adverse-weather",
+            "swarm-sim",
             "run",
         ),
     )
@@ -185,6 +194,52 @@ def main() -> int:
                 material=mat,
                 constraints=spec.get("constraints"),
                 seed=int(spec.get("seed", 42)),
+            )
+            write_result(args.output, payload)
+        elif args.command == "fixed-wing-sim":
+            spec = json.loads(args.input.read_text(encoding="utf-8"))
+            wing = ParametricWingSpec(
+                name=str(spec.get("name", "Fixed-Wing Aircraft")),
+                wingspan_m=float(spec.get("wingspan_m", 1.8)),
+                root_chord_m=float(spec.get("root_chord_m", 0.28)),
+                tip_chord_m=float(spec.get("tip_chord_m", 0.16)),
+                airfoil_code=str(spec.get("airfoil_code", "2412")),
+            )
+            payload = {
+                "geometry": compute_wing_geometry_properties(wing),
+                "mission": run_fixed_wing_mission(
+                    wing,
+                    mass_kg=float(spec.get("mass_kg", 2.2)),
+                    duration_s=float(spec.get("duration_s", 6.0)),
+                ),
+            }
+            write_result(args.output, payload)
+        elif args.command == "vtol-transition":
+            spec = json.loads(args.input.read_text(encoding="utf-8"))
+            payload = run_vtol_transition_corridor(
+                mass_kg=float(spec.get("mass_kg", 3.0)),
+                wing_area_m2=float(spec.get("wing_area_m2", 0.45)),
+                max_rotor_thrust_n=float(spec.get("max_rotor_thrust_n", 45.0)),
+                max_cruise_thrust_n=float(spec.get("max_cruise_thrust_n", 25.0)),
+            )
+            write_result(args.output, payload)
+        elif args.command == "adverse-weather":
+            spec = json.loads(args.input.read_text(encoding="utf-8"))
+            payload = {
+                "rain": evaluate_rain_wet_effects(rain_mm_h=float(spec.get("rain_mm_h", 0.0))),
+                "icing": evaluate_icing_and_shedding(
+                    oat_c=float(spec.get("oat_c", 5.0)),
+                    lwc_g_m3=float(spec.get("lwc_g_m3", 0.0)),
+                    exposure_s=float(spec.get("exposure_s", 0.0)),
+                ),
+            }
+            write_result(args.output, payload)
+        elif args.command == "swarm-sim":
+            spec = json.loads(args.input.read_text(encoding="utf-8"))
+            payload = run_multi_drone_swarm(
+                initial_positions_m=[tuple(float(v) for v in p) for p in spec["initial_positions_m"]],
+                target_positions_m=[tuple(float(v) for v in p) for p in spec["target_positions_m"]],
+                min_separation_m=float(spec.get("min_separation_m", 1.0)),
             )
             write_result(args.output, payload)
         elif args.command == "import-legacy":

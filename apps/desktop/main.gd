@@ -184,6 +184,10 @@ func _build_interface() -> void:
 	_add_button(toolbar, "Protocols", _open_protocol_catalog)
 	_add_button(toolbar, "Learn / Invent", _open_learning_dialog)
 	_add_button(toolbar, "Bounded Sweep", _open_sweep_dialog)
+	_add_button(toolbar, "Fixed-Wing VLM", _run_fixed_wing_vlm)
+	_add_button(toolbar, "VTOL Transition", _run_vtol_transition)
+	_add_button(toolbar, "Adverse Weather", _run_adverse_weather)
+	_add_button(toolbar, "Swarm Sim", _run_swarm_sim)
 	_add_button(toolbar, "Run applied-torque experiment", _run_cad_torque)
 	_add_button(toolbar, "Worker limits", _open_limits)
 	cad_material_select = OptionButton.new()
@@ -995,6 +999,30 @@ func _run_bounded_sweep() -> void:
 	_start_job("bounded-sweep", _write_json_text(payload_str))
 
 
+func _run_fixed_wing_vlm() -> void:
+	if job_pid > 0:
+		return
+	_start_job("fixed-wing-sim", _write_payload({"wingspan_m": 1.8, "root_chord_m": 0.26, "tip_chord_m": 0.16, "mass_kg": 2.2}))
+
+
+func _run_vtol_transition() -> void:
+	if job_pid > 0:
+		return
+	_start_job("vtol-transition", _write_payload({"mass_kg": 3.0, "wing_area_m2": 0.45, "max_rotor_thrust_n": 45.0}))
+
+
+func _run_adverse_weather() -> void:
+	if job_pid > 0:
+		return
+	_start_job("adverse-weather", _write_payload({"rain_mm_h": 15.0, "oat_c": -4.0, "lwc_g_m3": 0.5, "exposure_s": 60.0}))
+
+
+func _run_swarm_sim() -> void:
+	if job_pid > 0:
+		return
+	_start_job("swarm-sim", _write_payload({"initial_positions_m": [[0, 0, 2], [4, 0, 2], [0, 4, 2]], "target_positions_m": [[1, 0, 3], [5, 0, 3], [1, 4, 3]]}))
+
+
 func _run_native_cpp_rk4() -> void:
 	if engineering == null or not engineering.has_method("simulate_rk4"):
 		status_label.text = "Native C++20 simulate_rk4 unavailable; rebuild GDExtension."
@@ -1785,6 +1813,21 @@ func _process(delta: float) -> void:
 			elif job_action == "bounded-sweep":
 				status_label.text = "Bounded sweep %d total (%d feasible, %d failed retained, sha %s) · NOT physical validation." % [
 					int(output.get("total_candidates", 0)), int(output.get("feasible_count", 0)), int(output.get("infeasible_count", 0)), str(output.get("candidates_sha256", "")).left(12)]
+			elif job_action == "fixed-wing-sim":
+				var m: Dictionary = output.get("mission", {})
+				status_label.text = "Fixed-Wing VLM mission %s (verdict=%s, range=%.1f m) · physical validation pending." % [
+					str(m.get("status")), str(m.get("verdict")), float(m.get("range_m", 0.0))]
+			elif job_action == "vtol-transition":
+				status_label.text = "VTOL transition %s (peak temp=%.1f C, verdict=%s) · physical validation pending." % [
+					str(output.get("status")), float(output.get("peak_motor_temp_c", 0.0)), str(output.get("verdict"))]
+			elif job_action == "adverse-weather":
+				var r: Dictionary = output.get("rain", {})
+				var i_res: Dictionary = output.get("icing", {})
+				status_label.text = "Weather: wet CL_max=%.2f (%s), ice=%.4f kg (%s)." % [
+					float(r.get("wet_cl_max", 0.0)), str(r.get("status")), float(i_res.get("accreted_mass_kg", 0.0)), str(i_res.get("verdict", "OK"))]
+			elif job_action == "swarm-sim":
+				status_label.text = "Swarm (%d drones): %s (min sep=%.2f m) · physical validation pending." % [
+					int(output.get("agent_count", 0)), str(output.get("status")), float(output.get("min_observed_separation_m", 0.0))]
 			elif job_action == "run" or job_action == "cad-torque" or job_action == "simulate":
 				result = output
 				replay_time = 0.0
