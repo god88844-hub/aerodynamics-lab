@@ -14,6 +14,7 @@ from app.services.project_assets import copy_assets  # noqa: E402
 from app.services.project_service import run_project  # noqa: E402
 from desktop_worker.environment_authoring import author_test_ground  # noqa: E402
 from desktop_worker.io import write_result, write_started  # noqa: E402
+from desktop_worker.learning_experiments import create_guided_experiment_bundle, save_and_reproduce_experiment  # noqa: E402
 from desktop_worker.project_workflow import (  # noqa: E402
     ProjectWorkflowError,
     create_project_document,
@@ -24,6 +25,7 @@ from desktop_worker.project_workflow import (  # noqa: E402
     write_recovery_snapshot,
 )
 from desktop_worker.twin_comparison import compare_frozen_run_and_source, export_labeled_comparison  # noqa: E402
+from optimization.bounded_sweep import run_bounded_sweep  # noqa: E402
 from physics.dynamics.assembly_layout import build_multirotor_layout_and_bom  # noqa: E402
 from physics.propulsion.loader import ComponentLibrary  # noqa: E402
 from physics.scenarios.desktop_runner import run_authoritative_desktop_simulation  # noqa: E402
@@ -50,6 +52,8 @@ def main() -> int:
             "simulate",
             "compare-source",
             "register-protocol",
+            "guided-experiment",
+            "bounded-sweep",
             "run",
         ),
     )
@@ -142,6 +146,46 @@ def main() -> int:
                     tolerance_bindings=spec.get("tolerance_bindings", {}),
                     frozen_sha256=spec.get("frozen_sha256"),
                 )
+            write_result(args.output, payload)
+        elif args.command == "guided-experiment":
+            spec = json.loads(args.input.read_text(encoding="utf-8"))
+            proj = EngineeringProject.model_validate(spec["project"])
+            bundle = create_guided_experiment_bundle(
+                proj,
+                hypothesis=str(spec.get("hypothesis", "Higher target altitude increases hover climb demand")),
+                target_altitude_m=float(spec.get("target_altitude_m", 3.5)),
+                hover_duration_s=float(spec.get("hover_duration_s", 0.3)),
+                wind_world_m_s=tuple(float(v) for v in spec.get("wind_world_m_s", [0.0, 0.0, 0.0])),
+                seed=int(spec.get("seed", 42)),
+            )
+            if spec.get("save_bundle_path"):
+                bundle["reproduction_check"] = save_and_reproduce_experiment(bundle, Path(spec["save_bundle_path"]))
+            write_result(args.output, bundle)
+        elif args.command == "bounded-sweep":
+            from aeroforge_schemas.design import DroneDesign
+            from physics.structures.materials import load_materials
+
+            spec = json.loads(args.input.read_text(encoding="utf-8"))
+            design_path = ROOT / "data" / "designs" / "quad_mn3508_6s.json"
+            if spec.get("project") and spec["project"].get("vehicle", {}).get("format") == "legacy_multirotor_0.1":
+                design = DroneDesign.model_validate(spec["project"]["vehicle"]["snapshot"])
+            else:
+                design = DroneDesign.model_validate_json(design_path.read_bytes())
+            library = ComponentLibrary(ROOT / "data" / "components")
+            mat_id = spec.get("material_id", "cfrp_quasi_iso")
+            mat = load_materials(ROOT / "data" / "components" / "materials.json").get(mat_id)
+            grid_spec = spec.get(
+                "grid_spec",
+                {"battery_capacity_ah": [10.0, 16.0], "rotor_count": [4], "arm_length_m": [0.25, 0.35], "payload_kg": [0.0, 2.0]},
+            )
+            payload = run_bounded_sweep(
+                design,
+                library,
+                grid_spec,
+                material=mat,
+                constraints=spec.get("constraints"),
+                seed=int(spec.get("seed", 42)),
+            )
             write_result(args.output, payload)
         elif args.command == "import-legacy":
             raw = json.loads(args.input.read_text(encoding="utf-8"))

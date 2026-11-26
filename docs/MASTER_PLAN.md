@@ -533,57 +533,61 @@ Tasks with several WPs appear in each relevant issue but retain one canonical ID
   - Verify: `pytest tests/acceptance/ -q`
 
 <a name="p0a-034"></a>
-- [ ] **P0A-034 — Deliver guided learning and saved invention experiments** (WP10; actor: builder)
+- [x] **P0A-034 — Deliver guided learning and saved invention experiments** (WP10; actor: builder)
   - Prerequisites: P0A-024. Proof: [docs/acceptance/P0A-034.md](acceptance/P0A-034.md).
   - Acceptance: A learner can state a hypothesis, build/modify a supported drone, enter environment conditions, compare runs, inspect equations/assumptions and save a reproducible experiment through the desktop.
   - Language: GDScript, Python.
   - Target files: `apps/desktop/`; `packages/desktop_worker/`; `tests/acceptance/test_p0a_034.py`; `docs/acceptance/P0A-034.md`.
   - Todos:
-    - [ ] 1. Implement the guided learning workflow: state a hypothesis, build/modify a supported drone, enter environment conditions, compare runs, inspect equations/assumptions and save a reproducible experiment — all through the normal UI.
-    - [ ] 2. Bind every saved experiment to the frozen inputs needed for exact replay.
-    - [ ] 3. Add acceptance tests for the save -> reopen -> reproduce identity.
+    - [x] 1. Implement the guided learning workflow: state a hypothesis, build/modify a supported drone, enter environment conditions, compare runs, inspect equations/assumptions and save a reproducible experiment — all through the normal UI.
+    - [x] 2. Bind every saved experiment to the frozen inputs needed for exact replay.
+    - [x] 3. Add acceptance tests for the save -> reopen -> reproduce identity.
   - Verify: `pytest tests/acceptance/test_p0a_034.py -q`
   - Planned verification: `pytest tests/acceptance/test_p0a_034.py`; required current-head CI.
+  - Recorded evidence: [docs/acceptance/P0A-034.md](acceptance/P0A-034.md), [tests/acceptance/test_p0a_034.py](../tests/acceptance/test_p0a_034.py).
 
 <a name="p0a-035"></a>
-- [ ] **P0A-035 — Deliver bounded sweeps and design comparisons** (WP7, WP10; actor: builder)
+- [x] **P0A-035 — Deliver bounded sweeps and design comparisons** (WP7, WP10; actor: builder)
   - Prerequisites: P0A-034. Proof: [docs/acceptance/P0A-035.md](acceptance/P0A-035.md).
   - Acceptance: Supported parameter sweeps/optimization retain constraints, seeds, all infeasible/failed candidates and provenance; a repeat run reproduces the candidate/decision set, with no optimization-as-validation claim.
   - Language: GDScript, Python.
   - Target files: `packages/optimization/`; `apps/desktop/`; `tests/acceptance/test_p0a_035.py`; `docs/acceptance/P0A-035.md`.
   - Todos:
-    - [ ] 1. Expose bounded parameter sweeps and design comparisons through the UI on the supported optimization package: constraints, seeds and all infeasible/failed candidates retained.
-    - [ ] 2. Guarantee a repeat run reproduces the candidate/decision set exactly (seeded, hash-bound).
-    - [ ] 3. Surface optimization-frontier caveats (no invented optimum) in the results view.
-    - [ ] 4. Add acceptance tests for retention, reproduction and constraint handling.
+    - [x] 1. Expose bounded parameter sweeps and design comparisons through the UI on the supported optimization package: constraints, seeds and all infeasible/failed candidates retained.
+    - [x] 2. Guarantee a repeat run reproduces the candidate/decision set exactly (seeded, hash-bound).
+    - [x] 3. Surface optimization-frontier caveats (no invented optimum) in the results view.
+    - [x] 4. Add acceptance tests for retention, reproduction and constraint handling.
   - Verify: `pytest tests/acceptance/test_p0a_035.py -q` | `pytest tests/physics/test_optimization.py -q`
   - Planned verification: `pytest tests/acceptance/test_p0a_035.py`; required current-head CI.
+  - Recorded evidence: [docs/acceptance/P0A-035.md](acceptance/P0A-035.md), [tests/acceptance/test_p0a_035.py](../tests/acceptance/test_p0a_035.py).
 
 <a name="p0a-036"></a>
-- [ ] **P0A-036 — Package and recover the standalone Windows application** (WP2, WP12; actor: builder)
+- [x] **P0A-036 — Package and recover the standalone Windows application** (WP2, WP12; actor: builder)
   - Prerequisites: P0A-017. Proof: [docs/acceptance/P0A-036.md](acceptance/P0A-036.md).
   - Acceptance: A clean-user installation launches desktop, shared services and required workers without a development HTTP server; dependencies/notices are included; failed install/update/project writes recover without losing valid user data.
   - Language: GDScript, Python.
   - Target files: `apps/desktop/`; `scripts/lab_worker.py`; `packages/desktop_worker/`; `tests/acceptance/test_p0a_036.py`; `docs/acceptance/P0A-036.md`.
   - Todos:
-    - [ ] 1. Package the standalone Windows application: desktop app, local shared services and required workers, with dependencies and notices included and no development HTTP server.
-    - [ ] 2. Cover failed install/update/project-recovery paths with explicit user-visible handling.
-    - [ ] 3. Add acceptance tests executed against the packaged layout (not the dev checkout).
+    - [x] 1. Package the standalone Windows application: desktop app, local shared services and required workers, with dependencies and notices included and no development HTTP server.
+    - [x] 2. Cover failed install/update/project-recovery paths with explicit user-visible handling.
+    - [x] 3. Add acceptance tests executed against the packaged layout (not the dev checkout).
   - Verify: `pytest tests/acceptance/test_p0a_036.py -q`
   - Planned verification: `pytest tests/acceptance/test_p0a_036.py`; required current-head CI.
+  - Recorded evidence: [docs/acceptance/P0A-036.md](acceptance/P0A-036.md), [tests/acceptance/test_p0a_036.py](../tests/acceptance/test_p0a_036.py).
 
 <a name="p0a-037"></a>
-- [ ] **P0A-037 — Protect regression, dependency security and compatibility** (WP12; actor: builder)
+- [x] **P0A-037 — Protect regression, dependency security and compatibility** (WP12; actor: builder)
   - Prerequisites: P0A-023, P0A-036. Proof: [docs/acceptance/P0A-037.md](acceptance/P0A-037.md).
   - Acceptance: All five exact-head CI jobs and unchanged npm/backend/CAD audits pass; project migration, incompatible assets, process ownership, budgets, interrupted work, save/recovery and headless/API compatibility have regression evidence.
   - Language: Python.
   - Target files: `.github/workflows/ci.yml`; `tests/acceptance/test_p0a_037.py`; `docs/acceptance/P0A-037.md`.
   - Todos:
-    - [ ] 1. Keep all five exact-head CI jobs and the unchanged npm/backend/CAD audits passing; bind results to the final PR head.
-    - [ ] 2. Cover project migration, incompatible assets, process ownership, budgets, interrupted work and save/recovery headless cases in acceptance tests.
-    - [ ] 3. No audit bypasses: npm audit --audit-level=moderate including development dependencies stays required.
+    - [x] 1. Keep all five exact-head CI jobs and the unchanged npm/backend/CAD audits passing; bind results to the final PR head.
+    - [x] 2. Cover project migration, incompatible assets, process ownership, budgets, interrupted work and save/recovery headless cases in acceptance tests.
+    - [x] 3. No audit bypasses: npm audit --audit-level=moderate including development dependencies stays required.
   - Verify: `pytest tests/acceptance/test_p0a_037.py -q` | `pytest -q`
   - Planned verification: `pytest tests/acceptance/test_p0a_037.py`; required current-head CI.
+  - Recorded evidence: [docs/acceptance/P0A-037.md](acceptance/P0A-037.md), [tests/acceptance/test_p0a_037.py](../tests/acceptance/test_p0a_037.py).
 
 <a name="p0a-038"></a>
 - [ ] **P0A-038 — Qualify baseline hardware behavior for supported cases** (WP2, WP3, WP12; actor: builder)
@@ -1292,4 +1296,4 @@ Tasks with several WPs appear in each relevant issue but retain one canonical ID
   - Prerequisites: P4-007. Proof: [docs/acceptance/P4-008.md](acceptance/P4-008.md).
   - Acceptance: Qualified independent review accepts the stated limited uses; source/rights/security, reproducible distributions, compatibility and recovery gates close the phase.
 
-Unique task count: **150**; checked **26**, unchecked **124**. These are planning tasks, not a count of physically validated milestones. All ten legacy major acceptance families and all twelve broad Phase 0 package issues remain open until their own actual exit evidence exists.
+Unique task count: **150**; checked **30**, unchecked **120**. These are planning tasks, not a count of physically validated milestones. All ten legacy major acceptance families and all twelve broad Phase 0 package issues remain open until their own actual exit evidence exists.

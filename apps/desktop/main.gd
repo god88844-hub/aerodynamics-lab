@@ -80,6 +80,11 @@ var fidelity_dialog: AcceptDialog
 var fidelity_report_label: Label
 var protocol_dialog: AcceptDialog
 var protocol_report_label: Label
+var learning_dialog: AcceptDialog
+var hypothesis_input: LineEdit
+var learning_fields: Dictionary = {}
+var sweep_dialog: AcceptDialog
+var sweep_fields: Dictionary = {}
 var playback_state: String = "IDLE"
 var world_env: WorldEnvironment
 var ground_props: Node3D
@@ -176,6 +181,8 @@ func _build_interface() -> void:
 	_add_button(toolbar, "Twin % / Compare", _open_twin_dialog)
 	_add_button(toolbar, "Fidelity / Budgets", _open_fidelity_dialog)
 	_add_button(toolbar, "Protocols", _open_protocol_catalog)
+	_add_button(toolbar, "Learn / Invent", _open_learning_dialog)
+	_add_button(toolbar, "Bounded Sweep", _open_sweep_dialog)
 	_add_button(toolbar, "Run applied-torque experiment", _run_cad_torque)
 	_add_button(toolbar, "Worker limits", _open_limits)
 	cad_material_select = OptionButton.new()
@@ -489,6 +496,31 @@ func _build_interface() -> void:
 	protocol_report_label.custom_minimum_size = Vector2(560, 220)
 	protocol_dialog.add_child(protocol_report_label)
 	add_child(protocol_dialog)
+	learning_dialog = AcceptDialog.new()
+	learning_dialog.title = "Guided Learning & Saved Experiments"
+	learning_dialog.ok_button_text = "Run & save experiment"
+	var l_form: VBoxContainer = VBoxContainer.new()
+	learning_dialog.add_child(l_form)
+	var eq_lbl: Label = Label.new()
+	eq_lbl.text = "Governing physics: 6-DoF rigid body + quadratic air drag + ideal gas air density."
+	l_form.add_child(eq_lbl)
+	hypothesis_input = LineEdit.new()
+	hypothesis_input.text = "Higher target altitude increases climb demand under wind."
+	hypothesis_input.custom_minimum_size.x = 360
+	l_form.add_child(hypothesis_input)
+	learning_fields["target_altitude_m"] = _numeric_field(l_form, "Target altitude (m)", 0.5, 25.0, 0.5, 3.5)
+	learning_fields["wind_x"] = _numeric_field(l_form, "Wind X (m/s)", -20.0, 20.0, 0.5, 2.0)
+	learning_dialog.confirmed.connect(_run_guided_experiment)
+	add_child(learning_dialog)
+	sweep_dialog = AcceptDialog.new()
+	sweep_dialog.title = "Bounded Parameter Sweep (constraints & caveats preserved)"
+	sweep_dialog.ok_button_text = "Run bounded sweep"
+	var sw_form: VBoxContainer = VBoxContainer.new()
+	sweep_dialog.add_child(sw_form)
+	sweep_fields["max_mass_kg"] = _numeric_field(sw_form, "Max mass constraint (kg)", 1.0, 20.0, 0.2, 4.2)
+	sweep_fields["seed"] = _numeric_field(sw_form, "Sweep seed", 0, 100000, 1, 42)
+	sweep_dialog.confirmed.connect(_run_bounded_sweep)
+	add_child(sweep_dialog)
 	_update_camera()
 
 
@@ -927,6 +959,39 @@ func _open_protocol_catalog() -> void:
 		return
 	var catalog_path: String = repository_root().path_join("data/research/frozen_protocols.json")
 	_start_job("register-protocol", _write_payload({"catalog_path": catalog_path}))
+
+
+func _open_learning_dialog() -> void:
+	if job_pid > 0 or project.is_empty():
+		return
+	learning_dialog.popup_centered(Vector2i(520, 240))
+
+
+func _run_guided_experiment() -> void:
+	if job_pid > 0 or project.is_empty():
+		return
+	var doc_text: String = _frozen_project_json()
+	if doc_text.is_empty():
+		return
+	var hyp: String = hypothesis_input.text.strip_edges()
+	var payload_str: String = '{"project":%s,"hypothesis":%s,"target_altitude_m":%f,"wind_world_m_s":[%f,0.0,0.0]}' % [
+		doc_text, JSON.stringify(hyp), float(learning_fields["target_altitude_m"].value), float(learning_fields["wind_x"].value)]
+	_start_job("guided-experiment", _write_json_text(payload_str))
+
+
+func _open_sweep_dialog() -> void:
+	if job_pid > 0:
+		return
+	sweep_dialog.popup_centered(Vector2i(460, 200))
+
+
+func _run_bounded_sweep() -> void:
+	if job_pid > 0:
+		return
+	var doc_text: String = _frozen_project_json() if not project.is_empty() else "{}"
+	var payload_str: String = '{"project":%s,"constraints":{"max_mass_kg":%f},"seed":%d}' % [
+		doc_text, float(sweep_fields["max_mass_kg"].value), int(sweep_fields["seed"].value)]
+	_start_job("bounded-sweep", _write_json_text(payload_str))
 
 
 func _run_cad_torque() -> void:
@@ -1565,7 +1630,7 @@ func _start_job(action: String, input_path: String, output_path: String = "") ->
 		arguments = [
 			repository_root().path_join("scripts/lab_project.py"), cli_action, input_path, job_output,
 			"--error-output", job_error, "--completion-output", job_completion]
-		job_asset_root = project_asset_root if (action in ["package", "save-version", "edit-transform", "author-ground", "author-mission", "run-mission", "simulate"]) else input_path.get_base_dir()
+		job_asset_root = project_asset_root if (action in ["package", "save-version", "edit-transform", "author-ground", "author-mission", "run-mission", "simulate", "guided-experiment", "bounded-sweep"]) else input_path.get_base_dir()
 		if action in ["validate", "package", "save-version", "edit-transform"]:
 			arguments.append_array(["--asset-root", job_asset_root])
 		if action == "recover" and not current_project_path.is_empty():
@@ -1659,6 +1724,13 @@ func _process(delta: float) -> void:
 				protocol_report_label.text = "\n".join(lines) if not lines.is_empty() else "No protocols registered."
 				protocol_dialog.popup_centered(Vector2i(620, 260))
 				status_label.text = "Loaded %d frozen validation protocol(s)." % prots.size()
+			elif job_action == "guided-experiment":
+				var comp_s: Dictionary = output.get("comparison_summary", {})
+				status_label.text = "Guided experiment completed (delta max alt: %.3f m) · %d equations shown · physical validation pending." % [
+					float(comp_s.get("delta_max_altitude_m", 0.0)), output.get("equations_and_assumptions", []).size()]
+			elif job_action == "bounded-sweep":
+				status_label.text = "Bounded sweep %d total (%d feasible, %d failed retained, sha %s) · NOT physical validation." % [
+					int(output.get("total_candidates", 0)), int(output.get("feasible_count", 0)), int(output.get("infeasible_count", 0)), str(output.get("candidates_sha256", "")).left(12)]
 			elif job_action == "run" or job_action == "cad-torque" or job_action == "simulate":
 				result = output
 				replay_time = 0.0

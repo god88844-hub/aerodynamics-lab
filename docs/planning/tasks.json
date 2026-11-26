@@ -1579,13 +1579,16 @@
         "P0A-024"
       ],
       "actor": "builder",
-      "status": "todo",
+      "status": "done",
       "acceptance": "A learner can state a hypothesis, build/modify a supported drone, enter environment conditions, compare runs, inspect equations/assumptions and save a reproducible experiment through the desktop.",
       "proof_file": "docs/acceptance/P0A-034.md",
       "planned_tests": [
         "tests/acceptance/test_p0a_034.py"
       ],
-      "completion_evidence": [],
+      "completion_evidence": [
+        "docs/acceptance/P0A-034.md",
+        "tests/acceptance/test_p0a_034.py"
+      ],
       "gate": null,
       "language": [
         "GDScript",
@@ -1618,13 +1621,16 @@
         "P0A-034"
       ],
       "actor": "builder",
-      "status": "todo",
+      "status": "done",
       "acceptance": "Supported parameter sweeps/optimization retain constraints, seeds, all infeasible/failed candidates and provenance; a repeat run reproduces the candidate/decision set, with no optimization-as-validation claim.",
       "proof_file": "docs/acceptance/P0A-035.md",
       "planned_tests": [
         "tests/acceptance/test_p0a_035.py"
       ],
-      "completion_evidence": [],
+      "completion_evidence": [
+        "docs/acceptance/P0A-035.md",
+        "tests/acceptance/test_p0a_035.py"
+      ],
       "gate": null,
       "language": [
         "GDScript",
@@ -1659,13 +1665,16 @@
         "P0A-017"
       ],
       "actor": "builder",
-      "status": "todo",
+      "status": "done",
       "acceptance": "A clean-user installation launches desktop, shared services and required workers without a development HTTP server; dependencies/notices are included; failed install/update/project writes recover without losing valid user data.",
       "proof_file": "docs/acceptance/P0A-036.md",
       "planned_tests": [
         "tests/acceptance/test_p0a_036.py"
       ],
-      "completion_evidence": [],
+      "completion_evidence": [
+        "docs/acceptance/P0A-036.md",
+        "tests/acceptance/test_p0a_036.py"
+      ],
       "gate": null,
       "language": [
         "GDScript",
@@ -1699,13 +1708,16 @@
         "P0A-036"
       ],
       "actor": "builder",
-      "status": "todo",
+      "status": "done",
       "acceptance": "All five exact-head CI jobs and unchanged npm/backend/CAD audits pass; project migration, incompatible assets, process ownership, budgets, interrupted work, save/recovery and headless/API compatibility have regression evidence.",
       "proof_file": "docs/acceptance/P0A-037.md",
       "planned_tests": [
         "tests/acceptance/test_p0a_037.py"
       ],
-      "completion_evidence": [],
+      "completion_evidence": [
+        "docs/acceptance/P0A-037.md",
+        "tests/acceptance/test_p0a_037.py"
+      ],
       "gate": null,
       "language": [
         "Python"
