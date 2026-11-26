@@ -8,11 +8,11 @@ Tracking: [master issue #127](https://github.com/god88844-hub/aerodynamics-lab/i
 
 ## Next action and execution rules
 
-**P0A-004 is complete** with the owner's actual authorization receipt. Merge/tag requires the three pre-merge checks and five green CI jobs; actual operation receipts are recorded afterward. **P0A-015 numerical code and solution verification is complete as DEVELOPMENT. Stop before P0A-016 unless the owner gives a new instruction.** The next future software task is **P0A-016**.
+**P0A-004 is complete** with the owner's actual authorization receipt. Merge/tag requires the three pre-merge checks and five green CI jobs; actual operation receipts are recorded afterward. **Owner authorized resuming implementation starting at P0A-016 (visual Forward+ PBR, Dual Digital-Twin % metrics, and reference architecture locked in docs/SIMULATION_VISION_AND_REFERENCE_STACK.md).** The next future software task is **P0A-016**.
 
-1. Read `AGENTS.md`, this task's section, the linked fundamentals and acceptance ledger. Use only the canonical local workspace in `WORKSPACE.md`.
+1. Read `AGENTS.md`, this task's section, the linked fundamentals, `docs/SIMULATION_VISION_AND_REFERENCE_STACK.md` and the acceptance ledger. Use only the canonical local workspace in `WORKSPACE.md`.
 2. When implementation is explicitly resumed, pick the first unchecked builder task in document order whose prerequisites are checked. A pending owner/custodian/reviewer task requires its real receipt; a builder cannot self-approve it or invent data.
-3. The current request authorizes merge/tag and clean-main verification only, then stop before P0A-005. After a new owner request to resume, Phase 0 follows dependency order and WP7–WP9 follow their listed tasks. No repeated qualification stage is implied. Phases 1–4 remain interfaces/registries only until their entry gates.
+3. Phase 0 follows numbered dependency order and WP7–WP9 follow their listed tasks. No repeated qualification stage is implied. Phases 1–4 remain interfaces/registries only until their entry gates.
 4. Implement the named normal desktop/headless behavior and its verification target. Each unchecked test path below is a **planned acceptance test to implement**, not a claim that the file already exists.
 5. Record the exact proof, update the canonical JSON, regenerate this document and sync every affected issue checklist. Commit after a completed milestone; merge only with the required final-head CI green.
 6. Checkbox completion is a scoped task result. Scientific status is tracked separately in `ACCEPTANCE_LEDGER.md`; code, a shader, optimization or synthetic sensor output never counts as physical validation.
@@ -297,6 +297,7 @@ Tasks with several WPs appear in each relevant issue but retain one canonical ID
     - [ ] 2. Handle corrupt/missing assets and incompatible project versions with explicit recovery or refusal paths.
     - [ ] 3. Preserve project numeric identity through desktop round trips (existing JSON-authoritative tests stay green).
     - [ ] 4. Add acceptance tests driving the worker contract from the UI entry points.
+    - [ ] 5. Configure the Godot 4.7 Forward+ PBR desktop profile alongside gl_compatibility fallback for Tier 1 laptops and headless Linux CI (see docs/SIMULATION_VISION_AND_REFERENCE_STACK.md).
   - Verify: `pytest tests/acceptance/test_p0a_017.py -q` | `pytest tests/integration -q`
   - Planned verification: `pytest tests/acceptance/test_p0a_017.py`; required current-head CI.
 
@@ -311,6 +312,7 @@ Tasks with several WPs appear in each relevant issue but retain one canonical ID
     - [ ] 2. Add undo/redo with visible model support (display LOD must never alter the authored engineering geometry).
     - [ ] 3. Keep exact solids and engineering inputs authoritative in the saved project (worker-computed, UI-rendered).
     - [ ] 4. Add acceptance tests for the edit -> save -> reload -> exact-geometry identity.
+    - [ ] 5. Apply Fusion-style CAD material presets (Al 6061-T6, CFRP, PA12), clean edge/selection shading, and studio/outdoor HDRI lighting in the 3D editor while keeping display LOD strictly separate from Open CASCADE solids.
   - Verify: `pytest tests/acceptance/test_p0a_018.py -q`
   - Planned verification: `pytest tests/acceptance/test_p0a_018.py`; required current-head CI.
 
@@ -353,6 +355,7 @@ Tasks with several WPs appear in each relevant issue but retain one canonical ID
     - [ ] 2. Refuse unsupported atmospheric/contact mechanisms explicitly (fail closed with the reason).
     - [ ] 3. Serialize the authored ground with the project and verify save/reload identity.
     - [ ] 4. Add acceptance tests for authoring, serialization and refusal paths.
+    - [ ] 5. Support clean PBR engineering test-ground materials and lighting cues while keeping visual shaders strictly separate from aerodynamic and contact physics.
   - Verify: `pytest tests/acceptance/test_p0a_021.py -q`
   - Planned verification: `pytest tests/acceptance/test_p0a_021.py`; required current-head CI.
 
@@ -393,6 +396,7 @@ Tasks with several WPs appear in each relevant issue but retain one canonical ID
     - [ ] 1. Implement frozen-run vs source-measurement comparison in the UI: units, frames, source/model hashes, operating envelope, exclusions and uncertainty.
     - [ ] 2. Distinguish calculated, measured and interpolated values in every exported result.
     - [ ] 3. Add acceptance tests for the comparison pipeline with a frozen run and a pinned source measurement.
+    - [ ] 4. Present the Dual Digital-Twin percentages: Design Pass/Fail Probability (%) from component limits/UQ and Physical Evidence Match (%) from M21-M27 tolerances, strictly gated so limit breaches remain FAIL and unmeasured parts display UNVERIFIED_ESTIMATE / INCONCLUSIVE.
   - Verify: `pytest tests/acceptance/test_p0a_024.py -q`
   - Planned verification: `pytest tests/acceptance/test_p0a_024.py`; required current-head CI.
 
@@ -487,6 +491,7 @@ Tasks with several WPs appear in each relevant issue but retain one canonical ID
     - [ ] 1. Score per-flight trajectories, energy, heat/control response and the frozen failure-mode predictions against the sealed flights (P0A-030) using the frozen M24–M26 criteria.
     - [ ] 2. Retain observed failures; separate conditional replay from the primary blind scores.
     - [ ] 3. Publish per-flight agreement tables and all exclusions with reasons.
+    - [ ] 4. Report per-channel and gated Physical Evidence Match (%) alongside the M24-M26 pass/fail scores without obscuring any failing channel.
   - Verify: `pytest tests/acceptance/test_p0a_031.py -q` | `python scripts/reconcile_registry.py --check`
   - Planned verification: `pytest tests/acceptance/test_p0a_031.py`; required current-head CI.
 
@@ -500,6 +505,7 @@ Tasks with several WPs appear in each relevant issue but retain one canonical ID
     - [ ] 1. Calibrate the joint whole-flight uncertainty: simultaneous M27 channel coverage and width limits per independent cohort.
     - [ ] 2. Include numerical, measurement, parameter, environment and model-discrepancy uncertainty terms explicitly (no single ±band collapse).
     - [ ] 3. Publish the calibration result and any cohort that fails the width limits as FAILED VALIDATION.
+    - [ ] 4. Expose Design Pass/Fail Probability (%) from calibrated joint UQ for validated configurations, keeping unmeasured/new designs labeled UNVERIFIED_ESTIMATE / INCONCLUSIVE.
   - Verify: `pytest tests/acceptance/test_p0a_032.py -q`
   - Planned verification: `pytest tests/acceptance/test_p0a_032.py`; required current-head CI.
 
@@ -578,6 +584,7 @@ Tasks with several WPs appear in each relevant issue but retain one canonical ID
     - [ ] 1. Publish distinct 8 GB and 16 GB integrated-GPU installation/edit/run cases with CPU/GPU/OS/settings and measured frame-time/RAM data.
     - [ ] 2. Meet >=30 FPS on the declared 200-part editing workload and <=5 s project load on the recorded hardware.
     - [ ] 3. Take real measurements on the declared machines — synthetic or CI-host numbers do not qualify.
+    - [ ] 4. Measure both Tier 1 (gl_compatibility on 8/16 GB integrated GPU) and Tier 2 (Forward+ PBR/HDRI on dedicated GPU) hardware profiles.
   - Verify: `pytest tests/acceptance/test_p0a_038.py -q`
   - Planned verification: `pytest tests/acceptance/test_p0a_038.py`; required current-head CI.
 

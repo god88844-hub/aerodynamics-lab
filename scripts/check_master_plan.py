@@ -118,9 +118,9 @@ def render(plan):
              "", f"Tracking: [master issue #{plan['plan_issue']}](https://github.com/{plan['repository']}/issues/{plan['plan_issue']}), [PR #126](https://github.com/{plan['repository']}/pull/126). Proposed release marker: **`{plan['proposed_tag']}`**. This document does not approve merge, tagging, physical testing or physical acceptance.",
              "", "## Next action and execution rules", "",
              next_action,
-             "", "1. Read `AGENTS.md`, this task's section, the linked fundamentals and acceptance ledger. Use only the canonical local workspace in `WORKSPACE.md`.",
+             "", "1. Read `AGENTS.md`, this task's section, the linked fundamentals, `docs/SIMULATION_VISION_AND_REFERENCE_STACK.md` and the acceptance ledger. Use only the canonical local workspace in `WORKSPACE.md`.",
              "2. When implementation is explicitly resumed, pick the first unchecked builder task in document order whose prerequisites are checked. A pending owner/custodian/reviewer task requires its real receipt; a builder cannot self-approve it or invent data.",
-             "3. The current request authorizes merge/tag and clean-main verification only, then stop before P0A-005. After a new owner request to resume, Phase 0 follows dependency order and WP7–WP9 follow their listed tasks. No repeated qualification stage is implied. Phases 1–4 remain interfaces/registries only until their entry gates.",
+             "3. Phase 0 follows numbered dependency order and WP7–WP9 follow their listed tasks. No repeated qualification stage is implied. Phases 1–4 remain interfaces/registries only until their entry gates.",
              "4. Implement the named normal desktop/headless behavior and its verification target. Each unchecked test path below is a **planned acceptance test to implement**, not a claim that the file already exists.",
              "5. Record the exact proof, update the canonical JSON, regenerate this document and sync every affected issue checklist. Commit after a completed milestone; merge only with the required final-head CI green.",
              "6. Checkbox completion is a scoped task result. Scientific status is tracked separately in `ACCEPTANCE_LEDGER.md`; code, a shader, optimization or synthetic sensor output never counts as physical validation.",
@@ -227,7 +227,8 @@ def main():
             raise SystemExit("Master plan drift: edit canonical JSON and regenerate")
         check_sync(plan)
     approval = next(t for t in plan["tasks"] if t["id"] == plan["authorization_task"])["status"]
-    print(f"Master plan verified: {len(plan['tasks'])} numbered tasks, 12 packages, 8 stages; {plan['authorization_task']}={approval}; {plan['first_build_task']} held until owner resumes")
+    next_task = plan.get("next_build_task", plan["first_build_task"])
+    print(f"Master plan verified: {len(plan['tasks'])} numbered tasks, 12 packages, 8 stages; {plan['authorization_task']}={approval}; next task={next_task}")
 
 
 if __name__ == "__main__":
