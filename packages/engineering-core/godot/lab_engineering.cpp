@@ -1,4 +1,5 @@
 #include "lab/mass_properties.hpp"
+#include "lab/flight_rk4.hpp"
 
 #include <godot_cpp/classes/ref_counted.hpp>
 #include <godot_cpp/core/class_db.hpp>
@@ -18,6 +19,7 @@ protected:
     static void _bind_methods() {
         ClassDB::bind_method(D_METHOD("mass_properties", "parts"), &LabEngineering::mass_properties);
         ClassDB::bind_method(D_METHOD("check_clearance", "rotors", "minimum_required_m"), &LabEngineering::check_clearance);
+        ClassDB::bind_method(D_METHOD("simulate_rk4", "config"), &LabEngineering::simulate_rk4);
     }
 
 public:
@@ -93,6 +95,67 @@ public:
             output["ok"] = true;
             output["clear"] = res.clear;
             output["minimum_tip_clearance_m"] = res.minimum_tip_clearance_m;
+        } catch (const std::exception &error) {
+            output["ok"] = false;
+            output["error"] = String(error.what());
+        }
+        return output;
+    }
+
+    Dictionary simulate_rk4(const Dictionary &config) const {
+        Dictionary output;
+        try {
+            lab::MultirotorSimConfig cfg;
+            cfg.mass_kg = double(config.get("mass_kg", 1.5));
+            cfg.n_rotors = int(config.get("n_rotors", 4));
+            cfg.max_total_thrust_n = double(config.get("max_total_thrust_n", 56.0));
+            cfg.cd_a_m2 = double(config.get("cd_a_m2", 0.05));
+            cfg.air_density_kg_m3 = double(config.get("air_density_kg_m3", 1.225));
+            cfg.initial_altitude_m = double(config.get("initial_altitude_m", 2.0));
+            cfg.target_altitude_m = double(config.get("target_altitude_m", 2.0));
+            cfg.dt_s = double(config.get("dt_s", 0.004));
+            cfg.duration_s = double(config.get("duration_s", 0.4));
+            cfg.min_bus_voltage_v = double(config.get("min_bus_voltage_v", 19.2));
+            const Variant wind = config.get("wind_world_m_s", Variant());
+            if (wind.get_type() == Variant::ARRAY) {
+                const Array w = wind;
+                if (w.size() == 3) {
+                    cfg.wind_world_m_s = {double(w[0]), double(w[1]), double(w[2])};
+                }
+            }
+            const auto res = lab::run_multirotor_rk4(cfg);
+            Array pos_arr;
+            for (const double c : res.final_position_m) {
+                pos_arr.push_back(c);
+            }
+            Array t_arr;
+            Array x_arr;
+            Array y_arr;
+            Array z_arr;
+            Array q_arr;
+            for (std::size_t i = 0; i < res.times_s.size(); ++i) {
+                t_arr.push_back(res.times_s[i]);
+                x_arr.push_back(res.positions_m[i][0]);
+                y_arr.push_back(res.positions_m[i][1]);
+                z_arr.push_back(res.positions_m[i][2]);
+                Array q;
+                for (double qc : res.quaternions_wxyz[i]) q.push_back(qc);
+                q_arr.push_back(q);
+            }
+            Dictionary telemetry;
+            telemetry["t"] = t_arr;
+            telemetry["x"] = x_arr;
+            telemetry["y"] = y_arr;
+            telemetry["z"] = z_arr;
+            telemetry["q_wxyz"] = q_arr;
+            output["ok"] = true;
+            output["aborted"] = res.aborted;
+            output["reason"] = String(res.error_or_reason.c_str());
+            output["step_count"] = res.step_count;
+            output["max_altitude_m"] = res.max_altitude_m;
+            output["min_bus_voltage_v"] = res.min_bus_voltage_v;
+            output["final_position_m"] = pos_arr;
+            output["telemetry"] = telemetry;
         } catch (const std::exception &error) {
             output["ok"] = false;
             output["error"] = String(error.what());

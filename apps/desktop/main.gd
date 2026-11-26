@@ -178,6 +178,7 @@ func _build_interface() -> void:
 	_add_button(toolbar, "Test ground", _open_test_ground_dialog)
 	_add_button(toolbar, "Mission / Seeds", _open_mission_dialog)
 	_add_button(toolbar, "Run authoritative", _run_authoritative_sim)
+	_add_button(toolbar, "Run C++ Kernel", _run_native_cpp_rk4)
 	_add_button(toolbar, "Twin % / Compare", _open_twin_dialog)
 	_add_button(toolbar, "Fidelity / Budgets", _open_fidelity_dialog)
 	_add_button(toolbar, "Protocols", _open_protocol_catalog)
@@ -994,6 +995,40 @@ func _run_bounded_sweep() -> void:
 	_start_job("bounded-sweep", _write_json_text(payload_str))
 
 
+func _run_native_cpp_rk4() -> void:
+	if engineering == null or not engineering.has_method("simulate_rk4"):
+		status_label.text = "Native C++20 simulate_rk4 unavailable; rebuild GDExtension."
+		return
+	var wind: Array = [0.0, 0.0, 0.0]
+	var tg: Variant = project.get("experiment", {}).get("parameters", {}).get("test_ground")
+	if tg is Dictionary and tg.get("wind_world_m_s") is Array:
+		wind = tg["wind_world_m_s"]
+	var cfg: Dictionary = {
+		"mass_kg": 2.0,
+		"n_rotors": 4,
+		"max_total_thrust_n": 72.0,
+		"cd_a_m2": 0.05,
+		"air_density_kg_m3": 1.225,
+		"wind_world_m_s": wind,
+		"initial_altitude_m": 2.0,
+		"target_altitude_m": 2.5,
+		"dt_s": 0.004,
+		"duration_s": 0.4,
+	}
+	var res: Dictionary = engineering.call("simulate_rk4", cfg)
+	if not res.get("ok", false):
+		status_label.text = "Native C++ kernel refused: %s" % str(res.get("error", "unknown"))
+		return
+	result = {"experiment_kind": "native_cpp_rk4_1", "result": {"status": "failed" if res.get("aborted", false) else "completed", "telemetry": res.get("telemetry", {})}}
+	var t_arr: Array = result["result"]["telemetry"].get("t", [])
+	if t_arr.size() > 0:
+		timeline.max_value = float(t_arr[-1])
+		_seek(0.0)
+	playback_state = "FAILED" if res.get("aborted", false) else "COMPLETED"
+	status_label.text = "C++20 Native RK4 %s (%d steps, max_alt=%.3f m) · zero-Python mobile-ready." % [
+		playback_state, int(res.get("step_count", 0)), float(res.get("max_altitude_m", 0.0))]
+
+
 func _run_cad_torque() -> void:
 	if project.is_empty() or job_pid > 0:
 		return
@@ -1014,6 +1049,13 @@ func _viewport_input(event: InputEvent) -> void:
 	if event is InputEventMouseMotion and (event.button_mask & MOUSE_BUTTON_MASK_RIGHT or (qualification_orbit_left and event.button_mask & MOUSE_BUTTON_MASK_LEFT)):
 		yaw -= event.relative.x * 0.008
 		elevation = clampf(elevation + event.relative.y * 0.008, 0.05, 1.4)
+		_update_camera()
+	elif event is InputEventScreenDrag:
+		yaw -= event.relative.x * 0.01
+		elevation = clampf(elevation + event.relative.y * 0.01, 0.05, 1.4)
+		_update_camera()
+	elif event is InputEventMagnifyGesture and event.factor > 0.0:
+		distance_m = clampf(distance_m / event.factor, 0.3, 40.0)
 		_update_camera()
 	if event is InputEventMouseButton and event.pressed:
 		if event.button_index == MOUSE_BUTTON_LEFT:
@@ -1361,8 +1403,16 @@ func _apply_visual_profile() -> void:
 		return
 	var env: Environment = world_env.environment
 	var has_rd: bool = RenderingServer.get_rendering_device() != null
-	var use_pbr: bool = (visual_profile == "forward_plus") or (visual_profile == "auto" and has_rd)
-	if use_pbr and has_rd:
+	var effective: String = visual_profile
+	if effective == "auto":
+		if has_rd:
+			effective = "forward_plus"
+		elif OS.has_feature("mobile") or OS.has_feature("android") or OS.has_feature("ios"):
+			effective = "mobile_low"
+		else:
+			effective = "compatibility"
+	var use_forward: bool = has_rd and (effective in ["forward_plus", "forward_high"])
+	if use_forward:
 		var sky_mat: ProceduralSkyMaterial = ProceduralSkyMaterial.new()
 		if lighting_mode == "outdoor":
 			sky_mat.sky_top_color = Color(0.18, 0.42, 0.78)
@@ -1383,14 +1433,18 @@ func _apply_visual_profile() -> void:
 		env.tonemap_exposure = 1.05
 		env.glow_enabled = true
 		env.glow_intensity = 0.25
-		env.ssao_enabled = true
+		env.ssao_enabled = (effective == "forward_plus")
+		if viewport != null:
+			viewport.scaling_3d_scale = 1.0
+			viewport.msaa_3d = Viewport.MSAA_4X if effective == "forward_plus" else Viewport.MSAA_2X
 		if key_light != null:
 			key_light.shadow_enabled = true
 		if fill_light != null:
 			fill_light.visible = true
 		if visual_profile_button != null:
-			visual_profile_button.text = "Visual: Forward+ PBR"
+			visual_profile_button.text = "Visual: Forward+ Ultra" if effective == "forward_plus" else "Visual: Forward+ High"
 	else:
+		var is_mobile_low: bool = (effective == "mobile_low")
 		env.background_mode = Environment.BG_COLOR
 		env.background_color = Color(0.04, 0.065, 0.09)
 		env.ambient_light_source = Environment.AMBIENT_SOURCE_COLOR
@@ -1398,12 +1452,15 @@ func _apply_visual_profile() -> void:
 		env.tonemap_mode = Environment.TONE_MAPPER_LINEAR
 		env.glow_enabled = false
 		env.ssao_enabled = false
+		if viewport != null:
+			viewport.scaling_3d_scale = 0.75 if is_mobile_low else 1.0
+			viewport.msaa_3d = Viewport.MSAA_DISABLED if is_mobile_low else Viewport.MSAA_2X
 		if key_light != null:
 			key_light.shadow_enabled = false
 		if fill_light != null:
-			fill_light.visible = true
+			fill_light.visible = not is_mobile_low
 		if visual_profile_button != null:
-			visual_profile_button.text = "Visual: Compatibility"
+			visual_profile_button.text = "Visual: Mobile / Low" if is_mobile_low else "Visual: Integrated / Med"
 
 
 func _toggle_lighting_mode() -> void:
@@ -1415,14 +1472,11 @@ func _toggle_lighting_mode() -> void:
 
 
 func _cycle_visual_profile() -> void:
-	if visual_profile == "auto":
-		visual_profile = "compatibility"
-	elif visual_profile == "compatibility":
-		visual_profile = "forward_plus"
-	else:
-		visual_profile = "auto"
+	var order: Array[String] = ["auto", "mobile_low", "compatibility", "forward_high", "forward_plus"]
+	var idx: int = order.find(visual_profile)
+	visual_profile = order[(idx + 1) % order.size()]
 	_apply_visual_profile()
-	status_label.text = "Visual profile set to %s (display-only; physics/CAD unchanged)." % visual_profile
+	status_label.text = "Visual quality preset: %s (display-only; physics/CAD unchanged)." % visual_profile
 
 
 func _open_new_project_dialog() -> void:

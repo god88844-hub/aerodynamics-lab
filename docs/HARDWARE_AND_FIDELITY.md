@@ -6,6 +6,7 @@ Accepted product direction, 20 November 2026. These are delivery and benchmark t
 
 | Profile | Intended hardware | Target experience | Work allocation |
 | --- | --- | --- | --- |
+| Tier 0: phone / mobile *(planned ARM64 distribution)* | 4–8 GB RAM smartphones & tablets (Android ARM64 / iOS ARM64) | Interactive touch 3D modeling, student guided lessons, real-time 6-DoF C++20 flight & propulsion limits offline | Pure C++20 GDExtension (`lab_core` / ARM64 OCCT, zero Python subprocess), Godot `Mobile`/`Low` preset (`0.75x` scale, shadows off), optional Tier 3 remote solver submit |
 | Tier 1: baseline | 8–16 GB RAM, integrated graphics | Full supported parametric CAD features, real-time 6-DoF with qualified analytical/BEMT/table models, ArduPilot SITL, capped local studies | Adaptive display tessellation, simple engineering terrain, optional effects off, one budgeted local analysis at a time; deterministic stepped sensor experiments |
 | Tier 2: desktop | 16–32+ GB RAM, dedicated GPU | Same engineering capabilities plus detailed terrain/weather rendering, camera/LiDAR experiments and qualified mid-size CFD/FEA studies | Enable features after capability checks and measured scene/job budgets; real-time vision remains conditional on the benchmark |
 | Tier 3: workstation/remote | Measured workstation capacity or explicitly configured remote workers | Large CFD/FEA, RANS/LES where the backend supports them, coupled structural/thermal jobs and swarm sweeps | Queued headless workers with declared memory, CPU/GPU, storage and wall-time budgets |
