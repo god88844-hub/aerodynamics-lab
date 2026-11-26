@@ -8,7 +8,7 @@ Tracking: [master issue #127](https://github.com/god88844-hub/aerodynamics-lab/i
 
 ## Next action and execution rules
 
-**P0A-004 is complete** with the owner's actual authorization receipt. Merge/tag requires the three pre-merge checks and five green CI jobs; actual operation receipts are recorded afterward. **P0A-017 standalone desktop project workflow and dual visual profile complete as DEVELOPMENT. Implementation proceeds to P0A-018.** The next future software task is **P0A-018**.
+**P0A-004 is complete** with the owner's actual authorization receipt. Merge/tag requires the three pre-merge checks and five green CI jobs; actual operation receipts are recorded afterward. **P0A-018 3D CAD editor (blade/body/transform, undo/redo, CAD PBR presets) complete as DEVELOPMENT. Implementation proceeds to P0A-019.** The next future software task is **P0A-019**.
 
 1. Read `AGENTS.md`, this task's section, the linked fundamentals, `docs/SIMULATION_VISION_AND_REFERENCE_STACK.md` and the acceptance ledger. Use only the canonical local workspace in `WORKSPACE.md`.
 2. When implementation is explicitly resumed, pick the first unchecked builder task in document order whose prerequisites are checked. A pending owner/custodian/reviewer task requires its real receipt; a builder cannot self-approve it or invent data.
@@ -304,19 +304,20 @@ Tasks with several WPs appear in each relevant issue but retain one canonical ID
   - Recorded evidence: [docs/acceptance/P0A-017.md](acceptance/P0A-017.md), [tests/acceptance/test_p0a_017.py](../tests/acceptance/test_p0a_017.py).
 
 <a name="p0a-018"></a>
-- [ ] **P0A-018 — Build supported multirotor geometry through the 3D editor** (WP2, WP3; actor: builder)
+- [x] **P0A-018 — Build supported multirotor geometry through the 3D editor** (WP2, WP3; actor: builder)
   - Prerequisites: P0A-017. Proof: [docs/acceptance/P0A-018.md](acceptance/P0A-018.md).
   - Acceptance: Normal UI edits supported exact body/blade geometry, transforms and dimensions with constraints, undo/redo and visible model support. Exact solids and engineering inputs remain authoritative across save/reopen; no placement-only screen is labeled full CAD.
   - Language: GDScript.
   - Target files: `apps/desktop/`; `tests/acceptance/test_p0a_018.py`; `docs/acceptance/P0A-018.md`.
   - Todos:
-    - [ ] 1. Implement supported exact body/blade geometry editing in the 3D editor: transforms, dimensions and constraints through the normal UI.
-    - [ ] 2. Add undo/redo with visible model support (display LOD must never alter the authored engineering geometry).
-    - [ ] 3. Keep exact solids and engineering inputs authoritative in the saved project (worker-computed, UI-rendered).
-    - [ ] 4. Add acceptance tests for the edit -> save -> reload -> exact-geometry identity.
-    - [ ] 5. Apply Fusion-style CAD material presets (Al 6061-T6, CFRP, PA12), clean edge/selection shading, and studio/outdoor HDRI lighting in the 3D editor while keeping display LOD strictly separate from Open CASCADE solids.
+    - [x] 1. Implement supported exact body/blade geometry editing in the 3D editor: transforms, dimensions and constraints through the normal UI.
+    - [x] 2. Add undo/redo with visible model support (display LOD must never alter the authored engineering geometry).
+    - [x] 3. Keep exact solids and engineering inputs authoritative in the saved project (worker-computed, UI-rendered).
+    - [x] 4. Add acceptance tests for the edit -> save -> reload -> exact-geometry identity.
+    - [x] 5. Apply Fusion-style CAD material presets (Al 6061-T6, CFRP, PA12), clean edge/selection shading, and studio/outdoor HDRI lighting in the 3D editor while keeping display LOD strictly separate from Open CASCADE solids.
   - Verify: `pytest tests/acceptance/test_p0a_018.py -q`
   - Planned verification: `pytest tests/acceptance/test_p0a_018.py`; required current-head CI.
+  - Recorded evidence: [docs/acceptance/P0A-018.md](acceptance/P0A-018.md), [tests/acceptance/test_p0a_018.py](../tests/acceptance/test_p0a_018.py).
 
 <a name="p0a-019"></a>
 - [ ] **P0A-019 — Connect component layout, materials, BOM and mass properties** (WP3, WP5, WP6; actor: builder)
@@ -1283,4 +1284,4 @@ Tasks with several WPs appear in each relevant issue but retain one canonical ID
   - Prerequisites: P4-007. Proof: [docs/acceptance/P4-008.md](acceptance/P4-008.md).
   - Acceptance: Qualified independent review accepts the stated limited uses; source/rights/security, reproducible distributions, compatibility and recovery gates close the phase.
 
-Unique task count: **150**; checked **17**, unchecked **133**. These are planning tasks, not a count of physically validated milestones. All ten legacy major acceptance families and all twelve broad Phase 0 package issues remain open until their own actual exit evidence exists.
+Unique task count: **150**; checked **18**, unchecked **132**. These are planning tasks, not a count of physically validated milestones. All ten legacy major acceptance families and all twelve broad Phase 0 package issues remain open until their own actual exit evidence exists.
