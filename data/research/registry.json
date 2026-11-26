@@ -2900,5 +2900,6 @@
       "artifact": "data/components/materials.json",
       "default_status": "UNVERIFIED_ESTIMATE"
     }
-  }
+  },
+  "frozen_protocol_catalog": "data/research/frozen_protocols.json"
 }

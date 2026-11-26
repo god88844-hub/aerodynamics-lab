@@ -380,59 +380,63 @@ Tasks with several WPs appear in each relevant issue but retain one canonical ID
   - Recorded evidence: [docs/acceptance/P0A-022.md](acceptance/P0A-022.md), [tests/acceptance/test_p0a_022.py](../tests/acceptance/test_p0a_022.py).
 
 <a name="p0a-023"></a>
-- [ ] **P0A-023 — Run the supported design in the authoritative desktop simulation** (WP2, WP5, WP6; actor: builder)
+- [x] **P0A-023 — Run the supported design in the authoritative desktop simulation** (WP2, WP5, WP6; actor: builder)
   - Prerequisites: P0A-019, P0A-022, P0A-014. Proof: [docs/acceptance/P0A-023.md](acceptance/P0A-023.md).
   - Acceptance: A normal geometry/component/environment/mission edit changes the applicable simulated response; one double-precision integrator drives playback; pause/step/run/cancel/failure states and model limits are visible end to end.
   - Language: GDScript, Python.
   - Target files: `apps/desktop/`; `scripts/lab_worker.py`; `packages/desktop_worker/engine.py`; `packages/physics/`; `tests/acceptance/test_p0a_023.py`; `docs/acceptance/P0A-023.md`.
   - Todos:
-    - [ ] 1. Run the supported design through the authoritative desktop simulation: a normal geometry/component/environment/mission edit must change the applicable simulated response.
-    - [ ] 2. Drive playback from ONE double-precision integrator (no parallel approximate integrators).
-    - [ ] 3. Implement pause/step/run/cancel and failure-state handling with worker supervision.
-    - [ ] 4. Add acceptance tests for edit->response causality and the playback state machine.
+    - [x] 1. Run the supported design through the authoritative desktop simulation: a normal geometry/component/environment/mission edit must change the applicable simulated response.
+    - [x] 2. Drive playback from ONE double-precision integrator (no parallel approximate integrators).
+    - [x] 3. Implement pause/step/run/cancel and failure-state handling with worker supervision.
+    - [x] 4. Add acceptance tests for edit->response causality and the playback state machine.
   - Verify: `pytest tests/acceptance/test_p0a_023.py -q` | `pytest tests/acceptance/test_p0a_014.py tests/acceptance/test_p0a_019.py -q`
   - Planned verification: `pytest tests/acceptance/test_p0a_023.py`; required current-head CI.
+  - Recorded evidence: [docs/acceptance/P0A-023.md](acceptance/P0A-023.md), [tests/acceptance/test_p0a_023.py](../tests/acceptance/test_p0a_023.py).
 
 <a name="p0a-024"></a>
-- [ ] **P0A-024 — Inspect telemetry, evidence and reproducible result comparisons** (WP2, WP10, WP11; actor: builder)
+- [x] **P0A-024 — Inspect telemetry, evidence and reproducible result comparisons** (WP2, WP10, WP11; actor: builder)
   - Prerequisites: P0A-023. Proof: [docs/acceptance/P0A-024.md](acceptance/P0A-024.md).
   - Acceptance: UI compares frozen runs and source measurements with units, frames, source/model hashes, operating envelope, exclusions and uncertainty; exported results distinguish calculated, measured and synthetic channels.
   - Language: GDScript, Python.
   - Target files: `apps/desktop/`; `packages/desktop_worker/`; `tests/acceptance/test_p0a_024.py`; `docs/acceptance/P0A-024.md`.
   - Todos:
-    - [ ] 1. Implement frozen-run vs source-measurement comparison in the UI: units, frames, source/model hashes, operating envelope, exclusions and uncertainty.
-    - [ ] 2. Distinguish calculated, measured and interpolated values in every exported result.
-    - [ ] 3. Add acceptance tests for the comparison pipeline with a frozen run and a pinned source measurement.
-    - [ ] 4. Present the Dual Digital-Twin percentages: Design Pass/Fail Probability (%) from component limits/UQ and Physical Evidence Match (%) from M21-M27 tolerances, strictly gated so limit breaches remain FAIL and unmeasured parts display UNVERIFIED_ESTIMATE / INCONCLUSIVE.
+    - [x] 1. Implement frozen-run vs source-measurement comparison in the UI: units, frames, source/model hashes, operating envelope, exclusions and uncertainty.
+    - [x] 2. Distinguish calculated, measured and interpolated values in every exported result.
+    - [x] 3. Add acceptance tests for the comparison pipeline with a frozen run and a pinned source measurement.
+    - [x] 4. Present the Dual Digital-Twin percentages: Design Pass/Fail Probability (%) from component limits/UQ and Physical Evidence Match (%) from M21-M27 tolerances, strictly gated so limit breaches remain FAIL and unmeasured parts display UNVERIFIED_ESTIMATE / INCONCLUSIVE.
   - Verify: `pytest tests/acceptance/test_p0a_024.py -q`
   - Planned verification: `pytest tests/acceptance/test_p0a_024.py`; required current-head CI.
+  - Recorded evidence: [docs/acceptance/P0A-024.md](acceptance/P0A-024.md), [tests/acceptance/test_p0a_024.py](../tests/acceptance/test_p0a_024.py).
 
 <a name="p0a-025"></a>
-- [ ] **P0A-025 — Expose numerical fidelity and bounded execution** (WP2, WP7, WP11; actor: builder)
+- [x] **P0A-025 — Expose numerical fidelity and bounded execution** (WP2, WP7, WP11; actor: builder)
   - Prerequisites: P0A-020, P0A-023. Proof: [docs/acceptance/P0A-025.md](acceptance/P0A-025.md).
   - Acceptance: Requested/effective timestep, backend, solver rates, numerical error and runtime budgets are recorded; interactive/offline runs of the same supported case agree within declared tolerance; cancellation and resource refusal preserve projects.
   - Language: GDScript, Python.
   - Target files: `apps/desktop/`; `packages/desktop_worker/engine.py`; `packages/physics/`; `tests/acceptance/test_p0a_025.py`; `docs/acceptance/P0A-025.md`.
   - Todos:
-    - [ ] 1. Record requested vs effective timestep, backend, solver rates, numerical error and runtime budgets with every run.
-    - [ ] 2. Prove interactive and offline runs of the same supported case agree within the declared tolerance (desktop worker vs headless integration).
-    - [ ] 3. Expose the fidelity/budget panel in the UI from the recorded numbers (not free text).
-    - [ ] 4. Add acceptance tests for the agreement bound and the recorded budgets.
+    - [x] 1. Record requested vs effective timestep, backend, solver rates, numerical error and runtime budgets with every run.
+    - [x] 2. Prove interactive and offline runs of the same supported case agree within the declared tolerance (desktop worker vs headless integration).
+    - [x] 3. Expose the fidelity/budget panel in the UI from the recorded numbers (not free text).
+    - [x] 4. Add acceptance tests for the agreement bound and the recorded budgets.
   - Verify: `pytest tests/acceptance/test_p0a_025.py -q` | `pytest tests/acceptance/test_p0a_023.py -q`
   - Planned verification: `pytest tests/acceptance/test_p0a_025.py`; required current-head CI.
+  - Recorded evidence: [docs/acceptance/P0A-025.md](acceptance/P0A-025.md), [tests/acceptance/test_p0a_025.py](../tests/acceptance/test_p0a_025.py).
 
 <a name="p0a-026"></a>
-- [ ] **P0A-026 — Register component and multirotor validation protocols** (WP5, WP11; actor: builder)
+- [x] **P0A-026 — Register component and multirotor validation protocols** (WP5, WP11; actor: builder)
   - Prerequisites: P0A-015, P0A-016. Proof: [docs/acceptance/P0A-026.md](acceptance/P0A-026.md).
   - Acceptance: Freeze model/controller/geometry versions, channels, instrument/clock uncertainties, calibration groups, held-out whole experiments, stopping rules and M21–M27 tolerances before confirmatory reveal; qualified review is required for acceptance.
   - Language: Python.
   - Target files: `data/research/registry.json`; `data/campaigns/`; `tests/acceptance/test_p0a_026.py`; `docs/acceptance/P0A-026.md`.
   - Todos:
-    - [ ] 1. Freeze and register the validation protocols: model/controller/geometry versions, channels, instrument/clock uncertainties, calibration groups, held-out whole experiments, stopping rules and the M21–M27 tolerance bindings.
-    - [ ] 2. Refuse protocol registration with missing calibration groups or held-out definitions (fail closed).
-    - [ ] 3. Add acceptance tests asserting the frozen protocol records satisfy the registry contract.
+    - [x] 1. Freeze and register the validation protocols: model/controller/geometry versions, channels, instrument/clock uncertainties, calibration groups, held-out whole experiments, stopping rules and the M21–M27 tolerance bindings.
+    - [x] 2. Refuse protocol registration with missing calibration groups or held-out definitions (fail closed).
+    - [x] 3. Add acceptance tests asserting the frozen protocol records satisfy the registry contract.
   - Verify: `pytest tests/acceptance/test_p0a_026.py -q` | `python scripts/reconcile_registry.py --check`
   - Planned verification: `pytest tests/acceptance/test_p0a_026.py`; required current-head CI.
+  - Recorded evidence: [docs/acceptance/P0A-026.md](acceptance/P0A-026.md), [tests/acceptance/test_p0a_026.py](../tests/acceptance/test_p0a_026.py).
 
 <a name="p0a-027"></a>
 - [ ] **P0A-027 — Acquire and seal matching independent component experiments** (WP11; actor: custodian)
@@ -1288,4 +1292,4 @@ Tasks with several WPs appear in each relevant issue but retain one canonical ID
   - Prerequisites: P4-007. Proof: [docs/acceptance/P4-008.md](acceptance/P4-008.md).
   - Acceptance: Qualified independent review accepts the stated limited uses; source/rights/security, reproducible distributions, compatibility and recovery gates close the phase.
 
-Unique task count: **150**; checked **22**, unchecked **128**. These are planning tasks, not a count of physically validated milestones. All ten legacy major acceptance families and all twelve broad Phase 0 package issues remain open until their own actual exit evidence exists.
+Unique task count: **150**; checked **26**, unchecked **124**. These are planning tasks, not a count of physically validated milestones. All ten legacy major acceptance families and all twelve broad Phase 0 package issues remain open until their own actual exit evidence exists.

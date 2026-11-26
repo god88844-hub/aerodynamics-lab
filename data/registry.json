@@ -21,8 +21,8 @@
   "source_catalogs": [
     {
       "path": "data/research/registry.json",
-      "bytes_hashed": 113381,
-      "sha256": "742dbce5363116265c0de78d77dd215b82c39cfefedf2bc43ad71ee9491df0a0",
+      "bytes_hashed": 113449,
+      "sha256": "da72d37d80ccdde3be1f5d045cccbf0272939967986f315a2b1bf1774f900871",
       "hash_semantics": "LF_NORMALIZED_REPOSITORY_TEXT"
     },
     {
@@ -8032,8 +8032,8 @@
     },
     {
       "path": "data/research/registry.json",
-      "bytes_hashed": 113381,
-      "sha256": "742dbce5363116265c0de78d77dd215b82c39cfefedf2bc43ad71ee9491df0a0",
+      "bytes_hashed": 113449,
+      "sha256": "da72d37d80ccdde3be1f5d045cccbf0272939967986f315a2b1bf1774f900871",
       "hash_semantics": "LF_NORMALIZED_REPOSITORY_TEXT"
     },
     {
