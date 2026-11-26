@@ -1,0 +1,122 @@
+{
+  "schema_version": "1.0",
+  "note": "P0A-026 frozen validation protocol records pending confirmatory reveal and external review; grants zero physical acceptance.",
+  "protocols": [
+    {
+      "protocol": {
+        "schema_version": "1.0",
+        "protocol_id": "P0A026-PROP-BATTERY-COMPONENT-V1",
+        "intended_engineering_decision": "Compare modeled static thrust, battery sag voltage, and ESC thermal limit against independent bench calibration/holdout recordings.",
+        "frozen_model_git_sha": "8d0a6f1d452f8c7a3b19a0e4f28c9c7d6e5f4a3b",
+        "frozen_design_sha256": "1111111111111111111111111111111111111111111111111111111111111111",
+        "frozen_controller_configuration_sha256": "2222222222222222222222222222222222222222222222222222222222222222",
+        "preregistration_record_reference": "docs/acceptance/P0A-026.md#component-protocol-v1",
+        "numerical_convergence_report_reference": "docs/acceptance/P0A-015.md",
+        "independent_reviewer_reference": "PENDING_EXTERNAL_REVIEWER_RECEIPT_P0A_033",
+        "approved_test_safety_plan_reference": "PENDING_CUSTODIAN_SAFETY_PLAN_P0A_027",
+        "envelope": {
+          "ambient_temperature_c": [10.0, 35.0],
+          "air_density_kg_m3": [1.05, 1.30],
+          "wind_speed_m_s": [0.0, 2.0],
+          "payload_kg": [0.0, 1.0],
+          "altitude_m": [0.0, 50.0]
+        },
+        "hardware": [
+          {"role": "airframe", "model": "AeroForge-TestStand-S1", "serial_or_lot": "PENDING-LOT-01", "geometry_or_firmware_revision": "rev-1.0", "quantity": 1},
+          {"role": "motor", "model": "T-Motor MN3508 KV380", "serial_or_lot": "PENDING-MOT-01", "geometry_or_firmware_revision": "MN3508-v1", "quantity": 1},
+          {"role": "propeller", "model": "APC 15x5 MR", "serial_or_lot": "PENDING-PROP-01", "geometry_or_firmware_revision": "rev-1.0", "quantity": 1},
+          {"role": "esc", "model": "BLHeli32-40A", "serial_or_lot": "PENDING-ESC-01", "geometry_or_firmware_revision": "fw-32.9", "quantity": 1},
+          {"role": "battery", "model": "6S-5200mAh-LiPo", "serial_or_lot": "PENDING-BAT-CAL-01", "geometry_or_firmware_revision": "cell-25C", "quantity": 1},
+          {"role": "controller", "model": "PWM-Bench-Step", "serial_or_lot": "PENDING-CTL-01", "geometry_or_firmware_revision": "v1.0", "quantity": 1}
+        ],
+        "instruments": [
+          {"channel": "terminal_voltage_v", "manufacturer_model": "Keysight-DAQ970A", "serial": "PENDING-VOLT-01", "calibration_reference": "CAL-VOLT-2026", "calibration_date_utc": "2026-11-15", "bandwidth_hz": 100.0, "clock_alignment_bound_s": 0.005},
+          {"channel": "current_a", "manufacturer_model": "LEM-LAH50P", "serial": "PENDING-CURR-01", "calibration_reference": "CAL-CURR-2026", "calibration_date_utc": "2026-11-15", "bandwidth_hz": 100.0, "clock_alignment_bound_s": 0.005},
+          {"channel": "thrust_n", "manufacturer_model": "ATI-Gamma-LoadCell", "serial": "PENDING-THR-01", "calibration_reference": "CAL-THR-2026", "calibration_date_utc": "2026-11-15", "bandwidth_hz": 200.0, "clock_alignment_bound_s": 0.005}
+        ],
+        "uncertainties": [
+          {"name": "daq_voltage_bound", "channel": "terminal_voltage_v", "absolute_value": 0.05, "type": "hard_absolute_bound", "source_reference": "Keysight-DAQ970A-Spec"},
+          {"name": "shunt_current_bound", "channel": "current_a", "absolute_value": 0.25, "type": "hard_absolute_bound", "source_reference": "LEM-LAH50P-Spec"},
+          {"name": "loadcell_thrust_bound", "channel": "thrust_n", "absolute_value": 0.20, "type": "hard_absolute_bound", "source_reference": "ATI-Gamma-Cal"}
+        ],
+        "acceptance_metrics": [
+          {"channel": "terminal_voltage_v", "maximum_absolute_prediction_error": 0.35, "minimum_holdout_samples": 100, "maximum_sampling_gap_s": 0.05, "decision_critical": true},
+          {"channel": "current_a", "maximum_absolute_prediction_error": 1.5, "minimum_holdout_samples": 100, "maximum_sampling_gap_s": 0.05, "decision_critical": true},
+          {"channel": "thrust_n", "maximum_absolute_prediction_error": 1.2, "minimum_holdout_samples": 50, "maximum_sampling_gap_s": 0.05, "decision_critical": true}
+        ],
+        "experiments": [
+          {"experiment_id": "COMP-CAL-01", "recording_id": "COMP-REC-CAL-01", "vehicle_id": "STAND-CAL-01", "battery_id": "BAT-CAL-01", "role": "calibration", "scenario": "bench_throttle_sweep"},
+          {"experiment_id": "COMP-HOLD-01", "recording_id": "COMP-REC-HOLD-01", "vehicle_id": "STAND-HOLD-01", "battery_id": "BAT-HOLD-01", "role": "holdout", "scenario": "bench_step_discharge"},
+          {"experiment_id": "COMP-HOLD-02", "recording_id": "COMP-REC-HOLD-02", "vehicle_id": "STAND-HOLD-02", "battery_id": "BAT-HOLD-02", "role": "holdout", "scenario": "bench_cutoff_approach"}
+        ]
+      },
+      "tolerance_bindings": {
+        "M21": {"max_voltage_rmse_v": 0.25, "cutoff_time_error_s": 1.0},
+        "M22": {"min_step_rate_hz": 50.0},
+        "M23": {"structural_margin_min": 1.5},
+        "M24": {"signed_thrust_rel_err_max": 0.08},
+        "M25": {"fault_detection_tpr_min": 0.90},
+        "M26": {"position_mae_max_m": 0.30},
+        "M27": {"min_joint_coverage": 0.90}
+      }
+    },
+    {
+      "protocol": {
+        "schema_version": "1.0",
+        "protocol_id": "P0A026-QUAD-MN3508-FLIGHT-V1",
+        "intended_engineering_decision": "Compare closed-loop takeoff/hover/landing altitude, vertical speed, and pack bus voltage against held-out physical multirotor flights.",
+        "frozen_model_git_sha": "8d0a6f1d452f8c7a3b19a0e4f28c9c7d6e5f4a3b",
+        "frozen_design_sha256": "3333333333333333333333333333333333333333333333333333333333333333",
+        "frozen_controller_configuration_sha256": "4444444444444444444444444444444444444444444444444444444444444444",
+        "preregistration_record_reference": "docs/acceptance/P0A-026.md#multirotor-protocol-v1",
+        "numerical_convergence_report_reference": "docs/acceptance/P0A-015.md",
+        "independent_reviewer_reference": "PENDING_EXTERNAL_REVIEWER_RECEIPT_P0A_033",
+        "approved_test_safety_plan_reference": "PENDING_CUSTODIAN_SAFETY_PLAN_P0A_030",
+        "envelope": {
+          "ambient_temperature_c": [12.0, 32.0],
+          "air_density_kg_m3": [1.10, 1.28],
+          "wind_speed_m_s": [0.0, 4.0],
+          "payload_kg": [0.0, 0.5],
+          "altitude_m": [0.0, 20.0]
+        },
+        "hardware": [
+          {"role": "airframe", "model": "Quad-MN3508-X", "serial_or_lot": "PENDING-QF-01", "geometry_or_firmware_revision": "rev-1.0", "quantity": 1},
+          {"role": "motor", "model": "T-Motor MN3508 KV380", "serial_or_lot": "PENDING-QMOT-01", "geometry_or_firmware_revision": "MN3508-v1", "quantity": 4},
+          {"role": "propeller", "model": "APC 15x5 MR", "serial_or_lot": "PENDING-QPROP-01", "geometry_or_firmware_revision": "rev-1.0", "quantity": 4},
+          {"role": "esc", "model": "BLHeli32-40A", "serial_or_lot": "PENDING-QESC-01", "geometry_or_firmware_revision": "fw-32.9", "quantity": 4},
+          {"role": "battery", "model": "6S-5200mAh-LiPo", "serial_or_lot": "PENDING-QBAT-01", "geometry_or_firmware_revision": "cell-25C", "quantity": 1},
+          {"role": "controller", "model": "QuadcopterController-PID", "serial_or_lot": "PENDING-QCTL-01", "geometry_or_firmware_revision": "p0a-014", "quantity": 1}
+        ],
+        "instruments": [
+          {"channel": "altitude_m", "manufacturer_model": "RTK-Baro-Ref", "serial": "PENDING-ALT-01", "calibration_reference": "CAL-ALT-2026", "calibration_date_utc": "2026-11-15", "bandwidth_hz": 50.0, "clock_alignment_bound_s": 0.01},
+          {"channel": "terminal_voltage_v", "manufacturer_model": "Flight-DAQ-V1", "serial": "PENDING-FV-01", "calibration_reference": "CAL-FV-2026", "calibration_date_utc": "2026-11-15", "bandwidth_hz": 50.0, "clock_alignment_bound_s": 0.01},
+          {"channel": "current_a", "manufacturer_model": "Flight-DAQ-I1", "serial": "PENDING-FI-01", "calibration_reference": "CAL-FI-2026", "calibration_date_utc": "2026-11-15", "bandwidth_hz": 50.0, "clock_alignment_bound_s": 0.01}
+        ],
+        "uncertainties": [
+          {"name": "rtk_altitude_bound", "channel": "altitude_m", "absolute_value": 0.05, "type": "hard_absolute_bound", "source_reference": "RTK-Spec"},
+          {"name": "flight_voltage_bound", "channel": "terminal_voltage_v", "absolute_value": 0.08, "type": "hard_absolute_bound", "source_reference": "Flight-DAQ-Spec"},
+          {"name": "flight_current_bound", "channel": "current_a", "absolute_value": 0.40, "type": "hard_absolute_bound", "source_reference": "Flight-DAQ-Spec"}
+        ],
+        "acceptance_metrics": [
+          {"channel": "altitude_m", "maximum_absolute_prediction_error": 0.35, "minimum_holdout_samples": 100, "maximum_sampling_gap_s": 0.05, "decision_critical": true},
+          {"channel": "terminal_voltage_v", "maximum_absolute_prediction_error": 0.45, "minimum_holdout_samples": 100, "maximum_sampling_gap_s": 0.05, "decision_critical": true},
+          {"channel": "current_a", "maximum_absolute_prediction_error": 2.0, "minimum_holdout_samples": 100, "maximum_sampling_gap_s": 0.05, "decision_critical": true}
+        ],
+        "experiments": [
+          {"experiment_id": "FLT-CAL-01", "recording_id": "FLT-REC-CAL-01", "vehicle_id": "QUAD-CAL-01", "battery_id": "QBAT-CAL-01", "role": "calibration", "scenario": "hover_trim_cal"},
+          {"experiment_id": "FLT-HOLD-01", "recording_id": "FLT-REC-HOLD-01", "vehicle_id": "QUAD-HOLD-01", "battery_id": "QBAT-HOLD-01", "role": "holdout", "scenario": "takeoff_hover_land"},
+          {"experiment_id": "FLT-HOLD-02", "recording_id": "FLT-REC-HOLD-02", "vehicle_id": "QUAD-HOLD-02", "battery_id": "QBAT-HOLD-02", "role": "holdout", "scenario": "wind_step_hover"}
+        ]
+      },
+      "tolerance_bindings": {
+        "M21": {"max_voltage_rmse_v": 0.25, "cutoff_time_error_s": 1.0},
+        "M22": {"min_step_rate_hz": 50.0},
+        "M23": {"structural_margin_min": 1.5},
+        "M24": {"signed_thrust_rel_err_max": 0.08},
+        "M25": {"fault_detection_tpr_min": 0.90},
+        "M26": {"position_mae_max_m": 0.35},
+        "M27": {"min_joint_coverage": 0.90}
+      }
+    }
+  ]
+}
