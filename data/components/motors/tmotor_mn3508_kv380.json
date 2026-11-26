@@ -2,6 +2,24 @@
   "schema_version": "0.1",
   "id": "tmotor_mn3508_kv380",
   "name": "T-Motor MN3508 KV380 (Navigator type)",
+  "physical_identity": {
+    "manufacturer": "T-Motor",
+    "part_number": "MN3508-KV380",
+    "stator_rotor_slots": "12N14P"
+  },
+  "units": {
+    "kv_rpm_per_v": "rpm/V",
+    "internal_resistance_ohm": "ohm",
+    "idle_current_a": "A",
+    "idle_current_voltage_v": "V",
+    "max_continuous_current_a": "A",
+    "max_continuous_power_w": "W",
+    "max_continuous_duration_s": "s",
+    "mass_kg": "kg",
+    "cells_min": "1",
+    "cells_max": "1",
+    "max_winding_temp_c": "degC"
+  },
   "kv_rpm_per_v": 380,
   "internal_resistance_ohm": 0.205,
   "idle_current_a": 0.4,
@@ -13,14 +31,74 @@
   "cells_min": 3,
   "cells_max": 6,
   "configuration": "12N14P",
+  "operating_limits": {
+    "max_continuous_current_a": 14.0,
+    "max_continuous_power_w": 310.0,
+    "max_continuous_duration_s": 180.0,
+    "cells_min": 3,
+    "cells_max": 6,
+    "max_winding_temp_c": 120.0
+  },
   "source": {
     "source": "T-Motor official test report MN.00011 (MN3508 KV380): specifications and load-testing data, DC power supply, static bench",
     "url": "https://modelavia.pro/assets/images/tds_motor/t-mn3508-kv.pdf",
     "report_id": "MN.00011",
+    "evidence_id": "tmotor_mn00011",
     "retrieved": "2026-11-15",
     "uncertainty_pct": 3.0,
     "estimated": false,
+    "status": "SOURCED",
     "notes": "Load table transcribed from datasheet page 3 ('Load Testing Data'); every row is internally consistent (thrust/power matches published efficiency). Internal resistance 205 mOhm is the manufacturer winding measurement. Datasheet note: temperature refers to motor surface at 100% throttle after 10 min run."
+  },
+  "parameter_provenance": {
+    "kv_rpm_per_v": {
+      "unit": "rpm/V",
+      "source": "T-Motor test report MN.00011 specification table (KV 380)",
+      "uncertainty_pct": 3.0,
+      "estimated": false,
+      "status": "SOURCED",
+      "evidence_id": "tmotor_mn00011"
+    },
+    "internal_resistance_ohm": {
+      "unit": "ohm",
+      "source": "T-Motor test report MN.00011 winding resistance measurement (205 mOhm)",
+      "uncertainty_pct": 5.0,
+      "estimated": false,
+      "status": "SOURCED",
+      "evidence_id": "tmotor_mn00011"
+    },
+    "max_continuous_current_a": {
+      "unit": "A",
+      "source": "T-Motor test report MN.00011 (14 A, 180 s)",
+      "uncertainty_pct": 3.0,
+      "estimated": false,
+      "status": "SOURCED",
+      "evidence_id": "tmotor_mn00011"
+    },
+    "max_continuous_power_w": {
+      "unit": "W",
+      "source": "T-Motor test report MN.00011 (310 W, 180 s)",
+      "uncertainty_pct": 3.0,
+      "estimated": false,
+      "status": "SOURCED",
+      "evidence_id": "tmotor_mn00011"
+    },
+    "mass_kg": {
+      "unit": "kg",
+      "source": "T-Motor test report MN.00011 specification (103 g)",
+      "uncertainty_pct": 3.0,
+      "estimated": false,
+      "status": "SOURCED",
+      "evidence_id": "tmotor_mn00011"
+    },
+    "max_winding_temp_c": {
+      "unit": "degC",
+      "source": "Assumed enameled copper winding thermal ceiling (120 C, unlisted in MN.00011)",
+      "uncertainty_pct": 15.0,
+      "estimated": true,
+      "status": "UNVERIFIED_ESTIMATE",
+      "evidence_id": "tmotor_mn00011"
+    }
   },
   "test_data": [
     {"throttle_pct": 50, "voltage_v": 14.8, "current_a": 1.6, "power_w": 23.68, "thrust_gf": 430, "rpm": 2600, "prop": "T-MOTOR 15*5CF", "source": {"source": "T-Motor test report MN.00011, p.3", "report_id": "MN.00011", "uncertainty_pct": 3.0}},

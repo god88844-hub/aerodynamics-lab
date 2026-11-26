@@ -109,6 +109,43 @@ def _validate_inertia(inertia: np.ndarray) -> None:
         )
 
 
+def require_material_density_and_source(
+    density_kg_m3: float | None,
+    density_source: str | None,
+) -> tuple[float, str]:
+    """Fail closed when density or its provenance citation is missing for mass-property calculations."""
+    if density_kg_m3 is None or isinstance(density_kg_m3, bool):
+        raise ValueError("mass-property computation refused: material density_kg_m3 is missing")
+    value = float(density_kg_m3)
+    if not np.isfinite(value) or value <= 0.0:
+        raise ValueError("mass-property computation refused: material density_kg_m3 must be finite and > 0")
+    if not isinstance(density_source, str) or not density_source.strip():
+        raise ValueError("mass-property computation refused: material density source is missing")
+    return value, density_source.strip()
+
+
+def part_from_material_volume(
+    name: str,
+    volume_m3: float,
+    position_m: Sequence[float] | np.ndarray,
+    *,
+    density_kg_m3: float | None = None,
+    density_source: str | None = None,
+    unit_density_inertia_m5: np.ndarray | None = None,
+) -> Part:
+    """Build a Part from volume and sourced density, refusing missing density/source."""
+    if volume_m3 is None or isinstance(volume_m3, bool) or not np.isfinite(volume_m3) or float(volume_m3) <= 0.0:
+        raise ValueError(f"part {name!r}: volume_m3 must be finite and > 0")
+    density, _ = require_material_density_and_source(density_kg_m3, density_source)
+    mass_kg = float(volume_m3) * density
+    inertia = (
+        np.asarray(unit_density_inertia_m5, dtype=float) * density
+        if unit_density_inertia_m5 is not None
+        else None
+    )
+    return Part(name=name, mass_kg=mass_kg, position_m=np.asarray(position_m, dtype=float), inertia_about_own_cog=inertia)
+
+
 def iter_parts_schemas(parts: Iterable[Part]) -> Iterable[Part]:  # pragma: no cover
     """Placeholder for future schema-level part iteration helpers."""
     yield from parts

@@ -2,14 +2,59 @@
   "schema_version": "0.1",
   "id": "generic_esc_80a_12s",
   "name": "Generic 80 A BLDC ESC (12S-capable)",
+  "physical_identity": {
+    "device_type": "BLDC_ESC",
+    "class_rating": "80A_12S_placeholder"
+  },
+  "units": {
+    "max_continuous_current_a": "A",
+    "max_voltage_v": "V",
+    "mass_kg": "kg",
+    "max_temp_c": "degC",
+    "min_temp_c": "degC"
+  },
   "max_continuous_current_a": 80.0,
   "max_voltage_v": 50.4,
   "mass_kg": 0.15,
+  "operating_limits": {
+    "max_continuous_current_a": 80.0,
+    "max_voltage_v": 50.4,
+    "min_temp_c": -10.0,
+    "max_temp_c": 85.0
+  },
   "source": {
     "source": "Placeholder ESC rating sized with headroom over the P80 III's 60 A peak (180 s) rating",
+    "evidence_id": "placeholder_esc_80a_12s",
     "retrieved": "2026-11-15",
     "uncertainty_pct": 20.0,
     "estimated": true,
+    "status": "UNVERIFIED_ESTIMATE",
     "notes": "No specific ESC datasheet captured yet; rating is an estimate. Replace with the actual ESC part before any flight-worthiness claim."
+  },
+  "parameter_provenance": {
+    "max_continuous_current_a": {
+      "unit": "A",
+      "source": "Placeholder 80 A ESC rating sized above P80 III peak",
+      "uncertainty_pct": 20.0,
+      "estimated": true,
+      "status": "UNVERIFIED_ESTIMATE",
+      "evidence_id": "placeholder_esc_80a_12s"
+    },
+    "max_voltage_v": {
+      "unit": "V",
+      "source": "Assumed 12S LiPo full-charge ceiling (12 * 4.2 V = 50.4 V)",
+      "uncertainty_pct": 5.0,
+      "estimated": true,
+      "status": "UNVERIFIED_ESTIMATE",
+      "evidence_id": "placeholder_esc_80a_12s"
+    },
+    "mass_kg": {
+      "unit": "kg",
+      "source": "Typical 80 A 12S UAV ESC mass estimate",
+      "uncertainty_pct": 25.0,
+      "estimated": true,
+      "status": "UNVERIFIED_ESTIMATE",
+      "evidence_id": "placeholder_esc_80a_12s"
+    }
   }
 }

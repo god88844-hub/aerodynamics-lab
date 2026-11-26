@@ -1799,6 +1799,175 @@
         "acquisition": "cited_only; select a version, inspect exact terms and manifest before downloading"
       },
       "integration": "planned_reference_or_adapter; no new validation acceptance"
+    },
+    {
+      "id": "tmotor_mn00011",
+      "title": "T-Motor MN3508 KV380 Datasheet (MN.00011) and P15x5 CF Propeller Listing",
+      "phases": [
+        0
+      ],
+      "requirements": [
+        "ELEC",
+        "AIRCRAFT",
+        "VALIDATION"
+      ],
+      "kind": "component_datasheet",
+      "checked_at": "2026-11-26",
+      "urls": [
+        "https://modelavia.pro/assets/images/tds_motor/t-mn3508-kv.pdf"
+      ],
+      "license": {
+        "identifier": "PROPRIETARY_MANUFACTURER_DATASHEET",
+        "scope": "Public manufacturer specification sheet; transcribed parameters in data/components/",
+        "terms_url": "https://store.tmotor.com/",
+        "redistribution": "Citation and transcribed reference parameters only"
+      },
+      "hardware": [
+        "T-Motor MN3508 KV380",
+        "T-Motor P15*5 CF"
+      ],
+      "channels": [
+        "kv",
+        "winding_resistance",
+        "static_bench_thrust_current_rpm"
+      ],
+      "uncertainty_and_gaps": [
+        "Propeller mass and motor winding thermal ceiling are UNVERIFIED_ESTIMATE"
+      ],
+      "access": {
+        "provider_status": "public_primary_source_reviewed",
+        "research_record_cached": true,
+        "original_bytes_in_repository": false,
+        "external_local_originals_verified": false,
+        "acquisition": "cited_only"
+      },
+      "integration": "component_registry_reference; no independent physical flight acceptance"
+    },
+    {
+      "id": "tmotor-p80iii-kv100-page",
+      "title": "T-Motor P80 III KV100 Product Specification and G30x10.5 CF Bench Table",
+      "phases": [
+        0
+      ],
+      "requirements": [
+        "ELEC",
+        "AIRCRAFT",
+        "VALIDATION"
+      ],
+      "kind": "component_datasheet",
+      "checked_at": "2026-11-26",
+      "urls": [
+        "https://store.tmotor.com/product/P80-v3-without-pin-kv100-p-type.html"
+      ],
+      "license": {
+        "identifier": "PROPRIETARY_MANUFACTURER_DATASHEET",
+        "scope": "Public manufacturer product specification; transcribed parameters in data/components/",
+        "terms_url": "https://store.tmotor.com/",
+        "redistribution": "Citation and transcribed reference parameters only"
+      },
+      "hardware": [
+        "T-Motor P80 III KV100",
+        "T-Motor G30*10.5 CF"
+      ],
+      "channels": [
+        "kv",
+        "winding_resistance",
+        "static_bench_thrust_torque_current_rpm"
+      ],
+      "uncertainty_and_gaps": [
+        "Propeller mass and motor winding thermal ceiling are UNVERIFIED_ESTIMATE"
+      ],
+      "access": {
+        "provider_status": "public_primary_source_reviewed",
+        "research_record_cached": true,
+        "original_bytes_in_repository": false,
+        "external_local_originals_verified": false,
+        "acquisition": "cited_only"
+      },
+      "integration": "component_registry_reference; no independent physical flight acceptance"
+    },
+    {
+      "id": "astm_b258_12awg_silicone",
+      "title": "ASTM B258 Standard 12 AWG Copper Wire Specification and Silicone Bus Estimate",
+      "phases": [
+        0
+      ],
+      "requirements": [
+        "ELEC",
+        "VALIDATION"
+      ],
+      "kind": "standard",
+      "checked_at": "2026-11-26",
+      "urls": [
+        "https://www.astm.org/b0258-18.html"
+      ],
+      "license": {
+        "identifier": "PROPRIETARY_STANDARD_REFERENCE",
+        "scope": "Standard AWG cross-section/resistivity reference; ampacity and jacket mass are UNVERIFIED_ESTIMATE",
+        "terms_url": "https://www.astm.org/b0258-18.html",
+        "redistribution": "Citation only"
+      },
+      "hardware": [
+        "12 AWG silicone-insulated stranded copper bus"
+      ],
+      "channels": [
+        "cross_section_m2",
+        "resistance_ohm_per_m",
+        "ampacity_estimate"
+      ],
+      "uncertainty_and_gaps": [
+        "Installed ampacity, voltage rating, and cable mass/m are UNVERIFIED_ESTIMATE"
+      ],
+      "access": {
+        "provider_status": "public_primary_source_reviewed",
+        "research_record_cached": true,
+        "original_bytes_in_repository": false,
+        "external_local_originals_verified": false,
+        "acquisition": "cited_only"
+      },
+      "integration": "component_registry_reference; no independent physical harness acceptance"
+    },
+    {
+      "id": "tdk_icm42688p_ds000347",
+      "title": "TDK InvenSense ICM-42688-P 6-Axis MEMS IMU Datasheet (DS-000347)",
+      "phases": [
+        0
+      ],
+      "requirements": [
+        "ELEC",
+        "AUTO",
+        "VALIDATION"
+      ],
+      "kind": "component_datasheet",
+      "checked_at": "2026-11-26",
+      "urls": [
+        "https://invensense.tdk.com/products/motion-tracking/6-axis/icm-42688-p/"
+      ],
+      "license": {
+        "identifier": "PROPRIETARY_MANUFACTURER_DATASHEET",
+        "scope": "Public IC datasheet specification; carrier PCB mass and SPI latency are UNVERIFIED_ESTIMATE",
+        "terms_url": "https://invensense.tdk.com/products/motion-tracking/6-axis/icm-42688-p/",
+        "redistribution": "Citation only"
+      },
+      "hardware": [
+        "TDK InvenSense ICM-42688-P"
+      ],
+      "channels": [
+        "sample_rate_hz",
+        "gyro_noise_density",
+        "operating_voltage_temp_limits"
+      ],
+      "uncertainty_and_gaps": [
+        "Bias instability, SPI latency, and carrier mass are UNVERIFIED_ESTIMATE"
+      ],
+      "access": {
+        "provider_status": "public_primary_source_reviewed",
+        "research_record_cached": true,
+        "original_bytes_in_repository": false,
+        "external_local_originals_verified": false,
+        "acquisition": "cited_only"
+      },
+      "integration": "component_registry_reference; no independent flight-sensor acceptance"
     }
   ],
   "local_custody": {
@@ -2669,5 +2838,67 @@
     "supersonic/hypersonic thermal/aeroelastic and complete jet-engine tests",
     "rocket thrust/combustion/cooling/recovery and scale-specific full-flight evidence"
   ],
-  "legacy_note": "Existing data/benchmarks/public_sources.json and campaign prose include older acquisition statuses. Use this dated local-custody audit for actual current file presence; retain original campaign bounds. No original report was rewritten."
+  "legacy_note": "Existing data/benchmarks/public_sources.json and campaign prose include older acquisition statuses. Use this dated local-custody audit for actual current file presence; retain original campaign bounds. No original report was rewritten.",
+  "component_evidence_registry": {
+    "tmotor_mn00011": {
+      "kind": "datasheet",
+      "registry_entry_id": "tmotor_mn00011",
+      "default_status": "SOURCED"
+    },
+    "tmotor-p80iii-kv100-page": {
+      "kind": "datasheet",
+      "registry_entry_id": "tmotor-p80iii-kv100-page",
+      "default_status": "SOURCED"
+    },
+    "astm_b258_12awg_silicone": {
+      "kind": "standard_plus_estimate",
+      "registry_entry_id": "astm_b258_12awg_silicone",
+      "default_status": "UNVERIFIED_ESTIMATE"
+    },
+    "tdk_icm42688p_ds000347": {
+      "kind": "datasheet_plus_estimate",
+      "registry_entry_id": "tdk_icm42688p_ds000347",
+      "default_status": "UNVERIFIED_ESTIMATE"
+    },
+    "generic_lipo_12s_22000mah_chart": {
+      "kind": "community_reference_estimate",
+      "url": "https://intofpv.com/t-lipo-voltage-quick-chart",
+      "default_status": "UNVERIFIED_ESTIMATE"
+    },
+    "generic_lipo_6s_16000mah_chart": {
+      "kind": "community_reference_estimate",
+      "url": "https://intofpv.com/t-lipo-voltage-quick-chart",
+      "default_status": "UNVERIFIED_ESTIMATE"
+    },
+    "placeholder_esc_80a_12s": {
+      "kind": "placeholder_estimate",
+      "artifact": "data/components/controllers/esc_80a_12s.json",
+      "default_status": "UNVERIFIED_ESTIMATE"
+    },
+    "placeholder_esc_20a_6s": {
+      "kind": "placeholder_estimate",
+      "artifact": "data/components/controllers/generic_esc_20a.json",
+      "default_status": "UNVERIFIED_ESTIMATE"
+    },
+    "asm_matweb_6061_t6": {
+      "kind": "handbook_plus_assumed_band",
+      "artifact": "data/components/materials.json",
+      "default_status": "UNVERIFIED_ESTIMATE"
+    },
+    "cmh17_typical_cfrp": {
+      "kind": "typical_handbook_estimate",
+      "artifact": "data/components/materials.json",
+      "default_status": "UNVERIFIED_ESTIMATE"
+    },
+    "typical_pa12_pbf": {
+      "kind": "typical_datasheet_estimate",
+      "artifact": "data/components/materials.json",
+      "default_status": "UNVERIFIED_ESTIMATE"
+    },
+    "typical_pla_fdm": {
+      "kind": "typical_datasheet_estimate",
+      "artifact": "data/components/materials.json",
+      "default_status": "UNVERIFIED_ESTIMATE"
+    }
+  }
 }

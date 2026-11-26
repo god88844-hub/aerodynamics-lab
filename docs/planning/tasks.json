@@ -829,13 +829,16 @@
         "P0A-015"
       ],
       "actor": "builder",
-      "status": "todo",
+      "status": "done",
       "acceptance": "Battery/motor/ESC/wiring/material/sensor records carry units, identity, source, limits and parameter-level evidence; unsourced typical values and assumed uncertainty bands display UNVERIFIED_ESTIMATE; missing required limits refuse acceptance.",
       "proof_file": "docs/acceptance/P0A-016.md",
       "planned_tests": [
         "tests/acceptance/test_p0a_016.py"
       ],
-      "completion_evidence": [],
+      "completion_evidence": [
+        "docs/acceptance/P0A-016.md",
+        "tests/acceptance/test_p0a_016.py"
+      ],
       "gate": null,
       "language": [
         "Python"
@@ -4156,6 +4159,6 @@
       ]
     }
   ],
-  "execution_hold": "Owner authorized resuming implementation starting at P0A-016 (visual Forward+ PBR, Dual Digital-Twin % metrics, and reference architecture locked in docs/SIMULATION_VISION_AND_REFERENCE_STACK.md).",
-  "next_build_task": "P0A-016"
+  "execution_hold": "P0A-016 component provenance, UNVERIFIED_ESTIMATE surfacing, and fail-closed mass-property checks are complete as DEVELOPMENT. Implementation proceeds to P0A-017.",
+  "next_build_task": "P0A-017"
 }

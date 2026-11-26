@@ -8,7 +8,7 @@ Tracking: [master issue #127](https://github.com/god88844-hub/aerodynamics-lab/i
 
 ## Next action and execution rules
 
-**P0A-004 is complete** with the owner's actual authorization receipt. Merge/tag requires the three pre-merge checks and five green CI jobs; actual operation receipts are recorded afterward. **Owner authorized resuming implementation starting at P0A-016 (visual Forward+ PBR, Dual Digital-Twin % metrics, and reference architecture locked in docs/SIMULATION_VISION_AND_REFERENCE_STACK.md).** The next future software task is **P0A-016**.
+**P0A-004 is complete** with the owner's actual authorization receipt. Merge/tag requires the three pre-merge checks and five green CI jobs; actual operation receipts are recorded afterward. **P0A-016 component provenance, UNVERIFIED_ESTIMATE surfacing, and fail-closed mass-property checks are complete as DEVELOPMENT. Implementation proceeds to P0A-017.** The next future software task is **P0A-017**.
 
 1. Read `AGENTS.md`, this task's section, the linked fundamentals, `docs/SIMULATION_VISION_AND_REFERENCE_STACK.md` and the acceptance ledger. Use only the canonical local workspace in `WORKSPACE.md`.
 2. When implementation is explicitly resumed, pick the first unchecked builder task in document order whose prerequisites are checked. A pending owner/custodian/reviewer task requires its real receipt; a builder cannot self-approve it or invent data.
@@ -273,18 +273,19 @@ Tasks with several WPs appear in each relevant issue but retain one canonical ID
   - Recorded evidence: [docs/acceptance/P0A-015.md](acceptance/P0A-015.md), [tests/acceptance/test_p0a_015.py](../tests/acceptance/test_p0a_015.py), [packages/physics/dynamics/quaternion.py](../packages/physics/dynamics/quaternion.py), [packages/physics/scenarios/runner.py](../packages/physics/scenarios/runner.py).
 
 <a name="p0a-016"></a>
-- [ ] **P0A-016 — Make component sources and parameter uncertainty explicit** (WP1, WP5, WP11; actor: builder)
+- [x] **P0A-016 — Make component sources and parameter uncertainty explicit** (WP1, WP5, WP11; actor: builder)
   - Prerequisites: P0A-015. Proof: [docs/acceptance/P0A-016.md](acceptance/P0A-016.md).
   - Acceptance: Battery/motor/ESC/wiring/material/sensor records carry units, identity, source, limits and parameter-level evidence; unsourced typical values and assumed uncertainty bands display UNVERIFIED_ESTIMATE; missing required limits refuse acceptance.
   - Language: Python.
   - Target files: `data/research/registry.json`; `data/components/`; `packages/shared-schemas/`; `tests/acceptance/test_p0a_016.py`; `docs/acceptance/P0A-016.md`.
   - Todos:
-    - [ ] 1. Extend the component registry records: units, physical identity, source citation, operating limits and parameter-level evidence links for battery/motor/ESC/wiring/material/sensor records.
-    - [ ] 2. Mark every unsourced typical value and assumed uncertainty band UNVERIFIED_ESTIMATE and surface that flag in the UI/exports.
-    - [ ] 3. Refuse mass-property computation when a required density/source is missing (fail closed).
-    - [ ] 4. Add acceptance tests asserting each record carries the mandated fields.
+    - [x] 1. Extend the component registry records: units, physical identity, source citation, operating limits and parameter-level evidence links for battery/motor/ESC/wiring/material/sensor records.
+    - [x] 2. Mark every unsourced typical value and assumed uncertainty band UNVERIFIED_ESTIMATE and surface that flag in the UI/exports.
+    - [x] 3. Refuse mass-property computation when a required density/source is missing (fail closed).
+    - [x] 4. Add acceptance tests asserting each record carries the mandated fields.
   - Verify: `pytest tests/acceptance/test_p0a_016.py -q` | `python scripts/reconcile_registry.py --check`
   - Planned verification: `pytest tests/acceptance/test_p0a_016.py`; required current-head CI.
+  - Recorded evidence: [docs/acceptance/P0A-016.md](acceptance/P0A-016.md), [tests/acceptance/test_p0a_016.py](../tests/acceptance/test_p0a_016.py).
 
 <a name="p0a-017"></a>
 - [ ] **P0A-017 — Deliver the standalone desktop project workflow** (WP2; actor: builder)
@@ -1281,4 +1282,4 @@ Tasks with several WPs appear in each relevant issue but retain one canonical ID
   - Prerequisites: P4-007. Proof: [docs/acceptance/P4-008.md](acceptance/P4-008.md).
   - Acceptance: Qualified independent review accepts the stated limited uses; source/rights/security, reproducible distributions, compatibility and recovery gates close the phase.
 
-Unique task count: **150**; checked **15**, unchecked **135**. These are planning tasks, not a count of physically validated milestones. All ten legacy major acceptance families and all twelve broad Phase 0 package issues remain open until their own actual exit evidence exists.
+Unique task count: **150**; checked **16**, unchecked **134**. These are planning tasks, not a count of physically validated milestones. All ten legacy major acceptance families and all twelve broad Phase 0 package issues remain open until their own actual exit evidence exists.

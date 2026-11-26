@@ -2,17 +2,64 @@
   "schema_version": "0.1",
   "id": "tmotor_g30x105_cf",
   "name": "T-Motor G30*10.5 CF propeller (30x10.5 inch, carbon fiber)",
+  "physical_identity": {
+    "manufacturer": "T-Motor",
+    "part_number": "G30*10.5 CF",
+    "blade_count": 2,
+    "material": "carbon_fiber"
+  },
+  "units": {
+    "diameter_in": "in",
+    "pitch_in": "in",
+    "mass_kg": "kg",
+    "max_rpm": "rpm",
+    "min_temp_c": "degC",
+    "max_temp_c": "degC"
+  },
   "diameter_in": 30.0,
   "pitch_in": 10.5,
   "mass_kg": 0.25,
   "material": "carbon fiber",
   "motor_test_data_key": "T-MOTOR G30*10.5CF",
+  "operating_limits": {
+    "max_rpm": 4500.0,
+    "min_temp_c": -20.0,
+    "max_temp_c": 65.0
+  },
   "source": {
     "source": "T-Motor G-series propeller product listing (geometry); used in the T-Motor P80 III KV100 load-testing table",
     "url": "https://store.tmotor.com/product/P80-v3-without-pin-kv100-p-type.html",
+    "evidence_id": "tmotor-p80iii-kv100-page",
     "retrieved": "2026-11-15",
     "uncertainty_pct": 30.0,
     "estimated": true,
-    "notes": "Prop mass is NOT in the bench table; 250 g is an estimate for a 30-inch CF prop and MUST be replaced with a measured value for mass-critical designs (flagged estimated, uncertainty 30%)."
+    "status": "UNVERIFIED_ESTIMATE",
+    "notes": "Prop mass is NOT in the bench table; 250 g is an estimate for a 30-inch CF prop and MUST be replaced with a measured value for mass-critical designs (flagged UNVERIFIED_ESTIMATE, uncertainty 30%)."
+  },
+  "parameter_provenance": {
+    "diameter_in": {
+      "unit": "in",
+      "source": "T-Motor G30*10.5 CF specification (30 in)",
+      "uncertainty_pct": 0.5,
+      "estimated": false,
+      "status": "SOURCED",
+      "evidence_id": "tmotor-p80iii-kv100-page"
+    },
+    "pitch_in": {
+      "unit": "in",
+      "source": "T-Motor G30*10.5 CF specification (10.5 in)",
+      "uncertainty_pct": 1.0,
+      "estimated": false,
+      "status": "SOURCED",
+      "evidence_id": "tmotor-p80iii-kv100-page"
+    },
+    "mass_kg": {
+      "unit": "kg",
+      "source": "Estimated 30-inch carbon-fiber propeller mass (not published in bench table)",
+      "uncertainty_pct": 30.0,
+      "estimated": true,
+      "status": "UNVERIFIED_ESTIMATE",
+      "evidence_id": "tmotor-p80iii-kv100-page"
+    }
   }
 }

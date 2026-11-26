@@ -50,12 +50,22 @@ def constrained_rectangle(width_m: float, height_m: float) -> dict:
     return _rectangle_sketch(width_m, height_m)[1]
 
 
-def solid_mass_properties(shape, density_kg_m3: float | None) -> dict:
+def solid_mass_properties(
+    shape,
+    density_kg_m3: float | None,
+    *,
+    density_source: str | None = None,
+    require_source: bool = False,
+) -> dict:
     """OCCT central tensor in fixed CAD axes; geometry units are millimetres."""
-    import cadquery as cq
     import numpy as np
     from physics.dynamics.rigid_body import RigidBody
 
+    if require_source:
+        if density_kg_m3 is None:
+            raise ValueError("Mass properties refused: uniform density_kg_m3 is missing")
+        if not isinstance(density_source, str) or not density_source.strip():
+            raise ValueError("Mass properties refused: density_source provenance is missing")
     if not shape.isValid() or len(shape.Solids()) != 1 or shape.Volume() <= 0:
         raise ValueError("Mass properties require one valid positive-volume solid")
     center = shape.Center()
@@ -64,15 +74,22 @@ def solid_mass_properties(shape, density_kg_m3: float | None) -> dict:
     if density_kg_m3 is not None:
         if not math.isfinite(density_kg_m3) or density_kg_m3 <= 0:
             raise ValueError("Uniform density must be finite and positive")
+        import cadquery as cq
         # Unit-density volume inertia has dimensions length^5, not length^2.
         inertia = np.asarray(cq.Shape.matrixOfInertia(shape)) * density_kg_m3 * 1e-15
         mass = volume * density_kg_m3
         RigidBody(mass, inertia)  # reject nonfinite or non-positive-definite inputs
     return {"assumption": "homogeneous_uniform_density", "frame": "local_right_handed_z_up",
             "volume_m3": volume, "material_density_kg_m3": density_kg_m3,
+            "density_source": density_source.strip() if isinstance(density_source, str) and density_source.strip() else None,
             "center_of_mass_m": [center.x / 1000, center.y / 1000, center.z / 1000],
             "mass_kg": mass, "inertia_about_cog_kg_m2": inertia.tolist() if inertia is not None else None,
             "physical_validation_status": "unvalidated"}
+
+
+def require_solid_mass_properties(shape, density_kg_m3: float | None, density_source: str | None) -> dict:
+    """Fail-closed solid mass-property computation requiring both finite density and source."""
+    return solid_mass_properties(shape, density_kg_m3, density_source=density_source, require_source=True)
 
 
 def blade_solid(recipe: BladeRecipe):
