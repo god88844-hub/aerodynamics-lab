@@ -65,7 +65,17 @@ var transform_dialog: AcceptDialog
 var transform_fields: Dictionary = {}
 var undo_stack: Array = []
 var redo_stack: Array = []
+var layout_dialog: AcceptDialog
+var layout_fields: Dictionary = {}
+var layout_material_select: OptionButton
+var layout_motor_select: OptionButton
+var ground_dialog: AcceptDialog
+var ground_fields: Dictionary = {}
+var ground_rain_check: CheckButton
+var mission_dialog: AcceptDialog
+var mission_fields: Dictionary = {}
 var world_env: WorldEnvironment
+var ground_props: Node3D
 var key_light: DirectionalLight3D
 var fill_light: DirectionalLight3D
 var current_project_path: String = ""
@@ -151,6 +161,10 @@ func _build_interface() -> void:
 	_add_button(toolbar, "Edit transform", _open_transform_editor)
 	_add_button(toolbar, "Undo", _undo_edit)
 	_add_button(toolbar, "Redo", _redo_edit)
+	_add_button(toolbar, "Layout / BOM", _open_layout_editor)
+	_add_button(toolbar, "Check clearance", _run_clearance_check)
+	_add_button(toolbar, "Test ground", _open_test_ground_dialog)
+	_add_button(toolbar, "Mission / Seeds", _open_mission_dialog)
 	_add_button(toolbar, "Run applied-torque experiment", _run_cad_torque)
 	_add_button(toolbar, "Worker limits", _open_limits)
 	cad_material_select = OptionButton.new()
@@ -234,6 +248,8 @@ func _build_interface() -> void:
 	ground.material_override = ground_material
 	ground.position.y = -0.12
 	world.add_child(ground)
+	ground_props = Node3D.new()
+	world.add_child(ground_props)
 	var replay: HBoxContainer = HBoxContainer.new()
 	layout.add_child(replay)
 	_add_button(replay, "Play / pause", func(): playing = not playing)
@@ -382,6 +398,64 @@ func _build_interface() -> void:
 	transform_fields["yaw_deg"] = _numeric_field(tf_form, "Yaw (deg)", -180.0, 180.0, 1.0, 0.0)
 	transform_dialog.confirmed.connect(_apply_node_transform)
 	add_child(transform_dialog)
+	layout_dialog = AcceptDialog.new()
+	layout_dialog.title = "Multirotor Layout, Materials, BOM & Mass"
+	layout_dialog.ok_button_text = "Compute BOM & mass"
+	var lay_form: VBoxContainer = VBoxContainer.new()
+	layout_dialog.add_child(lay_form)
+	layout_fields["n_rotors"] = _numeric_field(lay_form, "Rotor count (3..12)", 3, 12, 1, 4)
+	layout_fields["arm_radius_m"] = _numeric_field(lay_form, "Arm radius (m)", 0.1, 3.0, 0.01, 0.28)
+	layout_fields["wiring_length_m"] = _numeric_field(lay_form, "Bus wiring length (m)", 0.05, 10.0, 0.05, 0.6)
+	var lm_row: HBoxContainer = HBoxContainer.new()
+	lay_form.add_child(lm_row)
+	var lm_lbl: Label = Label.new()
+	lm_lbl.text = "Frame material"
+	lm_lbl.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	lm_row.add_child(lm_lbl)
+	layout_material_select = OptionButton.new()
+	for mid in ["alu_6061_t6", "cfrp_quasi_iso", "pa12_nylon", "pla_fdg"]:
+		layout_material_select.add_item(mid)
+	lm_row.add_child(layout_material_select)
+	var mot_row: HBoxContainer = HBoxContainer.new()
+	lay_form.add_child(mot_row)
+	var mot_lbl: Label = Label.new()
+	mot_lbl.text = "Motor"
+	mot_lbl.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	mot_row.add_child(mot_lbl)
+	layout_motor_select = OptionButton.new()
+	layout_motor_select.add_item("tmotor_mn3508_kv380")
+	layout_motor_select.add_item("tmotor_p80iii_kv100")
+	mot_row.add_child(layout_motor_select)
+	layout_dialog.confirmed.connect(_apply_layout_bom)
+	add_child(layout_dialog)
+	ground_dialog = AcceptDialog.new()
+	ground_dialog.title = "Engineering test ground (SI Z-up)"
+	ground_dialog.ok_button_text = "Author test ground"
+	var g_form: VBoxContainer = VBoxContainer.new()
+	ground_dialog.add_child(g_form)
+	ground_fields["wind_x"] = _numeric_field(g_form, "Wind X (m/s)", -40.0, 40.0, 0.5, 0.0)
+	ground_fields["wind_y"] = _numeric_field(g_form, "Wind Y (m/s)", -40.0, 40.0, 0.5, 0.0)
+	ground_fields["temperature_k"] = _numeric_field(g_form, "Temperature (K)", 200.0, 340.0, 0.5, 288.15)
+	ground_fields["pressure_pa"] = _numeric_field(g_form, "Pressure (Pa)", 30000.0, 120000.0, 100.0, 101325.0)
+	ground_fields["humidity"] = _numeric_field(g_form, "Humidity (0..1)", 0.0, 1.0, 0.05, 0.0)
+	ground_fields["obstacle_x"] = _numeric_field(g_form, "Obstacle X (m)", -20.0, 20.0, 0.5, 4.0)
+	ground_rain_check = CheckButton.new()
+	ground_rain_check.text = "Request rain (Slice 0D unsupported check)"
+	ground_rain_check.button_pressed = false
+	g_form.add_child(ground_rain_check)
+	ground_dialog.confirmed.connect(_apply_test_ground)
+	add_child(ground_dialog)
+	mission_dialog = AcceptDialog.new()
+	mission_dialog.title = "Mission phases, clock & seed"
+	mission_dialog.ok_button_text = "Author & run mission"
+	var m_form: VBoxContainer = VBoxContainer.new()
+	mission_dialog.add_child(m_form)
+	mission_fields["hover_alt_m"] = _numeric_field(m_form, "Target hover altitude (m)", 0.5, 100.0, 0.5, 5.0)
+	mission_fields["hover_s"] = _numeric_field(m_form, "Hover duration (s)", 0.5, 120.0, 0.5, 3.0)
+	mission_fields["dt_s"] = _numeric_field(m_form, "Controller dt (s)", 0.002, 0.05, 0.002, 0.01)
+	mission_fields["seed"] = _numeric_field(m_form, "Experiment seed", 0, 1000000, 1, 42)
+	mission_dialog.confirmed.connect(_run_authored_mission)
+	add_child(mission_dialog)
 	_update_camera()
 
 
@@ -624,6 +698,110 @@ func _redo_edit() -> void:
 		status_label.text = "Redo applied (%d remaining). Exact solids and LOD restored." % redo_stack.size()
 
 
+func _open_layout_editor() -> void:
+	if job_pid > 0:
+		return
+	layout_dialog.popup_centered(Vector2i(500, 320))
+
+
+func _apply_layout_bom() -> void:
+	if job_pid > 0:
+		return
+	var n_rot: int = int(layout_fields["n_rotors"].value)
+	var radius: float = float(layout_fields["arm_radius_m"].value)
+	var rotors_arr: Array = []
+	for i in range(n_rot):
+		var ang: float = TAU * float(i) / float(n_rot)
+		rotors_arr.append({"position_m": [radius * cos(ang), radius * sin(ang), 0.0], "spin_direction": 1 if (i % 2 == 0) else -1})
+	var mat_id: String = layout_material_select.get_item_text(layout_material_select.selected)
+	var mot_id: String = layout_motor_select.get_item_text(layout_motor_select.selected)
+	var prop_id: String = "tmotor_g30x105_cf" if mot_id == "tmotor_p80iii_kv100" else "tmotor_p15x5_cf"
+	var esc_id: String = "esc_80a_12s" if mot_id == "tmotor_p80iii_kv100" else "generic_esc_20a"
+	var bat_id: String = "generic_12s_22000mah" if mot_id == "tmotor_p80iii_kv100" else "generic_6s_lipo_16000mah"
+	var spec: Dictionary = {
+		"rotors": rotors_arr,
+		"motor_id": mot_id,
+		"propeller_id": prop_id,
+		"esc_id": esc_id,
+		"battery_id": bat_id,
+		"wiring_id": "silicone_awg12_bus",
+		"wiring_length_m": float(layout_fields["wiring_length_m"].value),
+		"sensor_ids": ["icm42688p_imu"],
+		"frame_parts": [{"name": "central_frame", "material_id": mat_id, "shape": "box", "dimensions_m": [0.22, 0.22, 0.02], "position_m": [0.0, 0.0, 0.0]}],
+	}
+	_start_job("layout-bom", _write_payload(spec))
+
+
+func _run_clearance_check() -> void:
+	if job_pid > 0 or project.is_empty():
+		return
+	var doc_text: String = _frozen_project_json()
+	if doc_text.is_empty():
+		return
+	var rotors_arr: Array = []
+	var vehicle: Dictionary = project.get("vehicle", {})
+	if vehicle.get("format") == "legacy_multirotor_0.1":
+		for r in vehicle["snapshot"].get("rotors", []):
+			rotors_arr.append({"position_m": r["position_m"], "radius_m": 0.19})
+	else:
+		rotors_arr = [{"position_m": [0.25, 0.25, 0.0], "radius_m": 0.15}, {"position_m": [-0.25, 0.25, 0.0], "radius_m": 0.15}]
+	var payload_str: String = '{"project":%s,"rotors":%s,"minimum_clearance_m":0.02}' % [doc_text, JSON.stringify(rotors_arr, "", true, true)]
+	_start_job("clearance-check", _write_json_text(payload_str))
+
+
+func _open_test_ground_dialog() -> void:
+	if job_pid > 0 or project.is_empty():
+		return
+	ground_dialog.popup_centered(Vector2i(500, 360))
+
+
+func _apply_test_ground() -> void:
+	if job_pid > 0 or project.is_empty():
+		return
+	var doc_text: String = _frozen_project_json()
+	if doc_text.is_empty():
+		return
+	var ground_spec: Dictionary = {
+		"wind_world_m_s": [float(ground_fields["wind_x"].value), float(ground_fields["wind_y"].value), 0.0],
+		"temperature_k": float(ground_fields["temperature_k"].value),
+		"pressure_pa": float(ground_fields["pressure_pa"].value),
+		"relative_humidity": float(ground_fields["humidity"].value),
+		"rain_mm_h": 5.0 if ground_rain_check.button_pressed else 0.0,
+		"obstacles": [{"id": "pillar_1", "center_m": [float(ground_fields["obstacle_x"].value), 0.0, 0.5], "size_m": [0.5, 0.5, 1.0]}],
+	}
+	var payload_str: String = '{"project":%s,"test_ground":%s}' % [doc_text, JSON.stringify(ground_spec, "", true, true)]
+	_start_job("author-ground", _write_json_text(payload_str))
+
+
+func _open_mission_dialog() -> void:
+	if job_pid > 0 or project.is_empty():
+		return
+	mission_dialog.popup_centered(Vector2i(480, 280))
+
+
+func _run_authored_mission() -> void:
+	if job_pid > 0 or project.is_empty():
+		return
+	var doc_text: String = _frozen_project_json()
+	if doc_text.is_empty():
+		return
+	var alt: float = float(mission_fields["hover_alt_m"].value)
+	var hov_s: float = float(mission_fields["hover_s"].value)
+	var dt_s: float = float(mission_fields["dt_s"].value)
+	var seed_val: int = int(mission_fields["seed"].value)
+	var mission_spec: Dictionary = {
+		"controller_dt_s": dt_s,
+		"seed": seed_val,
+		"phases": [
+			{"phase": "takeoff", "duration_s": 1.0, "target_altitude_m": alt},
+			{"phase": "hover", "duration_s": hov_s, "target_altitude_m": alt},
+			{"phase": "landing", "duration_s": 1.0, "target_altitude_m": 0.0},
+		],
+	}
+	var payload_str: String = '{"project":%s,"mission":%s}' % [doc_text, JSON.stringify(mission_spec, "", true, true)]
+	_start_job("author-mission", _write_json_text(payload_str))
+
+
 func _run_cad_torque() -> void:
 	if project.is_empty() or job_pid > 0:
 		return
@@ -697,6 +875,7 @@ func _refresh_project() -> bool:
 	for child in aircraft.get_children():
 		aircraft.remove_child(child)
 		child.queue_free()
+	_refresh_ground_props()
 	components.clear()
 	var root: TreeItem = components.create_item()
 	project_label.text = "%s · %s · document %s" % [
@@ -774,6 +953,49 @@ func _asset(identity: String) -> Dictionary:
 		if asset["id"] == identity:
 			return asset
 	return {}
+
+
+func _refresh_ground_props() -> void:
+	if ground_props == null:
+		return
+	for child in ground_props.get_children():
+		ground_props.remove_child(child)
+		child.queue_free()
+	var tg: Variant = project.get("experiment", {}).get("parameters", {}).get("test_ground")
+	if not (tg is Dictionary):
+		return
+	# Display-only PBR cues for landing pad and authored obstacles; aerodynamic and contact physics remain separate.
+	var ls: Dictionary = tg.get("landing_surface", {})
+	var pad: MeshInstance3D = MeshInstance3D.new()
+	var pad_mesh: CylinderMesh = CylinderMesh.new()
+	pad_mesh.top_radius = 0.6
+	pad_mesh.bottom_radius = 0.65
+	pad_mesh.height = 0.02
+	pad.mesh = pad_mesh
+	var pad_mat: StandardMaterial3D = StandardMaterial3D.new()
+	pad_mat.albedo_color = Color(0.18, 0.22, 0.26)
+	pad_mat.roughness = 0.78
+	pad_mat.metallic = 0.1
+	pad.material_override = pad_mat
+	var pad_pos: Array = ls.get("origin_m", [0.0, 0.0, 0.0])
+	pad.position = _scene_position([float(pad_pos[0]), float(pad_pos[1]), float(pad_pos[2]) - 0.01])
+	ground_props.add_child(pad)
+	for obs in tg.get("obstacles", []):
+		if not (obs is Dictionary):
+			continue
+		var obs_inst: MeshInstance3D = MeshInstance3D.new()
+		var box_mesh: BoxMesh = BoxMesh.new()
+		var sz: Array = obs.get("size_m", [0.5, 0.5, 1.0])
+		box_mesh.size = Vector3(float(sz[0]), float(sz[2]), float(sz[1]))
+		obs_inst.mesh = box_mesh
+		var obs_mat: StandardMaterial3D = StandardMaterial3D.new()
+		obs_mat.albedo_color = Color(0.68, 0.36, 0.16)
+		obs_mat.roughness = 0.55
+		obs_mat.metallic = 0.25
+		obs_inst.material_override = obs_mat
+		var ctr: Array = obs.get("center_m", [2.0, 0.0, 0.5])
+		obs_inst.position = _scene_position([float(ctr[0]), float(ctr[1]), float(ctr[2])])
+		ground_props.add_child(obs_inst)
 
 
 func _display_mesh(asset: Dictionary) -> MeshInstance3D:
@@ -1206,14 +1428,21 @@ func _start_job(action: String, input_path: String, output_path: String = "") ->
 	job_completion = ProjectSettings.globalize_path(stem + "-complete.json")
 	job_started = ProjectSettings.globalize_path(stem + "-started.json")
 	var cli_action: String = "validate" if action == "edit-transform" else action
-	var arguments: PackedStringArray = [
-		repository_root().path_join("scripts/lab_project.py"), cli_action, input_path, job_output,
-		"--error-output", job_error, "--completion-output", job_completion]
-	job_asset_root = project_asset_root if (action in ["package", "save-version", "edit-transform"]) else input_path.get_base_dir()
-	if action in ["validate", "package", "save-version", "edit-transform"]:
-		arguments.append_array(["--asset-root", job_asset_root])
-	if action == "recover" and not current_project_path.is_empty():
-		arguments.append_array(["--restore-to", current_project_path])
+	var arguments: PackedStringArray
+	if action == "clearance-check":
+		job_asset_root = project_asset_root
+		arguments = [
+			repository_root().path_join("scripts/lab_cad_analysis.py"), input_path, job_output,
+			"--clearance", "--asset-root", job_asset_root, "--error-output", job_error, "--completion-output", job_completion]
+	else:
+		arguments = [
+			repository_root().path_join("scripts/lab_project.py"), cli_action, input_path, job_output,
+			"--error-output", job_error, "--completion-output", job_completion]
+		job_asset_root = project_asset_root if (action in ["package", "save-version", "edit-transform", "author-ground", "author-mission", "run-mission"]) else input_path.get_base_dir()
+		if action in ["validate", "package", "save-version", "edit-transform"]:
+			arguments.append_array(["--asset-root", job_asset_root])
+		if action == "recover" and not current_project_path.is_empty():
+			arguments.append_array(["--restore-to", current_project_path])
 	arguments.append_array(["--started-output", job_started])
 	job_pid = OS.create_process(python_command(), arguments, false)
 	status_label.text = "Running %s…" % action if job_pid > 0 else "Cannot start the configured Python worker"
@@ -1282,6 +1511,18 @@ func _process(delta: float) -> void:
 						project_document_json = JSON.stringify(rec_proj, "", true, true)
 						project_document_view = rec_proj.duplicate(true)
 					status_label.text = "Recovered last valid project (%s)." % str(output.get("project_sha256", "")).left(12)
+			elif job_action == "layout-bom":
+				var mp: Dictionary = output.get("mass_properties", {})
+				metrics_label.text = "BOM (%d rotors) · Mass %.3f kg\nCoG %s m\nUnverified: %s" % [
+					int(output.get("n_rotors", 0)), float(mp.get("mass_kg", 0.0)), str(mp.get("cog_m", [])), str(output.get("unverified_bom_items", []))]
+				status_label.text = "Layout BOM and mass properties computed (%d BOM items; physical validation pending)." % output.get("bom", []).size()
+			elif job_action == "clearance-check":
+				status_label.text = "Clearance %s (min gap: %s m) · %s" % [
+					str(output.get("clearance_status")), str(output.get("minimum_observed_clearance_m")), str(output.get("physical_validation_status"))]
+			elif job_action == "run-mission":
+				result = output
+				status_label.text = "Mission completed (seed %s, sha %s) · physical validation pending." % [
+					str(output.get("seed")), str(output.get("mission_sha256", "")).left(12)]
 			elif job_action == "run" or job_action == "cad-torque":
 				result = output
 				replay_time = 0.0

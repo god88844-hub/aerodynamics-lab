@@ -320,60 +320,64 @@ Tasks with several WPs appear in each relevant issue but retain one canonical ID
   - Recorded evidence: [docs/acceptance/P0A-018.md](acceptance/P0A-018.md), [tests/acceptance/test_p0a_018.py](../tests/acceptance/test_p0a_018.py).
 
 <a name="p0a-019"></a>
-- [ ] **P0A-019 — Connect component layout, materials, BOM and mass properties** (WP3, WP5, WP6; actor: builder)
+- [x] **P0A-019 — Connect component layout, materials, BOM and mass properties** (WP3, WP5, WP6; actor: builder)
   - Prerequisites: P0A-018, P0A-016. Proof: [docs/acceptance/P0A-019.md](acceptance/P0A-019.md).
   - Acceptance: Supported arbitrary rotor counts/layouts and component selection update mass, CoG, inertia, powertrain and BOM; independent analytic geometry cases pass; missing density refuses mass and flight acceptance.
   - Language: GDScript, Python.
   - Target files: `apps/desktop/`; `scripts/lab_worker.py`; `packages/physics/dynamics/`; `tests/acceptance/test_p0a_019.py`; `docs/acceptance/P0A-019.md`.
   - Todos:
-    - [ ] 1. Wire supported arbitrary rotor counts/layouts and component selection from the editor into the worker mass-property assembly.
-    - [ ] 2. Update mass, CoG, inertia, powertrain and BOM through the authoritative assembly; render in the UI from the same numbers.
-    - [ ] 3. Add independent analytic geometry cases (known layouts -> known CoG/inertia).
-    - [ ] 4. Refuse mass-property computation on missing density/source (fail closed) and surface the refusal in the UI.
+    - [x] 1. Wire supported arbitrary rotor counts/layouts and component selection from the editor into the worker mass-property assembly.
+    - [x] 2. Update mass, CoG, inertia, powertrain and BOM through the authoritative assembly; render in the UI from the same numbers.
+    - [x] 3. Add independent analytic geometry cases (known layouts -> known CoG/inertia).
+    - [x] 4. Refuse mass-property computation on missing density/source (fail closed) and surface the refusal in the UI.
   - Verify: `pytest tests/acceptance/test_p0a_019.py -q` | `pytest tests/physics/test_mass_properties.py -q`
   - Planned verification: `pytest tests/acceptance/test_p0a_019.py`; required current-head CI.
+  - Recorded evidence: [docs/acceptance/P0A-019.md](acceptance/P0A-019.md), [tests/acceptance/test_p0a_019.py](../tests/acceptance/test_p0a_019.py).
 
 <a name="p0a-020"></a>
-- [ ] **P0A-020 — Integrate geometry clearance and supported load checks** (WP3; actor: builder)
+- [x] **P0A-020 — Integrate geometry clearance and supported load checks** (WP3; actor: builder)
   - Prerequisites: P0A-018. Proof: [docs/acceptance/P0A-020.md](acceptance/P0A-020.md).
   - Acceptance: Rotor/obstacle/assembly clearance and datum transforms are checked from engineering geometry, including revision changes; LOD cannot change physics/clearance; screens retain analytical versus physically qualified status.
   - Language: Python, C++20.
   - Target files: `packages/engineering-core/`; `scripts/lab_cad.py`; `scripts/lab_cad_analysis.py`; `tests/acceptance/test_p0a_020.py`; `docs/acceptance/P0A-020.md`.
   - Todos:
-    - [ ] 1. Implement rotor/obstacle/assembly clearance and datum-transform checks from the exact CAD geometry through the native/OCCT core.
-    - [ ] 2. Guarantee revision changes re-run the clearance checks; display LOD cannot change physics or clearance results.
-    - [ ] 3. Keep analytic screening results visible in the UI alongside the exact checks.
-    - [ ] 4. Add acceptance tests with known-overlap and known-clear fixtures through the real worker.
+    - [x] 1. Implement rotor/obstacle/assembly clearance and datum-transform checks from the exact CAD geometry through the native/OCCT core.
+    - [x] 2. Guarantee revision changes re-run the clearance checks; display LOD cannot change physics or clearance results.
+    - [x] 3. Keep analytic screening results visible in the UI alongside the exact checks.
+    - [x] 4. Add acceptance tests with known-overlap and known-clear fixtures through the real worker.
   - Verify: `pytest tests/acceptance/test_p0a_020.py -q` | `pytest tests/cad -q`
   - Planned verification: `pytest tests/acceptance/test_p0a_020.py`; required current-head CI.
+  - Recorded evidence: [docs/acceptance/P0A-020.md](acceptance/P0A-020.md), [tests/acceptance/test_p0a_020.py](../tests/acceptance/test_p0a_020.py).
 
 <a name="p0a-021"></a>
-- [ ] **P0A-021 — Author a repeatable engineering test ground** (WP4, WP8; actor: builder)
+- [x] **P0A-021 — Author a repeatable engineering test ground** (WP4, WP8; actor: builder)
   - Prerequisites: P0A-017. Proof: [docs/acceptance/P0A-021.md](acceptance/P0A-021.md).
   - Acceptance: Normal UI saves terrain, obstacles, landing/contact surfaces, wind vector, temperature, pressure and humidity with units/origin. Unsupported atmospheric/contact mechanisms are refused or unvalidated, not implemented by a visual shader.
   - Language: GDScript.
   - Target files: `apps/desktop/`; `tests/acceptance/test_p0a_021.py`; `docs/acceptance/P0A-021.md`.
   - Todos:
-    - [ ] 1. Implement the engineering test-ground authoring UI: terrain, obstacles, landing/contact surfaces, wind vector, temperature, pressure and humidity with units and declared origin.
-    - [ ] 2. Refuse unsupported atmospheric/contact mechanisms explicitly (fail closed with the reason).
-    - [ ] 3. Serialize the authored ground with the project and verify save/reload identity.
-    - [ ] 4. Add acceptance tests for authoring, serialization and refusal paths.
-    - [ ] 5. Support clean PBR engineering test-ground materials and lighting cues while keeping visual shaders strictly separate from aerodynamic and contact physics.
+    - [x] 1. Implement the engineering test-ground authoring UI: terrain, obstacles, landing/contact surfaces, wind vector, temperature, pressure and humidity with units and declared origin.
+    - [x] 2. Refuse unsupported atmospheric/contact mechanisms explicitly (fail closed with the reason).
+    - [x] 3. Serialize the authored ground with the project and verify save/reload identity.
+    - [x] 4. Add acceptance tests for authoring, serialization and refusal paths.
+    - [x] 5. Support clean PBR engineering test-ground materials and lighting cues while keeping visual shaders strictly separate from aerodynamic and contact physics.
   - Verify: `pytest tests/acceptance/test_p0a_021.py -q`
   - Planned verification: `pytest tests/acceptance/test_p0a_021.py`; required current-head CI.
+  - Recorded evidence: [docs/acceptance/P0A-021.md](acceptance/P0A-021.md), [tests/acceptance/test_p0a_021.py](../tests/acceptance/test_p0a_021.py).
 
 <a name="p0a-022"></a>
-- [ ] **P0A-022 — Author missions, controls, clocks and experiment seeds** (WP4; actor: builder)
+- [x] **P0A-022 — Author missions, controls, clocks and experiment seeds** (WP4; actor: builder)
   - Prerequisites: P0A-021. Proof: [docs/acceptance/P0A-022.md](acceptance/P0A-022.md).
   - Acceptance: Takeoff/climb/hover/descent/landing, manual commands and disturbances serialize commands, timings, controller/sensor settings and seeds; replay reproduces the frozen experiment independently of render cadence.
   - Language: GDScript, Python.
   - Target files: `apps/desktop/`; `scripts/lab_worker.py`; `tests/acceptance/test_p0a_022.py`; `docs/acceptance/P0A-022.md`.
   - Todos:
-    - [ ] 1. Implement mission authoring: takeoff/climb/hover/descent/landing phases, manual commands and disturbances with serialized commands and timings.
-    - [ ] 2. Serialize controller/sensor settings and experiment seeds with the mission (replay reproduces the frozen experiment identically).
-    - [ ] 3. Add acceptance tests: authored mission -> replay -> identical telemetry under the declared seed.
+    - [x] 1. Implement mission authoring: takeoff/climb/hover/descent/landing phases, manual commands and disturbances with serialized commands and timings.
+    - [x] 2. Serialize controller/sensor settings and experiment seeds with the mission (replay reproduces the frozen experiment identically).
+    - [x] 3. Add acceptance tests: authored mission -> replay -> identical telemetry under the declared seed.
   - Verify: `pytest tests/acceptance/test_p0a_022.py -q`
   - Planned verification: `pytest tests/acceptance/test_p0a_022.py`; required current-head CI.
+  - Recorded evidence: [docs/acceptance/P0A-022.md](acceptance/P0A-022.md), [tests/acceptance/test_p0a_022.py](../tests/acceptance/test_p0a_022.py).
 
 <a name="p0a-023"></a>
 - [ ] **P0A-023 — Run the supported design in the authoritative desktop simulation** (WP2, WP5, WP6; actor: builder)
@@ -1284,4 +1288,4 @@ Tasks with several WPs appear in each relevant issue but retain one canonical ID
   - Prerequisites: P4-007. Proof: [docs/acceptance/P4-008.md](acceptance/P4-008.md).
   - Acceptance: Qualified independent review accepts the stated limited uses; source/rights/security, reproducible distributions, compatibility and recovery gates close the phase.
 
-Unique task count: **150**; checked **18**, unchecked **132**. These are planning tasks, not a count of physically validated milestones. All ten legacy major acceptance families and all twelve broad Phase 0 package issues remain open until their own actual exit evidence exists.
+Unique task count: **150**; checked **22**, unchecked **128**. These are planning tasks, not a count of physically validated milestones. All ten legacy major acceptance families and all twelve broad Phase 0 package issues remain open until their own actual exit evidence exists.
