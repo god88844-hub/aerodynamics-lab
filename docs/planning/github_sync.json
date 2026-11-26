@@ -1,6 +1,6 @@
 {
-  "checked_utc": "2026-11-25T01:00:15.909Z",
-  "plan_sha256_lf": "44100784060df85b3805b1c7013b80d3d937df7226cbf730af285f5db7f3680e",
+  "checked_utc": "2026-11-26T16:49:47.951Z",
+  "plan_sha256_lf": "8bf6d5b607a757b4daa38022fa18595e710e7f0cc490ab711773c0ec9ef632ea",
   "unique_tasks": 150,
   "scope": "P0A-011 DEVELOPMENT software complete; eight SHA-256-verified original MAT files, four fault detections and two remaining healthy false alarms; stop before P0A-012",
   "issues": {
