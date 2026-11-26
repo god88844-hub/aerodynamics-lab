@@ -45,6 +45,20 @@ var last_worker_check_ms: int = 0
 var limits_dialog: AcceptDialog
 var limits_fields: Dictionary = {}
 var limits_status: Label
+var new_project_dialog: AcceptDialog
+var new_project_name: LineEdit
+var new_project_family: OptionButton
+var new_project_template: OptionButton
+var versions_dialog: AcceptDialog
+var versions_tree: Tree
+var versions_status: Label
+var visual_profile_button: Button
+var visual_profile: String = "auto"
+var world_env: WorldEnvironment
+var key_light: DirectionalLight3D
+var fill_light: DirectionalLight3D
+var current_project_path: String = ""
+var last_valid_project_path: String = ""
 var qualification_orbit_left: bool = false
 var qualification_started_usec: int = 0
 var qualification_events: Array = []
@@ -74,9 +88,13 @@ func _ready() -> void:
 			capture_path = argument.trim_prefix("--capture=")
 		if argument.begins_with("--open-project="):
 			initial_project = argument.trim_prefix("--open-project=")
+		if argument.begins_with("--visual-tier="):
+			visual_profile = argument.trim_prefix("--visual-tier=")
+	_apply_visual_profile()
 	if initial_project.is_empty():
 		_load_reference()
 	else:
+		current_project_path = initial_project
 		_start_job("validate", initial_project)
 
 
@@ -105,9 +123,13 @@ func _build_interface() -> void:
 	layout.add_child(project_label)
 	var toolbar: HFlowContainer = HFlowContainer.new()
 	layout.add_child(toolbar)
+	_add_button(toolbar, "New project", _open_new_project_dialog)
+	_add_button(toolbar, "Import design", _import_design)
 	_add_button(toolbar, "Load reference", _load_reference)
 	_add_button(toolbar, "Open project", _open_project)
 	_add_button(toolbar, "Save project", _save_project)
+	_add_button(toolbar, "Save version", _save_version)
+	_add_button(toolbar, "Versions / Recover", _open_versions_dialog)
 	_add_button(toolbar, "Run reference experiment", _run_experiment)
 	_add_button(toolbar, "Cancel job", _cancel_job)
 	_add_button(toolbar, "Build blade example", func():
@@ -116,6 +138,10 @@ func _build_interface() -> void:
 	_add_button(toolbar, "New / edit test body", _open_body_editor)
 	_add_button(toolbar, "Run applied-torque experiment", _run_cad_torque)
 	_add_button(toolbar, "Worker limits", _open_limits)
+	visual_profile_button = Button.new()
+	visual_profile_button.text = "Visual: Auto"
+	visual_profile_button.pressed.connect(_cycle_visual_profile)
+	toolbar.add_child(visual_profile_button)
 	var split: HSplitContainer = HSplitContainer.new()
 	split.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	layout.add_child(split)
@@ -159,22 +185,26 @@ func _build_interface() -> void:
 	camera.current = true
 	camera.fov = 45.0
 	world.add_child(camera)
-	var light: DirectionalLight3D = DirectionalLight3D.new()
-	light.rotation_degrees = Vector3(-40, -25, 0)
-	world.add_child(light)
-	var environment: WorldEnvironment = WorldEnvironment.new()
-	environment.environment = Environment.new()
-	environment.environment.background_mode = Environment.BG_COLOR
-	environment.environment.background_color = Color(0.04, 0.065, 0.09)
-	environment.environment.ambient_light_source = Environment.AMBIENT_SOURCE_COLOR
-	environment.environment.ambient_light_color = Color(0.7, 0.8, 1.0)
-	world.add_child(environment)
+	key_light = DirectionalLight3D.new()
+	key_light.rotation_degrees = Vector3(-40, -25, 0)
+	key_light.light_energy = 1.25
+	world.add_child(key_light)
+	fill_light = DirectionalLight3D.new()
+	fill_light.rotation_degrees = Vector3(-25, 145, 0)
+	fill_light.light_energy = 0.45
+	fill_light.light_color = Color(0.75, 0.85, 1.0)
+	world.add_child(fill_light)
+	world_env = WorldEnvironment.new()
+	world_env.environment = Environment.new()
+	world.add_child(world_env)
 	var ground: MeshInstance3D = MeshInstance3D.new()
 	var ground_mesh: PlaneMesh = PlaneMesh.new()
 	ground_mesh.size = Vector2(8, 8)
 	ground.mesh = ground_mesh
 	var ground_material: StandardMaterial3D = StandardMaterial3D.new()
 	ground_material.albedo_color = Color(0.11, 0.16, 0.2)
+	ground_material.roughness = 0.85
+	ground_material.metallic = 0.05
 	ground.material_override = ground_material
 	ground.position.y = -0.12
 	world.add_child(ground)
@@ -230,6 +260,67 @@ func _build_interface() -> void:
 	limits_form.add_child(limits_status)
 	limits_dialog.confirmed.connect(_apply_limits)
 	add_child(limits_dialog)
+	new_project_dialog = AcceptDialog.new()
+	new_project_dialog.title = "Create new project"
+	new_project_dialog.ok_button_text = "Create project"
+	var new_form: VBoxContainer = VBoxContainer.new()
+	new_project_dialog.add_child(new_form)
+	var name_row: HBoxContainer = HBoxContainer.new()
+	new_form.add_child(name_row)
+	var name_lbl: Label = Label.new()
+	name_lbl.text = "Project name"
+	name_lbl.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	name_row.add_child(name_lbl)
+	new_project_name = LineEdit.new()
+	new_project_name.text = "Custom Multirotor Concept"
+	new_project_name.custom_minimum_size.x = 240
+	name_row.add_child(new_project_name)
+	var fam_row: HBoxContainer = HBoxContainer.new()
+	new_form.add_child(fam_row)
+	var fam_lbl: Label = Label.new()
+	fam_lbl.text = "Aircraft family"
+	fam_lbl.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	fam_row.add_child(fam_lbl)
+	new_project_family = OptionButton.new()
+	for fam in ["multirotor", "fixed_wing", "helicopter", "vtol"]:
+		new_project_family.add_item(fam)
+	fam_row.add_child(new_project_family)
+	var tpl_row: HBoxContainer = HBoxContainer.new()
+	new_form.add_child(tpl_row)
+	var tpl_lbl: Label = Label.new()
+	tpl_lbl.text = "Starter template"
+	tpl_lbl.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	tpl_row.add_child(tpl_lbl)
+	new_project_template = OptionButton.new()
+	new_project_template.add_item("assembly_empty")
+	new_project_template.add_item("legacy_reference")
+	tpl_row.add_child(new_project_template)
+	new_project_dialog.confirmed.connect(_create_new_project)
+	add_child(new_project_dialog)
+	versions_dialog = AcceptDialog.new()
+	versions_dialog.title = "Project versions and recovery"
+	versions_dialog.ok_button_text = "Reopen selected version"
+	var ver_box: VBoxContainer = VBoxContainer.new()
+	versions_dialog.add_child(ver_box)
+	versions_status = Label.new()
+	versions_status.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	ver_box.add_child(versions_status)
+	versions_tree = Tree.new()
+	versions_tree.columns = 3
+	versions_tree.set_column_title(0, "Version")
+	versions_tree.set_column_title(1, "Saved UTC")
+	versions_tree.set_column_title(2, "SHA-256")
+	versions_tree.set_column_titles_visible(true)
+	versions_tree.hide_root = true
+	versions_tree.custom_minimum_size = Vector2(560, 220)
+	ver_box.add_child(versions_tree)
+	versions_dialog.add_button("Recover last valid", false, "recover_last_valid")
+	versions_dialog.confirmed.connect(_reopen_selected_version)
+	versions_dialog.custom_action.connect(func(action_name: StringName):
+		if action_name == &"recover_last_valid":
+			versions_dialog.hide()
+			_recover_last_valid())
+	add_child(versions_dialog)
 	_update_camera()
 
 
@@ -518,6 +609,8 @@ func _display_mesh(asset: Dictionary) -> MeshInstance3D:
 	marker.set_meta("display_lod_count", importer.get_surface_lod_count(0))
 	var material: StandardMaterial3D = StandardMaterial3D.new()
 	material.albedo_color = Color(0.2, 0.75, 0.9)
+	material.metallic = 0.35
+	material.roughness = 0.42
 	marker.material_override = material
 	return marker
 
@@ -557,7 +650,97 @@ func _select_component() -> void:
 		status_label.text = "%s · CAD geometry · material and physical models require qualification" % metadata["node"]["name"]
 
 
+func _apply_visual_profile() -> void:
+	if world_env == null or world_env.environment == null:
+		return
+	var env: Environment = world_env.environment
+	var has_rd: bool = RenderingServer.get_rendering_device() != null
+	var use_pbr: bool = (visual_profile == "forward_plus") or (visual_profile == "auto" and has_rd)
+	if use_pbr and has_rd:
+		var sky_mat: ProceduralSkyMaterial = ProceduralSkyMaterial.new()
+		sky_mat.sky_top_color = Color(0.14, 0.24, 0.38)
+		sky_mat.sky_horizon_color = Color(0.42, 0.52, 0.64)
+		sky_mat.ground_bottom_color = Color(0.06, 0.08, 0.1)
+		sky_mat.ground_horizon_color = Color(0.22, 0.26, 0.3)
+		var sky: Sky = Sky.new()
+		sky.sky_material = sky_mat
+		env.background_mode = Environment.BG_SKY
+		env.sky = sky
+		env.ambient_light_source = Environment.AMBIENT_SOURCE_SKY
+		env.tonemap_mode = Environment.TONE_MAPPER_ACES
+		env.tonemap_exposure = 1.05
+		env.glow_enabled = true
+		env.glow_intensity = 0.25
+		env.ssao_enabled = true
+		if key_light != null:
+			key_light.shadow_enabled = true
+		if fill_light != null:
+			fill_light.visible = true
+		if visual_profile_button != null:
+			visual_profile_button.text = "Visual: Forward+ PBR"
+	else:
+		env.background_mode = Environment.BG_COLOR
+		env.background_color = Color(0.04, 0.065, 0.09)
+		env.ambient_light_source = Environment.AMBIENT_SOURCE_COLOR
+		env.ambient_light_color = Color(0.7, 0.8, 1.0)
+		env.tonemap_mode = Environment.TONE_MAPPER_LINEAR
+		env.glow_enabled = false
+		env.ssao_enabled = false
+		if key_light != null:
+			key_light.shadow_enabled = false
+		if fill_light != null:
+			fill_light.visible = true
+		if visual_profile_button != null:
+			visual_profile_button.text = "Visual: Compatibility"
+
+
+func _cycle_visual_profile() -> void:
+	if visual_profile == "auto":
+		visual_profile = "compatibility"
+	elif visual_profile == "compatibility":
+		visual_profile = "forward_plus"
+	else:
+		visual_profile = "auto"
+	_apply_visual_profile()
+	status_label.text = "Visual profile set to %s (display-only; physics/CAD unchanged)." % visual_profile
+
+
+func _open_new_project_dialog() -> void:
+	if job_pid > 0:
+		return
+	new_project_dialog.popup_centered(Vector2i(520, 240))
+
+
+func _create_new_project() -> void:
+	if job_pid > 0:
+		return
+	var fam: String = new_project_family.get_item_text(new_project_family.selected)
+	var tpl: String = new_project_template.get_item_text(new_project_template.selected)
+	var payload: Dictionary = {
+		"name": new_project_name.text,
+		"aircraft_family": fam,
+		"template": tpl,
+	}
+	var spec_path: String = _write_payload(payload)
+	var out_dir: String = ProjectSettings.globalize_path("user://projects/project-%s" % Time.get_ticks_usec())
+	DirAccess.make_dir_recursive_absolute(out_dir)
+	var out_project: String = out_dir.path_join("project.json")
+	current_project_path = out_project
+	_start_job("create", spec_path, out_project)
+
+
+func _import_design() -> void:
+	if job_pid > 0:
+		return
+	file_dialog.file_mode = FileDialog.FILE_MODE_OPEN_FILE
+	_connect_dialog(func(path: String):
+		current_project_path = ""
+		_start_job("import-legacy", path))
+	file_dialog.popup_centered_ratio(0.75)
+
+
 func _load_reference() -> void:
+	current_project_path = ""
 	_start_job("import-legacy", repository_root().path_join("data/designs/quad_mn3508_6s.json"))
 
 
@@ -565,7 +748,9 @@ func _open_project() -> void:
 	if job_pid > 0:
 		return
 	file_dialog.file_mode = FileDialog.FILE_MODE_OPEN_FILE
-	_connect_dialog(func(path: String): _start_job("validate", path))
+	_connect_dialog(func(path: String):
+		current_project_path = path
+		_start_job("validate", path))
 	file_dialog.popup_centered_ratio(0.75)
 
 
@@ -584,8 +769,62 @@ func _save_project() -> void:
 	file_dialog.current_file = "project.json"
 	_connect_dialog(func(path: String):
 		var snapshot: String = _write_job_input()
+		current_project_path = path
 		_start_job("package", snapshot, path))
 	file_dialog.popup_centered_ratio(0.75)
+
+
+func _save_version() -> void:
+	if project.is_empty() or job_pid > 0:
+		return
+	var target: String = current_project_path
+	if target.is_empty() and not project_asset_root.is_empty():
+		target = project_asset_root.path_join("project.json")
+	if target.is_empty():
+		_save_project()
+		return
+	var snapshot: String = _write_job_input()
+	if not snapshot.is_empty():
+		current_project_path = target
+		_start_job("save-version", snapshot, target)
+
+
+func _open_versions_dialog() -> void:
+	if job_pid > 0:
+		return
+	var probe_path: String = current_project_path
+	if probe_path.is_empty() and not project_asset_root.is_empty():
+		probe_path = project_asset_root.path_join("project.json")
+	if probe_path.is_empty():
+		status_label.text = "Save or open a project first to inspect saved versions or recovery snapshots."
+		return
+	_start_job("list-versions", probe_path)
+
+
+func _reopen_selected_version() -> void:
+	var selected: TreeItem = versions_tree.get_selected()
+	if selected == null:
+		return
+	var rel_path: String = str(selected.get_metadata(0))
+	if rel_path.is_empty():
+		return
+	var base_dir: String = current_project_path.get_base_dir() if not current_project_path.is_empty() else project_asset_root
+	var version_path: String = base_dir.path_join(rel_path)
+	_start_job("validate", version_path)
+
+
+func _recover_last_valid() -> void:
+	if job_pid > 0:
+		return
+	var probe_path: String = current_project_path
+	if probe_path.is_empty():
+		probe_path = last_valid_project_path
+	if probe_path.is_empty() and not project_asset_root.is_empty():
+		probe_path = project_asset_root.path_join("project.json")
+	if probe_path.is_empty():
+		status_label.text = "No saved project directory available for recovery."
+		return
+	_start_job("recover", probe_path)
 
 
 func _connect_dialog(action: Callable) -> void:
@@ -663,9 +902,11 @@ func _start_job(action: String, input_path: String, output_path: String = "") ->
 	var arguments: PackedStringArray = [
 		repository_root().path_join("scripts/lab_project.py"), action, input_path, job_output,
 		"--error-output", job_error, "--completion-output", job_completion]
-	job_asset_root = project_asset_root if action == "package" else input_path.get_base_dir()
-	if action == "validate" or action == "package":
+	job_asset_root = project_asset_root if (action == "package" or action == "save-version") else input_path.get_base_dir()
+	if action == "validate" or action == "package" or action == "save-version":
 		arguments.append_array(["--asset-root", job_asset_root])
+	if action == "recover" and not current_project_path.is_empty():
+		arguments.append_array(["--restore-to", current_project_path])
 	arguments.append_array(["--started-output", job_started])
 	job_pid = OS.create_process(python_command(), arguments, false)
 	status_label.text = "Running %s…" % action if job_pid > 0 else "Cannot start the configured Python worker"
@@ -702,11 +943,38 @@ func _process(delta: float) -> void:
 		job_pid = -1
 		if FileAccess.file_exists(job_error):
 			var error: Variant = JSON.parse_string(FileAccess.get_file_as_string(job_error))
-			status_label.text = "Worker refused the operation. " + str(error.get("error", "Invalid result"))
+			var cat: String = str(error.get("category", "error")) if error is Dictionary else "error"
+			var msg: String = str(error.get("error", "Invalid result")) if error is Dictionary else "Invalid result"
+			status_label.text = "Worker refused [%s]: %s" % [cat, msg]
 		elif _completed_output():
 			var output: Variant = JSON.parse_string(FileAccess.get_file_as_string(job_output))
 			if not output is Dictionary:
 				status_label.text = "Worker returned invalid JSON"
+			elif job_action == "list-versions":
+				versions_tree.clear()
+				var ver_root: TreeItem = versions_tree.create_item()
+				var vers: Array = output.get("versions", [])
+				for v in vers:
+					var row: TreeItem = versions_tree.create_item(ver_root)
+					row.set_text(0, str(v.get("id", "")))
+					row.set_text(1, str(v.get("saved_utc", "")))
+					row.set_text(2, str(v.get("project_sha256", "")).left(12))
+					row.set_metadata(0, str(v.get("path", "")))
+				var rec: Variant = output.get("recovery")
+				versions_status.text = "%d saved version(s). Recovery snapshot: %s" % [
+					vers.size(),
+					str(rec.get("saved_utc", "available")) if rec is Dictionary else "none"]
+				versions_dialog.popup_centered(Vector2i(620, 360))
+			elif job_action == "recover":
+				var rec_proj: Dictionary = output.get("project", {})
+				var rec_root: String = current_project_path.get_base_dir() if not current_project_path.is_empty() else project_asset_root
+				if not rec_proj.is_empty() and _adopt_project(rec_proj, rec_root):
+					if not current_project_path.is_empty() and FileAccess.file_exists(current_project_path):
+						_remember_project_document(current_project_path)
+					else:
+						project_document_json = JSON.stringify(rec_proj, "", true, true)
+						project_document_view = rec_proj.duplicate(true)
+					status_label.text = "Recovered last valid project (%s)." % str(output.get("project_sha256", "")).left(12)
 			elif job_action == "run" or job_action == "cad-torque":
 				result = output
 				replay_time = 0.0
@@ -731,14 +999,20 @@ func _process(delta: float) -> void:
 					next_root = str(output["project_path"]).get_base_dir()
 				else:
 					next_project = output
-					next_root = job_output.get_base_dir() if job_action == "package" else job_asset_root
-				if job_action == "package" and next_project == project:
+					next_root = job_output.get_base_dir() if (job_action == "package" or job_action == "save-version" or job_action == "create") else job_asset_root
+				if (job_action == "package" or job_action == "save-version") and next_project == project:
 					# Saving verified copies does not change the experiment's inputs.
 					project_asset_root = next_root
+					last_valid_project_path = job_output
 					_remember_project_document(job_output)
-					status_label.text = "Project saved. Geometry asset checks passed."
+					status_label.text = "Project version saved. Geometry asset checks passed." if job_action == "save-version" else "Project saved. Geometry asset checks passed."
 				elif _adopt_project(next_project, next_root):
-					_remember_project_document(str(output["project_path"]) if job_action.begins_with("build-") else job_output)
+					var doc_path: String = str(output["project_path"]) if job_action.begins_with("build-") else job_output
+					_remember_project_document(doc_path)
+					if job_action in ["create", "validate", "package", "save-version"]:
+						last_valid_project_path = doc_path
+						if current_project_path.is_empty():
+							current_project_path = doc_path
 					status_label.text = "Geometry rebuilt. Physical validation pending." if job_action.begins_with("build-") else "Project opened. Document and asset checks passed."
 					if output.has("geometry"):
 						_show_cad_properties(output["geometry"]["mass_properties"])

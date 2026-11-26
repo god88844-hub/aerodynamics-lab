@@ -872,13 +872,16 @@
         "P0A-015"
       ],
       "actor": "builder",
-      "status": "todo",
+      "status": "done",
       "acceptance": "Normal Godot UI creates/imports/opens/saves/versions/reopens a supported project without an HTTP server; corrupt/missing assets and incompatible versions are handled; recovery preserves the last valid project.",
       "proof_file": "docs/acceptance/P0A-017.md",
       "planned_tests": [
         "tests/acceptance/test_p0a_017.py"
       ],
-      "completion_evidence": [],
+      "completion_evidence": [
+        "docs/acceptance/P0A-017.md",
+        "tests/acceptance/test_p0a_017.py"
+      ],
       "gate": null,
       "language": [
         "GDScript",
@@ -4159,6 +4162,6 @@
       ]
     }
   ],
-  "execution_hold": "P0A-016 component provenance, UNVERIFIED_ESTIMATE surfacing, and fail-closed mass-property checks are complete as DEVELOPMENT. Implementation proceeds to P0A-017.",
-  "next_build_task": "P0A-017"
+  "execution_hold": "P0A-017 standalone desktop project workflow and dual visual profile complete as DEVELOPMENT. Implementation proceeds to P0A-018.",
+  "next_build_task": "P0A-018"
 }
