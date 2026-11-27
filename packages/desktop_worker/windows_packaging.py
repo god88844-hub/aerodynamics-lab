@@ -28,6 +28,8 @@ PACKAGE_TREE_ITEMS = (
     "scripts/lab_project.py",
     "scripts/lab_worker.py",
     "scripts/lab_cad_analysis.py",
+    "scripts/export_sbom.py",
+    "data/airfoils",
     "data/components",
     "data/designs",
     "data/research/frozen_protocols.json",
