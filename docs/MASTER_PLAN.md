@@ -8,7 +8,7 @@ Tracking: [master issue #127](https://github.com/god88844-hub/aerodynamics-lab/i
 
 ## Next action and execution rules
 
-**P0A-004 is complete** with the owner's actual authorization receipt. Merge/tag requires the three pre-merge checks and five green CI jobs; actual operation receipts are recorded afterward. **Slice 0A software exit (P0A-039) COMPLETE with 16 GB host qualification (P0A-038). Implementation proceeds to Slice 0B (P0B-001). Physical gates P0A-027..033 and P0A-040 remain open separately.** The next future software task is **P0C-001**.
+**P0A-004 is complete** with the owner's actual authorization receipt. Merge/tag requires the three pre-merge checks and five green CI jobs; actual operation receipts are recorded afterward. **Slice 0A software exit (P0A-039) COMPLETE with 16 GB host qualification (P0A-038). Implementation proceeds to Slice 0B (P0B-001). Physical gates P0A-027..033 and P0A-040 remain open separately.** The next future software task is **P0D-001**.
 
 1. Read `AGENTS.md`, this task's section, the linked fundamentals, `docs/SIMULATION_VISION_AND_REFERENCE_STACK.md` and the acceptance ledger. Use only the canonical local workspace in `WORKSPACE.md`.
 2. When implementation is explicitly resumed, pick the first unchecked builder task in document order whose prerequisites are checked. A pending owner/custodian/reviewer task requires its real receipt; a builder cannot self-approve it or invent data.
@@ -50,7 +50,7 @@ Tasks with several WPs appear in each relevant issue but retain one canonical ID
 - [ ] Slice 0A physical exit — **P0A-040**
 - [x] Slice 0B software exit — **P0B-021**
 - [ ] Slice 0B physical exit — **P0B-022**
-- [ ] Slice 0C software exit — **P0C-023**
+- [x] Slice 0C software exit — **P0C-023**
 - [ ] Slice 0C physical exit — **P0C-024**
 - [ ] Slice 0D software exit — **P0D-030**
 - [ ] Slice 0D physical exit — **P0D-031**
@@ -783,88 +783,102 @@ Tasks with several WPs appear in each relevant issue but retain one canonical ID
 ## Slice 0C — Helicopters, VTOL and detailed analysis
 
 <a name="p0c-001"></a>
-- [ ] **P0C-001 — Author helicopter rotor and articulated assemblies** (WP3; actor: builder)
+- [x] **P0C-001 — Author helicopter rotor and articulated assemblies** (WP3; actor: builder)
   - Prerequisites: P0B-021. Proof: [docs/acceptance/P0C-001.md](acceptance/P0C-001.md).
   - Acceptance: Rotor blades/hubs, swashplate and supported articulated placements have exact geometry, constraints and mass/inertia; singular/unsupported mechanisms are rejected explicitly.
   - Planned verification: `pytest tests/acceptance/test_p0c_001.py`; required current-head CI.
+  - Recorded evidence: [docs/acceptance/P0C-001.md](acceptance/P0C-001.md), [tests/acceptance/test_p0c_001.py](../tests/acceptance/test_p0c_001.py).
 
 <a name="p0c-002"></a>
-- [ ] **P0C-002 — Implement qualified rotor inflow and blade-element dynamics** (WP5, WP7; actor: builder)
+- [x] **P0C-002 — Implement qualified rotor inflow and blade-element dynamics** (WP5, WP7; actor: builder)
   - Prerequisites: P0C-001. Proof: [docs/acceptance/P0C-002.md](acceptance/P0C-002.md).
   - Acceptance: Supported BEMT/inflow/flapping equations pass analytical limiting cases and spatial/time convergence; polar envelopes, compressibility/tip limits and uncertainty are explicit; missing effects are not invented.
   - Planned verification: `pytest tests/acceptance/test_p0c_002.py`; required current-head CI.
+  - Recorded evidence: [docs/acceptance/P0C-002.md](acceptance/P0C-002.md), [tests/acceptance/test_p0c_002.py](../tests/acceptance/test_p0c_002.py).
 
 <a name="p0c-003"></a>
-- [ ] **P0C-003 — Implement rotor torque balance and helicopter control** (WP5, WP6; actor: builder)
+- [x] **P0C-003 — Implement rotor torque balance and helicopter control** (WP5, WP6; actor: builder)
   - Prerequisites: P0C-002. Proof: [docs/acceptance/P0C-003.md](acceptance/P0C-003.md).
   - Acceptance: Supported main/tail/coaxial rotor layouts and collective/cyclic controls propagate torque, actuator limits and saturation consistently; trim, hover and failure-boundary verification cases pass.
   - Planned verification: `pytest tests/acceptance/test_p0c_003.py`; required current-head CI.
+  - Recorded evidence: [docs/acceptance/P0C-003.md](acceptance/P0C-003.md), [tests/acceptance/test_p0c_003.py](../tests/acceptance/test_p0c_003.py).
 
 <a name="p0c-004"></a>
-- [ ] **P0C-004 — Run helicopter missions and supported autorotation** (WP4, WP6; actor: builder)
+- [x] **P0C-004 — Run helicopter missions and supported autorotation** (WP4, WP6; actor: builder)
   - Prerequisites: P0C-003. Proof: [docs/acceptance/P0C-004.md](acceptance/P0C-004.md).
   - Acceptance: Hover/climb/descent/translation/landing and any supported autorotation use recorded commands and one plant; unsupported recovery/autorotation regimes remain inconclusive rather than animated success.
   - Planned verification: `pytest tests/acceptance/test_p0c_004.py`; required current-head CI.
+  - Recorded evidence: [docs/acceptance/P0C-004.md](acceptance/P0C-004.md), [tests/acceptance/test_p0c_004.py](../tests/acceptance/test_p0c_004.py).
 
 <a name="p0c-005"></a>
-- [ ] **P0C-005 — Author VTOL tilt and lift-plus-cruise configurations** (WP3, WP6; actor: builder)
+- [x] **P0C-005 — Author VTOL tilt and lift-plus-cruise configurations** (WP3, WP6; actor: builder)
   - Prerequisites: P0C-001. Proof: [docs/acceptance/P0C-005.md](acceptance/P0C-005.md).
   - Acceptance: Supported tilt mechanisms, lift/cruise powertrains, control surfaces and geometry-dependent mass/loads serialize and round-trip; invalid mechanism configurations are diagnosed.
   - Planned verification: `pytest tests/acceptance/test_p0c_005.py`; required current-head CI.
+  - Recorded evidence: [docs/acceptance/P0C-005.md](acceptance/P0C-005.md), [tests/acceptance/test_p0c_005.py](../tests/acceptance/test_p0c_005.py).
 
 <a name="p0c-006"></a>
-- [ ] **P0C-006 — Implement coupled VTOL transitions and allocation** (WP5, WP6; actor: builder)
+- [x] **P0C-006 — Implement coupled VTOL transitions and allocation** (WP5, WP6; actor: builder)
   - Prerequisites: P0C-005, P0C-002, P0B-008. Proof: [docs/acceptance/P0C-006.md](acceptance/P0C-006.md).
   - Acceptance: Hover-to-cruise and reverse transitions preserve authoritative state, momentum/energy accounting, actuator limits and control authority; unsupported transition envelopes are rejected explicitly.
   - Planned verification: `pytest tests/acceptance/test_p0c_006.py`; required current-head CI.
+  - Recorded evidence: [docs/acceptance/P0C-006.md](acceptance/P0C-006.md), [tests/acceptance/test_p0c_006.py](../tests/acceptance/test_p0c_006.py).
 
 <a name="p0c-007"></a>
-- [ ] **P0C-007 — Couple transient electrical, actuator and thermal behavior** (WP5; actor: builder)
+- [x] **P0C-007 — Couple transient electrical, actuator and thermal behavior** (WP5; actor: builder)
   - Prerequisites: P0C-003, P0C-006. Proof: [docs/acceptance/P0C-007.md](acceptance/P0C-007.md).
   - Acceptance: Dynamic bus/current/RPM/torque/heat and supported derating are consistently coupled; independently verified loss/thermal balances and latency/saturation limits pass; estimated parameters remain tagged.
   - Planned verification: `pytest tests/acceptance/test_p0c_007.py`; required current-head CI.
+  - Recorded evidence: [docs/acceptance/P0C-007.md](acceptance/P0C-007.md), [tests/acceptance/test_p0c_007.py](../tests/acceptance/test_p0c_007.py).
 
 <a name="p0c-008"></a>
-- [ ] **P0C-008 — Model installed rotor interaction and ground effects** (WP5, WP7; actor: builder)
+- [x] **P0C-008 — Model installed rotor interaction and ground effects** (WP5, WP7; actor: builder)
   - Prerequisites: P0C-002, P0C-006. Proof: [docs/acceptance/P0C-008.md](acceptance/P0C-008.md).
   - Acceptance: Declared interaction/ground/off-axis models have numerical verification, calibration provenance and support envelopes; unknown installation/flow states remain unvalidated until measured.
   - Planned verification: `pytest tests/acceptance/test_p0c_008.py`; required current-head CI.
+  - Recorded evidence: [docs/acceptance/P0C-008.md](acceptance/P0C-008.md), [tests/acceptance/test_p0c_008.py](../tests/acceptance/test_p0c_008.py).
 
 <a name="p0c-009"></a>
-- [ ] **P0C-009 — Integrate geometry-dependent structural and modal analysis** (WP3, WP5, WP7; actor: builder)
+- [x] **P0C-009 — Integrate geometry-dependent structural and modal analysis** (WP3, WP5, WP7; actor: builder)
   - Prerequisites: P0C-001, P0C-005. Proof: [docs/acceptance/P0C-009.md](acceptance/P0C-009.md).
   - Acceptance: Supported loads, joints/materials, stress, modal/vibration and fatigue jobs consume exact geometry and publish assumptions/convergence; analytical fixtures pass; screening is not presented as installed strength qualification.
   - Planned verification: `pytest tests/acceptance/test_p0c_009.py`; required current-head CI.
+  - Recorded evidence: [docs/acceptance/P0C-009.md](acceptance/P0C-009.md), [tests/acceptance/test_p0c_009.py](../tests/acceptance/test_p0c_009.py).
 
 <a name="p0c-010"></a>
-- [ ] **P0C-010 — Integrate detailed aerodynamic solver workers** (WP7; actor: builder)
+- [x] **P0C-010 — Integrate detailed aerodynamic solver workers** (WP7; actor: builder)
   - Prerequisites: P0C-008, P0B-010. Proof: [docs/acceptance/P0C-010.md](acceptance/P0C-010.md).
   - Acceptance: At least the selected supported panel/VLM/CFD backends have reviewed licenses, mesh/boundary settings, progress/cancel/result contracts and code/solution verification; unimplemented backends remain absent from executable capabilities.
   - Planned verification: `pytest tests/acceptance/test_p0c_010.py`; required current-head CI.
+  - Recorded evidence: [docs/acceptance/P0C-010.md](acceptance/P0C-010.md), [tests/acceptance/test_p0c_010.py](../tests/acceptance/test_p0c_010.py).
 
 <a name="p0c-011"></a>
-- [ ] **P0C-011 — Integrate supported structural-thermal-aerodynamic coupling** (WP5, WP7; actor: builder)
+- [x] **P0C-011 — Integrate supported structural-thermal-aerodynamic coupling** (WP5, WP7; actor: builder)
   - Prerequisites: P0C-007, P0C-009, P0C-010. Proof: [docs/acceptance/P0C-011.md](acceptance/P0C-011.md).
   - Acceptance: Coupled exchanges conserve stated loads/energy, use consistent datums/clocks and converge under declared iteration/time tolerances; missing material/heat-transfer/closure inputs prevent acceptance.
   - Planned verification: `pytest tests/acceptance/test_p0c_011.py`; required current-head CI.
+  - Recorded evidence: [docs/acceptance/P0C-011.md](acceptance/P0C-011.md), [tests/acceptance/test_p0c_011.py](../tests/acceptance/test_p0c_011.py).
 
 <a name="p0c-012"></a>
-- [ ] **P0C-012 — Deliver budgeted local and remote detailed-job execution** (WP2, WP7, WP12; actor: builder)
+- [x] **P0C-012 — Deliver budgeted local and remote detailed-job execution** (WP2, WP7, WP12; actor: builder)
   - Prerequisites: P0C-010, P0C-009. Proof: [docs/acceptance/P0C-012.md](acceptance/P0C-012.md).
   - Acceptance: Queue/admission/progress/cancel/retry/authentication preserve frozen inputs and owned-process cleanup; actual memory/disk/deadline failures cannot publish success; local/remote equivalent cases agree within declared tolerance.
   - Planned verification: `pytest tests/acceptance/test_p0c_012.py`; required current-head CI.
+  - Recorded evidence: [docs/acceptance/P0C-012.md](acceptance/P0C-012.md), [tests/acceptance/test_p0c_012.py](../tests/acceptance/test_p0c_012.py).
 
 <a name="p0c-013"></a>
-- [ ] **P0C-013 — Verify helicopter and VTOL coupled missions** (WP6, WP11; actor: builder)
+- [x] **P0C-013 — Verify helicopter and VTOL coupled missions** (WP6, WP11; actor: builder)
   - Prerequisites: P0C-004, P0C-006, P0C-007, P0C-011. Proof: [docs/acceptance/P0C-013.md](acceptance/P0C-013.md).
   - Acceptance: Trim, transition, time/mesh convergence, perturbations, energy, actuator saturation and modeled fault transitions pass normal desktop/headless verification; four-family regression remains green.
   - Planned verification: `pytest tests/acceptance/test_p0c_013.py`; required current-head CI.
+  - Recorded evidence: [docs/acceptance/P0C-013.md](acceptance/P0C-013.md), [tests/acceptance/test_p0c_013.py](../tests/acceptance/test_p0c_013.py).
 
 <a name="p0c-014"></a>
-- [ ] **P0C-014 — Register rotorcraft/VTOL validation campaigns** (WP11; actor: builder)
+- [x] **P0C-014 — Register rotorcraft/VTOL validation campaigns** (WP11; actor: builder)
   - Prerequisites: P0C-013. Proof: [docs/acceptance/P0C-014.md](acceptance/P0C-014.md).
   - Acceptance: Reviewed family-specific rotor, installation, control/thermal/structure and flight requirements, model freezes, uncertainty budgets and whole-experiment splits are registered before reveal.
   - Planned verification: `pytest tests/acceptance/test_p0c_014.py`; required current-head CI.
+  - Recorded evidence: [docs/acceptance/P0C-014.md](acceptance/P0C-014.md), [tests/acceptance/test_p0c_014.py](../tests/acceptance/test_p0c_014.py).
 
 <a name="p0c-015"></a>
 - [ ] **P0C-015 — Acquire sealed helicopter and installed-rotor measurements** (WP11; actor: custodian)
@@ -900,22 +914,25 @@ Tasks with several WPs appear in each relevant issue but retain one canonical ID
   - Acceptance: Reviewer reproduces each family dossier, evaluates coupled-model discrepancy and signs distinct validated operating envelopes and known failures.
 
 <a name="p0c-021"></a>
-- [ ] **P0C-021 — Deliver rotorcraft/VTOL learning and comparison workflows** (WP10; actor: builder)
+- [x] **P0C-021 — Deliver rotorcraft/VTOL learning and comparison workflows** (WP10; actor: builder)
   - Prerequisites: P0C-013, P0C-012. Proof: [docs/acceptance/P0C-021.md](acceptance/P0C-021.md).
   - Acceptance: Normal desktop users build supported mechanisms, compare rotor/transition choices, inspect assumptions and save reproducible detailed/interactive experiments with correct evidence labels.
   - Planned verification: `pytest tests/acceptance/test_p0c_021.py`; required current-head CI.
+  - Recorded evidence: [docs/acceptance/P0C-021.md](acceptance/P0C-021.md), [tests/acceptance/test_p0c_021.py](../tests/acceptance/test_p0c_021.py).
 
 <a name="p0c-022"></a>
-- [ ] **P0C-022 — Qualify four-family application compatibility and recovery** (WP12; actor: builder)
+- [x] **P0C-022 — Qualify four-family application compatibility and recovery** (WP12; actor: builder)
   - Prerequisites: P0C-021, P0C-012. Proof: [docs/acceptance/P0C-022.md](acceptance/P0C-022.md).
   - Acceptance: Install/migrate/edit/run/detailed-job/cancel/save/reopen tests and exact-head audits pass for all supported families; queues and failed remote/local jobs preserve valid projects.
   - Planned verification: `pytest tests/acceptance/test_p0c_022.py`; required current-head CI.
+  - Recorded evidence: [docs/acceptance/P0C-022.md](acceptance/P0C-022.md), [tests/acceptance/test_p0c_022.py](../tests/acceptance/test_p0c_022.py).
 
 <a name="p0c-023"></a>
-- [ ] **P0C-023 — Exit: four-family and detailed-analysis software slice** (WP2, WP3, WP4, WP5, WP6, WP7, WP10, WP11, WP12; actor: builder)
+- [x] **P0C-023 — Exit: four-family and detailed-analysis software slice** (WP2, WP3, WP4, WP5, WP6, WP7, WP10, WP11, WP12; actor: builder)
   - Prerequisites: P0C-013, P0C-014, P0C-021, P0C-022. Proof: [docs/acceptance/P0C-023.md](acceptance/P0C-023.md).
   - Acceptance: Four families and selected detailed-analysis paths work through normal entry points with declared domains, numerical verification, budgets and explicit remaining physical gaps. Enables 0D software.
   - Planned verification: `pytest tests/acceptance/test_p0c_023.py`; required current-head CI.
+  - Recorded evidence: [docs/acceptance/P0C-023.md](acceptance/P0C-023.md), [tests/acceptance/test_p0c_023.py](../tests/acceptance/test_p0c_023.py).
 
 <a name="p0c-024"></a>
 - [ ] **P0C-024 — Exit: physically accepted rotorcraft/VTOL envelopes** (WP6, WP11, WP12; actor: builder)
@@ -1314,4 +1331,4 @@ Tasks with several WPs appear in each relevant issue but retain one canonical ID
   - Prerequisites: P4-007. Proof: [docs/acceptance/P4-008.md](acceptance/P4-008.md).
   - Acceptance: Qualified independent review accepts the stated limited uses; source/rights/security, reproducible distributions, compatibility and recovery gates close the phase.
 
-Unique task count: **150**; checked **48**, unchecked **102**. These are planning tasks, not a count of physically validated milestones. All ten legacy major acceptance families and all twelve broad Phase 0 package issues remain open until their own actual exit evidence exists.
+Unique task count: **150**; checked **65**, unchecked **85**. These are planning tasks, not a count of physically validated milestones. All ten legacy major acceptance families and all twelve broad Phase 0 package issues remain open until their own actual exit evidence exists.
