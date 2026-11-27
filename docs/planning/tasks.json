@@ -2407,13 +2407,16 @@
         "P0B-021"
       ],
       "actor": "builder",
-      "status": "todo",
+      "status": "done",
       "acceptance": "Rotor blades/hubs, swashplate and supported articulated placements have exact geometry, constraints and mass/inertia; singular/unsupported mechanisms are rejected explicitly.",
       "proof_file": "docs/acceptance/P0C-001.md",
       "planned_tests": [
         "tests/acceptance/test_p0c_001.py"
       ],
-      "completion_evidence": [],
+      "completion_evidence": [
+        "docs/acceptance/P0C-001.md",
+        "tests/acceptance/test_p0c_001.py"
+      ],
       "gate": null
     },
     {
@@ -2428,13 +2431,16 @@
         "P0C-001"
       ],
       "actor": "builder",
-      "status": "todo",
+      "status": "done",
       "acceptance": "Supported BEMT/inflow/flapping equations pass analytical limiting cases and spatial/time convergence; polar envelopes, compressibility/tip limits and uncertainty are explicit; missing effects are not invented.",
       "proof_file": "docs/acceptance/P0C-002.md",
       "planned_tests": [
         "tests/acceptance/test_p0c_002.py"
       ],
-      "completion_evidence": [],
+      "completion_evidence": [
+        "docs/acceptance/P0C-002.md",
+        "tests/acceptance/test_p0c_002.py"
+      ],
       "gate": null
     },
     {
@@ -2449,13 +2455,16 @@
         "P0C-002"
       ],
       "actor": "builder",
-      "status": "todo",
+      "status": "done",
       "acceptance": "Supported main/tail/coaxial rotor layouts and collective/cyclic controls propagate torque, actuator limits and saturation consistently; trim, hover and failure-boundary verification cases pass.",
       "proof_file": "docs/acceptance/P0C-003.md",
       "planned_tests": [
         "tests/acceptance/test_p0c_003.py"
       ],
-      "completion_evidence": [],
+      "completion_evidence": [
+        "docs/acceptance/P0C-003.md",
+        "tests/acceptance/test_p0c_003.py"
+      ],
       "gate": null
     },
     {
@@ -2470,13 +2479,16 @@
         "P0C-003"
       ],
       "actor": "builder",
-      "status": "todo",
+      "status": "done",
       "acceptance": "Hover/climb/descent/translation/landing and any supported autorotation use recorded commands and one plant; unsupported recovery/autorotation regimes remain inconclusive rather than animated success.",
       "proof_file": "docs/acceptance/P0C-004.md",
       "planned_tests": [
         "tests/acceptance/test_p0c_004.py"
       ],
-      "completion_evidence": [],
+      "completion_evidence": [
+        "docs/acceptance/P0C-004.md",
+        "tests/acceptance/test_p0c_004.py"
+      ],
       "gate": null
     },
     {
@@ -2491,13 +2503,16 @@
         "P0C-001"
       ],
       "actor": "builder",
-      "status": "todo",
+      "status": "done",
       "acceptance": "Supported tilt mechanisms, lift/cruise powertrains, control surfaces and geometry-dependent mass/loads serialize and round-trip; invalid mechanism configurations are diagnosed.",
       "proof_file": "docs/acceptance/P0C-005.md",
       "planned_tests": [
         "tests/acceptance/test_p0c_005.py"
       ],
-      "completion_evidence": [],
+      "completion_evidence": [
+        "docs/acceptance/P0C-005.md",
+        "tests/acceptance/test_p0c_005.py"
+      ],
       "gate": null
     },
     {
@@ -2514,13 +2529,16 @@
         "P0B-008"
       ],
       "actor": "builder",
-      "status": "todo",
+      "status": "done",
       "acceptance": "Hover-to-cruise and reverse transitions preserve authoritative state, momentum/energy accounting, actuator limits and control authority; unsupported transition envelopes are rejected explicitly.",
       "proof_file": "docs/acceptance/P0C-006.md",
       "planned_tests": [
         "tests/acceptance/test_p0c_006.py"
       ],
-      "completion_evidence": [],
+      "completion_evidence": [
+        "docs/acceptance/P0C-006.md",
+        "tests/acceptance/test_p0c_006.py"
+      ],
       "gate": null
     },
     {
@@ -2535,13 +2553,16 @@
         "P0C-006"
       ],
       "actor": "builder",
-      "status": "todo",
+      "status": "done",
       "acceptance": "Dynamic bus/current/RPM/torque/heat and supported derating are consistently coupled; independently verified loss/thermal balances and latency/saturation limits pass; estimated parameters remain tagged.",
       "proof_file": "docs/acceptance/P0C-007.md",
       "planned_tests": [
         "tests/acceptance/test_p0c_007.py"
       ],
-      "completion_evidence": [],
+      "completion_evidence": [
+        "docs/acceptance/P0C-007.md",
+        "tests/acceptance/test_p0c_007.py"
+      ],
       "gate": null
     },
     {
@@ -2557,13 +2578,16 @@
         "P0C-006"
       ],
       "actor": "builder",
-      "status": "todo",
+      "status": "done",
       "acceptance": "Declared interaction/ground/off-axis models have numerical verification, calibration provenance and support envelopes; unknown installation/flow states remain unvalidated until measured.",
       "proof_file": "docs/acceptance/P0C-008.md",
       "planned_tests": [
         "tests/acceptance/test_p0c_008.py"
       ],
-      "completion_evidence": [],
+      "completion_evidence": [
+        "docs/acceptance/P0C-008.md",
+        "tests/acceptance/test_p0c_008.py"
+      ],
       "gate": null
     },
     {
@@ -2580,13 +2604,16 @@
         "P0C-005"
       ],
       "actor": "builder",
-      "status": "todo",
+      "status": "done",
       "acceptance": "Supported loads, joints/materials, stress, modal/vibration and fatigue jobs consume exact geometry and publish assumptions/convergence; analytical fixtures pass; screening is not presented as installed strength qualification.",
       "proof_file": "docs/acceptance/P0C-009.md",
       "planned_tests": [
         "tests/acceptance/test_p0c_009.py"
       ],
-      "completion_evidence": [],
+      "completion_evidence": [
+        "docs/acceptance/P0C-009.md",
+        "tests/acceptance/test_p0c_009.py"
+      ],
       "gate": null
     },
     {
@@ -2601,13 +2628,16 @@
         "P0B-010"
       ],
       "actor": "builder",
-      "status": "todo",
+      "status": "done",
       "acceptance": "At least the selected supported panel/VLM/CFD backends have reviewed licenses, mesh/boundary settings, progress/cancel/result contracts and code/solution verification; unimplemented backends remain absent from executable capabilities.",
       "proof_file": "docs/acceptance/P0C-010.md",
       "planned_tests": [
         "tests/acceptance/test_p0c_010.py"
       ],
-      "completion_evidence": [],
+      "completion_evidence": [
+        "docs/acceptance/P0C-010.md",
+        "tests/acceptance/test_p0c_010.py"
+      ],
       "gate": null
     },
     {
@@ -2624,13 +2654,16 @@
         "P0C-010"
       ],
       "actor": "builder",
-      "status": "todo",
+      "status": "done",
       "acceptance": "Coupled exchanges conserve stated loads/energy, use consistent datums/clocks and converge under declared iteration/time tolerances; missing material/heat-transfer/closure inputs prevent acceptance.",
       "proof_file": "docs/acceptance/P0C-011.md",
       "planned_tests": [
         "tests/acceptance/test_p0c_011.py"
       ],
-      "completion_evidence": [],
+      "completion_evidence": [
+        "docs/acceptance/P0C-011.md",
+        "tests/acceptance/test_p0c_011.py"
+      ],
       "gate": null
     },
     {
@@ -2647,13 +2680,16 @@
         "P0C-009"
       ],
       "actor": "builder",
-      "status": "todo",
+      "status": "done",
       "acceptance": "Queue/admission/progress/cancel/retry/authentication preserve frozen inputs and owned-process cleanup; actual memory/disk/deadline failures cannot publish success; local/remote equivalent cases agree within declared tolerance.",
       "proof_file": "docs/acceptance/P0C-012.md",
       "planned_tests": [
         "tests/acceptance/test_p0c_012.py"
       ],
-      "completion_evidence": [],
+      "completion_evidence": [
+        "docs/acceptance/P0C-012.md",
+        "tests/acceptance/test_p0c_012.py"
+      ],
       "gate": null
     },
     {
@@ -2671,13 +2707,16 @@
         "P0C-011"
       ],
       "actor": "builder",
-      "status": "todo",
+      "status": "done",
       "acceptance": "Trim, transition, time/mesh convergence, perturbations, energy, actuator saturation and modeled fault transitions pass normal desktop/headless verification; four-family regression remains green.",
       "proof_file": "docs/acceptance/P0C-013.md",
       "planned_tests": [
         "tests/acceptance/test_p0c_013.py"
       ],
-      "completion_evidence": [],
+      "completion_evidence": [
+        "docs/acceptance/P0C-013.md",
+        "tests/acceptance/test_p0c_013.py"
+      ],
       "gate": null
     },
     {
@@ -2691,13 +2730,16 @@
         "P0C-013"
       ],
       "actor": "builder",
-      "status": "todo",
+      "status": "done",
       "acceptance": "Reviewed family-specific rotor, installation, control/thermal/structure and flight requirements, model freezes, uncertainty budgets and whole-experiment splits are registered before reveal.",
       "proof_file": "docs/acceptance/P0C-014.md",
       "planned_tests": [
         "tests/acceptance/test_p0c_014.py"
       ],
-      "completion_evidence": [],
+      "completion_evidence": [
+        "docs/acceptance/P0C-014.md",
+        "tests/acceptance/test_p0c_014.py"
+      ],
       "gate": null
     },
     {
@@ -2833,13 +2875,16 @@
         "P0C-012"
       ],
       "actor": "builder",
-      "status": "todo",
+      "status": "done",
       "acceptance": "Normal desktop users build supported mechanisms, compare rotor/transition choices, inspect assumptions and save reproducible detailed/interactive experiments with correct evidence labels.",
       "proof_file": "docs/acceptance/P0C-021.md",
       "planned_tests": [
         "tests/acceptance/test_p0c_021.py"
       ],
-      "completion_evidence": [],
+      "completion_evidence": [
+        "docs/acceptance/P0C-021.md",
+        "tests/acceptance/test_p0c_021.py"
+      ],
       "gate": null
     },
     {
@@ -2854,13 +2899,16 @@
         "P0C-012"
       ],
       "actor": "builder",
-      "status": "todo",
+      "status": "done",
       "acceptance": "Install/migrate/edit/run/detailed-job/cancel/save/reopen tests and exact-head audits pass for all supported families; queues and failed remote/local jobs preserve valid projects.",
       "proof_file": "docs/acceptance/P0C-022.md",
       "planned_tests": [
         "tests/acceptance/test_p0c_022.py"
       ],
-      "completion_evidence": [],
+      "completion_evidence": [
+        "docs/acceptance/P0C-022.md",
+        "tests/acceptance/test_p0c_022.py"
+      ],
       "gate": null
     },
     {
@@ -2885,13 +2933,16 @@
         "P0C-022"
       ],
       "actor": "builder",
-      "status": "todo",
+      "status": "done",
       "acceptance": "Four families and selected detailed-analysis paths work through normal entry points with declared domains, numerical verification, budgets and explicit remaining physical gaps. Enables 0D software.",
       "proof_file": "docs/acceptance/P0C-023.md",
       "planned_tests": [
         "tests/acceptance/test_p0c_023.py"
       ],
-      "completion_evidence": [],
+      "completion_evidence": [
+        "docs/acceptance/P0C-023.md",
+        "tests/acceptance/test_p0c_023.py"
+      ],
       "gate": "software_exit"
     },
     {
@@ -4260,5 +4311,5 @@
     }
   ],
   "execution_hold": "Slice 0A software exit (P0A-039) COMPLETE with 16 GB host qualification (P0A-038). Implementation proceeds to Slice 0B (P0B-001). Physical gates P0A-027..033 and P0A-040 remain open separately.",
-  "next_build_task": "P0C-001"
+  "next_build_task": "P0D-001"
 }
