@@ -31,22 +31,31 @@ class SitlLockstepBridge:
         vel_ned_m_s: tuple[float, float, float],
         bus_voltage_v: float,
         pwm_commands: list[float],
+        link_lost: bool = False,
+        latency_ms: float = 4.0,
     ) -> dict[str, Any]:
         if len(pwm_commands) != self.n_actuators:
             raise ValueError(f"Expected {self.n_actuators} actuator commands, got {len(pwm_commands)}")
         if any(not math.isfinite(p) or not 0.0 <= p <= 1.0 for p in pwm_commands):
             raise ValueError("SITL normalized PWM commands must stay in [0.0, 1.0]")
+        if not math.isfinite(latency_ms) or latency_ms < 0.0 or latency_ms > 250.0:
+            raise ValueError(f"SITL telemetry latency {latency_ms} ms exceeds safe lockstep bound (<= 250 ms)")
         t_usec = int(round(self.step_index * self.dt_s * 1_000_000))
         self.step_index += 1
+        mode = "FAILSAFE_LINK_LOSS" if link_lost else "LOCKSTEP_ACTIVE"
+        actuators = [0.0] * self.n_actuators if link_lost else list(pwm_commands)
         return {
             "protocol": f"{self.firmware_kind}_lockstep_1",
             "time_usec": t_usec,
+            "mode": mode,
+            "link_lost": link_lost,
+            "latency_ms": float(latency_ms),
             "sensors": {
                 "pos_ned_m": list(pos_ned_m),
                 "vel_ned_m_s": list(vel_ned_m_s),
                 "battery_v": float(bus_voltage_v),
             },
-            "actuators_pwm_norm": list(pwm_commands),
+            "actuators_pwm_norm": actuators,
         }
 
 
@@ -290,5 +299,41 @@ def localize_fiducial_apriltag_proxy(
         "range_m": round(dist, 4),
         "off_nadir_deg": round(angle_deg, 2),
         "channel_provenance": "SYNTHETIC",
+        "physical_validation_status": "UNVALIDATED",
+    }
+
+
+def evaluate_geofence_and_override(
+    *,
+    position_m: tuple[float, float, float],
+    geofence_radius_m: float = 50.0,
+    min_obstacle_clearance_m: float = 1.2,
+    avoidance_authority_available: bool = True,
+    manual_override_active: bool = False,
+) -> dict[str, Any]:
+    """Enforce cylindrical geofence, obstacle clearance, avoidance authority, and pilot manual override."""
+    radial = math.hypot(position_m[0], position_m[1])
+    if manual_override_active:
+        decision = "MANUAL_OPERATOR_OVERRIDE"
+        verdict = "NO_MODELED_LIMIT_BREACHED"
+    elif radial > geofence_radius_m:
+        decision = "GEOFENCE_BREACH_RTL"
+        verdict = "FAIL"
+    elif min_obstacle_clearance_m < 0.5:
+        if not avoidance_authority_available:
+            decision = "AVOIDANCE_UNAVAILABLE_FAIL"
+            verdict = "FAIL"
+        else:
+            decision = "AVOIDANCE_BRAKE_HOLD"
+            verdict = "NO_MODELED_LIMIT_BREACHED"
+    else:
+        decision = "NOMINAL_AUTONOMOUS"
+        verdict = "NO_MODELED_LIMIT_BREACHED"
+    return {
+        "schema_version": "1.0",
+        "decision": decision,
+        "verdict": verdict,
+        "manual_override_active": manual_override_active,
+        "radial_distance_m": round(radial, 4),
         "physical_validation_status": "UNVALIDATED",
     }
