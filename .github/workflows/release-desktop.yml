@@ -1,0 +1,48 @@
+name: Release Desktop Build
+
+on:
+  workflow_dispatch:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: read
+
+jobs:
+  build-windows-app:
+    runs-on: windows-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Build Windows C++20 lab_engineering.dll
+        run: |
+          cmake -S packages/engineering-core -B packages/engineering-core/build -DCMAKE_BUILD_TYPE=Release -DLAB_BUILD_GDEXTENSION=ON
+          cmake --build packages/engineering-core/build --config Release --parallel 4
+      - name: Download Pinned Godot 4.7.2 & Export Templates
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Force "$env:APPDATA\Godot\export_templates\4.7.2.stable" | Out-Null
+          curl.exe -fL -o godot.zip https://github.com/godotengine/godot/releases/download/4.7.2-stable/Godot_v4.7.2-stable_win64.exe.zip
+          if ((Get-FileHash godot.zip -Algorithm SHA256).Hash.ToLower() -ne '731980f9608d61333e5baf54a2ef17210acc7a538446c0cb9969f002aca1e953') { throw "Godot hash mismatch" }
+          Expand-Archive -Force godot.zip "$env:RUNNER_TEMP\godot"
+          curl.exe -fL -o templates.zip https://github.com/godotengine/godot/releases/download/4.7.2-stable/Godot_v4.7.2-stable_export_templates.tpz
+          if ((Get-FileHash templates.zip -Algorithm SHA256).Hash.ToLower() -ne 'f298490b8d44d934be425a5a65a51bf15f422428b229a06a6e11d9ffea248011') { throw "Template hash mismatch" }
+          Expand-Archive -Force templates.zip "$env:RUNNER_TEMP\tpl"
+          Copy-Item -Recurse -Force "$env:RUNNER_TEMP\tpl\templates\*" "$env:APPDATA\Godot\export_templates\4.7.2.stable\"
+      - name: Export Branded Standalone AerodynamicsLab.exe
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Force .local\release | Out-Null
+          & "$env:RUNNER_TEMP\godot\Godot_v4.7.2-stable_win64_console.exe" --headless --path apps/desktop --export-release "Windows Desktop"
+          Test-Path .local\release\AerodynamicsLab.exe
+          python scripts/package_windows_app.py dist\AerodynamicsLab-Stage --zip dist\AerodynamicsLab-Windows-x64.zip
+      - uses: actions/upload-artifact@v4
+        with:
+          name: AerodynamicsLab-Windows-Standalone
+          path: |
+            .local/release/AerodynamicsLab.exe
+            dist/AerodynamicsLab-Windows-x64.zip

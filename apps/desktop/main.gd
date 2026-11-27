@@ -28,6 +28,7 @@ var yaw: float = 0.7
 var elevation: float = 0.5
 var distance_m: float = 1.4
 var capture_path: String = ""
+var capture_view: String = ""
 var capture_frames: int = 0
 var project_asset_root: String = ""
 var job_asset_root: String = ""
@@ -89,8 +90,22 @@ var help_dialog: AcceptDialog
 var playback_state: String = "IDLE"
 var world_env: WorldEnvironment
 var ground_props: Node3D
+var grid_group: Node3D
+var overlay_group: Node3D
 var key_light: DirectionalLight3D
 var fill_light: DirectionalLight3D
+var ribbon_tabs: TabBar
+var ribbon_panels: Array[HFlowContainer] = []
+var viewport_container: SubViewportContainer
+var blueprint_canvas: WorkbenchControls.BlueprintSheetCanvas
+var telemetry_plot: WorkbenchControls.TelemetryPlotCanvas
+var colorbar_legend: WorkbenchControls.ColorbarLegend
+var viewport_hud_label: Label
+var show_inertia_rings: bool = true
+var show_flow_overlay: bool = false
+var show_stress_map: bool = false
+var hud_timer: float = 0.0
+var last_rotor_scene_positions: Array = []
 var current_project_path: String = ""
 var last_valid_project_path: String = ""
 var qualification_orbit_left: bool = false
@@ -128,6 +143,8 @@ func _ready() -> void:
 	for argument in OS.get_cmdline_user_args():
 		if argument.begins_with("--capture="):
 			capture_path = argument.trim_prefix("--capture=")
+		if argument.begins_with("--demo-view="):
+			capture_view = argument.trim_prefix("--demo-view=")
 		if argument.begins_with("--open-project="):
 			initial_project = argument.trim_prefix("--open-project=")
 		if argument.begins_with("--visual-tier="):
@@ -151,72 +168,106 @@ func _build_interface() -> void:
 	var margin: MarginContainer = MarginContainer.new()
 	margin.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	for side in ["left", "right", "top", "bottom"]:
-		margin.add_theme_constant_override("margin_" + side, 16)
+		margin.add_theme_constant_override("margin_" + side, 10)
 	add_child(margin)
 	var layout: VBoxContainer = VBoxContainer.new()
-	layout.add_theme_constant_override("separation", 12)
+	layout.add_theme_constant_override("separation", 6)
 	margin.add_child(layout)
+	# --- Clean Fusion 360 / Onshape Top Workbench Header Bar ---
+	var header: HBoxContainer = HBoxContainer.new()
+	header.add_theme_constant_override("separation", 10)
+	layout.add_child(header)
 	var title: Label = Label.new()
-	title.text = "Aerodynamics Lab"
-	title.add_theme_font_size_override("font_size", 26)
-	layout.add_child(title)
+	title.text = "AERODYNAMICS LAB"
+	title.add_theme_font_size_override("font_size", 18)
+	title.add_theme_color_override("font_color", Color(0.45, 0.80, 1.0))
+	header.add_child(title)
 	project_label = Label.new()
-	project_label.text = "Aerodynamics Lab · Standalone Engineering Desktop"
-	layout.add_child(project_label)
-	var toolbar: HFlowContainer = HFlowContainer.new()
-	layout.add_child(toolbar)
-	_add_button(toolbar, "New project", _open_new_project_dialog)
-	_add_button(toolbar, "Import design", _import_design)
-	_add_button(toolbar, "Load reference", _load_reference)
-	_add_button(toolbar, "Open project", _open_project)
-	_add_button(toolbar, "Save project", _save_project)
-	_add_button(toolbar, "Save version", _save_version)
-	_add_button(toolbar, "Versions / Recover", _open_versions_dialog)
-	_add_button(toolbar, "Run reference experiment", _run_experiment)
-	_add_button(toolbar, "Cancel job", _cancel_job)
-	_add_button(toolbar, "Build blade example", func():
-		_start_job("build-blade", repository_root().path_join("data/cad/blade-example.json")))
-	_add_button(toolbar, "Build blade recipe", _open_blade_recipe)
-	_add_button(toolbar, "Edit blade geometry", _open_blade_editor)
-	_add_button(toolbar, "New / edit test body", _open_body_editor)
-	_add_button(toolbar, "Edit transform", _open_transform_editor)
-	_add_button(toolbar, "Undo", _undo_edit)
-	_add_button(toolbar, "Redo", _redo_edit)
-	_add_button(toolbar, "Layout / BOM", _open_layout_editor)
-	_add_button(toolbar, "Check clearance", _run_clearance_check)
-	_add_button(toolbar, "Test ground", _open_test_ground_dialog)
-	_add_button(toolbar, "Mission / Seeds", _open_mission_dialog)
-	_add_button(toolbar, "Run authoritative", _run_authoritative_sim)
-	_add_button(toolbar, "Run C++ Kernel", _run_native_cpp_rk4)
-	_add_button(toolbar, "Twin % / Compare", _open_twin_dialog)
-	_add_button(toolbar, "Fidelity / Budgets", _open_fidelity_dialog)
-	_add_button(toolbar, "Protocols", _open_protocol_catalog)
-	_add_button(toolbar, "Learn / Invent", _open_learning_dialog)
-	_add_button(toolbar, "Bounded Sweep", _open_sweep_dialog)
-	_add_button(toolbar, "Fixed-Wing VLM", _run_fixed_wing_vlm)
-	_add_button(toolbar, "VTOL Transition", _run_vtol_transition)
-	_add_button(toolbar, "Heli Autorotation", _run_helicopter_autorotation)
-	_add_button(toolbar, "Adverse Weather", _run_adverse_weather)
-	_add_button(toolbar, "Swarm Sim", _run_swarm_sim)
-	_add_button(toolbar, "SITL Autonomy", _run_sitl_mission)
-	_add_button(toolbar, "Run applied-torque experiment", _run_cad_torque)
-	_add_button(toolbar, "Worker limits", _open_limits)
-	_add_button(toolbar, "? Help & Equations", _open_help_dialog)
+	project_label.text = "Standalone CAD & 6-DoF Flight Workbench"
+	project_label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	header.add_child(project_label)
 	cad_material_select = OptionButton.new()
-	cad_material_select.add_item("CAD Mat: Anodized Blue")
-	cad_material_select.add_item("CAD Mat: Alu 6061-T6")
-	cad_material_select.add_item("CAD Mat: CFRP Quasi-Iso")
-	cad_material_select.add_item("CAD Mat: PA12 Nylon")
+	cad_material_select.add_item("Mat: Anodized Blue")
+	cad_material_select.add_item("Mat: Alu 6061-T6")
+	cad_material_select.add_item("Mat: CFRP Quasi-Iso")
+	cad_material_select.add_item("Mat: PA12 Nylon")
 	cad_material_select.item_selected.connect(_on_cad_material_selected)
-	toolbar.add_child(cad_material_select)
+	header.add_child(cad_material_select)
 	lighting_button = Button.new()
 	lighting_button.text = "Light: Studio"
 	lighting_button.pressed.connect(_toggle_lighting_mode)
-	toolbar.add_child(lighting_button)
+	header.add_child(lighting_button)
 	visual_profile_button = Button.new()
 	visual_profile_button.text = "Visual: Auto"
 	visual_profile_button.pressed.connect(_cycle_visual_profile)
-	toolbar.add_child(visual_profile_button)
+	header.add_child(visual_profile_button)
+	_add_button(header, "? Help", _open_help_dialog)
+	# --- Contextual Workspace Ribbon Tabs (NO button wall clutter!) ---
+	ribbon_tabs = TabBar.new()
+	for tab_title in ["Design CAD", "Assembly & BOM", "2D Blueprint", "Aero & Flow", "Flight & Swarm", "Verify & Env"]:
+		ribbon_tabs.add_tab(tab_title)
+	ribbon_tabs.tab_changed.connect(_on_ribbon_tab_changed)
+	layout.add_child(ribbon_tabs)
+	var ribbon_box := PanelContainer.new()
+	layout.add_child(ribbon_box)
+	var ribbon_holder := MarginContainer.new()
+	for s in ["left", "right", "top", "bottom"]:
+		ribbon_holder.add_theme_constant_override("margin_" + s, 6)
+	ribbon_box.add_child(ribbon_holder)
+	ribbon_panels.clear()
+	for idx in range(6):
+		var rp := HFlowContainer.new()
+		rp.visible = (idx == 0)
+		ribbon_panels.append(rp)
+		ribbon_holder.add_child(rp)
+	# Tab 0: Design CAD
+	_add_button(ribbon_panels[0], "New Project", _open_new_project_dialog)
+	_add_button(ribbon_panels[0], "Import Design", _import_design)
+	_add_button(ribbon_panels[0], "Load Reference", _load_reference)
+	_add_button(ribbon_panels[0], "Open Project", _open_project)
+	_add_button(ribbon_panels[0], "Build Blade", func():
+		_start_job("build-blade", repository_root().path_join("data/cad/blade-example.json")))
+	_add_button(ribbon_panels[0], "Blade Recipe", _open_blade_recipe)
+	_add_button(ribbon_panels[0], "Edit Blade", _open_blade_editor)
+	_add_button(ribbon_panels[0], "Edit Body", _open_body_editor)
+	_add_button(ribbon_panels[0], "Transform", _open_transform_editor)
+	_add_button(ribbon_panels[0], "Undo", _undo_edit)
+	_add_button(ribbon_panels[0], "Redo", _redo_edit)
+	# Tab 1: Assembly & BOM
+	_add_button(ribbon_panels[1], "Layout / BOM", _open_layout_editor)
+	_add_button(ribbon_panels[1], "Rotor Clearance", _run_clearance_check)
+	_add_button(ribbon_panels[1], "Toggle CoG & Inertia Rings", _toggle_inertia_rings)
+	_add_button(ribbon_panels[1], "Save Project", _save_project)
+	_add_button(ribbon_panels[1], "Save Version", _save_version)
+	_add_button(ribbon_panels[1], "Versions / Recover", _open_versions_dialog)
+	# Tab 2: 2D Blueprint
+	_add_button(ribbon_panels[2], "Toggle 2D Sheet / 3D", func(): _toggle_blueprint_view(true))
+	_add_button(ribbon_panels[2], "Toggle Balloons", _toggle_blueprint_balloons)
+	_add_button(ribbon_panels[2], "Export DXF + SVG", _export_active_drawing)
+	# Tab 3: Aero & Flow
+	_add_button(ribbon_panels[3], "Fixed-Wing VLM", _run_fixed_wing_vlm)
+	_add_button(ribbon_panels[3], "Toggle Airflow Streamlines", _toggle_flow_overlay)
+	_add_button(ribbon_panels[3], "Toggle Wing Stress Map", _toggle_stress_map)
+	_add_button(ribbon_panels[3], "Adverse Weather", _run_adverse_weather)
+	_add_button(ribbon_panels[3], "Bounded Sweep", _open_sweep_dialog)
+	# Tab 4: Flight & Swarm
+	_add_button(ribbon_panels[4], "Test Ground", _open_test_ground_dialog)
+	_add_button(ribbon_panels[4], "Mission / Seeds", _open_mission_dialog)
+	_add_button(ribbon_panels[4], "Run authoritative", _run_authoritative_sim)
+	_add_button(ribbon_panels[4], "Run C++ Kernel", _run_native_cpp_rk4)
+	_add_button(ribbon_panels[4], "VTOL Transition", _run_vtol_transition)
+	_add_button(ribbon_panels[4], "Heli Autorotation", _run_helicopter_autorotation)
+	_add_button(ribbon_panels[4], "Swarm Sim", _run_swarm_sim)
+	_add_button(ribbon_panels[4], "SITL Autonomy", _run_sitl_mission)
+	_add_button(ribbon_panels[4], "Applied Torque", _run_cad_torque)
+	_add_button(ribbon_panels[4], "Reference Flight", _run_experiment)
+	# Tab 5: Verify & Env
+	_add_button(ribbon_panels[5], "Twin % / Compare", _open_twin_dialog)
+	_add_button(ribbon_panels[5], "Fidelity / Budgets", _open_fidelity_dialog)
+	_add_button(ribbon_panels[5], "Validation Protocols", _open_protocol_catalog)
+	_add_button(ribbon_panels[5], "Learn / Invent", _open_learning_dialog)
+	_add_button(ribbon_panels[5], "Worker Limits", _open_limits)
+	_add_button(ribbon_panels[5], "Cancel Job", _cancel_job)
 	help_dialog = AcceptDialog.new()
 	help_dialog.title = "Physics Equations, Units Contract & Accessibility Shortcuts"
 	var help_lbl: Label = Label.new()
@@ -258,17 +309,63 @@ func _build_interface() -> void:
 	torque_z.step = 0.0001
 	torque_duration = _numeric_field(inspector, "Duration (s)", 0.01, 10, 0.01, 1.0)
 	torque_step = _numeric_field(inspector, "Integration step (s)", 0.0001, 0.05, 0.0001, 0.005)
-	var viewport_container: SubViewportContainer = SubViewportContainer.new()
+	var viewport_stage := Control.new()
+	viewport_stage.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	viewport_stage.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	split.add_child(viewport_stage)
+	viewport_container = SubViewportContainer.new()
+	viewport_container.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	viewport_container.stretch = true
-	viewport_container.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	viewport_container.mouse_filter = Control.MOUSE_FILTER_STOP
 	viewport_container.gui_input.connect(_viewport_input)
-	split.add_child(viewport_container)
+	viewport_stage.add_child(viewport_container)
 	viewport = SubViewport.new()
-	viewport.size = Vector2i(900, 500)
+	viewport.size = Vector2i(960, 540)
 	viewport.render_target_update_mode = SubViewport.UPDATE_ALWAYS
 	viewport.own_world_3d = true
 	viewport_container.add_child(viewport)
+	blueprint_canvas = WorkbenchControls.BlueprintSheetCanvas.new()
+	blueprint_canvas.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	blueprint_canvas.visible = false
+	viewport_stage.add_child(blueprint_canvas)
+	# Top-Left NVIDIA Isaac-Sim style Physics & Performance HUD
+	var hud_panel := PanelContainer.new()
+	hud_panel.position = Vector2(12, 12)
+	hud_panel.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	viewport_container.add_child(hud_panel)
+	var hud_pad := MarginContainer.new()
+	for s in ["left", "right", "top", "bottom"]:
+		hud_pad.add_theme_constant_override("margin_" + s, 8)
+	hud_pad.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	hud_panel.add_child(hud_pad)
+	viewport_hud_label = Label.new()
+	viewport_hud_label.text = "FPS: -- | Engine Ready\nMass & CoG: loading..."
+	viewport_hud_label.add_theme_font_size_override("font_size", 11)
+	viewport_hud_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	hud_pad.add_child(viewport_hud_label)
+	# Top-Right Interactive Onshape / Fusion 360 ViewCube Quick-Snap Controls
+	var viewcube := HBoxContainer.new()
+	viewcube.set_anchors_and_offsets_preset(Control.PRESET_TOP_RIGHT)
+	viewcube.offset_left = -255
+	viewcube.offset_top = 12
+	viewcube.offset_right = -12
+	viewcube.offset_bottom = 42
+	viewport_container.add_child(viewcube)
+	_add_button(viewcube, "ISO", func(): _snap_view(0.72, 0.48))
+	_add_button(viewcube, "TOP", func(): _snap_view(0.0, 1.38))
+	_add_button(viewcube, "FRONT", func(): _snap_view(0.0, 0.08))
+	_add_button(viewcube, "SIDE", func(): _snap_view(PI * 0.5, 0.10))
+	_add_button(viewcube, "FIT", _fit_camera)
+	# Bottom-Right SOLIDWORKS Flow / Onshape FEA Colorbar Scale Legend
+	colorbar_legend = WorkbenchControls.ColorbarLegend.new()
+	colorbar_legend.set_anchors_and_offsets_preset(Control.PRESET_BOTTOM_RIGHT)
+	colorbar_legend.offset_left = -210
+	colorbar_legend.offset_top = -72
+	colorbar_legend.offset_right = -12
+	colorbar_legend.offset_bottom = -12
+	colorbar_legend.visible = false
+	colorbar_legend.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	viewport_container.add_child(colorbar_legend)
 	world = Node3D.new()
 	viewport.add_child(world)
 	aircraft = Node3D.new()
@@ -291,15 +388,19 @@ func _build_interface() -> void:
 	world.add_child(world_env)
 	var ground: MeshInstance3D = MeshInstance3D.new()
 	var ground_mesh: PlaneMesh = PlaneMesh.new()
-	ground_mesh.size = Vector2(8, 8)
+	ground_mesh.size = Vector2(12, 12)
 	ground.mesh = ground_mesh
 	var ground_material: StandardMaterial3D = StandardMaterial3D.new()
-	ground_material.albedo_color = Color(0.11, 0.16, 0.2)
-	ground_material.roughness = 0.85
+	ground_material.albedo_color = Color(0.08, 0.11, 0.15)
+	ground_material.roughness = 0.88
 	ground_material.metallic = 0.05
 	ground.material_override = ground_material
 	ground.position.y = -0.12
 	world.add_child(ground)
+	grid_group = WorkbenchMeshes.build_cad_grid_and_axes(6.0, 0.5, true)
+	world.add_child(grid_group)
+	overlay_group = Node3D.new()
+	aircraft.add_child(overlay_group)
 	ground_props = Node3D.new()
 	world.add_child(ground_props)
 	var replay: HBoxContainer = HBoxContainer.new()
@@ -311,6 +412,9 @@ func _build_interface() -> void:
 	timeline.step = 0.001
 	timeline.value_changed.connect(_seek)
 	replay.add_child(timeline)
+	telemetry_plot = WorkbenchControls.TelemetryPlotCanvas.new()
+	telemetry_plot.custom_minimum_size = Vector2(0, 66)
+	layout.add_child(telemetry_plot)
 	scope_label = Label.new()
 	scope_label.text = "Schematic component positions · reference Python dynamics · physical validation pending"
 	layout.add_child(scope_label)
@@ -1230,40 +1334,64 @@ func _refresh_project() -> bool:
 		item.set_metadata(0, {"marker": marker, "part": part})
 	var hub_inst := MeshInstance3D.new()
 	var hub_mesh := BoxMesh.new()
-	hub_mesh.size = Vector3(0.18, 0.045, 0.18)
+	hub_mesh.size = Vector3(0.20, 0.038, 0.20)
 	hub_inst.mesh = hub_mesh
 	hub_inst.material_override = _make_cad_material(false)
 	aircraft.add_child(hub_inst)
-	var disc_mat := StandardMaterial3D.new()
-	disc_mat.albedo_color = Color(0.95, 0.58, 0.18, 0.42)
-	disc_mat.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+	var motor_mat := StandardMaterial3D.new()
+	motor_mat.albedo_color = Color(0.75, 0.78, 0.84)
+	motor_mat.metallic = 0.85
+	motor_mat.roughness = 0.24
+	var blade_mat := StandardMaterial3D.new()
+	blade_mat.albedo_color = Color(0.16, 0.18, 0.22)
+	blade_mat.metallic = 0.20
+	blade_mat.roughness = 0.35
+	var duct_mat := StandardMaterial3D.new()
+	duct_mat.albedo_color = Color(0.28, 0.45, 0.65, 0.30)
+	duct_mat.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+	last_rotor_scene_positions.clear()
 	for r_spec in vehicle["snapshot"].get("rotors", []):
 		if not (r_spec is Dictionary):
 			continue
 		var r_pos: Vector3 = _scene_position(r_spec.get("position_m", [0.0, 0.0, 0.0]))
+		last_rotor_scene_positions.append(r_pos)
 		var r_len: float = Vector2(r_pos.x, r_pos.z).length()
 		if r_len > 0.02:
 			var arm := MeshInstance3D.new()
 			var arm_m := BoxMesh.new()
-			arm_m.size = Vector3(r_len, 0.022, 0.022)
+			arm_m.size = Vector3(r_len, 0.018, 0.024)
 			arm.mesh = arm_m
 			arm.position = r_pos * 0.5
 			arm.rotation.y = -atan2(r_pos.z, r_pos.x)
 			arm.material_override = _make_cad_material(false)
 			aircraft.add_child(arm)
-		var disc := MeshInstance3D.new()
-		var dm := CylinderMesh.new()
-		dm.top_radius = 0.17
-		dm.bottom_radius = 0.17
-		dm.height = 0.008
-		disc.mesh = dm
-		disc.position = r_pos + Vector3(0.0, 0.025, 0.0)
-		disc.material_override = disc_mat
-		aircraft.add_child(disc)
+		var bell := MeshInstance3D.new()
+		var bm := CylinderMesh.new()
+		bm.top_radius = 0.024
+		bm.bottom_radius = 0.024
+		bm.height = 0.032
+		bell.mesh = bm
+		bell.position = r_pos + Vector3(0.0, 0.016, 0.0)
+		bell.material_override = motor_mat
+		aircraft.add_child(bell)
+		var blade := MeshInstance3D.new()
+		blade.mesh = WorkbenchMeshes.build_twisted_blade_mesh(0.18, 0.032, 0.014, 2, int(r_spec.get("spin_direction", 1)))
+		blade.position = r_pos + Vector3(0.0, 0.036, 0.0)
+		blade.material_override = blade_mat
+		aircraft.add_child(blade)
+		var ring_mesh := TorusMesh.new()
+		ring_mesh.inner_radius = 0.185
+		ring_mesh.outer_radius = 0.195
+		var duct := MeshInstance3D.new()
+		duct.mesh = ring_mesh
+		duct.position = r_pos + Vector3(0.0, 0.036, 0.0)
+		duct.material_override = duct_mat
+		aircraft.add_child(duct)
 	var properties: Dictionary = engineering.mass_properties(parts)
 	if properties["ok"]:
 		metrics_label.text = "Native C++ mass %.3f kg\nCoG %s m" % [
 			properties["mass_kg"], str(properties["center_of_mass_m"])]
+		_rebuild_viewport_overlays(_scene_position(properties["center_of_mass_m"]))
 	else:
 		metrics_label.text = properties["error"]
 		return false
@@ -1905,8 +2033,15 @@ func _process(delta: float) -> void:
 						"t": fwt["t_s"], "x": fw_x, "y": fw_y, "z": fwt["altitude_m"], "q_wxyz": []}}}
 					timeline.max_value = float(fwt["t_s"][-1])
 					_seek(0.0)
+					_update_telemetry_plot("Fixed-Wing Altitude (m)")
 				status_label.text = "Fixed-Wing VLM mission %s (verdict=%s, range=%.1f m) · physical validation pending." % [
 					str(m.get("status")), str(m.get("verdict")), float(m.get("range_m", 0.0))]
+			elif job_action == "export-drawing":
+				var outs: Dictionary = output.get("outputs", {})
+				status_label.text = "2D Orthographic Drawings exported (SVG + DXF) · MAC=%.3f m" % float(output.get("mean_aerodynamic_chord_m", 0.0))
+				if blueprint_canvas != null:
+					blueprint_canvas.part_title = "%s | DXF+SVG Exported" % str(output.get("part_name", "Wing"))
+					blueprint_canvas.queue_redraw()
 			elif job_action == "vtol-transition":
 				_build_procedural_aircraft_family("vtol")
 				var vs: Array = output.get("samples", [])
@@ -1976,6 +2111,7 @@ func _process(delta: float) -> void:
 				if telemetry is Dictionary and telemetry.get("t", []).size() > 0:
 					timeline.max_value = float(telemetry["t"][-1])
 					_seek(0)
+					_update_telemetry_plot("6-DoF Trajectory (Altitude m · Bus Voltage V)")
 					status_label.text = "Experiment %s (%s) · %.2f seconds · physical validation pending" % [
 					run_status, playback_state,
 					(Time.get_ticks_msec() - job_started_ms) / 1000.0]
@@ -2019,12 +2155,46 @@ func _process(delta: float) -> void:
 		_seek(replay_time)
 		if replay_time >= timeline.max_value:
 			playing = false
+	hud_timer += delta
+	if hud_timer >= 0.25 and viewport_hud_label != null:
+		hud_timer = 0.0
+		var fps_val: float = Engine.get_frames_per_second()
+		var ms_val: float = 1000.0 / maxf(1.0, fps_val)
+		var tier_txt: String = visual_profile_button.text if visual_profile_button != null else visual_profile
+		viewport_hud_label.text = "FPS: %.1f (%.1f ms) | %s | UNVALIDATED\n%s" % [
+			fps_val, ms_val, tier_txt, metrics_label.text.replace("\n", " · ")]
 	if not capture_path.is_empty() and not project.is_empty():
 		capture_frames += 1
+		if capture_frames == 22 and not capture_view.is_empty():
+			if capture_view == "flow":
+				_run_native_cpp_rk4()
+				_update_telemetry_plot("6-DoF Trajectory (Altitude m)")
+				ribbon_tabs.current_tab = 3
+				show_flow_overlay = true
+				_toggle_stress_map()
+			elif capture_view == "blueprint":
+				ribbon_tabs.current_tab = 2
+			elif capture_view == "rotor_flow":
+				_run_native_cpp_rk4()
+				_update_telemetry_plot("Quadcopter Rotor Downwash + 6-DoF Telemetry")
+				ribbon_tabs.current_tab = 3
+				_toggle_flow_overlay()
 		if capture_frames == 30:
 			await RenderingServer.frame_post_draw
 			get_viewport().get_texture().get_image().save_png(capture_path)
 			get_tree().quit()
+
+
+func _update_telemetry_plot(title_str: String = "Flight Telemetry (Altitude m · Bus Voltage V)") -> void:
+	if telemetry_plot == null:
+		return
+	var tel: Variant = result.get("result", {}).get("telemetry")
+	if tel is Dictionary:
+		telemetry_plot.label_title = title_str
+		telemetry_plot.series_t = tel.get("t", [])
+		telemetry_plot.series_z = tel.get("z", [])
+		telemetry_plot.series_v = tel.get("v_bus_v", [])
+		telemetry_plot.queue_redraw()
 
 
 func _completed_output() -> bool:
@@ -2105,6 +2275,17 @@ func _build_procedural_aircraft_family(family: String, extra_items: Array = []) 
 	mat.roughness = 0.35
 	var accent := StandardMaterial3D.new()
 	accent.albedo_color = Color(0.95, 0.55, 0.15)
+	var wing_mat := StandardMaterial3D.new()
+	wing_mat.albedo_color = Color(0.84, 0.88, 0.92)
+	wing_mat.metallic = 0.15
+	wing_mat.roughness = 0.32
+	if show_stress_map:
+		wing_mat.vertex_color_use_as_albedo = true
+	var blade_mat := StandardMaterial3D.new()
+	blade_mat.albedo_color = Color(0.14, 0.16, 0.20)
+	blade_mat.metallic = 0.30
+	blade_mat.roughness = 0.35
+	last_rotor_scene_positions.clear()
 	if family == "multirotor_bom":
 		var hub := MeshInstance3D.new()
 		var hub_m := BoxMesh.new()
@@ -2114,79 +2295,151 @@ func _build_procedural_aircraft_family(family: String, extra_items: Array = []) 
 		aircraft.add_child(hub)
 		for r_entry in extra_items:
 			if r_entry is Dictionary:
-				var disc := MeshInstance3D.new()
-				var dm := CylinderMesh.new()
-				dm.top_radius = 0.18
-				dm.bottom_radius = 0.18
-				dm.height = 0.015
-				disc.mesh = dm
-				disc.position = _scene_position(r_entry.get("position_m", [0.0, 0.0, 0.0]))
-				disc.material_override = accent
-				aircraft.add_child(disc)
+				var rp: Vector3 = _scene_position(r_entry.get("position_m", [0.0, 0.0, 0.0]))
+				last_rotor_scene_positions.append(rp)
+				var blade := MeshInstance3D.new()
+				blade.mesh = WorkbenchMeshes.build_twisted_blade_mesh(0.18, 0.032, 0.014, 2, int(r_entry.get("spin_direction", 1)))
+				blade.position = rp + Vector3(0.0, 0.02, 0.0)
+				blade.material_override = blade_mat
+				aircraft.add_child(blade)
 	elif family == "fixed_wing":
 		var fuse := MeshInstance3D.new()
-		var fuse_m := BoxMesh.new()
-		fuse_m.size = Vector3(1.1, 0.12, 0.14)
-		fuse.mesh = fuse_m
-		fuse.material_override = mat
+		fuse.mesh = WorkbenchMeshes.build_streamlined_fuselage_mesh(1.05, 0.075)
+		fuse.material_override = wing_mat
 		aircraft.add_child(fuse)
 		var wing := MeshInstance3D.new()
-		var wing_m := BoxMesh.new()
-		wing_m.size = Vector3(0.24, 0.03, 1.80)
-		wing.mesh = wing_m
-		wing.material_override = accent
+		wing.mesh = WorkbenchMeshes.build_lofted_wing_mesh(1.80, 0.26, 0.14, 5.0, 3.0, show_stress_map)
+		wing.material_override = wing_mat
 		aircraft.add_child(wing)
+		var push_prop := MeshInstance3D.new()
+		push_prop.mesh = WorkbenchMeshes.build_twisted_blade_mesh(0.14, 0.028, 0.012, 2, 1)
+		push_prop.rotation_degrees = Vector3(0.0, 0.0, 90.0)
+		push_prop.position = Vector3(-0.62, 0.0, 0.0)
+		push_prop.material_override = blade_mat
+		aircraft.add_child(push_prop)
 	elif family == "vtol":
 		var v_fuse := MeshInstance3D.new()
-		var v_m := BoxMesh.new()
-		v_m.size = Vector3(1.0, 0.14, 0.16)
-		v_fuse.mesh = v_m
-		v_fuse.material_override = mat
+		v_fuse.mesh = WorkbenchMeshes.build_streamlined_fuselage_mesh(1.10, 0.085)
+		v_fuse.material_override = wing_mat
 		aircraft.add_child(v_fuse)
 		var v_wing := MeshInstance3D.new()
-		var vw_m := BoxMesh.new()
-		vw_m.size = Vector3(0.26, 0.03, 1.60)
-		v_wing.mesh = vw_m
-		v_wing.material_override = mat
+		v_wing.mesh = WorkbenchMeshes.build_lofted_wing_mesh(1.75, 0.26, 0.16, 3.0, 2.0, show_stress_map)
+		v_wing.material_override = wing_mat
 		aircraft.add_child(v_wing)
 		for side in [-1.0, 1.0]:
 			var nac := MeshInstance3D.new()
 			nac.name = "nacelle_left" if side < 0 else "nacelle_right"
 			var nac_m := CylinderMesh.new()
-			nac_m.top_radius = 0.045
-			nac_m.bottom_radius = 0.045
-			nac_m.height = 0.24
+			nac_m.top_radius = 0.042
+			nac_m.bottom_radius = 0.042
+			nac_m.height = 0.22
 			nac.mesh = nac_m
-			nac.position = Vector3(0.10, 0.06, side * 0.78)
+			nac.position = Vector3(0.12, 0.06, side * 0.78)
 			nac.material_override = accent
+			var nac_prop := MeshInstance3D.new()
+			nac_prop.mesh = WorkbenchMeshes.build_twisted_blade_mesh(0.20, 0.032, 0.014, 3, int(side))
+			nac_prop.position = Vector3(0.0, 0.12, 0.0)
+			nac_prop.material_override = blade_mat
+			nac.add_child(nac_prop)
 			aircraft.add_child(nac)
+			last_rotor_scene_positions.append(nac.position)
 	elif family == "helicopter":
 		var h_fuse := MeshInstance3D.new()
-		var hf_m := BoxMesh.new()
-		hf_m.size = Vector3(1.3, 0.16, 0.18)
-		h_fuse.mesh = hf_m
+		h_fuse.mesh = WorkbenchMeshes.build_streamlined_fuselage_mesh(1.35, 0.10)
 		h_fuse.material_override = mat
 		aircraft.add_child(h_fuse)
 		var main_rotor := MeshInstance3D.new()
-		var mr_m := BoxMesh.new()
-		mr_m.size = Vector3(0.06, 0.02, 1.44)
-		main_rotor.mesh = mr_m
+		main_rotor.mesh = WorkbenchMeshes.build_twisted_blade_mesh(0.72, 0.055, 0.035, 2, 1)
 		main_rotor.position = Vector3(0.0, 0.16, 0.0)
-		main_rotor.material_override = accent
+		main_rotor.material_override = blade_mat
 		aircraft.add_child(main_rotor)
+		last_rotor_scene_positions.append(main_rotor.position)
 	elif family == "swarm":
 		var offsets: Array = extra_items if not extra_items.is_empty() else [[-0.6, -0.6, 0.0], [-0.6, 0.6, 0.0], [0.6, -0.6, 0.0], [0.6, 0.6, 0.0]]
 		for s_i in range(offsets.size()):
 			var agent := MeshInstance3D.new()
 			agent.name = "swarm_agent_%d" % s_i
 			var ag_m := SphereMesh.new()
-			ag_m.radius = 0.12
-			ag_m.height = 0.12
+			ag_m.radius = 0.11
+			ag_m.height = 0.11
 			agent.mesh = ag_m
 			agent.position = _scene_position(offsets[s_i])
 			agent.material_override = accent
 			aircraft.add_child(agent)
+	_rebuild_viewport_overlays(Vector3.ZERO, family in ["fixed_wing", "vtol"])
 	_fit_camera()
+
+
+func _on_ribbon_tab_changed(tab_idx: int) -> void:
+	for i in range(ribbon_panels.size()):
+		ribbon_panels[i].visible = (i == tab_idx)
+	_toggle_blueprint_view(tab_idx == 2)
+
+
+func _toggle_blueprint_view(show_sheet: bool) -> void:
+	if blueprint_canvas != null and viewport_container != null:
+		blueprint_canvas.visible = show_sheet
+		viewport_container.visible = not show_sheet
+		if show_sheet:
+			blueprint_canvas.queue_redraw()
+
+
+func _toggle_blueprint_balloons() -> void:
+	if blueprint_canvas != null:
+		blueprint_canvas.show_balloons = not blueprint_canvas.show_balloons
+		blueprint_canvas.queue_redraw()
+
+
+func _export_active_drawing() -> void:
+	if job_pid > 0:
+		return
+	var out_dir: String = ProjectSettings.globalize_path("user://drawings")
+	DirAccess.make_dir_recursive_absolute(out_dir)
+	var svg_p: String = out_dir.path_join("wing_blueprint.svg")
+	var dxf_p: String = out_dir.path_join("wing_blueprint.dxf")
+	_start_job("export-drawing", _write_payload({"name": "AerodynamicsLab-Wing", "wingspan_m": 1.80, "svg_path": svg_p, "dxf_path": dxf_p}))
+
+
+func _toggle_inertia_rings() -> void:
+	show_inertia_rings = not show_inertia_rings
+	_rebuild_viewport_overlays(Vector3.ZERO, false)
+
+
+func _toggle_flow_overlay() -> void:
+	show_flow_overlay = not show_flow_overlay
+	_rebuild_viewport_overlays(Vector3.ZERO, false)
+
+
+func _toggle_stress_map() -> void:
+	show_stress_map = not show_stress_map
+	if colorbar_legend != null:
+		colorbar_legend.visible = show_flow_overlay or show_stress_map
+		colorbar_legend.title_text = "Wing Bending Stress (MPa)" if show_stress_map else "Airflow Velocity (m/s)"
+		colorbar_legend.min_label = "0.0"
+		colorbar_legend.max_label = "185" if show_stress_map else "24.0"
+		colorbar_legend.queue_redraw()
+	_build_procedural_aircraft_family("fixed_wing")
+
+
+func _snap_view(new_yaw: float, new_elev: float) -> void:
+	yaw = new_yaw
+	elevation = new_elev
+	_update_camera()
+
+
+func _rebuild_viewport_overlays(cog_pos: Vector3, is_fixed_wing: bool = false) -> void:
+	if overlay_group != null and is_instance_valid(overlay_group):
+		overlay_group.queue_free()
+	overlay_group = Node3D.new()
+	aircraft.add_child(overlay_group)
+	if show_inertia_rings:
+		overlay_group.add_child(WorkbenchMeshes.build_inertia_rings_overlay(cog_pos))
+	if show_flow_overlay:
+		overlay_group.add_child(WorkbenchMeshes.build_flow_streamlines(last_rotor_scene_positions, is_fixed_wing))
+	if colorbar_legend != null:
+		colorbar_legend.visible = show_flow_overlay or show_stress_map
+		if colorbar_legend.visible:
+			colorbar_legend.queue_redraw()
 
 
 func _exit_tree() -> void:
