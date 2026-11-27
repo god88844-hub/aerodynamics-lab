@@ -40,10 +40,10 @@ Phase 0 is the implementation focus. The complete expansion roadmap appears in [
 
 ## Architecture decisions
 
-1. Use Godot as the desktop scene, interaction and application shell. Use typed GDScript for application behavior.
-2. Use independent C++20 libraries for exact CAD and demonstrated performance-critical computation. Integrate through GDExtension and headless interfaces.
+1. Use pure native C++20 + OpenGL 3.3 Core + Dear ImGui Docking (`apps/native/`) as the zero-game-engine CAD, analysis, and flight desktop application shell (clean light engineering workspace, orthographic 4-view + 3D perspective, model/feature tree, live parametric sliders). Legacy Godot `apps/desktop/` is frozen in transition only until retired.
+2. Use independent C++20 libraries (`packages/engineering-core/`, `lab_core`) directly linked into `apps/native/` for exact mass/inertia, RK4 trajectory integration, mesh/edge generation, and performance-critical computation, plus headless CLI/worker interfaces.
 3. Retain Python for existing models, data ingestion, calibration, optimization and research. Migrate a numerical path after profiling and agreement tests establish the benefit.
-4. Use Open CASCADE for exact geometry. Qualify constrained-sketch and drawing integrations behind application interfaces before choosing FreeCAD solver reuse or another implementation. Preserve each dependency's license obligations.
+4. Use Open CASCADE (`OCCT`) via `packages/geometry/` for exact geometry, constrained sketches, feature history (`Extrude`, `Cut-Extrude`, `Revolve`, `Loft`, `Circular Pattern`, custom wings/propellers/drone parts, part swapping), and `STEP` / `STL` / `DXF` / `SVG` exchange. Preserve each dependency's license obligations.
 5. Use ArduPilot as the initial broad autopilot adapter and add applicable PX4 integrations. Each run has one authoritative vehicle-state integrator.
 6. Use double-precision engineering state, explicit units and coordinate transforms. Rendering and simulation clocks operate independently.
 7. Keep detailed analysis in cancellable workers with explicit resource admission and local/remote execution contracts. Publish the inputs, backend versions, convergence and evidence associated with each result.

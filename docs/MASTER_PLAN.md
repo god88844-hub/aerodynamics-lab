@@ -1,8 +1,8 @@
 # Master task and execution plan
 
-21 November 2026. **Full standalone software plan; owner authorization recorded; implementation held.**
+27 November 2026. **Full standalone native software plan; owner authorization recorded; implementation held.**
 
-Qualification is complete. The primary product is `apps/desktop/`, the standalone Godot 3D application; shared engineering services remain usable without an HTTP server. `apps/web/` is frozen legacy (security and minimal compatibility only). Historical qualification receipts remain evidence, not a recurring development stage.
+Qualification is complete. The primary product is **`apps/native/`**, the standalone zero-game-engine C++20 + OpenGL 3.3 + Dear ImGui desktop application (`apps/desktop/` frozen only until native CI parity completes, then retired); shared engineering services remain usable without an HTTP server. `apps/web/` is frozen legacy (security and minimal compatibility only). Historical qualification receipts remain evidence, not a recurring development stage. Phase 0 (multirotors, fixed-wing, helicopters, VTOL, custom part design/redesign) completes first before sequential future Phases 1–4.
 
 Tracking: [master issue #127](https://github.com/god88844-hub/aerodynamics-lab/issues/127), [PR #126](https://github.com/god88844-hub/aerodynamics-lab/pull/126). Proposed release marker: **`v0.0-plan-locked`**. This document does not approve merge, tagging, physical testing or physical acceptance.
 
@@ -909,9 +909,9 @@ Tasks with several WPs appear in each relevant issue but retain one canonical ID
 ## Slice 0D — Complete supported drone laboratory
 
 <a name="p0d-001"></a>
-- [ ] **P0D-001 — Complete supported CAD, drawings and engineering handoff** (WP3; actor: builder)
+- [ ] **P0D-001 — Complete supported CAD part design, redesign, drawings and engineering handoff** (WP2, WP3; actor: builder)
   - Prerequisites: P0C-023. Proof: [docs/acceptance/P0D-001.md](acceptance/P0D-001.md).
-  - Acceptance: Supported sketch/feature/assembly/joint/material operations, clearances, drawing views/dimensions, BOM and exchange work end to end with traceable revisions, units and engineering assumptions.
+  - Acceptance: Native zero-engine workbench (`apps/native/`, C++20 + OpenGL 3.3 + Dear ImGui) and `packages/geometry/` support 2D constrained sketches, extrude/cut/revolve/loft/circular-pattern, custom drone part redesign & assembly swapping, 4-quadrant ortho + shaded-edge CAD views, drawing views/dimensions, BOM and STEP/STL/DXF/SVG exchange with traceable revisions and units.
   - Planned verification: `pytest tests/acceptance/test_p0d_001.py`; required current-head CI.
 
 <a name="p0d-002"></a>
@@ -1057,9 +1057,9 @@ Tasks with several WPs appear in each relevant issue but retain one canonical ID
   - Planned verification: `pytest tests/acceptance/test_p0d_025.py`; required current-head CI.
 
 <a name="p0d-026"></a>
-- [ ] **P0D-026 — Build reproducible standalone release installers** (WP2, WP12; actor: builder)
+- [ ] **P0D-026 — Build reproducible standalone native Windows release installers** (WP2, WP12; actor: builder)
   - Prerequisites: P0D-025. Proof: [docs/acceptance/P0D-026.md](acceptance/P0D-026.md).
-  - Acceptance: Windows installer and declared headless/other-platform distributions reproduce from frozen locks with checksums/notices and selected signing policy; unsupported platforms are not advertised as tested.
+  - Acceptance: Standalone native `apps/native/AerodynamicsLab.exe` (zero third-party game engine, C++20 + OpenGL + Dear ImGui + bundled OCCT/Python worker) and declared distributions reproduce from frozen locks with checksums/SBOM/notices; Godot runtime retired once native CI parity is green.
   - Planned verification: `pytest tests/acceptance/test_p0d_026.py`; required current-head CI.
 
 <a name="p0d-027"></a>
