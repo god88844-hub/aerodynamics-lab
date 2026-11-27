@@ -8,6 +8,8 @@ from typing import Any
 
 import numpy as np
 
+from geometry.fixed_wing_cad import ParametricWingSpec, compute_wing_geometry_properties
+from physics.aerodynamics.airfoil_polars import generate_airfoil_polar
 from physics.constants import STANDARD_GRAVITY
 from physics.dynamics.quaternion import conjugate, normalize, rotate
 from physics.dynamics.rigid_body import RigidBody, make_state, unpack_state
@@ -152,10 +154,47 @@ def simulate_6dof_fixed_wing(
     return {
         "schema_version": "1.0",
         "model": "6dof_jsbsim_stability_derivatives",
+        "aircraft_family": "fixed_wing",
         "status": "completed",
         "final_position_m": arr[-1, 0:3].tolist(),
         "final_quaternion_wxyz": arr[-1, 6:10].tolist(),
         "final_velocity_m_s": arr[-1, 3:6].tolist(),
         "times_s": times,
+        "telemetry": {
+            "t": times,
+            "x": arr[:, 0].tolist(),
+            "y": arr[:, 1].tolist(),
+            "z": arr[:, 2].tolist(),
+            "q_wxyz": arr[:, 6:10].tolist(),
+            "vx": arr[:, 3].tolist(),
+            "vy": arr[:, 4].tolist(),
+            "vz": arr[:, 5].tolist(),
+            "channel_provenance": "calculated",
+        },
         "physical_validation_status": "UNVALIDATED",
     }
+
+
+def build_derivatives_from_wing(
+    wing: ParametricWingSpec,
+    *,
+    airspeed_ref_m_s: float = 18.0,
+) -> FixedWingAeroDerivatives:
+    """Couple CAD ParametricWingSpec + viscous airfoil polar directly into 6-DoF stability derivatives."""
+    props = compute_wing_geometry_properties(wing)
+    ar = props["aspect_ratio"]
+    mac = props["mean_aerodynamic_chord_m"]
+    polar = generate_airfoil_polar(wing.airfoil_code, reynolds=max(3.0e4, 1.225 * airspeed_ref_m_s * mac / 1.789e-5))
+    # Finite-wing Helmholtz/Prandtl lift-slope reduction 2*pi * AR / (AR + 2)
+    cl_alpha_3d = 2.0 * math.pi * ar / (ar + 2.0)
+    cl0_row = min(polar["rows"], key=lambda r: abs(r["alpha_deg"]))
+    return FixedWingAeroDerivatives(
+        wing_area_m2=props["planform_area_m2"],
+        wingspan_m=props["wingspan_m"],
+        mean_chord_m=mac,
+        cl0=float(cl0_row["cl"]),
+        cl_alpha=cl_alpha_3d,
+        cd0=float(polar["cd_min"]) + 0.012,
+        k_induced=1.0 / (math.pi * ar * wing.oswald_e),
+        cl_beta=-0.04 - 0.015 * abs(wing.dihedral_deg),
+    )

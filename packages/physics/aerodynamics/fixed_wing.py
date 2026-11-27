@@ -8,7 +8,9 @@ from typing import Any
 import numpy as np
 
 from geometry.fixed_wing_cad import ParametricWingSpec, compute_wing_geometry_properties
+from physics.aerodynamics.airfoil_polars import generate_airfoil_polar
 from physics.constants import STANDARD_GRAVITY
+from physics.environment.isa_atmosphere import isa_atmosphere_1976
 
 MAX_MACH_INCOMPRESSIBLE = 0.30
 DEFAULT_STALL_ALPHA_DEG = 14.0
@@ -23,13 +25,16 @@ def solve_lifting_line_wing(
     cd0: float = 0.022,
     stall_alpha_deg: float = DEFAULT_STALL_ALPHA_DEG,
     n_span_stations: int = 16,
+    use_reynolds_polar: bool = False,
+    altitude_m: float = 0.0,
 ) -> dict[str, Any]:
-    """Prandtl finite-wing Fourier lifting-line solver with fail-closed stall & compressibility checks."""
+    """Prandtl finite-wing Fourier lifting-line solver with fail-closed stall, Mach, and optional Re polar coupling."""
     if not math.isfinite(alpha_deg) or not math.isfinite(airspeed_m_s) or airspeed_m_s <= 0.0:
         raise ValueError("alpha_deg must be finite and airspeed_m_s > 0")
     if not math.isfinite(rho_kg_m3) or rho_kg_m3 <= 0.0:
         raise ValueError("rho_kg_m3 must be finite and > 0")
-    mach = airspeed_m_s / 340.3
+    atm = isa_atmosphere_1976(altitude_m)
+    mach = airspeed_m_s / atm.speed_of_sound_m_s
     if mach > MAX_MACH_INCOMPRESSIBLE:
         raise ValueError(f"Compressible flow regime unsupported: Mach {mach:.3f} > {MAX_MACH_INCOMPRESSIBLE}")
     if abs(alpha_deg) > stall_alpha_deg:
@@ -41,6 +46,16 @@ def solve_lifting_line_wing(
     ct = wing.tip_chord_m
     s_ref = geom["planform_area_m2"]
     ar = geom["aspect_ratio"]
+    mac = geom["mean_aerodynamic_chord_m"]
+
+    reynolds = (rho_kg_m3 * airspeed_m_s * mac) / atm.dynamic_viscosity_pa_s
+    effective_cd0 = cd0
+    alpha_zero_lift_rad = -math.radians(2.0 * (int(wing.airfoil_code[0]) / 100.0) * 100.0) if int(wing.airfoil_code[0]) > 0 else 0.0
+    if use_reynolds_polar:
+        polar = generate_airfoil_polar(wing.airfoil_code, reynolds=max(3.0e4, min(2.0e7, reynolds)))
+        alpha_zero_lift_rad = math.radians(polar["alpha_zero_lift_deg"])
+        # Parasite wing drag + baseline airframe allowance (0.012)
+        effective_cd0 = polar["cd_min"] + 0.012
 
     # Prandtl Fourier colocation over N odd/even terms across half-span stations (0, pi)
     m_terms = max(8, int(n_span_stations))
@@ -51,8 +66,6 @@ def solve_lifting_line_wing(
     a0 = 2.0 * math.pi  # thin airfoil lift slope [1/rad]
     mu = (chord * a0) / (4.0 * b)
 
-    camber_pct = int(wing.airfoil_code[0]) / 100.0
-    alpha_zero_lift_rad = -math.radians(2.0 * camber_pct * 100.0) if camber_pct > 0 else 0.0
     twist_rad = np.radians(wing.twist_tip_deg) * eta
     alpha_geom_rad = math.radians(alpha_deg) + twist_rad - alpha_zero_lift_rad
 
@@ -69,7 +82,7 @@ def solve_lifting_line_wing(
     delta_induced = sum(n * (A[n - 1] / A[0]) ** 2 for n in range(2, m_terms + 1)) if abs(A[0]) > 1e-12 else 0.0
     e_computed = float(1.0 / (1.0 + max(0.0, delta_induced)))
     cd_i = (cl * cl) / (math.pi * ar * e_computed)
-    cd = cd0 + cd_i
+    cd = effective_cd0 + cd_i
     q_dyn = 0.5 * rho_kg_m3 * airspeed_m_s * airspeed_m_s
     lift_n = q_dyn * s_ref * cl
     drag_n = q_dyn * s_ref * cd
@@ -78,9 +91,11 @@ def solve_lifting_line_wing(
         "model_fidelity": "lifting_line_prandtl_fourier",
         "alpha_deg": alpha_deg,
         "airspeed_m_s": airspeed_m_s,
+        "reynolds": reynolds,
         "mach": mach,
         "cl": cl,
         "cd": cd,
+        "cd0_used": effective_cd0,
         "cd_induced": cd_i,
         "span_efficiency_e": e_computed,
         "lift_n": lift_n,
@@ -211,5 +226,42 @@ def run_fixed_wing_mission(
             "load_factor_g": load_factors,
             "channel_provenance": "calculated",
         },
+        "physical_validation_status": "UNVALIDATED",
+    }
+
+
+def verify_fixed_wing_convergence(
+    wing: ParametricWingSpec,
+    *,
+    alpha_deg: float = 4.0,
+    airspeed_m_s: float = 18.0,
+) -> dict[str, Any]:
+    """Verify 3-level Fourier span-station refinement & finite-difference AoA sensitivity."""
+    coarse = solve_lifting_line_wing(wing, alpha_deg=alpha_deg, airspeed_m_s=airspeed_m_s, n_span_stations=8, use_reynolds_polar=True)
+    medium = solve_lifting_line_wing(wing, alpha_deg=alpha_deg, airspeed_m_s=airspeed_m_s, n_span_stations=16, use_reynolds_polar=True)
+    fine = solve_lifting_line_wing(wing, alpha_deg=alpha_deg, airspeed_m_s=airspeed_m_s, n_span_stations=32, use_reynolds_polar=True)
+    err_1 = abs(coarse["cl"] - fine["cl"])
+    err_2 = abs(medium["cl"] - fine["cl"])
+
+    # Geometric sensitivity: +5% span increases aspect ratio & lowers induced drag
+    wider_wing = ParametricWingSpec(
+        name=f"{wing.name}_wider",
+        wingspan_m=wing.wingspan_m * 1.05,
+        root_chord_m=wing.root_chord_m,
+        tip_chord_m=wing.tip_chord_m,
+        sweep_le_deg=wing.sweep_le_deg,
+        dihedral_deg=wing.dihedral_deg,
+        twist_tip_deg=wing.twist_tip_deg,
+        airfoil_code=wing.airfoil_code,
+        oswald_e=wing.oswald_e,
+    )
+    wider_res = solve_lifting_line_wing(wider_wing, alpha_deg=alpha_deg, airspeed_m_s=airspeed_m_s, n_span_stations=16, use_reynolds_polar=True)
+    return {
+        "schema_version": "1.0",
+        "cl_coarse": coarse["cl"],
+        "cl_medium": medium["cl"],
+        "cl_fine": fine["cl"],
+        "refinement_monotone": err_2 <= err_1 + 1e-9,
+        "span_sensitivity_ld_delta": wider_res["lift_to_drag"] - medium["lift_to_drag"],
         "physical_validation_status": "UNVALIDATED",
     }

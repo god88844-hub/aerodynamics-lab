@@ -1,0 +1,225 @@
+{
+  "schema_version": "1.0",
+  "note": "Extended Slice 0B/0C/0D validation protocol templates pending custodian data and external review.",
+  "protocols": [
+    {
+      "protocol": {
+        "schema_version": "1.0",
+        "protocol_id": "P0B012-FIXEDWING-GLIDER-V1",
+        "intended_engineering_decision": "Compare modeled fixed-wing Prandtl lifting-line trim, sink rate, and 6-DoF trajectories against held-out flight tests.",
+        "frozen_model_git_sha": "81027d9a452f8c7a3b19a0e4f28c9c7d6e5f4a3b",
+        "frozen_design_sha256": "5555555555555555555555555555555555555555555555555555555555555555",
+        "frozen_controller_configuration_sha256": "6666666666666666666666666666666666666666666666666666666666666666",
+        "preregistration_record_reference": "docs/acceptance/P0B-software.md#fixed-wing-v1",
+        "numerical_convergence_report_reference": "docs/acceptance/P0A-015.md",
+        "independent_reviewer_reference": "PENDING_EXTERNAL_REVIEWER_RECEIPT_P0B_017",
+        "approved_test_safety_plan_reference": "PENDING_CUSTODIAN_SAFETY_PLAN_P0B_013",
+        "envelope": {
+          "ambient_temperature_c": [5.0, 35.0],
+          "air_density_kg_m3": [1.05, 1.30],
+          "wind_speed_m_s": [0.0, 6.0],
+          "payload_kg": [0.0, 0.8],
+          "altitude_m": [0.0, 120.0]
+        },
+        "hardware": [
+          {"role": "airframe", "model": "AeroGlider-1800", "serial_or_lot": "PENDING-FW-01", "geometry_or_firmware_revision": "rev-1.0", "quantity": 1},
+          {"role": "motor", "model": "Sunnysky-X2212-KV980", "serial_or_lot": "PENDING-FWMOT-01", "geometry_or_firmware_revision": "rev-1.0", "quantity": 1},
+          {"role": "propeller", "model": "AeroNaut-10x6-Fold", "serial_or_lot": "PENDING-FWPROP-01", "geometry_or_firmware_revision": "rev-1.0", "quantity": 1},
+          {"role": "esc", "model": "BLHeli32-30A", "serial_or_lot": "PENDING-FWESC-01", "geometry_or_firmware_revision": "fw-32.9", "quantity": 1},
+          {"role": "battery", "model": "3S-2200mAh-LiPo", "serial_or_lot": "PENDING-FWBAT-01", "geometry_or_firmware_revision": "cell-25C", "quantity": 1},
+          {"role": "controller", "model": "ArduPlane-FixedWing-PID", "serial_or_lot": "PENDING-FWCTL-01", "geometry_or_firmware_revision": "v1.0", "quantity": 1}
+        ],
+        "instruments": [
+          {"channel": "vertical_speed_m_s", "manufacturer_model": "MS5611-Vario-Ref", "serial": "PENDING-VARIO-01", "calibration_reference": "CAL-VARIO-2026", "calibration_date_utc": "2026-11-20", "bandwidth_hz": 50.0, "clock_alignment_bound_s": 0.01},
+          {"channel": "altitude_m", "manufacturer_model": "RTK-Baro-Ref", "serial": "PENDING-FWALT-01", "calibration_reference": "CAL-ALT-2026", "calibration_date_utc": "2026-11-20", "bandwidth_hz": 50.0, "clock_alignment_bound_s": 0.01}
+        ],
+        "uncertainties": [
+          {"name": "vario_rate_bound", "channel": "vertical_speed_m_s", "absolute_value": 0.25, "type": "hard_absolute_bound", "source_reference": "MS5611-Spec"},
+          {"name": "rtk_altitude_bound", "channel": "altitude_m", "absolute_value": 0.15, "type": "hard_absolute_bound", "source_reference": "RTK-Spec"}
+        ],
+        "acceptance_metrics": [
+          {"channel": "vertical_speed_m_s", "maximum_absolute_prediction_error": 0.50, "minimum_holdout_samples": 100, "maximum_sampling_gap_s": 0.05, "decision_critical": true},
+          {"channel": "altitude_m", "maximum_absolute_prediction_error": 1.0, "minimum_holdout_samples": 100, "maximum_sampling_gap_s": 0.05, "decision_critical": true}
+        ],
+        "experiments": [
+          {"experiment_id": "FW-CAL-01", "recording_id": "FW-REC-CAL-01", "vehicle_id": "FW-V-CAL", "battery_id": "FW-B-CAL", "role": "calibration", "scenario": "steady_cruise_trim"},
+          {"experiment_id": "FW-HOLD-01", "recording_id": "FW-REC-HOLD-01", "vehicle_id": "FW-V-H1", "battery_id": "FW-B-H1", "role": "holdout", "scenario": "glide_ratio_descent"},
+          {"experiment_id": "FW-HOLD-02", "recording_id": "FW-REC-HOLD-02", "vehicle_id": "FW-V-H2", "battery_id": "FW-B-H2", "role": "holdout", "scenario": "banked_turn_climb"}
+        ]
+      },
+      "tolerance_bindings": {
+        "M21": {"max_voltage_rmse_v": 0.25, "cutoff_time_error_s": 1.0},
+        "M22": {"min_step_rate_hz": 50.0},
+        "M23": {"structural_margin_min": 1.5},
+        "M24": {"signed_thrust_rel_err_max": 0.08},
+        "M25": {"fault_detection_tpr_min": 0.90},
+        "M26": {"position_mae_max_m": 0.50},
+        "M27": {"min_joint_coverage": 0.90}
+      }
+    },
+    {
+      "protocol": {
+        "schema_version": "1.0",
+        "protocol_id": "P0C014-ROTORCRAFT-VTOL-V1",
+        "intended_engineering_decision": "Compare modeled BEMT rotorcraft hover, Cheeseman-Bennett IGE, and VTOL corridor transition bus current against held-out trials.",
+        "frozen_model_git_sha": "81027d9a452f8c7a3b19a0e4f28c9c7d6e5f4a3b",
+        "frozen_design_sha256": "7777777777777777777777777777777777777777777777777777777777777777",
+        "frozen_controller_configuration_sha256": "8888888888888888888888888888888888888888888888888888888888888888",
+        "preregistration_record_reference": "docs/acceptance/P0C-software.md#rotorcraft-vtol-v1",
+        "numerical_convergence_report_reference": "docs/acceptance/P0A-015.md",
+        "independent_reviewer_reference": "PENDING_EXTERNAL_REVIEWER_RECEIPT_P0C_020",
+        "approved_test_safety_plan_reference": "PENDING_CUSTODIAN_SAFETY_PLAN_P0C_015",
+        "envelope": {
+          "ambient_temperature_c": [10.0, 32.0],
+          "air_density_kg_m3": [1.08, 1.28],
+          "wind_speed_m_s": [0.0, 5.0],
+          "payload_kg": [0.0, 1.2],
+          "altitude_m": [0.0, 80.0]
+        },
+        "hardware": [
+          {"role": "airframe", "model": "TiltVTOL-2100", "serial_or_lot": "PENDING-VT-01", "geometry_or_firmware_revision": "rev-1.0", "quantity": 1},
+          {"role": "motor", "model": "T-Motor-MN4014-KV330", "serial_or_lot": "PENDING-VTMOT-01", "geometry_or_firmware_revision": "rev-1.0", "quantity": 2},
+          {"role": "propeller", "model": "CF-18x6-Tilt", "serial_or_lot": "PENDING-VTPROP-01", "geometry_or_firmware_revision": "rev-1.0", "quantity": 2},
+          {"role": "esc", "model": "BLHeli32-55A", "serial_or_lot": "PENDING-VTESC-01", "geometry_or_firmware_revision": "fw-32.9", "quantity": 2},
+          {"role": "battery", "model": "6S-6000mAh-LiPo", "serial_or_lot": "PENDING-VTBAT-01", "geometry_or_firmware_revision": "cell-25C", "quantity": 1},
+          {"role": "controller", "model": "PX4-TiltRotor-Corridor", "serial_or_lot": "PENDING-VTCTL-01", "geometry_or_firmware_revision": "v1.0", "quantity": 1}
+        ],
+        "instruments": [
+          {"channel": "current_a", "manufacturer_model": "Flight-DAQ-I100", "serial": "PENDING-CUR-01", "calibration_reference": "CAL-CUR-2026", "calibration_date_utc": "2026-11-20", "bandwidth_hz": 100.0, "clock_alignment_bound_s": 0.01},
+          {"channel": "thrust_n", "manufacturer_model": "ATI-Gamma-LoadCell", "serial": "PENDING-VTTHR-01", "calibration_reference": "CAL-THR-2026", "calibration_date_utc": "2026-11-20", "bandwidth_hz": 200.0, "clock_alignment_bound_s": 0.005}
+        ],
+        "uncertainties": [
+          {"name": "cur_daq_bound", "channel": "current_a", "absolute_value": 0.60, "type": "hard_absolute_bound", "source_reference": "DAQ-Spec"},
+          {"name": "thrust_cell_bound", "channel": "thrust_n", "absolute_value": 0.30, "type": "hard_absolute_bound", "source_reference": "ATI-Gamma-Cal"}
+        ],
+        "acceptance_metrics": [
+          {"channel": "current_a", "maximum_absolute_prediction_error": 2.5, "minimum_holdout_samples": 100, "maximum_sampling_gap_s": 0.05, "decision_critical": true},
+          {"channel": "thrust_n", "maximum_absolute_prediction_error": 1.8, "minimum_holdout_samples": 100, "maximum_sampling_gap_s": 0.05, "decision_critical": true}
+        ],
+        "experiments": [
+          {"experiment_id": "VT-CAL-01", "recording_id": "VT-REC-CAL-01", "vehicle_id": "VT-V-CAL", "battery_id": "VT-B-CAL", "role": "calibration", "scenario": "ige_hover_sweep"},
+          {"experiment_id": "VT-HOLD-01", "recording_id": "VT-REC-HOLD-01", "vehicle_id": "VT-V-H1", "battery_id": "VT-B-H1", "role": "holdout", "scenario": "hover_to_cruise_transition"},
+          {"experiment_id": "VT-HOLD-02", "recording_id": "VT-REC-HOLD-02", "vehicle_id": "VT-V-H2", "battery_id": "VT-B-H2", "role": "holdout", "scenario": "autorotation_flare_descent"}
+        ]
+      },
+      "tolerance_bindings": {
+        "M21": {"max_voltage_rmse_v": 0.25, "cutoff_time_error_s": 1.0},
+        "M22": {"min_step_rate_hz": 50.0},
+        "M23": {"structural_margin_min": 1.5},
+        "M24": {"signed_thrust_rel_err_max": 0.08},
+        "M25": {"fault_detection_tpr_min": 0.90},
+        "M26": {"position_mae_max_m": 0.50},
+        "M27": {"min_joint_coverage": 0.90}
+      }
+    },
+    {
+      "protocol": {
+        "schema_version": "1.0",
+        "protocol_id": "P0D009-ADVERSE-WEATHER-V1",
+        "intended_engineering_decision": "Evaluate modeled Dryden gust response, rain wet drag/thrust penalties, and icing mass accretion against field trials.",
+        "frozen_model_git_sha": "81027d9a452f8c7a3b19a0e4f28c9c7d6e5f4a3b",
+        "frozen_design_sha256": "9999999999999999999999999999999999999999999999999999999999999999",
+        "frozen_controller_configuration_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "preregistration_record_reference": "docs/acceptance/P0D-software.md#weather-v1",
+        "numerical_convergence_report_reference": "docs/acceptance/P0A-015.md",
+        "independent_reviewer_reference": "PENDING_EXTERNAL_REVIEWER_RECEIPT_P0D_029",
+        "approved_test_safety_plan_reference": "PENDING_CUSTODIAN_SAFETY_PLAN_P0D_010",
+        "envelope": {
+          "ambient_temperature_c": [-10.0, 30.0],
+          "air_density_kg_m3": [1.10, 1.38],
+          "wind_speed_m_s": [0.0, 14.0],
+          "payload_kg": [0.0, 0.5],
+          "altitude_m": [0.0, 60.0]
+        },
+        "hardware": [
+          {"role": "airframe", "model": "Quad-MN3508-X", "serial_or_lot": "PENDING-WX-01", "geometry_or_firmware_revision": "rev-1.0", "quantity": 1},
+          {"role": "motor", "model": "T-Motor MN3508 KV380", "serial_or_lot": "PENDING-WXMOT-01", "geometry_or_firmware_revision": "rev-1.0", "quantity": 4},
+          {"role": "propeller", "model": "APC 15x5 MR", "serial_or_lot": "PENDING-WXPROP-01", "geometry_or_firmware_revision": "rev-1.0", "quantity": 4},
+          {"role": "esc", "model": "BLHeli32-40A", "serial_or_lot": "PENDING-WXESC-01", "geometry_or_firmware_revision": "fw-32.9", "quantity": 4},
+          {"role": "battery", "model": "6S-5200mAh-LiPo", "serial_or_lot": "PENDING-WXBAT-01", "geometry_or_firmware_revision": "cell-25C", "quantity": 1},
+          {"role": "controller", "model": "QuadcopterController-PID", "serial_or_lot": "PENDING-WXCTL-01", "geometry_or_firmware_revision": "v1.0", "quantity": 1}
+        ],
+        "instruments": [
+          {"channel": "wind_speed_m_s", "manufacturer_model": "Gill-WindMaster-3D", "serial": "PENDING-ANEM-01", "calibration_reference": "CAL-WIND-2026", "calibration_date_utc": "2026-11-20", "bandwidth_hz": 20.0, "clock_alignment_bound_s": 0.02},
+          {"channel": "altitude_m", "manufacturer_model": "RTK-Baro-Ref", "serial": "PENDING-WXALT-01", "calibration_reference": "CAL-ALT-2026", "calibration_date_utc": "2026-11-20", "bandwidth_hz": 50.0, "clock_alignment_bound_s": 0.01}
+        ],
+        "uncertainties": [
+          {"name": "sonic_wind_bound", "channel": "wind_speed_m_s", "absolute_value": 0.30, "type": "hard_absolute_bound", "source_reference": "Gill-Spec"},
+          {"name": "rtk_altitude_bound", "channel": "altitude_m", "absolute_value": 0.10, "type": "hard_absolute_bound", "source_reference": "RTK-Spec"}
+        ],
+        "acceptance_metrics": [
+          {"channel": "altitude_m", "maximum_absolute_prediction_error": 0.60, "minimum_holdout_samples": 100, "maximum_sampling_gap_s": 0.05, "decision_critical": true}
+        ],
+        "experiments": [
+          {"experiment_id": "WX-CAL-01", "recording_id": "WX-REC-CAL-01", "vehicle_id": "WX-V-CAL", "battery_id": "WX-B-CAL", "role": "calibration", "scenario": "steady_gust_hover"},
+          {"experiment_id": "WX-HOLD-01", "recording_id": "WX-REC-HOLD-01", "vehicle_id": "WX-V-H1", "battery_id": "WX-B-H1", "role": "holdout", "scenario": "rain_hover_step"},
+          {"experiment_id": "WX-HOLD-02", "recording_id": "WX-REC-HOLD-02", "vehicle_id": "WX-V-H2", "battery_id": "WX-B-H2", "role": "holdout", "scenario": "cold_icing_hover"}
+        ]
+      },
+      "tolerance_bindings": {
+        "M21": {"max_voltage_rmse_v": 0.25, "cutoff_time_error_s": 1.0},
+        "M22": {"min_step_rate_hz": 50.0},
+        "M23": {"structural_margin_min": 1.5},
+        "M24": {"signed_thrust_rel_err_max": 0.08},
+        "M25": {"fault_detection_tpr_min": 0.90},
+        "M26": {"position_mae_max_m": 0.60},
+        "M27": {"min_joint_coverage": 0.90}
+      }
+    },
+    {
+      "protocol": {
+        "schema_version": "1.0",
+        "protocol_id": "P0D019-AUTONOMY-SITL-V1",
+        "intended_engineering_decision": "Compare EKF state estimation, LiDAR obstacle avoidance clearance, and SITL closed-loop trajectory tracking against physical autonomy flights.",
+        "frozen_model_git_sha": "81027d9a452f8c7a3b19a0e4f28c9c7d6e5f4a3b",
+        "frozen_design_sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "frozen_controller_configuration_sha256": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+        "preregistration_record_reference": "docs/acceptance/P0D-software.md#autonomy-v1",
+        "numerical_convergence_report_reference": "docs/acceptance/P0A-015.md",
+        "independent_reviewer_reference": "PENDING_EXTERNAL_REVIEWER_RECEIPT_P0D_029",
+        "approved_test_safety_plan_reference": "PENDING_CUSTODIAN_SAFETY_PLAN_P0D_020",
+        "envelope": {
+          "ambient_temperature_c": [10.0, 35.0],
+          "air_density_kg_m3": [1.10, 1.28],
+          "wind_speed_m_s": [0.0, 5.0],
+          "payload_kg": [0.0, 0.4],
+          "altitude_m": [0.0, 30.0]
+        },
+        "hardware": [
+          {"role": "airframe", "model": "Quad-Autonomy-S1", "serial_or_lot": "PENDING-AU-01", "geometry_or_firmware_revision": "rev-1.0", "quantity": 1},
+          {"role": "motor", "model": "T-Motor MN3508 KV380", "serial_or_lot": "PENDING-AUMOT-01", "geometry_or_firmware_revision": "rev-1.0", "quantity": 4},
+          {"role": "propeller", "model": "APC 15x5 MR", "serial_or_lot": "PENDING-AUPROP-01", "geometry_or_firmware_revision": "rev-1.0", "quantity": 4},
+          {"role": "esc", "model": "BLHeli32-40A", "serial_or_lot": "PENDING-AUESC-01", "geometry_or_firmware_revision": "fw-32.9", "quantity": 4},
+          {"role": "battery", "model": "6S-5200mAh-LiPo", "serial_or_lot": "PENDING-AUBAT-01", "geometry_or_firmware_revision": "cell-25C", "quantity": 1},
+          {"role": "controller", "model": "PX4-EKF2-Planner", "serial_or_lot": "PENDING-AUCTL-01", "geometry_or_firmware_revision": "v1.15", "quantity": 1}
+        ],
+        "instruments": [
+          {"channel": "altitude_m", "manufacturer_model": "RTK-Mocap-Ref", "serial": "PENDING-AUALT-01", "calibration_reference": "CAL-MOCAP-2026", "calibration_date_utc": "2026-11-20", "bandwidth_hz": 100.0, "clock_alignment_bound_s": 0.005},
+          {"channel": "attitude_error_deg", "manufacturer_model": "Vicon-Ref", "serial": "PENDING-AUATT-01", "calibration_reference": "CAL-VICON-2026", "calibration_date_utc": "2026-11-20", "bandwidth_hz": 100.0, "clock_alignment_bound_s": 0.005}
+        ],
+        "uncertainties": [
+          {"name": "mocap_pos_bound", "channel": "altitude_m", "absolute_value": 0.03, "type": "hard_absolute_bound", "source_reference": "Vicon-Spec"},
+          {"name": "mocap_att_bound", "channel": "attitude_error_deg", "absolute_value": 0.50, "type": "hard_absolute_bound", "source_reference": "Vicon-Spec"}
+        ],
+        "acceptance_metrics": [
+          {"channel": "altitude_m", "maximum_absolute_prediction_error": 0.30, "minimum_holdout_samples": 100, "maximum_sampling_gap_s": 0.05, "decision_critical": true},
+          {"channel": "attitude_error_deg", "maximum_absolute_prediction_error": 2.5, "minimum_holdout_samples": 100, "maximum_sampling_gap_s": 0.05, "decision_critical": true}
+        ],
+        "experiments": [
+          {"experiment_id": "AU-CAL-01", "recording_id": "AU-REC-CAL-01", "vehicle_id": "AU-V-CAL", "battery_id": "AU-B-CAL", "role": "calibration", "scenario": "waypoint_ekf_hover"},
+          {"experiment_id": "AU-HOLD-01", "recording_id": "AU-REC-HOLD-01", "vehicle_id": "AU-V-H1", "battery_id": "AU-B-H1", "role": "holdout", "scenario": "obstacle_slalom"},
+          {"experiment_id": "AU-HOLD-02", "recording_id": "AU-REC-HOLD-02", "vehicle_id": "AU-V-H2", "battery_id": "AU-B-H2", "role": "holdout", "scenario": "swarm_separation_transit"}
+        ]
+      },
+      "tolerance_bindings": {
+        "M21": {"max_voltage_rmse_v": 0.25, "cutoff_time_error_s": 1.0},
+        "M22": {"min_step_rate_hz": 50.0},
+        "M23": {"structural_margin_min": 1.5},
+        "M24": {"signed_thrust_rel_err_max": 0.08},
+        "M25": {"fault_detection_tpr_min": 0.90},
+        "M26": {"position_mae_max_m": 0.30},
+        "M27": {"min_joint_coverage": 0.90}
+      }
+    }
+  ]
+}
