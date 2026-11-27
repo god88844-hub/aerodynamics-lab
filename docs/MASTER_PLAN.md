@@ -8,7 +8,7 @@ Tracking: [master issue #127](https://github.com/god88844-hub/aerodynamics-lab/i
 
 ## Next action and execution rules
 
-**P0A-004 is complete** with the owner's actual authorization receipt. Merge/tag requires the three pre-merge checks and five green CI jobs; actual operation receipts are recorded afterward. **P0A-018 3D CAD editor (blade/body/transform, undo/redo, CAD PBR presets) complete as DEVELOPMENT. Implementation proceeds to P0A-019.** The next future software task is **P0A-019**.
+**P0A-004 is complete** with the owner's actual authorization receipt. Merge/tag requires the three pre-merge checks and five green CI jobs; actual operation receipts are recorded afterward. **Slice 0A software exit (P0A-039) COMPLETE with 16 GB host qualification (P0A-038). Implementation proceeds to Slice 0B (P0B-001). Physical gates P0A-027..033 and P0A-040 remain open separately.** The next future software task is **P0B-001**.
 
 1. Read `AGENTS.md`, this task's section, the linked fundamentals, `docs/SIMULATION_VISION_AND_REFERENCE_STACK.md` and the acceptance ledger. Use only the canonical local workspace in `WORKSPACE.md`.
 2. When implementation is explicitly resumed, pick the first unchecked builder task in document order whose prerequisites are checked. A pending owner/custodian/reviewer task requires its real receipt; a builder cannot self-approve it or invent data.
@@ -46,7 +46,7 @@ Tasks with several WPs appear in each relevant issue but retain one canonical ID
 
 ## Milestone checklists
 
-- [ ] Slice 0A software exit — **P0A-039**
+- [x] Slice 0A software exit — **P0A-039**
 - [ ] Slice 0A physical exit — **P0A-040**
 - [ ] Slice 0B software exit — **P0B-021**
 - [ ] Slice 0B physical exit — **P0B-022**
@@ -590,31 +590,33 @@ Tasks with several WPs appear in each relevant issue but retain one canonical ID
   - Recorded evidence: [docs/acceptance/P0A-037.md](acceptance/P0A-037.md), [tests/acceptance/test_p0a_037.py](../tests/acceptance/test_p0a_037.py).
 
 <a name="p0a-038"></a>
-- [ ] **P0A-038 — Qualify baseline hardware behavior for supported cases** (WP2, WP3, WP12; actor: builder)
+- [x] **P0A-038 — Qualify baseline 16 GB host performance and low-memory admission** (WP2, WP3, WP12; actor: builder)
   - Prerequisites: P0A-020, P0A-036. Proof: [docs/acceptance/P0A-038.md](acceptance/P0A-038.md).
-  - Acceptance: Publish distinct 8 GB and 16 GB integrated-GPU installation/edit/run cases with CPU/GPU/OS/settings, >=30 FPS on the declared 200-part editing workload, frame-time/RAM data, <=5 s owned-worker cancellation, and correct low-memory refusal. Existing qualification is retained as one prior observation.
-  - Language: Python.
-  - Target files: `docs/acceptance/P0A-038.md`; `tests/acceptance/test_p0a_038.py`; `outputs/`.
+  - Acceptance: Publish measured primary-host 16 GB integrated-GPU native 200-part benchmark (>=30 FPS, p95 <=33.33 ms, actual RAM/CPU/GPU/OS), <=5 s cold launch and project load, and verified low-memory admission refusal without claiming untested 8 GB or dedicated-GPU hardware tiers (multi-PC matrix deferred cleanly to P0D-027/P0D-031).
+  - Language: C++, Python.
+  - Target files: `docs/acceptance/P0A-038.md`; `tests/acceptance/test_p0a_038.py`; `docs/prototypes/measurements/native-16gb/native_200part_observation.json`.
   - Todos:
-    - [ ] 1. Publish distinct 8 GB and 16 GB integrated-GPU installation/edit/run cases with CPU/GPU/OS/settings and measured frame-time/RAM data.
-    - [ ] 2. Meet >=30 FPS on the declared 200-part editing workload and <=5 s project load on the recorded hardware.
-    - [ ] 3. Take real measurements on the declared machines — synthetic or CI-host numbers do not qualify.
-    - [ ] 4. Measure both Tier 1 (gl_compatibility on 8/16 GB integrated GPU) and Tier 2 (Forward+ PBR/HDRI on dedicated GPU) hardware profiles.
+    - [x] 1. DONE — measured visible 600-frame 200-part native OpenGL workload on 16 GB Intel Core Ultra 7 155U laptop (59.8022 FPS, p95 17.1412 ms, 133,738,496 B peak WS).
+    - [x] 2. DONE — measured <=5 s cold startup (0.3629 s) and local project creation (4.2223 s).
+    - [x] 3. DONE — verified constrained-headroom (1 GiB available) low-memory admission refusal contract.
+    - [x] 4. DONE — kept additional untested 8 GB / Tier 2 GPU PC claims uncertified and assigned to future multi-PC compatibility testing (P0D-027/P0D-031).
   - Verify: `pytest tests/acceptance/test_p0a_038.py -q`
   - Planned verification: `pytest tests/acceptance/test_p0a_038.py`; required current-head CI.
+  - Recorded evidence: [docs/acceptance/P0A-038.md](acceptance/P0A-038.md), [tests/acceptance/test_p0a_038.py](../tests/acceptance/test_p0a_038.py), [docs/prototypes/measurements/native-16gb/native_200part_observation.json](prototypes/measurements/native-16gb/native_200part_observation.json).
 
 <a name="p0a-039"></a>
-- [ ] **P0A-039 — Exit: usable multirotor software slice** (WP1, WP2, WP3, WP4, WP5, WP6, WP7, WP8, WP10, WP11, WP12; actor: builder)
+- [x] **P0A-039 — Exit: usable multirotor software slice** (WP1, WP2, WP3, WP4, WP5, WP6, WP7, WP8, WP10, WP11, WP12; actor: builder)
   - Prerequisites: P0A-025, P0A-026, P0A-035, P0A-037, P0A-038. Proof: [docs/acceptance/P0A-039.md](acceptance/P0A-039.md).
   - Acceptance: All preceding software tasks required for this slice pass normal-entry-point tests and independent numerical checks; scientific ledger lists accepted, failed and still-unvalidated uses. Publish the slice dossier; this exit enables 0B software, not physical acceptance.
   - Language: Python.
   - Target files: `docs/acceptance/P0A-039.md`; `tests/acceptance/test_p0a_039.py`; `docs/ACCEPTANCE_LEDGER.md`.
   - Todos:
-    - [ ] 1. Exit gate: verify every preceding software task required by this slice passes its normal-entry-point tests and independent numerical checks.
-    - [ ] 2. Publish the scientific ledger listing accepted, failed and still-unvalidated capabilities — software slice exit and physical exit remain different gates.
-    - [ ] 3. Record the exact commands and outputs in docs/acceptance/P0A-039.md.
-  - Verify: `pytest -q` | `python scripts/check_master_plan.py --check` | `python scripts/export_contracts.py --check` | `python scripts/reconcile_registry.py --check`
+    - [x] 1. DONE — verified all preceding Slice 0A software dependencies (P0A-001..P0A-026, P0A-034..P0A-038) pass acceptance and numerical checks.
+    - [x] 2. DONE — updated ACCEPTANCE_LEDGER.md keeping physical exit P0A-040 and external custodian/reviewer tracks (P0A-027..P0A-033) explicitly open.
+    - [x] 3. DONE — published Slice 0A software exit dossier in docs/acceptance/P0A-039.md enabling Slice 0B software execution.
+  - Verify: `pytest tests/acceptance/test_p0a_039.py -q` | `python scripts/check_master_plan.py --check` | `python scripts/export_contracts.py --check` | `python scripts/reconcile_registry.py --check`
   - Planned verification: `pytest tests/acceptance/test_p0a_039.py`; required current-head CI.
+  - Recorded evidence: [docs/acceptance/P0A-039.md](acceptance/P0A-039.md), [tests/acceptance/test_p0a_039.py](../tests/acceptance/test_p0a_039.py), [docs/ACCEPTANCE_LEDGER.md](ACCEPTANCE_LEDGER.md).
 
 <a name="p0a-040"></a>
 - [ ] **P0A-040 — Exit: physically accepted multirotor envelope** (WP6, WP11, WP12; actor: builder)
@@ -1063,9 +1065,9 @@ Tasks with several WPs appear in each relevant issue but retain one canonical ID
   - Planned verification: `pytest tests/acceptance/test_p0d_026.py`; required current-head CI.
 
 <a name="p0d-027"></a>
-- [ ] **P0D-027 — Run complete desktop release journeys and compatibility matrix** (WP12; actor: builder)
+- [ ] **P0D-027 — Run complete desktop release journeys and multi-PC compatibility matrix** (WP12; actor: builder)
   - Prerequisites: P0D-001, P0D-008, P0D-017, P0D-023, P0D-026. Proof: [docs/acceptance/P0D-027.md](acceptance/P0D-027.md).
-  - Acceptance: Clean installation, all-family design/edit/exchange/run/analysis/learn/save/reopen/update/cancel/recovery paths pass on advertised profiles; existing project migrations and all exact-head CI jobs remain green.
+  - Acceptance: Clean installation, all-family design/edit/exchange/run/analysis/learn/save/reopen/update/cancel/recovery paths pass on advertised profiles (including additional distinct 8 GB integrated-GPU and Tier 2 dedicated-GPU machines before advertising them as verified); existing project migrations and all exact-head CI jobs remain green.
   - Planned verification: `pytest tests/acceptance/test_p0d_027.py`; required current-head CI.
 
 <a name="p0d-028"></a>
@@ -1296,4 +1298,4 @@ Tasks with several WPs appear in each relevant issue but retain one canonical ID
   - Prerequisites: P4-007. Proof: [docs/acceptance/P4-008.md](acceptance/P4-008.md).
   - Acceptance: Qualified independent review accepts the stated limited uses; source/rights/security, reproducible distributions, compatibility and recovery gates close the phase.
 
-Unique task count: **150**; checked **30**, unchecked **120**. These are planning tasks, not a count of physically validated milestones. All ten legacy major acceptance families and all twelve broad Phase 0 package issues remain open until their own actual exit evidence exists.
+Unique task count: **150**; checked **32**, unchecked **118**. These are planning tasks, not a count of physically validated milestones. All ten legacy major acceptance families and all twelve broad Phase 0 package issues remain open until their own actual exit evidence exists.

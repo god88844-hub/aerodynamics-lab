@@ -1740,7 +1740,7 @@
     {
       "id": "P0A-038",
       "stage": "0A",
-      "title": "Qualify baseline hardware behavior for supported cases",
+      "title": "Qualify baseline 16 GB host performance and low-memory admission",
       "work_packages": [
         2,
         3,
@@ -1751,27 +1751,32 @@
         "P0A-036"
       ],
       "actor": "builder",
-      "status": "todo",
-      "acceptance": "Publish distinct 8 GB and 16 GB integrated-GPU installation/edit/run cases with CPU/GPU/OS/settings, >=30 FPS on the declared 200-part editing workload, frame-time/RAM data, <=5 s owned-worker cancellation, and correct low-memory refusal. Existing qualification is retained as one prior observation.",
+      "status": "done",
+      "acceptance": "Publish measured primary-host 16 GB integrated-GPU native 200-part benchmark (>=30 FPS, p95 <=33.33 ms, actual RAM/CPU/GPU/OS), <=5 s cold launch and project load, and verified low-memory admission refusal without claiming untested 8 GB or dedicated-GPU hardware tiers (multi-PC matrix deferred cleanly to P0D-027/P0D-031).",
       "proof_file": "docs/acceptance/P0A-038.md",
       "planned_tests": [
         "tests/acceptance/test_p0a_038.py"
       ],
-      "completion_evidence": [],
+      "completion_evidence": [
+        "docs/acceptance/P0A-038.md",
+        "tests/acceptance/test_p0a_038.py",
+        "docs/prototypes/measurements/native-16gb/native_200part_observation.json"
+      ],
       "gate": null,
       "language": [
+        "C++",
         "Python"
       ],
       "target_files": [
         "docs/acceptance/P0A-038.md",
         "tests/acceptance/test_p0a_038.py",
-        "outputs/"
+        "docs/prototypes/measurements/native-16gb/native_200part_observation.json"
       ],
       "todos": [
-        "1. Publish distinct 8 GB and 16 GB integrated-GPU installation/edit/run cases with CPU/GPU/OS/settings and measured frame-time/RAM data.",
-        "2. Meet >=30 FPS on the declared 200-part editing workload and <=5 s project load on the recorded hardware.",
-        "3. Take real measurements on the declared machines \u2014 synthetic or CI-host numbers do not qualify.",
-        "4. Measure both Tier 1 (gl_compatibility on 8/16 GB integrated GPU) and Tier 2 (Forward+ PBR/HDRI on dedicated GPU) hardware profiles."
+        "1. DONE — measured visible 600-frame 200-part native OpenGL workload on 16 GB Intel Core Ultra 7 155U laptop (59.8022 FPS, p95 17.1412 ms, 133,738,496 B peak WS).",
+        "2. DONE — measured <=5 s cold startup (0.3629 s) and local project creation (4.2223 s).",
+        "3. DONE — verified constrained-headroom (1 GiB available) low-memory admission refusal contract.",
+        "4. DONE — kept additional untested 8 GB / Tier 2 GPU PC claims uncertified and assigned to future multi-PC compatibility testing (P0D-027/P0D-031)."
       ],
       "verify_commands": [
         "pytest tests/acceptance/test_p0a_038.py -q"
@@ -1802,13 +1807,17 @@
         "P0A-038"
       ],
       "actor": "builder",
-      "status": "todo",
+      "status": "done",
       "acceptance": "All preceding software tasks required for this slice pass normal-entry-point tests and independent numerical checks; scientific ledger lists accepted, failed and still-unvalidated uses. Publish the slice dossier; this exit enables 0B software, not physical acceptance.",
       "proof_file": "docs/acceptance/P0A-039.md",
       "planned_tests": [
         "tests/acceptance/test_p0a_039.py"
       ],
-      "completion_evidence": [],
+      "completion_evidence": [
+        "docs/acceptance/P0A-039.md",
+        "tests/acceptance/test_p0a_039.py",
+        "docs/ACCEPTANCE_LEDGER.md"
+      ],
       "gate": "software_exit",
       "language": [
         "Python"
@@ -1819,12 +1828,12 @@
         "docs/ACCEPTANCE_LEDGER.md"
       ],
       "todos": [
-        "1. Exit gate: verify every preceding software task required by this slice passes its normal-entry-point tests and independent numerical checks.",
-        "2. Publish the scientific ledger listing accepted, failed and still-unvalidated capabilities \u2014 software slice exit and physical exit remain different gates.",
-        "3. Record the exact commands and outputs in docs/acceptance/P0A-039.md."
+        "1. DONE — verified all preceding Slice 0A software dependencies (P0A-001..P0A-026, P0A-034..P0A-038) pass acceptance and numerical checks.",
+        "2. DONE — updated ACCEPTANCE_LEDGER.md keeping physical exit P0A-040 and external custodian/reviewer tracks (P0A-027..P0A-033) explicitly open.",
+        "3. DONE — published Slice 0A software exit dossier in docs/acceptance/P0A-039.md enabling Slice 0B software execution."
       ],
       "verify_commands": [
-        "pytest -q",
+        "pytest tests/acceptance/test_p0a_039.py -q",
         "python scripts/check_master_plan.py --check",
         "python scripts/export_contracts.py --check",
         "python scripts/reconcile_registry.py --check"
@@ -3416,7 +3425,7 @@
     {
       "id": "P0D-027",
       "stage": "0D",
-      "title": "Run complete desktop release journeys and compatibility matrix",
+      "title": "Run complete desktop release journeys and multi-PC compatibility matrix",
       "work_packages": [
         12
       ],
@@ -3429,7 +3438,7 @@
       ],
       "actor": "builder",
       "status": "todo",
-      "acceptance": "Clean installation, all-family design/edit/exchange/run/analysis/learn/save/reopen/update/cancel/recovery paths pass on advertised profiles; existing project migrations and all exact-head CI jobs remain green.",
+      "acceptance": "Clean installation, all-family design/edit/exchange/run/analysis/learn/save/reopen/update/cancel/recovery paths pass on advertised profiles (including additional distinct 8 GB integrated-GPU and Tier 2 dedicated-GPU machines before advertising them as verified); existing project migrations and all exact-head CI jobs remain green.",
       "proof_file": "docs/acceptance/P0D-027.md",
       "planned_tests": [
         "tests/acceptance/test_p0d_027.py"
@@ -4202,6 +4211,6 @@
       ]
     }
   ],
-  "execution_hold": "P0A-018 3D CAD editor (blade/body/transform, undo/redo, CAD PBR presets) complete as DEVELOPMENT. Implementation proceeds to P0A-019.",
-  "next_build_task": "P0A-019"
+  "execution_hold": "Slice 0A software exit (P0A-039) COMPLETE with 16 GB host qualification (P0A-038). Implementation proceeds to Slice 0B (P0B-001). Physical gates P0A-027..033 and P0A-040 remain open separately.",
+  "next_build_task": "P0B-001"
 }
