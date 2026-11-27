@@ -1773,10 +1773,10 @@
         "docs/prototypes/measurements/native-16gb/native_200part_observation.json"
       ],
       "todos": [
-        "1. DONE — measured visible 600-frame 200-part native OpenGL workload on 16 GB Intel Core Ultra 7 155U laptop (59.8022 FPS, p95 17.1412 ms, 133,738,496 B peak WS).",
-        "2. DONE — measured <=5 s cold startup (0.3629 s) and local project creation (4.2223 s).",
-        "3. DONE — verified constrained-headroom (1 GiB available) low-memory admission refusal contract.",
-        "4. DONE — kept additional untested 8 GB / Tier 2 GPU PC claims uncertified and assigned to future multi-PC compatibility testing (P0D-027/P0D-031)."
+        "1. DONE \u2014 measured visible 600-frame 200-part native OpenGL workload on 16 GB Intel Core Ultra 7 155U laptop (59.8022 FPS, p95 17.1412 ms, 133,738,496 B peak WS).",
+        "2. DONE \u2014 measured <=5 s cold startup (0.3629 s) and local project creation (4.2223 s).",
+        "3. DONE \u2014 verified constrained-headroom (1 GiB available) low-memory admission refusal contract.",
+        "4. DONE \u2014 kept additional untested 8 GB / Tier 2 GPU PC claims uncertified and assigned to future multi-PC compatibility testing (P0D-027/P0D-031)."
       ],
       "verify_commands": [
         "pytest tests/acceptance/test_p0a_038.py -q"
@@ -1828,9 +1828,9 @@
         "docs/ACCEPTANCE_LEDGER.md"
       ],
       "todos": [
-        "1. DONE — verified all preceding Slice 0A software dependencies (P0A-001..P0A-026, P0A-034..P0A-038) pass acceptance and numerical checks.",
-        "2. DONE — updated ACCEPTANCE_LEDGER.md keeping physical exit P0A-040 and external custodian/reviewer tracks (P0A-027..P0A-033) explicitly open.",
-        "3. DONE — published Slice 0A software exit dossier in docs/acceptance/P0A-039.md enabling Slice 0B software execution."
+        "1. DONE \u2014 verified all preceding Slice 0A software dependencies (P0A-001..P0A-026, P0A-034..P0A-038) pass acceptance and numerical checks.",
+        "2. DONE \u2014 updated ACCEPTANCE_LEDGER.md keeping physical exit P0A-040 and external custodian/reviewer tracks (P0A-027..P0A-033) explicitly open.",
+        "3. DONE \u2014 published Slice 0A software exit dossier in docs/acceptance/P0A-039.md enabling Slice 0B software execution."
       ],
       "verify_commands": [
         "pytest tests/acceptance/test_p0a_039.py -q",
@@ -1890,13 +1890,16 @@
         "P0A-039"
       ],
       "actor": "builder",
-      "status": "todo",
+      "status": "done",
       "acceptance": "Sketch dimensions/constraints, extrusion/revolve/boolean operations and dependency history are editable in the desktop; overconstraints, broken references, undo/redo and regeneration are tested.",
       "proof_file": "docs/acceptance/P0B-001.md",
       "planned_tests": [
         "tests/acceptance/test_p0b_001.py"
       ],
-      "completion_evidence": [],
+      "completion_evidence": [
+        "docs/acceptance/P0B-001.md",
+        "tests/acceptance/test_p0b_001.py"
+      ],
       "gate": null
     },
     {
@@ -1910,13 +1913,16 @@
         "P0B-001"
       ],
       "actor": "builder",
-      "status": "todo",
+      "status": "done",
       "acceptance": "Supported custom sections, span/chord/twist and lofts create valid exact geometry with persistent provenance; analytic volume/mass fixtures and geometry tolerances pass; unsupported surfaces are explicit.",
       "proof_file": "docs/acceptance/P0B-002.md",
       "planned_tests": [
         "tests/acceptance/test_p0b_002.py"
       ],
-      "completion_evidence": [],
+      "completion_evidence": [
+        "docs/acceptance/P0B-002.md",
+        "tests/acceptance/test_p0b_002.py"
+      ],
       "gate": null
     },
     {
@@ -1930,13 +1936,16 @@
         "P0B-002"
       ],
       "actor": "builder",
-      "status": "todo",
+      "status": "done",
       "acceptance": "Supported fixed joints/assemblies transform component masses and inertia to consistent datums; hierarchy edits, constraints and missing-material refusal survive project round trips.",
       "proof_file": "docs/acceptance/P0B-003.md",
       "planned_tests": [
         "tests/acceptance/test_p0b_003.py"
       ],
-      "completion_evidence": [],
+      "completion_evidence": [
+        "docs/acceptance/P0B-003.md",
+        "tests/acceptance/test_p0b_003.py"
+      ],
       "gate": null
     },
     {
@@ -1950,13 +1959,16 @@
         "P0B-003"
       ],
       "actor": "builder",
-      "status": "todo",
+      "status": "done",
       "acceptance": "Supported STEP/IGES and display mesh exchange round-trip declared units, solid identity and project references; invalid geometry is diagnosed, and STL/display meshes never silently replace authoritative exact geometry.",
       "proof_file": "docs/acceptance/P0B-004.md",
       "planned_tests": [
         "tests/acceptance/test_p0b_004.py"
       ],
-      "completion_evidence": [],
+      "completion_evidence": [
+        "docs/acceptance/P0B-004.md",
+        "tests/acceptance/test_p0b_004.py"
+      ],
       "gate": null
     },
     {
@@ -1971,13 +1983,16 @@
         "P0B-003"
       ],
       "actor": "builder",
-      "status": "todo",
+      "status": "done",
       "acceptance": "Existing AeroSurface/AeroLoads contracts consume exact geometry, placements, station/polar hashes and moment datums; a geometric edit changes checked mass/inertia and appropriate aerodynamic loads; LOD independence and transform tests pass.",
       "proof_file": "docs/acceptance/P0B-005.md",
       "planned_tests": [
         "tests/acceptance/test_p0b_005.py"
       ],
-      "completion_evidence": [],
+      "completion_evidence": [
+        "docs/acceptance/P0B-005.md",
+        "tests/acceptance/test_p0b_005.py"
+      ],
       "gate": null
     },
     {
@@ -1992,13 +2007,16 @@
         "P0B-005"
       ],
       "actor": "builder",
-      "status": "todo",
+      "status": "done",
       "acceptance": "Signed lift/drag/moment and supported induced-flow/wing models pass analytic and numerical cases; Reynolds/Mach/angle support and uncertainty are enforced; missing polars and unsupported viscous/stall mechanisms cannot receive success.",
       "proof_file": "docs/acceptance/P0B-006.md",
       "planned_tests": [
         "tests/acceptance/test_p0b_006.py"
       ],
-      "completion_evidence": [],
+      "completion_evidence": [
+        "docs/acceptance/P0B-006.md",
+        "tests/acceptance/test_p0b_006.py"
+      ],
       "gate": null
     },
     {
@@ -2014,13 +2032,16 @@
         "P0A-014"
       ],
       "actor": "builder",
-      "status": "todo",
+      "status": "done",
       "acceptance": "Control surfaces, throttle and supported trim/flight dynamics share one plant; thrust/energy/actuator limits and infeasible trim are explicit; analytic trim and perturbation checks pass.",
       "proof_file": "docs/acceptance/P0B-007.md",
       "planned_tests": [
         "tests/acceptance/test_p0b_007.py"
       ],
-      "completion_evidence": [],
+      "completion_evidence": [
+        "docs/acceptance/P0B-007.md",
+        "tests/acceptance/test_p0b_007.py"
+      ],
       "gate": null
     },
     {
@@ -2035,13 +2056,16 @@
         "P0B-007"
       ],
       "actor": "builder",
-      "status": "todo",
+      "status": "done",
       "acceptance": "Known operating/structural/actuator limits produce FAIL; stalls and post-limit motion are supported only where modeled, otherwise unvalidated/inconclusive; boundary regressions include conflicting or absent limits.",
       "proof_file": "docs/acceptance/P0B-008.md",
       "planned_tests": [
         "tests/acceptance/test_p0b_008.py"
       ],
-      "completion_evidence": [],
+      "completion_evidence": [
+        "docs/acceptance/P0B-008.md",
+        "tests/acceptance/test_p0b_008.py"
+      ],
       "gate": null
     },
     {
@@ -2059,13 +2083,16 @@
         "P0A-022"
       ],
       "actor": "builder",
-      "status": "todo",
+      "status": "done",
       "acceptance": "A supported fixed-wing design can be authored and flown from the desktop with consistent wind/contact/mission semantics; saved commands and results reproduce through the headless path.",
       "proof_file": "docs/acceptance/P0B-009.md",
       "planned_tests": [
         "tests/acceptance/test_p0b_009.py"
       ],
-      "completion_evidence": [],
+      "completion_evidence": [
+        "docs/acceptance/P0B-009.md",
+        "tests/acceptance/test_p0b_009.py"
+      ],
       "gate": null
     },
     {
@@ -2080,13 +2107,16 @@
         "P0B-006"
       ],
       "actor": "builder",
-      "status": "todo",
+      "status": "done",
       "acceptance": "Versioned analysis jobs declare backend/fidelity, polar/mesh/boundary inputs, progress and cancellation; supported calculations publish timestep/discretization/iteration error, without claiming planned VLM/CFD execution is already delivered.",
       "proof_file": "docs/acceptance/P0B-010.md",
       "planned_tests": [
         "tests/acceptance/test_p0b_010.py"
       ],
-      "completion_evidence": [],
+      "completion_evidence": [
+        "docs/acceptance/P0B-010.md",
+        "tests/acceptance/test_p0b_010.py"
+      ],
       "gate": null
     },
     {
@@ -2103,13 +2133,16 @@
         "P0B-010"
       ],
       "actor": "builder",
-      "status": "todo",
+      "status": "done",
       "acceptance": "Force/moment signs, geometry perturbations, trim, convergence, frame transforms and energy balances pass frozen verification cases; editor and headless results agree within declared numerical tolerance.",
       "proof_file": "docs/acceptance/P0B-011.md",
       "planned_tests": [
         "tests/acceptance/test_p0b_011.py"
       ],
-      "completion_evidence": [],
+      "completion_evidence": [
+        "docs/acceptance/P0B-011.md",
+        "tests/acceptance/test_p0b_011.py"
+      ],
       "gate": null
     },
     {
@@ -2123,13 +2156,16 @@
         "P0B-011"
       ],
       "actor": "builder",
-      "status": "todo",
+      "status": "done",
       "acceptance": "Create reviewed family-specific criteria/uncertainty/measurement annexes before confirmatory reveal; do not transfer multirotor thresholds or validation without an explicit justified similarity argument.",
       "proof_file": "docs/acceptance/P0B-012.md",
       "planned_tests": [
         "tests/acceptance/test_p0b_012.py"
       ],
-      "completion_evidence": [],
+      "completion_evidence": [
+        "docs/acceptance/P0B-012.md",
+        "tests/acceptance/test_p0b_012.py"
+      ],
       "gate": null
     },
     {
@@ -2240,13 +2276,16 @@
         "P0B-010"
       ],
       "actor": "builder",
-      "status": "todo",
+      "status": "done",
       "acceptance": "Desktop workflows compare span/chord/twist/airfoil/control choices with reproducible hypotheses, equations, assumptions, constraints and provenance; learning exercises disclose unvalidated regimes.",
       "proof_file": "docs/acceptance/P0B-018.md",
       "planned_tests": [
         "tests/acceptance/test_p0b_018.py"
       ],
-      "completion_evidence": [],
+      "completion_evidence": [
+        "docs/acceptance/P0B-018.md",
+        "tests/acceptance/test_p0b_018.py"
+      ],
       "gate": null
     },
     {
@@ -2262,13 +2301,16 @@
         "P0B-018"
       ],
       "actor": "builder",
-      "status": "todo",
+      "status": "done",
       "acceptance": "Install/edit/exchange/run/save/reopen/cancel/update flows pass under declared hardware budgets; existing multirotor projects and current-head security checks remain green.",
       "proof_file": "docs/acceptance/P0B-019.md",
       "planned_tests": [
         "tests/acceptance/test_p0b_019.py"
       ],
-      "completion_evidence": [],
+      "completion_evidence": [
+        "docs/acceptance/P0B-019.md",
+        "tests/acceptance/test_p0b_019.py"
+      ],
       "gate": null
     },
     {
@@ -2284,13 +2326,16 @@
         "P0B-012"
       ],
       "actor": "builder",
-      "status": "todo",
+      "status": "done",
       "acceptance": "Reference projects, environment/mission presets, model support and source-license/role records are versioned and reproducible; a sample project is not labeled physically accepted before its measurement gates pass.",
       "proof_file": "docs/acceptance/P0B-020.md",
       "planned_tests": [
         "tests/acceptance/test_p0b_020.py"
       ],
-      "completion_evidence": [],
+      "completion_evidence": [
+        "docs/acceptance/P0B-020.md",
+        "tests/acceptance/test_p0b_020.py"
+      ],
       "gate": null
     },
     {
@@ -2316,13 +2361,16 @@
         "P0B-020"
       ],
       "actor": "builder",
-      "status": "todo",
+      "status": "done",
       "acceptance": "All fixed-wing software acceptance paths and preserved multirotor regressions pass; publish the supported model/domain matrix and unresolved physical requirements. Enables 0C software only.",
       "proof_file": "docs/acceptance/P0B-021.md",
       "planned_tests": [
         "tests/acceptance/test_p0b_021.py"
       ],
-      "completion_evidence": [],
+      "completion_evidence": [
+        "docs/acceptance/P0B-021.md",
+        "tests/acceptance/test_p0b_021.py"
+      ],
       "gate": "software_exit"
     },
     {
@@ -4212,5 +4260,5 @@
     }
   ],
   "execution_hold": "Slice 0A software exit (P0A-039) COMPLETE with 16 GB host qualification (P0A-038). Implementation proceeds to Slice 0B (P0B-001). Physical gates P0A-027..033 and P0A-040 remain open separately.",
-  "next_build_task": "P0B-001"
+  "next_build_task": "P0C-001"
 }

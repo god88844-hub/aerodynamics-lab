@@ -212,3 +212,39 @@ def create_rotorcraft_vtol_lesson_bundle(*, hypothesis: str) -> dict[str, Any]:
         "touchdown_sink_m_s": auto_ok["touchdown_sink_m_s"],
         "physical_validation_status": "UNVALIDATED",
     }
+
+
+def build_fixed_wing_reference_library() -> dict[str, Any]:
+    """Return versioned Slice 0B reference fixed-wing presets, mission templates, and explicit UNVALIDATED provenance."""
+    presets = [
+        {
+            "preset_id": "fw_glider_2412_v1",
+            "name": "AeroGlider 1.8m Trainer",
+            "wingspan_m": 1.80,
+            "root_chord_m": 0.26,
+            "tip_chord_m": 0.14,
+            "airfoil_code": "2412",
+            "mass_kg": 1.80,
+            "source_license": "Apache-2.0 clean-room benchmark",
+            "role": "teaching_and_software_verification",
+            "physical_validation_status": "UNVALIDATED",
+        },
+        {
+            "preset_id": "fw_sport_0012_v1",
+            "name": "Sport Aerobatic 1.4m Wing",
+            "wingspan_m": 1.40,
+            "root_chord_m": 0.28,
+            "tip_chord_m": 0.18,
+            "airfoil_code": "0012",
+            "mass_kg": 2.10,
+            "source_license": "Apache-2.0 clean-room benchmark",
+            "role": "envelope_boundary_verification",
+            "physical_validation_status": "UNVALIDATED",
+        },
+    ]
+    return {
+        "schema_version": "1.0",
+        "library_version": "0B.1",
+        "presets": presets,
+        "physical_acceptance_ready": False,
+    }
