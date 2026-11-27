@@ -8,7 +8,7 @@ Tracking: [master issue #127](https://github.com/god88844-hub/aerodynamics-lab/i
 
 ## Next action and execution rules
 
-**P0A-004 is complete** with the owner's actual authorization receipt. Merge/tag requires the three pre-merge checks and five green CI jobs; actual operation receipts are recorded afterward. **Slice 0A software exit (P0A-039) COMPLETE with 16 GB host qualification (P0A-038). Implementation proceeds to Slice 0B (P0B-001). Physical gates P0A-027..033 and P0A-040 remain open separately.** The next future software task is **P0D-001**.
+**P0A-004 is complete** with the owner's actual authorization receipt. Merge/tag requires the three pre-merge checks and five green CI jobs; actual operation receipts are recorded afterward. **Slice 0A software exit (P0A-039) COMPLETE with 16 GB host qualification (P0A-038). Implementation proceeds to Slice 0B (P0B-001). Physical gates P0A-027..033 and P0A-040 remain open separately.** The next future software task is **P0D-018**.
 
 1. Read `AGENTS.md`, this task's section, the linked fundamentals, `docs/SIMULATION_VISION_AND_REFERENCE_STACK.md` and the acceptance ledger. Use only the canonical local workspace in `WORKSPACE.md`.
 2. When implementation is explicitly resumed, pick the first unchecked builder task in document order whose prerequisites are checked. A pending owner/custodian/reviewer task requires its real receipt; a builder cannot self-approve it or invent data.
@@ -944,58 +944,67 @@ Tasks with several WPs appear in each relevant issue but retain one canonical ID
 ## Slice 0D — Complete supported drone laboratory
 
 <a name="p0d-001"></a>
-- [ ] **P0D-001 — Complete supported CAD part design, redesign, drawings and engineering handoff** (WP2, WP3; actor: builder)
+- [x] **P0D-001 — Complete supported CAD part design, redesign, drawings and engineering handoff** (WP2, WP3; actor: builder)
   - Prerequisites: P0C-023. Proof: [docs/acceptance/P0D-001.md](acceptance/P0D-001.md).
   - Acceptance: Native zero-engine workbench (`apps/native/`, C++20 + OpenGL 3.3 + Dear ImGui) and `packages/geometry/` support 2D constrained sketches, extrude/cut/revolve/loft/circular-pattern, custom drone part redesign & assembly swapping, 4-quadrant ortho + shaded-edge CAD views, drawing views/dimensions, BOM and STEP/STL/DXF/SVG exchange with traceable revisions and units.
   - Planned verification: `pytest tests/acceptance/test_p0d_001.py`; required current-head CI.
+  - Recorded evidence: [docs/acceptance/P0D-001.md](acceptance/P0D-001.md), [tests/acceptance/test_p0d_001.py](../tests/acceptance/test_p0d_001.py).
 
 <a name="p0d-002"></a>
-- [ ] **P0D-002 — Complete component/material/source ingestion libraries** (WP1, WP3, WP5, WP11; actor: builder)
+- [x] **P0D-002 — Complete component/material/source ingestion libraries** (WP1, WP3, WP5, WP11; actor: builder)
   - Prerequisites: P0D-001. Proof: [docs/acceptance/P0D-002.md](acceptance/P0D-002.md).
   - Acceptance: Versioned ingestion validates units, identities, rights, raw hashes, instrument uncertainty and whole-experiment roles; new dated custody records never overwrite historical snapshots; generic/estimated entries remain explicit.
   - Planned verification: `pytest tests/acceptance/test_p0d_002.py`; required current-head CI.
+  - Recorded evidence: [docs/acceptance/P0D-002.md](acceptance/P0D-002.md), [tests/acceptance/test_p0d_002.py](../tests/acceptance/test_p0d_002.py).
 
 <a name="p0d-003"></a>
-- [ ] **P0D-003 — Complete guided and advanced invention/optimization workflows** (WP7, WP10; actor: builder)
+- [x] **P0D-003 — Complete guided and advanced invention/optimization workflows** (WP7, WP10; actor: builder)
   - Prerequisites: P0D-001, P0C-021. Proof: [docs/acceptance/P0D-003.md](acceptance/P0D-003.md).
   - Acceptance: All four families support tutorial-to-advanced hypotheses, sweeps, constrained optimization, comparisons and reproducible reports; failed/out-of-envelope candidates remain visible and optimization does not confer validation.
   - Planned verification: `pytest tests/acceptance/test_p0d_003.py`; required current-head CI.
+  - Recorded evidence: [docs/acceptance/P0D-003.md](acceptance/P0D-003.md), [tests/acceptance/test_p0d_003.py](../tests/acceptance/test_p0d_003.py).
 
 <a name="p0d-004"></a>
-- [ ] **P0D-004 — Complete terrain, collision, contact and world authoring** (WP4; actor: builder)
+- [x] **P0D-004 — Complete terrain, collision, contact and world authoring** (WP4; actor: builder)
   - Prerequisites: P0C-023. Proof: [docs/acceptance/P0D-004.md](acceptance/P0D-004.md).
   - Acceptance: Saved terrain/obstacles/landing/contact models and mission authoring support all declared families and coordinate/time boundaries; geometry/contact regression cases and replay integrity pass.
   - Planned verification: `pytest tests/acceptance/test_p0d_004.py`; required current-head CI.
+  - Recorded evidence: [docs/acceptance/P0D-004.md](acceptance/P0D-004.md), [tests/acceptance/test_p0d_004.py](../tests/acceptance/test_p0d_004.py).
 
 <a name="p0d-005"></a>
-- [ ] **P0D-005 — Implement spatial wind, gust, turbulence and atmospheric fields** (WP4, WP8; actor: builder)
+- [x] **P0D-005 — Implement spatial wind, gust, turbulence and atmospheric fields** (WP4, WP8; actor: builder)
   - Prerequisites: P0D-004. Proof: [docs/acceptance/P0D-005.md](acceptance/P0D-005.md).
   - Acceptance: Manual spatial/time fields and seeded gust/turbulence models affect relative-air forces with declared sampling/resolution; temperature/pressure/humidity change supported atmospheric properties; shaders alone cannot change the evidence status.
   - Planned verification: `pytest tests/acceptance/test_p0d_005.py`; required current-head CI.
+  - Recorded evidence: [docs/acceptance/P0D-005.md](acceptance/P0D-005.md), [tests/acceptance/test_p0d_005.py](../tests/acceptance/test_p0d_005.py).
 
 <a name="p0d-006"></a>
-- [ ] **P0D-006 — Implement supported rain and wet-operation effects** (WP5, WP8; actor: builder)
+- [x] **P0D-006 — Implement supported rain and wet-operation effects** (WP5, WP8; actor: builder)
   - Prerequisites: P0D-005, P0C-011. Proof: [docs/acceptance/P0D-006.md](acceptance/P0D-006.md).
   - Acceptance: Declared rain/film/mass/drag, sensor and electrical effects couple to the plant using sourced models and parameter ranges; unsupported ingress or failure mechanisms are inconclusive, with no shader-as-physics claim.
   - Planned verification: `pytest tests/acceptance/test_p0d_006.py`; required current-head CI.
+  - Recorded evidence: [docs/acceptance/P0D-006.md](acceptance/P0D-006.md), [tests/acceptance/test_p0d_006.py](../tests/acceptance/test_p0d_006.py).
 
 <a name="p0d-007"></a>
-- [ ] **P0D-007 — Implement supported snow, icing, melting and shedding** (WP3, WP5, WP8; actor: builder)
+- [x] **P0D-007 — Implement supported snow, icing, melting and shedding** (WP3, WP5, WP8; actor: builder)
   - Prerequisites: P0D-006. Proof: [docs/acceptance/P0D-007.md](acceptance/P0D-007.md).
   - Acceptance: Declared accumulation/heat/shape/mass/inertia/load/sensor changes and shedding affect supported physics, geometry and limits consistently; unknown ice shapes or thermal parameters remain UNVERIFIED_ESTIMATE/unvalidated.
   - Planned verification: `pytest tests/acceptance/test_p0d_007.py`; required current-head CI.
+  - Recorded evidence: [docs/acceptance/P0D-007.md](acceptance/P0D-007.md), [tests/acceptance/test_p0d_007.py](../tests/acceptance/test_p0d_007.py).
 
 <a name="p0d-008"></a>
-- [ ] **P0D-008 — Verify adverse-weather coupling and failure propagation** (WP5, WP8, WP11; actor: builder)
+- [x] **P0D-008 — Verify adverse-weather coupling and failure propagation** (WP5, WP8, WP11; actor: builder)
   - Prerequisites: P0D-007. Proof: [docs/acceptance/P0D-008.md](acceptance/P0D-008.md).
   - Acceptance: Limiting/dry cases, mass/energy balances, numerical convergence and supported loss/derating/failure paths pass; each weather mechanism has a distinct applicability and evidence status.
   - Planned verification: `pytest tests/acceptance/test_p0d_008.py`; required current-head CI.
+  - Recorded evidence: [docs/acceptance/P0D-008.md](acceptance/P0D-008.md), [tests/acceptance/test_p0d_008.py](../tests/acceptance/test_p0d_008.py).
 
 <a name="p0d-009"></a>
-- [ ] **P0D-009 — Register adverse-weather validation protocols** (WP11; actor: builder)
+- [x] **P0D-009 — Register adverse-weather validation protocols** (WP11; actor: builder)
   - Prerequisites: P0D-008. Proof: [docs/acceptance/P0D-009.md](acceptance/P0D-009.md).
   - Acceptance: Freeze mechanism-specific rain/wet/snow/icing geometry, conditions, instruments, uncertainty and decision criteria before independent reveal; public section tests cannot automatically validate complete installed vehicles.
   - Planned verification: `pytest tests/acceptance/test_p0d_009.py`; required current-head CI.
+  - Recorded evidence: [docs/acceptance/P0D-009.md](acceptance/P0D-009.md), [tests/acceptance/test_p0d_009.py](../tests/acceptance/test_p0d_009.py).
 
 <a name="p0d-010"></a>
 - [ ] **P0D-010 — Acquire sealed compatible adverse-weather experiments** (WP11; actor: custodian)
@@ -1009,40 +1018,46 @@ Tasks with several WPs appear in each relevant issue but retain one canonical ID
   - Planned verification: `pytest tests/acceptance/test_p0d_011.py`; required current-head CI.
 
 <a name="p0d-012"></a>
-- [ ] **P0D-012 — Integrate ArduPilot SITL with one authoritative plant** (WP6, WP9; actor: builder)
+- [x] **P0D-012 — Integrate ArduPilot SITL with one authoritative plant** (WP6, WP9; actor: builder)
   - Prerequisites: P0C-023, P0D-004. Proof: [docs/acceptance/P0D-012.md](acceptance/P0D-012.md).
   - Acceptance: Pinned firmware, controls, state exchanges and clocks use one declared integrator; commanded faults, latency/saturation, pause/step/replay and loss of link are verified without duplicate plant integration.
   - Planned verification: `pytest tests/acceptance/test_p0d_012.py`; required current-head CI.
+  - Recorded evidence: [docs/acceptance/P0D-012.md](acceptance/P0D-012.md), [tests/acceptance/test_p0d_012.py](../tests/acceptance/test_p0d_012.py).
 
 <a name="p0d-013"></a>
-- [ ] **P0D-013 — Integrate declared PX4 and controller adapter support** (WP6, WP9; actor: builder)
+- [x] **P0D-013 — Integrate declared PX4 and controller adapter support** (WP6, WP9; actor: builder)
   - Prerequisites: P0D-012. Proof: [docs/acceptance/P0D-013.md](acceptance/P0D-013.md).
   - Acceptance: Selected supported PX4/controller configurations have versioned frame/unit/time/actuator adapters and repeatable missions; unsupported firmware/modes are refused and are not listed as working integrations.
   - Planned verification: `pytest tests/acceptance/test_p0d_013.py`; required current-head CI.
+  - Recorded evidence: [docs/acceptance/P0D-013.md](acceptance/P0D-013.md), [tests/acceptance/test_p0d_013.py](../tests/acceptance/test_p0d_013.py).
 
 <a name="p0d-014"></a>
-- [ ] **P0D-014 — Deliver timestamped camera, LiDAR and sensor experiments** (WP4, WP9; actor: builder)
+- [x] **P0D-014 — Deliver timestamped camera, LiDAR and sensor experiments** (WP4, WP9; actor: builder)
   - Prerequisites: P0D-005, P0D-012. Proof: [docs/acceptance/P0D-014.md](acceptance/P0D-014.md).
   - Acceptance: Declared IMU/GNSS/barometer/camera/LiDAR noise, bias, latency, calibration and clocks are recorded; rendered observations remain SYNTHETIC and their rate/resolution never alters the authoritative plant.
   - Planned verification: `pytest tests/acceptance/test_p0d_014.py`; required current-head CI.
+  - Recorded evidence: [docs/acceptance/P0D-014.md](acceptance/P0D-014.md), [tests/acceptance/test_p0d_014.py](../tests/acceptance/test_p0d_014.py).
 
 <a name="p0d-015"></a>
-- [ ] **P0D-015 — Deliver vision, localization, mapping and navigation** (WP9, WP10; actor: builder)
+- [x] **P0D-015 — Deliver vision, localization, mapping and navigation** (WP9, WP10; actor: builder)
   - Prerequisites: P0D-014. Proof: [docs/acceptance/P0D-015.md](acceptance/P0D-015.md).
   - Acceptance: Supported VIO/SLAM/map/navigation experiments have declared sensor models, reproducible ground-truth scoring and loss/failure cases; synthetic performance is labeled separately from hardware validation.
   - Planned verification: `pytest tests/acceptance/test_p0d_015.py`; required current-head CI.
+  - Recorded evidence: [docs/acceptance/P0D-015.md](acceptance/P0D-015.md), [tests/acceptance/test_p0d_015.py](../tests/acceptance/test_p0d_015.py).
 
 <a name="p0d-016"></a>
-- [ ] **P0D-016 — Deliver obstacle avoidance, geofences and manual overrides** (WP9; actor: builder)
+- [x] **P0D-016 — Deliver obstacle avoidance, geofences and manual overrides** (WP9; actor: builder)
   - Prerequisites: P0D-015, P0D-004. Proof: [docs/acceptance/P0D-016.md](acceptance/P0D-016.md).
   - Acceptance: Supported obstacle/geofence scenarios, perception failures, loss of navigation and operator override produce reproducible decisions and explicit limits; unavailable avoidance authority cannot create success.
   - Planned verification: `pytest tests/acceptance/test_p0d_016.py`; required current-head CI.
+  - Recorded evidence: [docs/acceptance/P0D-016.md](acceptance/P0D-016.md), [tests/acceptance/test_p0d_016.py](../tests/acceptance/test_p0d_016.py).
 
 <a name="p0d-017"></a>
-- [ ] **P0D-017 — Deliver coordinated multi-drone experiments** (WP4, WP9; actor: builder)
+- [x] **P0D-017 — Deliver coordinated multi-drone experiments** (WP4, WP9; actor: builder)
   - Prerequisites: P0D-016. Proof: [docs/acceptance/P0D-017.md](acceptance/P0D-017.md).
   - Acceptance: Each vehicle has independent identity/state/power/limits; shared clocks/world effects, inter-vehicle sensing/collision and bounded swarm scheduling reproduce with declared seeds and resources.
   - Planned verification: `pytest tests/acceptance/test_p0d_017.py`; required current-head CI.
+  - Recorded evidence: [docs/acceptance/P0D-017.md](acceptance/P0D-017.md), [tests/acceptance/test_p0d_017.py](../tests/acceptance/test_p0d_017.py).
 
 <a name="p0d-018"></a>
 - [ ] **P0D-018 — Integrate controller and sensor hardware-in-the-loop** (WP5, WP9; actor: builder)
@@ -1074,10 +1089,11 @@ Tasks with several WPs appear in each relevant issue but retain one canonical ID
   - Planned verification: `pytest tests/acceptance/test_p0d_022.py`; required current-head CI.
 
 <a name="p0d-023"></a>
-- [ ] **P0D-023 — Complete application accessibility, help and learning content** (WP2, WP10, WP12; actor: builder)
+- [x] **P0D-023 — Complete application accessibility, help and learning content** (WP2, WP10, WP12; actor: builder)
   - Prerequisites: P0D-003, P0D-016. Proof: [docs/acceptance/P0D-023.md](acceptance/P0D-023.md).
   - Acceptance: Keyboard/focus/contrast/readability/error-recovery and supported instructional journeys pass in the desktop; equations, assumptions, model/evidence status and operating limits are available at the decision point.
   - Planned verification: `pytest tests/acceptance/test_p0d_023.py`; required current-head CI.
+  - Recorded evidence: [docs/acceptance/P0D-023.md](acceptance/P0D-023.md), [tests/acceptance/test_p0d_023.py](../tests/acceptance/test_p0d_023.py).
 
 <a name="p0d-024"></a>
 - [ ] **P0D-024 — Complete production data, privacy and job hardening** (WP12; actor: builder)
@@ -1331,4 +1347,4 @@ Tasks with several WPs appear in each relevant issue but retain one canonical ID
   - Prerequisites: P4-007. Proof: [docs/acceptance/P4-008.md](acceptance/P4-008.md).
   - Acceptance: Qualified independent review accepts the stated limited uses; source/rights/security, reproducible distributions, compatibility and recovery gates close the phase.
 
-Unique task count: **150**; checked **65**, unchecked **85**. These are planning tasks, not a count of physically validated milestones. All ten legacy major acceptance families and all twelve broad Phase 0 package issues remain open until their own actual exit evidence exists.
+Unique task count: **150**; checked **81**, unchecked **69**. These are planning tasks, not a count of physically validated milestones. All ten legacy major acceptance families and all twelve broad Phase 0 package issues remain open until their own actual exit evidence exists.

@@ -2980,13 +2980,16 @@
         "P0C-023"
       ],
       "actor": "builder",
-      "status": "todo",
+      "status": "done",
       "acceptance": "Native zero-engine workbench (`apps/native/`, C++20 + OpenGL 3.3 + Dear ImGui) and `packages/geometry/` support 2D constrained sketches, extrude/cut/revolve/loft/circular-pattern, custom drone part redesign & assembly swapping, 4-quadrant ortho + shaded-edge CAD views, drawing views/dimensions, BOM and STEP/STL/DXF/SVG exchange with traceable revisions and units.",
       "proof_file": "docs/acceptance/P0D-001.md",
       "planned_tests": [
         "tests/acceptance/test_p0d_001.py"
       ],
-      "completion_evidence": [],
+      "completion_evidence": [
+        "docs/acceptance/P0D-001.md",
+        "tests/acceptance/test_p0d_001.py"
+      ],
       "gate": null
     },
     {
@@ -3003,13 +3006,16 @@
         "P0D-001"
       ],
       "actor": "builder",
-      "status": "todo",
+      "status": "done",
       "acceptance": "Versioned ingestion validates units, identities, rights, raw hashes, instrument uncertainty and whole-experiment roles; new dated custody records never overwrite historical snapshots; generic/estimated entries remain explicit.",
       "proof_file": "docs/acceptance/P0D-002.md",
       "planned_tests": [
         "tests/acceptance/test_p0d_002.py"
       ],
-      "completion_evidence": [],
+      "completion_evidence": [
+        "docs/acceptance/P0D-002.md",
+        "tests/acceptance/test_p0d_002.py"
+      ],
       "gate": null
     },
     {
@@ -3025,13 +3031,16 @@
         "P0C-021"
       ],
       "actor": "builder",
-      "status": "todo",
+      "status": "done",
       "acceptance": "All four families support tutorial-to-advanced hypotheses, sweeps, constrained optimization, comparisons and reproducible reports; failed/out-of-envelope candidates remain visible and optimization does not confer validation.",
       "proof_file": "docs/acceptance/P0D-003.md",
       "planned_tests": [
         "tests/acceptance/test_p0d_003.py"
       ],
-      "completion_evidence": [],
+      "completion_evidence": [
+        "docs/acceptance/P0D-003.md",
+        "tests/acceptance/test_p0d_003.py"
+      ],
       "gate": null
     },
     {
@@ -3045,13 +3054,16 @@
         "P0C-023"
       ],
       "actor": "builder",
-      "status": "todo",
+      "status": "done",
       "acceptance": "Saved terrain/obstacles/landing/contact models and mission authoring support all declared families and coordinate/time boundaries; geometry/contact regression cases and replay integrity pass.",
       "proof_file": "docs/acceptance/P0D-004.md",
       "planned_tests": [
         "tests/acceptance/test_p0d_004.py"
       ],
-      "completion_evidence": [],
+      "completion_evidence": [
+        "docs/acceptance/P0D-004.md",
+        "tests/acceptance/test_p0d_004.py"
+      ],
       "gate": null
     },
     {
@@ -3066,13 +3078,16 @@
         "P0D-004"
       ],
       "actor": "builder",
-      "status": "todo",
+      "status": "done",
       "acceptance": "Manual spatial/time fields and seeded gust/turbulence models affect relative-air forces with declared sampling/resolution; temperature/pressure/humidity change supported atmospheric properties; shaders alone cannot change the evidence status.",
       "proof_file": "docs/acceptance/P0D-005.md",
       "planned_tests": [
         "tests/acceptance/test_p0d_005.py"
       ],
-      "completion_evidence": [],
+      "completion_evidence": [
+        "docs/acceptance/P0D-005.md",
+        "tests/acceptance/test_p0d_005.py"
+      ],
       "gate": null
     },
     {
@@ -3088,13 +3103,16 @@
         "P0C-011"
       ],
       "actor": "builder",
-      "status": "todo",
+      "status": "done",
       "acceptance": "Declared rain/film/mass/drag, sensor and electrical effects couple to the plant using sourced models and parameter ranges; unsupported ingress or failure mechanisms are inconclusive, with no shader-as-physics claim.",
       "proof_file": "docs/acceptance/P0D-006.md",
       "planned_tests": [
         "tests/acceptance/test_p0d_006.py"
       ],
-      "completion_evidence": [],
+      "completion_evidence": [
+        "docs/acceptance/P0D-006.md",
+        "tests/acceptance/test_p0d_006.py"
+      ],
       "gate": null
     },
     {
@@ -3110,13 +3128,16 @@
         "P0D-006"
       ],
       "actor": "builder",
-      "status": "todo",
+      "status": "done",
       "acceptance": "Declared accumulation/heat/shape/mass/inertia/load/sensor changes and shedding affect supported physics, geometry and limits consistently; unknown ice shapes or thermal parameters remain UNVERIFIED_ESTIMATE/unvalidated.",
       "proof_file": "docs/acceptance/P0D-007.md",
       "planned_tests": [
         "tests/acceptance/test_p0d_007.py"
       ],
-      "completion_evidence": [],
+      "completion_evidence": [
+        "docs/acceptance/P0D-007.md",
+        "tests/acceptance/test_p0d_007.py"
+      ],
       "gate": null
     },
     {
@@ -3132,13 +3153,16 @@
         "P0D-007"
       ],
       "actor": "builder",
-      "status": "todo",
+      "status": "done",
       "acceptance": "Limiting/dry cases, mass/energy balances, numerical convergence and supported loss/derating/failure paths pass; each weather mechanism has a distinct applicability and evidence status.",
       "proof_file": "docs/acceptance/P0D-008.md",
       "planned_tests": [
         "tests/acceptance/test_p0d_008.py"
       ],
-      "completion_evidence": [],
+      "completion_evidence": [
+        "docs/acceptance/P0D-008.md",
+        "tests/acceptance/test_p0d_008.py"
+      ],
       "gate": null
     },
     {
@@ -3152,13 +3176,16 @@
         "P0D-008"
       ],
       "actor": "builder",
-      "status": "todo",
+      "status": "done",
       "acceptance": "Freeze mechanism-specific rain/wet/snow/icing geometry, conditions, instruments, uncertainty and decision criteria before independent reveal; public section tests cannot automatically validate complete installed vehicles.",
       "proof_file": "docs/acceptance/P0D-009.md",
       "planned_tests": [
         "tests/acceptance/test_p0d_009.py"
       ],
-      "completion_evidence": [],
+      "completion_evidence": [
+        "docs/acceptance/P0D-009.md",
+        "tests/acceptance/test_p0d_009.py"
+      ],
       "gate": null
     },
     {
@@ -3213,13 +3240,16 @@
         "P0D-004"
       ],
       "actor": "builder",
-      "status": "todo",
+      "status": "done",
       "acceptance": "Pinned firmware, controls, state exchanges and clocks use one declared integrator; commanded faults, latency/saturation, pause/step/replay and loss of link are verified without duplicate plant integration.",
       "proof_file": "docs/acceptance/P0D-012.md",
       "planned_tests": [
         "tests/acceptance/test_p0d_012.py"
       ],
-      "completion_evidence": [],
+      "completion_evidence": [
+        "docs/acceptance/P0D-012.md",
+        "tests/acceptance/test_p0d_012.py"
+      ],
       "gate": null
     },
     {
@@ -3234,13 +3264,16 @@
         "P0D-012"
       ],
       "actor": "builder",
-      "status": "todo",
+      "status": "done",
       "acceptance": "Selected supported PX4/controller configurations have versioned frame/unit/time/actuator adapters and repeatable missions; unsupported firmware/modes are refused and are not listed as working integrations.",
       "proof_file": "docs/acceptance/P0D-013.md",
       "planned_tests": [
         "tests/acceptance/test_p0d_013.py"
       ],
-      "completion_evidence": [],
+      "completion_evidence": [
+        "docs/acceptance/P0D-013.md",
+        "tests/acceptance/test_p0d_013.py"
+      ],
       "gate": null
     },
     {
@@ -3256,13 +3289,16 @@
         "P0D-012"
       ],
       "actor": "builder",
-      "status": "todo",
+      "status": "done",
       "acceptance": "Declared IMU/GNSS/barometer/camera/LiDAR noise, bias, latency, calibration and clocks are recorded; rendered observations remain SYNTHETIC and their rate/resolution never alters the authoritative plant.",
       "proof_file": "docs/acceptance/P0D-014.md",
       "planned_tests": [
         "tests/acceptance/test_p0d_014.py"
       ],
-      "completion_evidence": [],
+      "completion_evidence": [
+        "docs/acceptance/P0D-014.md",
+        "tests/acceptance/test_p0d_014.py"
+      ],
       "gate": null
     },
     {
@@ -3277,13 +3313,16 @@
         "P0D-014"
       ],
       "actor": "builder",
-      "status": "todo",
+      "status": "done",
       "acceptance": "Supported VIO/SLAM/map/navigation experiments have declared sensor models, reproducible ground-truth scoring and loss/failure cases; synthetic performance is labeled separately from hardware validation.",
       "proof_file": "docs/acceptance/P0D-015.md",
       "planned_tests": [
         "tests/acceptance/test_p0d_015.py"
       ],
-      "completion_evidence": [],
+      "completion_evidence": [
+        "docs/acceptance/P0D-015.md",
+        "tests/acceptance/test_p0d_015.py"
+      ],
       "gate": null
     },
     {
@@ -3298,13 +3337,16 @@
         "P0D-004"
       ],
       "actor": "builder",
-      "status": "todo",
+      "status": "done",
       "acceptance": "Supported obstacle/geofence scenarios, perception failures, loss of navigation and operator override produce reproducible decisions and explicit limits; unavailable avoidance authority cannot create success.",
       "proof_file": "docs/acceptance/P0D-016.md",
       "planned_tests": [
         "tests/acceptance/test_p0d_016.py"
       ],
-      "completion_evidence": [],
+      "completion_evidence": [
+        "docs/acceptance/P0D-016.md",
+        "tests/acceptance/test_p0d_016.py"
+      ],
       "gate": null
     },
     {
@@ -3319,13 +3361,16 @@
         "P0D-016"
       ],
       "actor": "builder",
-      "status": "todo",
+      "status": "done",
       "acceptance": "Each vehicle has independent identity/state/power/limits; shared clocks/world effects, inter-vehicle sensing/collision and bounded swarm scheduling reproduce with declared seeds and resources.",
       "proof_file": "docs/acceptance/P0D-017.md",
       "planned_tests": [
         "tests/acceptance/test_p0d_017.py"
       ],
-      "completion_evidence": [],
+      "completion_evidence": [
+        "docs/acceptance/P0D-017.md",
+        "tests/acceptance/test_p0d_017.py"
+      ],
       "gate": null
     },
     {
@@ -3449,13 +3494,16 @@
         "P0D-016"
       ],
       "actor": "builder",
-      "status": "todo",
+      "status": "done",
       "acceptance": "Keyboard/focus/contrast/readability/error-recovery and supported instructional journeys pass in the desktop; equations, assumptions, model/evidence status and operating limits are available at the decision point.",
       "proof_file": "docs/acceptance/P0D-023.md",
       "planned_tests": [
         "tests/acceptance/test_p0d_023.py"
       ],
-      "completion_evidence": [],
+      "completion_evidence": [
+        "docs/acceptance/P0D-023.md",
+        "tests/acceptance/test_p0d_023.py"
+      ],
       "gate": null
     },
     {
@@ -4311,5 +4359,5 @@
     }
   ],
   "execution_hold": "Slice 0A software exit (P0A-039) COMPLETE with 16 GB host qualification (P0A-038). Implementation proceeds to Slice 0B (P0B-001). Physical gates P0A-027..033 and P0A-040 remain open separately.",
-  "next_build_task": "P0D-001"
+  "next_build_task": "P0D-018"
 }
