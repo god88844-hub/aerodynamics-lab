@@ -1,22 +1,24 @@
 # Desktop architecture and legacy boundary
 
-The standalone Godot 3D application is the primary product. It is a **100 % standalone, local, offline desktop application**: a normal user installs it once and can design, invent, simulate and learn with **zero server or Docker setup** and no network connection. See [SIMULATION_VISION_AND_REFERENCE_STACK](SIMULATION_VISION_AND_REFERENCE_STACK.md) for the Godot 4.7 Forward+ PBR / `gl_compatibility` dual visual profile, Dual Digital-Twin percentage scoring, and reference-platform mapping. The installer bundles everything needed for that: the desktop executable, the native/CAD runtime, the built-in component and material libraries, starter designs, lessons and compact reference benchmarks. Large multi-gigabyte raw external research datasets are **optional downloadable offline data packs** — never forced into the base installer and never required for the core offline workflow. Foundation qualification passed and is complete. The current stage is executing the numbered Phase 0 dependencies of the [master software plan](MASTER_PLAN.md); the plan is locked (`v0.0-plan-locked`) and Stage 0A is active. There is no new qualification stage before normal feature work.
+The standalone native C++20/OpenGL desktop application (`apps/native/`) is the primary product. It is a **100 % standalone, local, offline, zero-game-engine desktop application**: a normal user installs it once and can design, redesign custom parts, invent, simulate and learn with **zero server, Docker, or third-party game-engine runtime**. Legacy `apps/desktop/` (Godot 4.7 bridge) remains temporarily frozen only until `apps/native/` completes full CI parity, and will then be retired. See [SIMULATION_VISION_AND_REFERENCE_STACK](SIMULATION_VISION_AND_REFERENCE_STACK.md) for the Godot 4.7 Forward+ PBR / `gl_compatibility` dual visual profile, Dual Digital-Twin percentage scoring, and reference-platform mapping. The installer bundles everything needed for that: the desktop executable, the native/CAD runtime, the built-in component and material libraries, starter designs, lessons and compact reference benchmarks. Large multi-gigabyte raw external research datasets are **optional downloadable offline data packs** — never forced into the base installer and never required for the core offline workflow. Foundation qualification passed and is complete. The current stage is executing the numbered Phase 0 dependencies of the [master software plan](MASTER_PLAN.md); the plan is locked (`v0.0-plan-locked`) and Stage 0A is active. There is no new qualification stage before normal feature work.
 
 ## Authoritative execution path
 
 ```text
-Godot desktop (GDScript)
-  ├─ GDExtension → independent C++ engineering library
+Native Desktop Workbench (apps/native/, C++20 + OpenGL 3.3 + Dear ImGui)
+  ├─ direct C++20 link → independent lab_core engineering library (packages/engineering-core)
   └─ local process protocol → Python project / supervised CAD workers
        ├─ shared Python physics and engineering schemas
-       ├─ CadQuery / Open CASCADE exact geometry
+       ├─ CadQuery / Open CASCADE exact geometry & custom part designer
        └─ shared service functions currently located in apps/api/app/services
+
+Legacy Desktop Bridge (apps/desktop/, Godot) → frozen transition compatibility until native CI exit
 
 Legacy HTTP deployment → FastAPI routes → the same shared service / physics code
 Legacy React client   → legacy HTTP deployment
 ```
 
-The Godot desktop **does not require a running FastAPI HTTP server**. It invokes `scripts/lab_project.py` and `scripts/lab_worker.py` locally. Those workers currently import shared service functions from `apps/api/app/services`, including project, asset and simulation services. That source directory is therefore part of the present shared execution implementation, not dead server-only code. Its location does not imply a desktop HTTP dependency. A later package extraction requires compatibility tests and profiling; this change does not perform that migration.
+The native desktop (`apps/native/`) **does not require a running FastAPI HTTP server or Godot runtime**. It links `lab_core` directly and invokes `scripts/lab_project.py` and `scripts/lab_worker.py` locally. Those workers currently import shared service functions from `apps/api/app/services`, including project, asset and simulation services. That source directory is therefore part of the present shared execution implementation, not dead server-only code. Its location does not imply a desktop HTTP dependency. A later package extraction requires compatibility tests and profiling; this change does not perform that migration.
 
 `simulation_service.run_simulation` remains shared core behavior and serves persisted legacy API runs. Its provenance must describe the actual installed source/components/dependencies. Project and CAD wrappers retain their own environment checks. Engineering state is double precision with explicit SI/frame contracts. Verified engineering JSON remains authoritative; the rendering dictionary and display LOD cannot replace engineering inputs.
 

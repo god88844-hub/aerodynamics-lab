@@ -2863,8 +2863,9 @@
     {
       "id": "P0D-001",
       "stage": "0D",
-      "title": "Complete supported CAD, drawings and engineering handoff",
+      "title": "Complete supported CAD part design, redesign, drawings and engineering handoff",
       "work_packages": [
+        2,
         3
       ],
       "dependencies": [
@@ -2872,7 +2873,7 @@
       ],
       "actor": "builder",
       "status": "todo",
-      "acceptance": "Supported sketch/feature/assembly/joint/material operations, clearances, drawing views/dimensions, BOM and exchange work end to end with traceable revisions, units and engineering assumptions.",
+      "acceptance": "Native zero-engine workbench (`apps/native/`, C++20 + OpenGL 3.3 + Dear ImGui) and `packages/geometry/` support 2D constrained sketches, extrude/cut/revolve/loft/circular-pattern, custom drone part redesign & assembly swapping, 4-quadrant ortho + shaded-edge CAD views, drawing views/dimensions, BOM and STEP/STL/DXF/SVG exchange with traceable revisions and units.",
       "proof_file": "docs/acceptance/P0D-001.md",
       "planned_tests": [
         "tests/acceptance/test_p0d_001.py"
@@ -3394,7 +3395,7 @@
     {
       "id": "P0D-026",
       "stage": "0D",
-      "title": "Build reproducible standalone release installers",
+      "title": "Build reproducible standalone native Windows release installers",
       "work_packages": [
         2,
         12
@@ -3404,7 +3405,7 @@
       ],
       "actor": "builder",
       "status": "todo",
-      "acceptance": "Windows installer and declared headless/other-platform distributions reproduce from frozen locks with checksums/notices and selected signing policy; unsupported platforms are not advertised as tested.",
+      "acceptance": "Standalone native `apps/native/AerodynamicsLab.exe` (zero third-party game engine, C++20 + OpenGL + Dear ImGui + bundled OCCT/Python worker) and declared distributions reproduce from frozen locks with checksums/SBOM/notices; Godot runtime retired once native CI parity is green.",
       "proof_file": "docs/acceptance/P0D-026.md",
       "planned_tests": [
         "tests/acceptance/test_p0d_026.py"
