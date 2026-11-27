@@ -112,7 +112,18 @@ func _run() -> void:
 
 	desktop.call("_open_help_dialog")
 	desktop.get("help_dialog").hide()
-	print("[PASS] Protocols, Guided Learning Experiment, Bounded Sweep & Help/Equations dialog")
+	desktop.call("_on_ribbon_tab_changed", 3)
+	desktop.call("_toggle_flow_overlay")
+	desktop.call("_toggle_stress_map")
+	desktop.call("_snap_view", 0.72, 0.48)
+	desktop.call("_on_ribbon_tab_changed", 2)
+	desktop.call("_toggle_blueprint_balloons")
+	desktop.call("_export_active_drawing")
+	if not await _wait_job(desktop):
+		quit(27)
+		return
+	desktop.call("_on_ribbon_tab_changed", 0)
+	print("[PASS] Protocols, Guided Experiment, Sweep, Flow Streamlines, Stress Colormap & 2D Blueprint Export")
 
 	# 6. Multi-Family Simulation Workflows & 3D Viewport Animations
 	desktop.call("_run_fixed_wing_vlm")
