@@ -8,7 +8,7 @@ Tracking: [master issue #127](https://github.com/god88844-hub/aerodynamics-lab/i
 
 ## Next action and execution rules
 
-**P0A-004 is complete** with the owner's actual authorization receipt. Merge/tag requires the three pre-merge checks and five green CI jobs; actual operation receipts are recorded afterward. **Slice 0A software exit (P0A-039) COMPLETE with 16 GB host qualification (P0A-038). Implementation proceeds to Slice 0B (P0B-001). Physical gates P0A-027..033 and P0A-040 remain open separately.** The next future software task is **P0B-001**.
+**P0A-004 is complete** with the owner's actual authorization receipt. Merge/tag requires the three pre-merge checks and five green CI jobs; actual operation receipts are recorded afterward. **Slice 0A software exit (P0A-039) COMPLETE with 16 GB host qualification (P0A-038). Implementation proceeds to Slice 0B (P0B-001). Physical gates P0A-027..033 and P0A-040 remain open separately.** The next future software task is **P0C-001**.
 
 1. Read `AGENTS.md`, this task's section, the linked fundamentals, `docs/SIMULATION_VISION_AND_REFERENCE_STACK.md` and the acceptance ledger. Use only the canonical local workspace in `WORKSPACE.md`.
 2. When implementation is explicitly resumed, pick the first unchecked builder task in document order whose prerequisites are checked. A pending owner/custodian/reviewer task requires its real receipt; a builder cannot self-approve it or invent data.
@@ -48,7 +48,7 @@ Tasks with several WPs appear in each relevant issue but retain one canonical ID
 
 - [x] Slice 0A software exit — **P0A-039**
 - [ ] Slice 0A physical exit — **P0A-040**
-- [ ] Slice 0B software exit — **P0B-021**
+- [x] Slice 0B software exit — **P0B-021**
 - [ ] Slice 0B physical exit — **P0B-022**
 - [ ] Slice 0C software exit — **P0C-023**
 - [ ] Slice 0C physical exit — **P0C-024**
@@ -635,76 +635,88 @@ Tasks with several WPs appear in each relevant issue but retain one canonical ID
 ## Slice 0B — Fixed-wing geometry and flight
 
 <a name="p0b-001"></a>
-- [ ] **P0B-001 — Implement constrained sketch and feature-history editing** (WP3; actor: builder)
+- [x] **P0B-001 — Implement constrained sketch and feature-history editing** (WP3; actor: builder)
   - Prerequisites: P0A-039. Proof: [docs/acceptance/P0B-001.md](acceptance/P0B-001.md).
   - Acceptance: Sketch dimensions/constraints, extrusion/revolve/boolean operations and dependency history are editable in the desktop; overconstraints, broken references, undo/redo and regeneration are tested.
   - Planned verification: `pytest tests/acceptance/test_p0b_001.py`; required current-head CI.
+  - Recorded evidence: [docs/acceptance/P0B-001.md](acceptance/P0B-001.md), [tests/acceptance/test_p0b_001.py](../tests/acceptance/test_p0b_001.py).
 
 <a name="p0b-002"></a>
-- [ ] **P0B-002 — Author exact wings, airfoils, blades and surfaces** (WP3; actor: builder)
+- [x] **P0B-002 — Author exact wings, airfoils, blades and surfaces** (WP3; actor: builder)
   - Prerequisites: P0B-001. Proof: [docs/acceptance/P0B-002.md](acceptance/P0B-002.md).
   - Acceptance: Supported custom sections, span/chord/twist and lofts create valid exact geometry with persistent provenance; analytic volume/mass fixtures and geometry tolerances pass; unsupported surfaces are explicit.
   - Planned verification: `pytest tests/acceptance/test_p0b_002.py`; required current-head CI.
+  - Recorded evidence: [docs/acceptance/P0B-002.md](acceptance/P0B-002.md), [tests/acceptance/test_p0b_002.py](../tests/acceptance/test_p0b_002.py).
 
 <a name="p0b-003"></a>
-- [ ] **P0B-003 — Assemble joints, placements and distributed mass** (WP3; actor: builder)
+- [x] **P0B-003 — Assemble joints, placements and distributed mass** (WP3; actor: builder)
   - Prerequisites: P0B-002. Proof: [docs/acceptance/P0B-003.md](acceptance/P0B-003.md).
   - Acceptance: Supported fixed joints/assemblies transform component masses and inertia to consistent datums; hierarchy edits, constraints and missing-material refusal survive project round trips.
   - Planned verification: `pytest tests/acceptance/test_p0b_003.py`; required current-head CI.
+  - Recorded evidence: [docs/acceptance/P0B-003.md](acceptance/P0B-003.md), [tests/acceptance/test_p0b_003.py](../tests/acceptance/test_p0b_003.py).
 
 <a name="p0b-004"></a>
-- [ ] **P0B-004 — Deliver versioned CAD import/export and unit-safe exchange** (WP3; actor: builder)
+- [x] **P0B-004 — Deliver versioned CAD import/export and unit-safe exchange** (WP3; actor: builder)
   - Prerequisites: P0B-003. Proof: [docs/acceptance/P0B-004.md](acceptance/P0B-004.md).
   - Acceptance: Supported STEP/IGES and display mesh exchange round-trip declared units, solid identity and project references; invalid geometry is diagnosed, and STL/display meshes never silently replace authoritative exact geometry.
   - Planned verification: `pytest tests/acceptance/test_p0b_004.py`; required current-head CI.
+  - Recorded evidence: [docs/acceptance/P0B-004.md](acceptance/P0B-004.md), [tests/acceptance/test_p0b_004.py](../tests/acceptance/test_p0b_004.py).
 
 <a name="p0b-005"></a>
-- [ ] **P0B-005 — Implement geometry-to-aerodynamics loading** (WP5; actor: builder)
+- [x] **P0B-005 — Implement geometry-to-aerodynamics loading** (WP5; actor: builder)
   - Prerequisites: P0B-002, P0B-003. Proof: [docs/acceptance/P0B-005.md](acceptance/P0B-005.md).
   - Acceptance: Existing AeroSurface/AeroLoads contracts consume exact geometry, placements, station/polar hashes and moment datums; a geometric edit changes checked mass/inertia and appropriate aerodynamic loads; LOD independence and transform tests pass.
   - Planned verification: `pytest tests/acceptance/test_p0b_005.py`; required current-head CI.
+  - Recorded evidence: [docs/acceptance/P0B-005.md](acceptance/P0B-005.md), [tests/acceptance/test_p0b_005.py](../tests/acceptance/test_p0b_005.py).
 
 <a name="p0b-006"></a>
-- [ ] **P0B-006 — Deliver supported section/polar and wing aerodynamic models** (WP5, WP7; actor: builder)
+- [x] **P0B-006 — Deliver supported section/polar and wing aerodynamic models** (WP5, WP7; actor: builder)
   - Prerequisites: P0B-005. Proof: [docs/acceptance/P0B-006.md](acceptance/P0B-006.md).
   - Acceptance: Signed lift/drag/moment and supported induced-flow/wing models pass analytic and numerical cases; Reynolds/Mach/angle support and uncertainty are enforced; missing polars and unsupported viscous/stall mechanisms cannot receive success.
   - Planned verification: `pytest tests/acceptance/test_p0b_006.py`; required current-head CI.
+  - Recorded evidence: [docs/acceptance/P0B-006.md](acceptance/P0B-006.md), [tests/acceptance/test_p0b_006.py](../tests/acceptance/test_p0b_006.py).
 
 <a name="p0b-007"></a>
-- [ ] **P0B-007 — Implement fixed-wing propulsion, trim and controls** (WP5, WP6; actor: builder)
+- [x] **P0B-007 — Implement fixed-wing propulsion, trim and controls** (WP5, WP6; actor: builder)
   - Prerequisites: P0B-006, P0A-014. Proof: [docs/acceptance/P0B-007.md](acceptance/P0B-007.md).
   - Acceptance: Control surfaces, throttle and supported trim/flight dynamics share one plant; thrust/energy/actuator limits and infeasible trim are explicit; analytic trim and perturbation checks pass.
   - Planned verification: `pytest tests/acceptance/test_p0b_007.py`; required current-head CI.
+  - Recorded evidence: [docs/acceptance/P0B-007.md](acceptance/P0B-007.md), [tests/acceptance/test_p0b_007.py](../tests/acceptance/test_p0b_007.py).
 
 <a name="p0b-008"></a>
-- [ ] **P0B-008 — Enforce stall, load, speed and control-authority envelopes** (WP5, WP6; actor: builder)
+- [x] **P0B-008 — Enforce stall, load, speed and control-authority envelopes** (WP5, WP6; actor: builder)
   - Prerequisites: P0B-007. Proof: [docs/acceptance/P0B-008.md](acceptance/P0B-008.md).
   - Acceptance: Known operating/structural/actuator limits produce FAIL; stalls and post-limit motion are supported only where modeled, otherwise unvalidated/inconclusive; boundary regressions include conflicting or absent limits.
   - Planned verification: `pytest tests/acceptance/test_p0b_008.py`; required current-head CI.
+  - Recorded evidence: [docs/acceptance/P0B-008.md](acceptance/P0B-008.md), [tests/acceptance/test_p0b_008.py](../tests/acceptance/test_p0b_008.py).
 
 <a name="p0b-009"></a>
-- [ ] **P0B-009 — Run fixed-wing takeoff, cruise, maneuver and landing** (WP2, WP4, WP6; actor: builder)
+- [x] **P0B-009 — Run fixed-wing takeoff, cruise, maneuver and landing** (WP2, WP4, WP6; actor: builder)
   - Prerequisites: P0B-004, P0B-008, P0A-022. Proof: [docs/acceptance/P0B-009.md](acceptance/P0B-009.md).
   - Acceptance: A supported fixed-wing design can be authored and flown from the desktop with consistent wind/contact/mission semantics; saved commands and results reproduce through the headless path.
   - Planned verification: `pytest tests/acceptance/test_p0b_009.py`; required current-head CI.
+  - Recorded evidence: [docs/acceptance/P0B-009.md](acceptance/P0B-009.md), [tests/acceptance/test_p0b_009.py](../tests/acceptance/test_p0b_009.py).
 
 <a name="p0b-010"></a>
-- [ ] **P0B-010 — Expose aerodynamic analysis adapters and convergence** (WP7, WP11; actor: builder)
+- [x] **P0B-010 — Expose aerodynamic analysis adapters and convergence** (WP7, WP11; actor: builder)
   - Prerequisites: P0B-006. Proof: [docs/acceptance/P0B-010.md](acceptance/P0B-010.md).
   - Acceptance: Versioned analysis jobs declare backend/fidelity, polar/mesh/boundary inputs, progress and cancellation; supported calculations publish timestep/discretization/iteration error, without claiming planned VLM/CFD execution is already delivered.
   - Planned verification: `pytest tests/acceptance/test_p0b_010.py`; required current-head CI.
+  - Recorded evidence: [docs/acceptance/P0B-010.md](acceptance/P0B-010.md), [tests/acceptance/test_p0b_010.py](../tests/acceptance/test_p0b_010.py).
 
 <a name="p0b-011"></a>
-- [ ] **P0B-011 — Verify fixed-wing numerical and geometry sensitivity** (WP3, WP6, WP11; actor: builder)
+- [x] **P0B-011 — Verify fixed-wing numerical and geometry sensitivity** (WP3, WP6, WP11; actor: builder)
   - Prerequisites: P0B-009, P0B-010. Proof: [docs/acceptance/P0B-011.md](acceptance/P0B-011.md).
   - Acceptance: Force/moment signs, geometry perturbations, trim, convergence, frame transforms and energy balances pass frozen verification cases; editor and headless results agree within declared numerical tolerance.
   - Planned verification: `pytest tests/acceptance/test_p0b_011.py`; required current-head CI.
+  - Recorded evidence: [docs/acceptance/P0B-011.md](acceptance/P0B-011.md), [tests/acceptance/test_p0b_011.py](../tests/acceptance/test_p0b_011.py).
 
 <a name="p0b-012"></a>
-- [ ] **P0B-012 — Register fixed-wing validation policy and frozen models** (WP11; actor: builder)
+- [x] **P0B-012 — Register fixed-wing validation policy and frozen models** (WP11; actor: builder)
   - Prerequisites: P0B-011. Proof: [docs/acceptance/P0B-012.md](acceptance/P0B-012.md).
   - Acceptance: Create reviewed family-specific criteria/uncertainty/measurement annexes before confirmatory reveal; do not transfer multirotor thresholds or validation without an explicit justified similarity argument.
   - Planned verification: `pytest tests/acceptance/test_p0b_012.py`; required current-head CI.
+  - Recorded evidence: [docs/acceptance/P0B-012.md](acceptance/P0B-012.md), [tests/acceptance/test_p0b_012.py](../tests/acceptance/test_p0b_012.py).
 
 <a name="p0b-013"></a>
 - [ ] **P0B-013 — Acquire sealed wing and fixed-wing component measurements** (WP11; actor: custodian)
@@ -734,28 +746,32 @@ Tasks with several WPs appear in each relevant issue but retain one canonical ID
   - Acceptance: Reviewer reproduces the frozen results and signs the limited family-specific operating envelope; a multirotor qualification does not substitute.
 
 <a name="p0b-018"></a>
-- [ ] **P0B-018 — Teach wing design and comparative experiments** (WP10; actor: builder)
+- [x] **P0B-018 — Teach wing design and comparative experiments** (WP10; actor: builder)
   - Prerequisites: P0B-009, P0B-010. Proof: [docs/acceptance/P0B-018.md](acceptance/P0B-018.md).
   - Acceptance: Desktop workflows compare span/chord/twist/airfoil/control choices with reproducible hypotheses, equations, assumptions, constraints and provenance; learning exercises disclose unvalidated regimes.
   - Planned verification: `pytest tests/acceptance/test_p0b_018.py`; required current-head CI.
+  - Recorded evidence: [docs/acceptance/P0B-018.md](acceptance/P0B-018.md), [tests/acceptance/test_p0b_018.py](../tests/acceptance/test_p0b_018.py).
 
 <a name="p0b-019"></a>
-- [ ] **P0B-019 — Qualify fixed-wing CAD application recovery and packaging** (WP12; actor: builder)
+- [x] **P0B-019 — Qualify fixed-wing CAD application recovery and packaging** (WP12; actor: builder)
   - Prerequisites: P0B-004, P0B-009, P0B-018. Proof: [docs/acceptance/P0B-019.md](acceptance/P0B-019.md).
   - Acceptance: Install/edit/exchange/run/save/reopen/cancel/update flows pass under declared hardware budgets; existing multirotor projects and current-head security checks remain green.
   - Planned verification: `pytest tests/acceptance/test_p0b_019.py`; required current-head CI.
+  - Recorded evidence: [docs/acceptance/P0B-019.md](acceptance/P0B-019.md), [tests/acceptance/test_p0b_019.py](../tests/acceptance/test_p0b_019.py).
 
 <a name="p0b-020"></a>
-- [ ] **P0B-020 — Complete fixed-wing experiment and source library** (WP1, WP4, WP11; actor: builder)
+- [x] **P0B-020 — Complete fixed-wing experiment and source library** (WP1, WP4, WP11; actor: builder)
   - Prerequisites: P0B-012. Proof: [docs/acceptance/P0B-020.md](acceptance/P0B-020.md).
   - Acceptance: Reference projects, environment/mission presets, model support and source-license/role records are versioned and reproducible; a sample project is not labeled physically accepted before its measurement gates pass.
   - Planned verification: `pytest tests/acceptance/test_p0b_020.py`; required current-head CI.
+  - Recorded evidence: [docs/acceptance/P0B-020.md](acceptance/P0B-020.md), [tests/acceptance/test_p0b_020.py](../tests/acceptance/test_p0b_020.py).
 
 <a name="p0b-021"></a>
-- [ ] **P0B-021 — Exit: fixed-wing software slice** (WP2, WP3, WP4, WP5, WP6, WP7, WP10, WP11, WP12; actor: builder)
+- [x] **P0B-021 — Exit: fixed-wing software slice** (WP2, WP3, WP4, WP5, WP6, WP7, WP10, WP11, WP12; actor: builder)
   - Prerequisites: P0B-011, P0B-012, P0B-018, P0B-019, P0B-020. Proof: [docs/acceptance/P0B-021.md](acceptance/P0B-021.md).
   - Acceptance: All fixed-wing software acceptance paths and preserved multirotor regressions pass; publish the supported model/domain matrix and unresolved physical requirements. Enables 0C software only.
   - Planned verification: `pytest tests/acceptance/test_p0b_021.py`; required current-head CI.
+  - Recorded evidence: [docs/acceptance/P0B-021.md](acceptance/P0B-021.md), [tests/acceptance/test_p0b_021.py](../tests/acceptance/test_p0b_021.py).
 
 <a name="p0b-022"></a>
 - [ ] **P0B-022 — Exit: physically accepted fixed-wing envelope** (WP6, WP11, WP12; actor: builder)
@@ -1298,4 +1314,4 @@ Tasks with several WPs appear in each relevant issue but retain one canonical ID
   - Prerequisites: P4-007. Proof: [docs/acceptance/P4-008.md](acceptance/P4-008.md).
   - Acceptance: Qualified independent review accepts the stated limited uses; source/rights/security, reproducible distributions, compatibility and recovery gates close the phase.
 
-Unique task count: **150**; checked **32**, unchecked **118**. These are planning tasks, not a count of physically validated milestones. All ten legacy major acceptance families and all twelve broad Phase 0 package issues remain open until their own actual exit evidence exists.
+Unique task count: **150**; checked **48**, unchecked **102**. These are planning tasks, not a count of physically validated milestones. All ten legacy major acceptance families and all twelve broad Phase 0 package issues remain open until their own actual exit evidence exists.

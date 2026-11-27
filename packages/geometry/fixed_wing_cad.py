@@ -22,13 +22,30 @@ class ConstrainedSketch2D:
     height_m: float
     thickness_m: float
     history_features: tuple[str, ...] = ("base_sketch", "extrude")
+    area_constraint_m2: float | None = None
+    diagonal_constraint_m: float | None = None
+    is_closed: bool = True
 
     def __post_init__(self) -> None:
         if not self.name.strip():
             raise ValueError("Sketch name must be non-empty")
+        if not self.is_closed:
+            raise ValueError("Open 2D sketch profile rejected: closed contour required for solid feature")
         for val, label in ((self.width_m, "width_m"), (self.height_m, "height_m"), (self.thickness_m, "thickness_m")):
             if not math.isfinite(val) or val <= 0.0:
                 raise ValueError(f"{label} must be finite and > 0")
+        if self.area_constraint_m2 is not None:
+            expected_area = self.width_m * self.height_m
+            if not math.isfinite(self.area_constraint_m2) or not math.isclose(self.area_constraint_m2, expected_area, rel_tol=1e-6, abs_tol=1e-9):
+                raise ValueError(
+                    f"Overconstrained 2D sketch: area_constraint_m2={self.area_constraint_m2} conflicts with width*height={expected_area}"
+                )
+        if self.diagonal_constraint_m is not None:
+            expected_diag = math.hypot(self.width_m, self.height_m)
+            if not math.isfinite(self.diagonal_constraint_m) or not math.isclose(self.diagonal_constraint_m, expected_diag, rel_tol=1e-6, abs_tol=1e-9):
+                raise ValueError(
+                    f"Overconstrained 2D sketch: diagonal_constraint_m={self.diagonal_constraint_m} conflicts with hypot={expected_diag}"
+                )
 
     def area_m2(self) -> float:
         return self.width_m * self.height_m
@@ -163,15 +180,30 @@ def compute_wing_geometry_properties(wing: ParametricWingSpec) -> dict[str, Any]
     }
 
 
-def export_cad_exchange_manifest(wing: ParametricWingSpec, *, unit_system: str = "SI_METERS") -> dict[str, Any]:
+def export_cad_exchange_manifest(
+    wing: ParametricWingSpec,
+    *,
+    unit_system: str = "SI_METERS",
+    exchange_format: str = "STEP_AP214",
+    source_role: str = "exact_geometry",
+) -> dict[str, Any]:
     """Prepare a unit-safe, hash-bound CAD exchange payload verifying round-trip geometric consistency."""
     if unit_system != "SI_METERS":
         raise ValueError(f"Unsupported CAD exchange unit_system {unit_system!r}; SI_METERS required")
+    fmt_up = exchange_format.upper()
+    if fmt_up in ("STL", "OBJ", "GLB", "MESH") and source_role == "exact_geometry":
+        raise ValueError(
+            f"Unsupported exact geometry exchange format {exchange_format!r}: display meshes cannot replace authoritative exact STEP/IGES geometry"
+        )
+    if fmt_up not in ("STEP", "STEP_AP214", "IGES", "AEROFORGE_CAD_EXCHANGE_1", "STL"):
+        raise ValueError(f"Unsupported CAD exchange format {exchange_format!r}")
     props = compute_wing_geometry_properties(wing)
     canonical = json.dumps(props, sort_keys=True, separators=(",", ":"), allow_nan=False).encode("utf-8")
     return {
         "schema_version": "1.0",
-        "exchange_format": "aeroforge_cad_exchange_1",
+        "exchange_format": fmt_up,
+        "source_role": source_role,
+        "authoritative_exact": source_role == "exact_geometry" and fmt_up in ("STEP", "STEP_AP214", "IGES", "AEROFORGE_CAD_EXCHANGE_1"),
         "unit_system": unit_system,
         "frame": "local_right_handed_z_up",
         "payload": props,
@@ -179,8 +211,41 @@ def export_cad_exchange_manifest(wing: ParametricWingSpec, *, unit_system: str =
     }
 
 
+def import_cad_exchange_manifest(manifest: dict[str, Any], *, require_exact: bool = True) -> dict[str, Any]:
+    """Import and verify unit consistency, SHA256 integrity, and exact-vs-display distinction."""
+    if manifest.get("unit_system") != "SI_METERS":
+        raise ValueError(f"CAD import unit mismatch: expected SI_METERS, got {manifest.get('unit_system')!r}")
+    fmt_up = str(manifest.get("exchange_format", "")).upper()
+    if require_exact and (not manifest.get("authoritative_exact") or fmt_up in ("STL", "OBJ", "GLB", "MESH")):
+        raise ValueError("CAD import refused: STL/display mesh cannot silently substitute for authoritative exact STEP/IGES geometry")
+    payload = manifest.get("payload")
+    if not isinstance(payload, dict):
+        raise ValueError("CAD import missing payload dictionary")
+    canonical = json.dumps(payload, sort_keys=True, separators=(",", ":"), allow_nan=False).encode("utf-8")
+    digest = sha256(canonical).hexdigest()
+    if digest != manifest.get("payload_sha256"):
+        raise ValueError("CAD import corrupted: payload SHA256 digest mismatch")
+    for dim_key in ("wingspan_m", "root_chord_m", "tip_chord_m", "solid_volume_m3"):
+        val = float(payload.get(dim_key, -1.0))
+        if not math.isfinite(val) or val <= 0.0:
+            raise ValueError(f"Invalid CAD geometry {dim_key}={val}")
+    return dict(payload)
+
+
+def _compute_feature_delta(op: str, params_m: dict[str, float]) -> float:
+    if op == "revolve":
+        vol = math.pi * (params_m.get("outer_radius_m", 0.05) ** 2 - params_m.get("inner_radius_m", 0.0) ** 2) * params_m.get("length_m", 0.2)
+        if vol <= 0.0:
+            raise ValueError("Revolve inner_radius_m must be smaller than outer_radius_m")
+        return float(vol)
+    if op in ("extrude", "boolean_union", "boolean_cut"):
+        vol = params_m.get("width_m", 0.1) * params_m.get("height_m", 0.1) * params_m.get("depth_m", 0.1)
+        return float(-abs(vol) if op == "boolean_cut" else vol)
+    return 0.0
+
+
 class FeatureHistoryStack:
-    """Undoable/redoable parametric CAD feature stack (sketch, extrude, revolve, boolean)."""
+    """Undoable/redoable parametric CAD feature stack (sketch, extrude, revolve, boolean, dependencies)."""
 
     SUPPORTED_OPS = ("sketch_rect", "extrude", "revolve", "boolean_union", "boolean_cut")
 
@@ -188,26 +253,71 @@ class FeatureHistoryStack:
         self._features: list[dict[str, Any]] = []
         self._redo: list[dict[str, Any]] = []
 
-    def add_feature(self, op: str, *, name: str, params_m: dict[str, float]) -> dict[str, Any]:
+    def add_feature(self, op: str, *, name: str, params_m: dict[str, float], depends_on: str | None = None) -> dict[str, Any]:
         if op not in self.SUPPORTED_OPS:
             raise ValueError(f"Unsupported CAD operation {op!r}; expected one of {self.SUPPORTED_OPS}")
-        if not name.strip():
+        clean_name = name.strip()
+        if not clean_name:
             raise ValueError("Feature name must be non-empty")
+        if any(f["name"] == clean_name for f in self._features):
+            raise ValueError(f"Duplicate feature name {clean_name!r}")
+        if depends_on is not None and not any(f["name"] == depends_on for f in self._features):
+            raise ValueError(f"Broken feature reference: parent {depends_on!r} does not exist")
         for key, val in params_m.items():
             if not math.isfinite(val) or val <= 0.0:
                 raise ValueError(f"Parameter {key!r} must be finite and > 0")
-        if op == "revolve":
-            vol = math.pi * (params_m.get("outer_radius_m", 0.05) ** 2 - params_m.get("inner_radius_m", 0.0) ** 2) * params_m.get("length_m", 0.2)
-            if vol <= 0.0:
-                raise ValueError("Revolve inner_radius_m must be smaller than outer_radius_m")
-        elif op in ("extrude", "boolean_union", "boolean_cut"):
-            vol = params_m.get("width_m", 0.1) * params_m.get("height_m", 0.1) * params_m.get("depth_m", 0.1)
-            if op == "boolean_cut":
-                vol = -abs(vol)
-        else:
-            vol = 0.0
-        entry = {"op": op, "name": name.strip(), "params_m": dict(params_m), "delta_volume_m3": float(vol)}
+        vol = _compute_feature_delta(op, params_m)
+        entry = {
+            "op": op,
+            "name": clean_name,
+            "depends_on": depends_on,
+            "params_m": dict(params_m),
+            "delta_volume_m3": vol,
+        }
+        candidate = [*self._features, entry]
+        if sum(item["delta_volume_m3"] for item in candidate) < 0.0:
+            raise ValueError("Boolean cut produced negative net solid volume")
         self._features.append(entry)
+        self._redo.clear()
+        return self.snapshot()
+
+    def delete_feature(self, name: str) -> dict[str, Any]:
+        dependents = [f["name"] for f in self._features if f.get("depends_on") == name]
+        if dependents:
+            raise ValueError(f"Broken feature reference: cannot delete {name!r} while {dependents} depend on it")
+        idx = next((i for i, f in enumerate(self._features) if f["name"] == name), None)
+        if idx is None:
+            raise ValueError(f"Broken feature reference: unknown feature {name!r}")
+        removed = self._features.pop(idx)
+        try:
+            return self.snapshot()
+        except ValueError:
+            self._features.insert(idx, removed)
+            raise
+
+    def regenerate(self, overrides: dict[str, dict[str, float]] | None = None) -> dict[str, Any]:
+        overrides = overrides or {}
+        known = {f["name"] for f in self._features}
+        for target_name in overrides:
+            if target_name not in known:
+                raise ValueError(f"Broken feature reference: override target {target_name!r} missing")
+        rebuilt: list[dict[str, Any]] = []
+        seen: set[str] = set()
+        for feat in self._features:
+            if feat.get("depends_on") is not None and feat["depends_on"] not in seen:
+                raise ValueError(f"Broken feature reference during regeneration: missing parent {feat['depends_on']!r}")
+            new_params = dict(feat["params_m"])
+            if feat["name"] in overrides:
+                for k, v in overrides[feat["name"]].items():
+                    if not math.isfinite(v) or v <= 0.0:
+                        raise ValueError(f"Regeneration parameter {k!r} must be finite and > 0")
+                    new_params[k] = float(v)
+            new_vol = _compute_feature_delta(feat["op"], new_params)
+            rebuilt.append({**feat, "params_m": new_params, "delta_volume_m3": new_vol})
+            seen.add(feat["name"])
+        if sum(item["delta_volume_m3"] for item in rebuilt) < 0.0:
+            raise ValueError("Regeneration produced negative net solid volume")
+        self._features = rebuilt
         self._redo.clear()
         return self.snapshot()
 
