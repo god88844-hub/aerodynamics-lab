@@ -25,11 +25,12 @@ from desktop_worker.project_workflow import (  # noqa: E402
     write_recovery_snapshot,
 )
 from desktop_worker.twin_comparison import compare_frozen_run_and_source, export_labeled_comparison  # noqa: E402
-from geometry.fixed_wing_cad import ParametricWingSpec, compute_wing_geometry_properties  # noqa: E402
+from geometry.fixed_wing_cad import ParametricWingSpec, compute_wing_geometry_properties, export_2d_engineering_drawing_svg_dxf  # noqa: E402
 from optimization.bounded_sweep import run_bounded_sweep  # noqa: E402
 from physics.aerodynamics.fixed_wing import run_fixed_wing_mission  # noqa: E402
-from physics.aerodynamics.rotorcraft_vtol import run_vtol_transition_corridor  # noqa: E402
-from physics.autonomy.sitl_and_swarms import run_multi_drone_swarm  # noqa: E402
+from physics.aerodynamics.rotorcraft_vtol import run_helicopter_autorotation_mission, run_vtol_transition_corridor  # noqa: E402
+from physics.aerodynamics.sixdof_fixed_wing import build_derivatives_from_wing, simulate_6dof_fixed_wing  # noqa: E402
+from physics.autonomy.sitl_and_swarms import run_multi_drone_swarm, run_sitl_closed_loop_mission  # noqa: E402
 from physics.dynamics.assembly_layout import build_multirotor_layout_and_bom  # noqa: E402
 from physics.environment.adverse_weather import evaluate_icing_and_shedding, evaluate_rain_wet_effects  # noqa: E402
 from physics.propulsion.loader import ComponentLibrary  # noqa: E402
@@ -60,9 +61,13 @@ def main() -> int:
             "guided-experiment",
             "bounded-sweep",
             "fixed-wing-sim",
+            "6dof-fixed-wing",
+            "export-drawing",
             "vtol-transition",
+            "autorotation-sim",
             "adverse-weather",
             "swarm-sim",
+            "sitl-mission",
             "run",
         ),
     )
@@ -241,6 +246,48 @@ def main() -> int:
                 target_positions_m=[tuple(float(v) for v in p) for p in spec["target_positions_m"]],
                 min_separation_m=float(spec.get("min_separation_m", 1.0)),
             )
+            write_result(args.output, payload)
+        elif args.command == "export-drawing":
+            spec = json.loads(args.input.read_text(encoding="utf-8"))
+            wing = ParametricWingSpec(
+                name=str(spec.get("name", "FixedWing")),
+                wingspan_m=float(spec.get("wingspan_m", 1.8)),
+                root_chord_m=float(spec.get("root_chord_m", 0.26)),
+                tip_chord_m=float(spec.get("tip_chord_m", 0.14)),
+                airfoil_code=str(spec.get("airfoil_code", "2412")),
+            )
+            payload = export_2d_engineering_drawing_svg_dxf(
+                wing,
+                svg_path=Path(spec["svg_path"]) if spec.get("svg_path") else None,
+                dxf_path=Path(spec["dxf_path"]) if spec.get("dxf_path") else None,
+            )
+            write_result(args.output, payload)
+        elif args.command == "6dof-fixed-wing":
+            spec = json.loads(args.input.read_text(encoding="utf-8"))
+            wing = ParametricWingSpec(
+                name=str(spec.get("name", "FixedWing")),
+                wingspan_m=float(spec.get("wingspan_m", 1.8)),
+                root_chord_m=float(spec.get("root_chord_m", 0.26)),
+                tip_chord_m=float(spec.get("tip_chord_m", 0.14)),
+                airfoil_code=str(spec.get("airfoil_code", "2412")),
+            )
+            payload = simulate_6dof_fixed_wing(
+                aero=build_derivatives_from_wing(wing),
+                mass_kg=float(spec.get("mass_kg", 2.2)),
+                thrust_n=float(spec.get("thrust_n", 3.5)),
+                duration_s=float(spec.get("duration_s", 1.2)),
+            )
+            write_result(args.output, payload)
+        elif args.command == "autorotation-sim":
+            spec = json.loads(args.input.read_text(encoding="utf-8"))
+            payload = run_helicopter_autorotation_mission(
+                flare_altitude_m=float(spec.get("flare_altitude_m", 8.0)),
+                min_safe_rpm=float(spec.get("min_safe_rpm", 950.0)),
+            )
+            write_result(args.output, payload)
+        elif args.command == "sitl-mission":
+            spec = json.loads(args.input.read_text(encoding="utf-8"))
+            payload = run_sitl_closed_loop_mission(firmware_kind=str(spec.get("firmware_kind", "ardupilot")))
             write_result(args.output, payload)
         elif args.command == "import-legacy":
             raw = json.loads(args.input.read_text(encoding="utf-8"))
