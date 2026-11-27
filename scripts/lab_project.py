@@ -26,7 +26,9 @@ from desktop_worker.project_workflow import (  # noqa: E402
 )
 from desktop_worker.twin_comparison import compare_frozen_run_and_source, export_labeled_comparison  # noqa: E402
 from geometry.fixed_wing_cad import ParametricWingSpec, compute_wing_geometry_properties, export_2d_engineering_drawing_svg_dxf  # noqa: E402
+from geometry.part_designer import CustomPartRecipe, build_custom_part, swap_assembly_part  # noqa: E402
 from optimization.bounded_sweep import run_bounded_sweep  # noqa: E402
+from physics.validation.virtual_evidence_scorecard import compute_virtual_evidence_scorecard  # noqa: E402
 from physics.aerodynamics.fixed_wing import run_fixed_wing_mission  # noqa: E402
 from physics.aerodynamics.rotorcraft_vtol import run_helicopter_autorotation_mission, run_vtol_transition_corridor  # noqa: E402
 from physics.aerodynamics.sixdof_fixed_wing import build_derivatives_from_wing, simulate_6dof_fixed_wing  # noqa: E402
@@ -68,6 +70,9 @@ def main() -> int:
             "adverse-weather",
             "swarm-sim",
             "sitl-mission",
+            "build-custom-part",
+            "swap-assembly-part",
+            "evidence-scorecard",
             "run",
         ),
     )
@@ -288,6 +293,60 @@ def main() -> int:
         elif args.command == "sitl-mission":
             spec = json.loads(args.input.read_text(encoding="utf-8"))
             payload = run_sitl_closed_loop_mission(firmware_kind=str(spec.get("firmware_kind", "ardupilot")))
+            write_result(args.output, payload)
+        elif args.command == "build-custom-part":
+            spec = json.loads(args.input.read_text(encoding="utf-8"))
+            recipe = CustomPartRecipe(
+                part_name=str(spec["part_name"]),
+                sketch_kind=str(spec.get("sketch_kind", "rounded_plate")),
+                width_m=float(spec.get("width_m", 0.048)),
+                length_m=float(spec.get("length_m", 0.240)),
+                thickness_m=float(spec.get("thickness_m", 0.012)),
+                hole_radius_m=float(spec.get("hole_radius_m", 0.008)),
+                revolve_360=bool(spec.get("revolve_360", False)),
+                circular_pattern_count=int(spec.get("circular_pattern_count", 1)),
+                density_kg_m3=float(spec.get("density_kg_m3", 1580.0)),
+                density_source=str(spec.get("density_source", "")),
+                airfoil_code=str(spec.get("airfoil_code", "2412")),
+            )
+            export_dir = Path(spec["export_dir"]) if spec.get("export_dir") else None
+            payload = build_custom_part(recipe, export_dir=export_dir)
+            write_result(args.output, payload)
+        elif args.command == "swap-assembly-part":
+            spec = json.loads(args.input.read_text(encoding="utf-8"))
+            rep = spec["replacement"]
+            recipe = CustomPartRecipe(
+                part_name=str(rep["part_name"]),
+                sketch_kind=str(rep.get("sketch_kind", "rounded_plate")),
+                width_m=float(rep.get("width_m", 0.048)),
+                length_m=float(rep.get("length_m", 0.240)),
+                thickness_m=float(rep.get("thickness_m", 0.012)),
+                hole_radius_m=float(rep.get("hole_radius_m", 0.008)),
+                revolve_360=bool(rep.get("revolve_360", False)),
+                circular_pattern_count=int(rep.get("circular_pattern_count", 1)),
+                density_kg_m3=float(rep.get("density_kg_m3", 1580.0)),
+                density_source=str(rep.get("density_source", "")),
+            )
+            pos = tuple(float(v) for v in spec["replacement_position_m"]) if spec.get("replacement_position_m") else None
+            payload = swap_assembly_part(
+                list(spec["parts"]),
+                target_part_name=str(spec["target_part_name"]),
+                replacement=recipe,
+                replacement_position_m=pos,
+            )
+            write_result(args.output, payload)
+        elif args.command == "evidence-scorecard":
+            spec = json.loads(args.input.read_text(encoding="utf-8"))
+            payload = compute_virtual_evidence_scorecard(
+                vehicle_family=str(spec.get("vehicle_family", "multirotor")),
+                cpp_mass_kg=float(spec["cpp_mass_kg"]),
+                python_mass_kg=float(spec["python_mass_kg"]),
+                clearance_ok=bool(spec.get("clearance_ok", True)),
+                mach=float(spec.get("mach", 0.05)),
+                alpha_deg=float(spec.get("alpha_deg", 5.0)),
+                has_custom_modified_part=bool(spec.get("has_custom_modified_part", False)),
+                benchmark_twin_percent=spec.get("benchmark_twin_percent"),
+            )
             write_result(args.output, payload)
         elif args.command == "import-legacy":
             raw = json.loads(args.input.read_text(encoding="utf-8"))

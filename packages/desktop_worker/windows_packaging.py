@@ -13,6 +13,8 @@ from desktop_worker.project_workflow import recover_last_valid_project
 ROOT = Path(__file__).resolve().parents[2]
 
 PACKAGE_TREE_ITEMS = (
+    "apps/native/CMakeLists.txt",
+    "apps/native/src",
     "apps/desktop/main.gd",
     "apps/desktop/cad_worker.gd",
     "apps/desktop/project.godot",
@@ -20,6 +22,7 @@ PACKAGE_TREE_ITEMS = (
     "apps/desktop/requirements-cad.lock",
     "apps/api/app/services",
     "apps/api/requirements.lock",
+    "packages/engineering-core",
     "packages/desktop_worker",
     "packages/physics",
     "packages/geometry",
@@ -38,8 +41,8 @@ PACKAGE_TREE_ITEMS = (
 
 NOTICE_TEXT = (
     "Aerodynamics Lab Standalone Offline Desktop Distribution\n"
-    "- Requires zero external web or HTTP server.\n"
-    "- Bundles local Godot frontend definitions, Open CASCADE/Python worker scripts, shared schemas, and reference component/design data.\n"
+    "- Zero third-party game engine or HTTP server required.\n"
+    "- Bundles native C++20/OpenGL workbench sources (plus built AerodynamicsLab.exe when present), Open CASCADE/Python worker scripts, shared schemas, and reference component/design data.\n"
     "- See LICENSE for Apache-2.0 repository terms; external benchmark sources retain their declared licenses.\n"
 )
 
@@ -74,6 +77,12 @@ def stage_standalone_package(target_dir: Path, *, repo_root: Path = ROOT) -> dic
             dst.parent.mkdir(parents=True, exist_ok=True)
             shutil.copy2(src, dst)
             staged_files.append({"path": rel, "sha256": _file_sha256(dst)})
+
+    native_exe = repo_root / "apps/native/build/AerodynamicsLab.exe"
+    if native_exe.is_file():
+        dst_exe = target_dir / "AerodynamicsLab.exe"
+        shutil.copy2(native_exe, dst_exe)
+        staged_files.append({"path": "AerodynamicsLab.exe", "sha256": _file_sha256(dst_exe)})
 
     notice_path = target_dir / "NOTICE_STANDALONE.txt"
     notice_path.write_text(NOTICE_TEXT, encoding="utf-8")
