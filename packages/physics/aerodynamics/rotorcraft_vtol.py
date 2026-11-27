@@ -9,6 +9,7 @@ from typing import Any
 
 import numpy as np
 
+from physics.aerodynamics.pitt_peters_inflow import run_pitt_peters_step_response
 from physics.constants import STANDARD_GRAVITY
 
 
@@ -222,3 +223,161 @@ def build_detailed_solver_contract(
     }
     payload["contract_sha256"] = sha256(json.dumps(payload, sort_keys=True, separators=(",", ":")).encode("utf-8")).hexdigest()
     return payload
+
+
+def run_helicopter_autorotation_mission(
+    *,
+    mass_kg: float = 3.2,
+    rotor_radius_m: float = 0.72,
+    rotor_inertia_kg_m2: float = 0.14,
+    initial_altitude_m: float = 32.0,
+    initial_rpm: float = 1650.0,
+    min_safe_rpm: float = 950.0,
+    flare_altitude_m: float = 7.0,
+    max_touchdown_sink_m_s: float = 2.6,
+    dt_s: float = 0.05,
+    duration_s: float = 12.0,
+) -> dict[str, Any]:
+    """Simulate unpowered helicopter autorotation descent + collective flare with RPM stall and sink limits."""
+    if mass_kg <= 0.0 or rotor_radius_m <= 0.0 or rotor_inertia_kg_m2 <= 0.0 or dt_s <= 0.0:
+        raise ValueError("Autorotation helicopter parameters must be positive")
+    z = float(initial_altitude_m)
+    vz = -5.2
+    omega = initial_rpm * 2.0 * math.pi / 60.0
+    disk_area = math.pi * rotor_radius_m * rotor_radius_m
+    steps = max(2, math.ceil(duration_s / dt_s))
+
+    times, xs, ys, zs, qs, rpms, sinks = [], [], [], [], [], [], []
+    verdict = "NO_MODELED_LIMIT_BREACHED"
+    abort_reason: str | None = None
+    touchdown_sink = 0.0
+
+    for idx in range(steps + 1):
+        t = round(idx * dt_s, 4)
+        rpm = omega * 60.0 / (2.0 * math.pi)
+        times.append(t)
+        xs.append(round(4.5 * t, 4))  # gentle forward autorotative glide
+        ys.append(0.0)
+        zs.append(round(max(0.0, z), 4))
+        qs.append([1.0, 0.0, -0.04, 0.0] if z > flare_altitude_m else [1.0, 0.0, 0.08, 0.0])
+        rpms.append(round(rpm, 2))
+        sinks.append(round(-vz, 3))
+
+        if rpm < min_safe_rpm:
+            verdict = "FAIL"
+            abort_reason = f"Rotor RPM decayed below safe stall bound ({rpm:.1f} < {min_safe_rpm:.1f} RPM)"
+            break
+        if z <= 0.0 and idx > 0:
+            touchdown_sink = abs(vz)
+            if touchdown_sink > max_touchdown_sink_m_s:
+                verdict = "FAIL"
+                abort_reason = f"Hard autorotation landing sink={touchdown_sink:.2f} > {max_touchdown_sink_m_s:.2f} m/s"
+            break
+
+        # Collective increases in flare below flare_altitude_m; autorotative windmill torque recovers/drains omega
+        in_flare = z <= flare_altitude_m
+        v_tip = omega * rotor_radius_m
+        solidity = 0.032
+        cd0_eff = 0.020 if in_flare else 0.010
+        thrust_coeff = 0.0038 if in_flare else 0.00175
+        thrust_n = min(1.85 * mass_kg * STANDARD_GRAVITY, 0.5 * 1.225 * disk_area * (v_tip ** 2) * thrust_coeff * (1.0 + 0.05 * max(0.0, -vz)))
+        az = (thrust_n - mass_kg * STANDARD_GRAVITY) / mass_kg
+        # Physical momentum energy extraction vs profile drag torque
+        windmill_power = max(0.0, -vz) * thrust_n * 0.88
+        profile_power = 0.125 * 1.225 * solidity * cd0_eff * disk_area * (v_tip ** 3)
+        domega = (windmill_power - profile_power) / (rotor_inertia_kg_m2 * max(1.0, omega))
+        omega = max(1.0, omega + domega * dt_s)
+        vz = vz + az * dt_s
+        z = z + vz * dt_s
+
+    return {
+        "schema_version": "1.0",
+        "aircraft_family": "helicopter",
+        "status": "failed" if abort_reason else "completed",
+        "verdict": verdict,
+        "abort_reason": abort_reason,
+        "touchdown_sink_m_s": round(touchdown_sink, 3),
+        "min_observed_rpm": min(rpms),
+        "telemetry": {
+            "t": times,
+            "x": xs,
+            "y": ys,
+            "z": zs,
+            "q_wxyz": qs,
+            "rotor_rpm": rpms,
+            "sink_rate_m_s": sinks,
+            "channel_provenance": "calculated",
+        },
+        "physical_validation_status": "UNVALIDATED",
+    }
+
+
+def run_coupled_aero_thermo_structural(
+    *,
+    vtol_architecture: str = "tilt_rotor",
+    mass_kg: float = 3.2,
+    wing_area_m2: float = 0.45,
+    max_rotor_thrust_n: float = 48.0,
+    max_cruise_thrust_n: float = 28.0,
+    boom_length_m: float = 0.55,
+    youngs_modulus_pa: float = 6.5e10,
+    area_moment_m4: float = 1.6e-9,
+    linear_density_kg_m: float = 0.35,
+    max_tip_deflection_mm: float = 22.0,
+) -> dict[str, Any]:
+    """Coupled VTOL transition aerodynamics + Euler-Bernoulli boom bending + transient motor thermal loop."""
+    if vtol_architecture not in ("tilt_rotor", "lift_plus_cruise"):
+        raise ValueError("vtol_architecture must be 'tilt_rotor' or 'lift_plus_cruise'")
+    trans = run_vtol_transition_corridor(
+        mass_kg=mass_kg,
+        wing_area_m2=wing_area_m2,
+        max_rotor_thrust_n=max_rotor_thrust_n,
+        max_cruise_thrust_n=max_cruise_thrust_n,
+    )
+    modes = compute_beam_modal_frequencies_hz(
+        length_m=boom_length_m,
+        youngs_modulus_pa=youngs_modulus_pa,
+        area_moment_m4=area_moment_m4,
+        linear_density_kg_m=linear_density_kg_m,
+    )
+    peak_rotor_n = max((s["rotor_thrust_n"] for s in trans["samples"]), default=0.0)
+    # Tip load per symmetric boom/rotor
+    tip_load_n = 0.5 * peak_rotor_n
+    tip_deflection_mm = 1000.0 * (tip_load_n * (boom_length_m ** 3)) / (3.0 * youngs_modulus_pa * area_moment_m4)
+    verdict = trans["verdict"]
+    abort = trans["abort_reason"]
+    if tip_deflection_mm > max_tip_deflection_mm:
+        verdict = "FAIL"
+        abort = f"Boom tip deflection {tip_deflection_mm:.2f} mm > limit {max_tip_deflection_mm:.2f} mm"
+    return {
+        "schema_version": "1.0",
+        "aircraft_family": "vtol",
+        "vtol_architecture": vtol_architecture,
+        "verdict": verdict,
+        "abort_reason": abort,
+        "peak_motor_temp_c": trans["peak_motor_temp_c"],
+        "peak_rotor_thrust_n": peak_rotor_n,
+        "boom_tip_deflection_mm": round(tip_deflection_mm, 3),
+        "mode_1_hz": round(modes["mode_1_hz"], 2),
+        "samples": trans["samples"],
+        "physical_validation_status": "UNVALIDATED",
+    }
+
+
+def verify_rotorcraft_convergence_and_inflow() -> dict[str, Any]:
+    """Verify 3-grid annular BEMT refinement and Pitt-Peters dynamic inflow coupling."""
+    r10 = solve_helicopter_bemt_rotor(radius_m=0.72, root_cutout_m=0.10, chord_m=0.055, n_blades=2, omega_rad_s=170.0, collective_deg=8.0, n_elements=10)
+    r20 = solve_helicopter_bemt_rotor(radius_m=0.72, root_cutout_m=0.10, chord_m=0.055, n_blades=2, omega_rad_s=170.0, collective_deg=8.0, n_elements=20)
+    r40 = solve_helicopter_bemt_rotor(radius_m=0.72, root_cutout_m=0.10, chord_m=0.055, n_blades=2, omega_rad_s=170.0, collective_deg=8.0, n_elements=40)
+    inflow = run_pitt_peters_step_response(ct_step=0.008, omega_rad_s=170.0, duration_s=0.15)
+    e1 = abs(r10["thrust_n"] - r40["thrust_n"])
+    e2 = abs(r20["thrust_n"] - r40["thrust_n"])
+    return {
+        "schema_version": "1.0",
+        "bemt_thrust_10": r10["thrust_n"],
+        "bemt_thrust_20": r20["thrust_n"],
+        "bemt_thrust_40": r40["thrust_n"],
+        "refinement_monotone": e2 <= e1 + 1e-6,
+        "pitt_peters_final_lambda0": inflow["final_inflow"][0],
+        "physical_validation_status": "UNVALIDATED",
+    }

@@ -1815,9 +1815,39 @@ func _process(delta: float) -> void:
 					int(output.get("total_candidates", 0)), int(output.get("feasible_count", 0)), int(output.get("infeasible_count", 0)), str(output.get("candidates_sha256", "")).left(12)]
 			elif job_action == "fixed-wing-sim":
 				var m: Dictionary = output.get("mission", {})
+				_build_procedural_aircraft_family("fixed_wing")
+				var fwt: Dictionary = m.get("telemetry", {})
+				if not fwt.get("t_s", []).is_empty():
+					var fw_x: Array = []
+					var fw_y: Array = []
+					for idx in range(fwt["t_s"].size()):
+						fw_x.append(float(idx) * 0.35)
+						fw_y.append(0.0)
+					result = {"result": {"status": m.get("status", "completed"), "telemetry": {
+						"t": fwt["t_s"], "x": fw_x, "y": fw_y, "z": fwt["altitude_m"], "q_wxyz": []}}}
+					timeline.max_value = float(fwt["t_s"][-1])
+					_seek(0.0)
 				status_label.text = "Fixed-Wing VLM mission %s (verdict=%s, range=%.1f m) · physical validation pending." % [
 					str(m.get("status")), str(m.get("verdict")), float(m.get("range_m", 0.0))]
 			elif job_action == "vtol-transition":
+				_build_procedural_aircraft_family("vtol")
+				var vs: Array = output.get("samples", [])
+				if not vs.is_empty():
+					var vt: Array = []
+					var vx: Array = []
+					var vy: Array = []
+					var vz: Array = []
+					var vq: Array = []
+					for s_idx in range(vs.size()):
+						vt.append(float(vs[s_idx]["t_s"]))
+						vx.append(float(s_idx) * 0.45)
+						vy.append(0.0)
+						vz.append(12.0 + 0.04 * float(s_idx))
+						vq.append([1.0, 0.0, 0.0, 0.0])
+					result = {"result": {"status": output.get("status", "completed"), "samples": vs, "telemetry": {
+						"t": vt, "x": vx, "y": vy, "z": vz, "q_wxyz": vq}}}
+					timeline.max_value = float(vt[-1])
+					_seek(0.0)
 				status_label.text = "VTOL transition %s (peak temp=%.1f C, verdict=%s) · physical validation pending." % [
 					str(output.get("status")), float(output.get("peak_motor_temp_c", 0.0)), str(output.get("verdict"))]
 			elif job_action == "adverse-weather":
@@ -1826,6 +1856,7 @@ func _process(delta: float) -> void:
 				status_label.text = "Weather: wet CL_max=%.2f (%s), ice=%.4f kg (%s)." % [
 					float(r.get("wet_cl_max", 0.0)), str(r.get("status")), float(i_res.get("accreted_mass_kg", 0.0)), str(i_res.get("verdict", "OK"))]
 			elif job_action == "swarm-sim":
+				_build_procedural_aircraft_family("swarm")
 				status_label.text = "Swarm (%d drones): %s (min sep=%.2f m) · physical validation pending." % [
 					int(output.get("agent_count", 0)), str(output.get("status")), float(output.get("min_observed_separation_m", 0.0))]
 			elif job_action == "run" or job_action == "cad-torque" or job_action == "simulate":
@@ -1940,7 +1971,88 @@ func _seek(time_s: float) -> void:
 	if result.get("experiment_kind") == "cad_torque_1":
 		# The rigid-body state is at its CoG; the CAD mesh retains its original datum.
 		aircraft.position -= aircraft.quaternion * _scene_position(result["mass_properties"]["center_of_mass_m"])
+	var v_samples: Array = result.get("result", {}).get("samples", [])
+	if v_samples.size() == times.size():
+		var tilt_deg: float = float(v_samples[index].get("tilt_deg", 90.0))
+		for nac_name in ["nacelle_left", "nacelle_right"]:
+			var nac: Node = aircraft.find_child(nac_name, true, false)
+			if nac is Node3D:
+				(nac as Node3D).rotation_degrees = Vector3(0.0, 0.0, -(90.0 - tilt_deg))
 	_update_camera()
+
+
+func _build_procedural_aircraft_family(family: String) -> void:
+	for child in aircraft.get_children():
+		aircraft.remove_child(child)
+		child.queue_free()
+	var mat := StandardMaterial3D.new()
+	mat.albedo_color = Color(0.24, 0.62, 0.92)
+	mat.metallic = 0.25
+	mat.roughness = 0.35
+	var accent := StandardMaterial3D.new()
+	accent.albedo_color = Color(0.95, 0.55, 0.15)
+	if family == "fixed_wing":
+		var fuse := MeshInstance3D.new()
+		var fuse_m := BoxMesh.new()
+		fuse_m.size = Vector3(1.1, 0.12, 0.14)
+		fuse.mesh = fuse_m
+		fuse.material_override = mat
+		aircraft.add_child(fuse)
+		var wing := MeshInstance3D.new()
+		var wing_m := BoxMesh.new()
+		wing_m.size = Vector3(0.24, 0.03, 1.80)
+		wing.mesh = wing_m
+		wing.material_override = accent
+		aircraft.add_child(wing)
+	elif family == "vtol":
+		var v_fuse := MeshInstance3D.new()
+		var v_m := BoxMesh.new()
+		v_m.size = Vector3(1.0, 0.14, 0.16)
+		v_fuse.mesh = v_m
+		v_fuse.material_override = mat
+		aircraft.add_child(v_fuse)
+		var v_wing := MeshInstance3D.new()
+		var vw_m := BoxMesh.new()
+		vw_m.size = Vector3(0.26, 0.03, 1.60)
+		v_wing.mesh = vw_m
+		v_wing.material_override = mat
+		aircraft.add_child(v_wing)
+		for side in [-1.0, 1.0]:
+			var nac := MeshInstance3D.new()
+			nac.name = "nacelle_left" if side < 0 else "nacelle_right"
+			var nac_m := CylinderMesh.new()
+			nac_m.top_radius = 0.045
+			nac_m.bottom_radius = 0.045
+			nac_m.height = 0.24
+			nac.mesh = nac_m
+			nac.position = Vector3(0.10, 0.06, side * 0.78)
+			nac.material_override = accent
+			aircraft.add_child(nac)
+	elif family == "helicopter":
+		var h_fuse := MeshInstance3D.new()
+		var hf_m := BoxMesh.new()
+		hf_m.size = Vector3(1.3, 0.16, 0.18)
+		h_fuse.mesh = hf_m
+		h_fuse.material_override = mat
+		aircraft.add_child(h_fuse)
+		var main_rotor := MeshInstance3D.new()
+		var mr_m := BoxMesh.new()
+		mr_m.size = Vector3(0.06, 0.02, 1.44)
+		main_rotor.mesh = mr_m
+		main_rotor.position = Vector3(0.0, 0.16, 0.0)
+		main_rotor.material_override = accent
+		aircraft.add_child(main_rotor)
+	elif family == "swarm":
+		for offset in [Vector3(-0.6, 0.0, -0.6), Vector3(-0.6, 0.0, 0.6), Vector3(0.6, 0.0, -0.6), Vector3(0.6, 0.0, 0.6)]:
+			var agent := MeshInstance3D.new()
+			var ag_m := SphereMesh.new()
+			ag_m.radius = 0.10
+			ag_m.height = 0.10
+			agent.mesh = ag_m
+			agent.position = offset
+			agent.material_override = accent
+			aircraft.add_child(agent)
+	_fit_camera()
 
 
 func _exit_tree() -> void:

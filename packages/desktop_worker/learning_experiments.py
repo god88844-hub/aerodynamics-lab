@@ -12,6 +12,7 @@ from desktop_worker.environment_authoring import author_test_ground
 from desktop_worker.twin_comparison import compare_frozen_run_and_source, compute_dual_digital_twin_metrics
 from geometry.fixed_wing_cad import ParametricWingSpec
 from physics.aerodynamics.fixed_wing import compute_fixed_wing_cruise_trim, run_fixed_wing_mission
+from physics.aerodynamics.rotorcraft_vtol import run_helicopter_autorotation_mission, solve_helicopter_bemt_rotor
 from physics.scenarios.desktop_runner import run_authoritative_desktop_simulation
 from physics.scenarios.mission_authoring import author_mission
 
@@ -35,6 +36,11 @@ EQUATIONS_AND_ASSUMPTIONS: list[dict[str, str]] = [
         "topic": "Prandtl lifting-line fixed-wing finite span aerodynamics",
         "equation": "CL = pi * AR * A_1; CDi = CL^2 / (pi * AR * e); e = 1 / (1 + sum(n * (A_n/A_1)^2))",
         "assumptions": "Incompressible attached-flow Mach <= 0.30, linear lift curve up to stall threshold; clean-room Re drag polar UNVALIDATED until wind-tunnel calibrated.",
+    },
+    {
+        "topic": "Cheeseman-Bennett in-ground-effect helicopter rotor scaling",
+        "equation": "T_IGE / T_OGE = 1 / (1 - (R / (4 * z_AGL))^2) at constant rotor shaft power",
+        "assumptions": "Valid for z_AGL / R > 0.35 in axial hover without vortex-ring descent (< -8 m/s).",
     },
 ]
 
@@ -183,5 +189,26 @@ def create_fixed_wing_lesson_bundle(
         "baseline_range_m": float(base_mission["range_m"]),
         "modified_range_m": float(mod_mission["range_m"]),
         "bundle_sha256": _canon_hash({"base": base_mission, "mod": mod_mission}),
+        "physical_validation_status": "UNVALIDATED",
+    }
+
+
+def create_rotorcraft_vtol_lesson_bundle(*, hypothesis: str) -> dict[str, Any]:
+    """Run rotorcraft OGE-vs-IGE hover and autorotation flare guided learning lesson."""
+    if not hypothesis.strip():
+        raise ValueError("Learner hypothesis must be non-empty")
+    oge = solve_helicopter_bemt_rotor(radius_m=0.72, root_cutout_m=0.10, chord_m=0.055, n_blades=2, omega_rad_s=170.0, collective_deg=8.0, altitude_agl_m=40.0)
+    ige = solve_helicopter_bemt_rotor(radius_m=0.72, root_cutout_m=0.10, chord_m=0.055, n_blades=2, omega_rad_s=170.0, collective_deg=8.0, altitude_agl_m=0.60)
+    auto_ok = run_helicopter_autorotation_mission(flare_altitude_m=8.0)
+    return {
+        "schema_version": "1.0",
+        "experiment_kind": "guided_rotorcraft_lesson_1",
+        "hypothesis": hypothesis.strip(),
+        "equations_and_assumptions": EQUATIONS_AND_ASSUMPTIONS,
+        "oge_thrust_n": float(oge["thrust_n"]),
+        "ige_thrust_n": float(ige["thrust_n"]),
+        "ige_thrust_gain_pct": 100.0 * (ige["thrust_n"] - oge["thrust_n"]) / max(1e-9, oge["thrust_n"]),
+        "autorotation_verdict": auto_ok["verdict"],
+        "touchdown_sink_m_s": auto_ok["touchdown_sink_m_s"],
         "physical_validation_status": "UNVALIDATED",
     }
