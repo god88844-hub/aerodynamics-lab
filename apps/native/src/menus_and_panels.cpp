@@ -56,6 +56,49 @@ void draw_polar_plot(const LiveEvidenceSummary &ev) {
     ImGui::Dummy(size);
 }
 
+bool draw_interactive_2d_sketch_canvas(CustomPartParams &part) {
+    bool modified = false;
+    ImGui::Text("Interactive 2D Sketch (Drag blue handle in XY):");
+    const ImVec2 avail = ImGui::GetContentRegionAvail();
+    const ImVec2 size(std::max(150.0f, avail.x), 116.0f);
+    const ImVec2 p0 = ImGui::GetCursorScreenPos();
+    const ImVec2 p1(p0.x + size.x, p0.y + size.y);
+    ImDrawList *dl = ImGui::GetWindowDrawList();
+
+    dl->AddRectFilled(p0, p1, IM_COL32(252, 253, 255, 255), 4.0f);
+    dl->AddRect(p0, p1, IM_COL32(198, 208, 222, 255), 4.0f);
+    const float ox = p0.x + 26.0f;
+    const float oy = 0.5f * (p0.y + p1.y);
+    dl->AddLine(ImVec2(p0.x + 6.0f, oy), ImVec2(p1.x - 6.0f, oy), IM_COL32(226, 232, 240, 255), 1.0f);
+    dl->AddLine(ImVec2(ox, p0.y + 6.0f), ImVec2(ox, p1.y - 6.0f), IM_COL32(226, 232, 240, 255), 1.0f);
+
+    const float px_per_m = (size.x - 44.0f) / 0.62f;
+    const float len_px = std::clamp(part.length_m * px_per_m, 12.0f, size.x - 42.0f);
+    const float half_w_px = std::clamp(part.width_m * 0.5f * px_per_m, 6.0f, 44.0f);
+    const ImVec2 r0(ox, oy - half_w_px);
+    const ImVec2 r1(ox + len_px, oy + half_w_px);
+    dl->AddRectFilled(r0, r1, IM_COL32(219, 234, 254, 180), 3.0f);
+    dl->AddRect(r0, r1, IM_COL32(37, 99, 235, 255), 3.0f, 0, 1.8f);
+    if (part.hole_radius_m > 0.001f) {
+        dl->AddCircle(ImVec2(ox + len_px, oy), std::clamp(part.hole_radius_m * px_per_m, 3.0f, 22.0f),
+                      IM_COL32(220, 38, 38, 255), 16, 1.5f);
+    }
+    const ImVec2 handle(ox + len_px, oy - half_w_px);
+    dl->AddCircleFilled(handle, 5.5f, IM_COL32(37, 99, 235, 255));
+    char dim_lbl[64];
+    std::snprintf(dim_lbl, sizeof(dim_lbl), "%.0f x %.0f mm", part.length_m * 1000.0f, part.width_m * 1000.0f);
+    dl->AddText(ImVec2(p0.x + 8.0f, p1.y - 16.0f), IM_COL32(71, 85, 105, 255), dim_lbl);
+
+    ImGui::InvisibleButton("##sketch2d_canvas", size);
+    if (ImGui::IsItemActive() && ImGui::IsMouseDragging(ImGuiMouseButton_Left)) {
+        const ImVec2 mp = ImGui::GetIO().MousePos;
+        part.length_m = std::clamp((mp.x - ox) / px_per_m, 0.04f, 0.60f);
+        part.width_m = std::clamp((std::abs(oy - mp.y) * 2.0f) / px_per_m, 0.015f, 0.25f);
+        modified = true;
+    }
+    return modified;
+}
+
 void draw_view_cube_and_triad(ImDrawList *dl, ImVec2 vp_pos, ImVec2 vp_size,
                               CameraOrbitState &cam, ViewportLayout layout) {
     // 1. Bottom-left RGB Axis Triad
@@ -239,6 +282,7 @@ void AppWorkbench::draw_menu_bar() {
     if (ImGui::BeginMenu("Flight")) {
         if (ImGui::MenuItem("Run 6-DoF RK4 Flight Simulation (C++20)")) {
             ipc_->run_cpp_rk4_multirotor(params, evidence);
+            if (viewport_) viewport_->upload_trajectory_path(evidence.traj_pos_m);
         }
         if (ImGui::MenuItem("Run 6-DoF Fixed-Wing Mission (Python Worker)")) {
             ipc_->launch_python_command("6dof-fixed-wing", ipc_->build_project_payload_json(params));
@@ -300,6 +344,7 @@ void AppWorkbench::draw_quick_toolstrip() {
     ImGui::SameLine();
     if (ImGui::Button("Run 6-DoF (C++)")) {
         ipc_->run_cpp_rk4_multirotor(params, evidence);
+        if (viewport_) viewport_->upload_trajectory_path(evidence.traj_pos_m);
     }
     ImGui::SameLine();
     if (ImGui::Button("Reset View")) {
@@ -451,6 +496,7 @@ void AppWorkbench::draw_right_inspector() {
 
         if (params.family == VehicleFamily::CustomPart || params.attach_custom_part) {
             ImGui::Separator();
+            changed |= draw_interactive_2d_sketch_canvas(params.active_part);
             ImGui::Text("Custom Part Sketch & Solid Feature:");
             const char *kinds[] = {"Rounded Arm/Plate", "Ring Duct", "NACA Airfoil Rib", "Hex Mount"};
             int k = static_cast<int>(params.active_part.sketch_kind);
@@ -500,6 +546,25 @@ void AppWorkbench::draw_right_inspector() {
                                             ? ImVec4(0.75f, 0.45f, 0.08f, 1.0f)
                                             : ImVec4(0.10f, 0.42f, 0.80f, 1.0f));
         ImGui::TextColored(badge_col, "Status: %s", evidence.validation_status.c_str());
+
+        char ready_buf[48];
+        std::snprintf(ready_buf, sizeof(ready_buf), "Readiness: %.1f%%", evidence.predicted_readiness_pct);
+        ImGui::PushStyleColor(ImGuiCol_PlotHistogram,
+                              evidence.predicted_readiness_pct >= 75.0
+                                  ? ImVec4(0.13f, 0.62f, 0.32f, 1.0f)
+                                  : (evidence.predicted_readiness_pct > 0.0 ? ImVec4(0.85f, 0.55f, 0.10f, 1.0f) : ImVec4(0.82f, 0.16f, 0.16f, 1.0f)));
+        ImGui::ProgressBar(static_cast<float>(evidence.predicted_readiness_pct / 100.0), ImVec2(-1.0f, 18.0f), ready_buf);
+        ImGui::PopStyleColor();
+
+        if (evidence.benchmark_match_pct >= 0.0) {
+            char bench_buf[48];
+            std::snprintf(bench_buf, sizeof(bench_buf), "Benchmark Match: %.1f%%", evidence.benchmark_match_pct);
+            ImGui::PushStyleColor(ImGuiCol_PlotHistogram, ImVec4(0.15f, 0.39f, 0.92f, 1.0f));
+            ImGui::ProgressBar(static_cast<float>(evidence.benchmark_match_pct / 100.0), ImVec2(-1.0f, 18.0f), bench_buf);
+            ImGui::PopStyleColor();
+        } else {
+            ImGui::TextColored(ImVec4(0.75f, 0.45f, 0.08f, 1.0f), "Benchmark Match: N/A (%s)", evidence.benchmark_source_tag.c_str());
+        }
         ImGui::TextWrapped("%s", evidence.status_detail.c_str());
     }
 

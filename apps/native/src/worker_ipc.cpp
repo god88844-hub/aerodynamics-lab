@@ -176,6 +176,7 @@ bool WorkerIPC::launch_python_command(const std::string &cmd, const std::string 
         status_.last_ok = (rc == 0);
         if (rc == 0) {
             status_.summary_line = "Worker finished: " + cmd + " -> " + out_file.filename().string();
+            pending_result_.store(true);
         } else {
             status_.summary_line = "Worker exited (" + std::to_string(rc) + ") on " + cmd;
         }
@@ -183,6 +184,57 @@ bool WorkerIPC::launch_python_command(const std::string &cmd, const std::string 
         busy_.store(false);
     });
     return true;
+}
+
+bool WorkerIPC::poll_completed_results(LiveEvidenceSummary &summary) {
+    if (!pending_result_.exchange(false)) {
+        return false;
+    }
+    const auto out_file = tmp_dir_ / "job_out.json";
+    std::ifstream ifs(out_file);
+    if (!ifs) return false;
+    std::string text((std::istreambuf_iterator<char>(ifs)), std::istreambuf_iterator<char>());
+    auto parse_triples = [&](const char *key) -> std::vector<std::array<double, 3>> {
+        std::vector<std::array<double, 3>> pts;
+        const auto kpos = text.find(key);
+        if (kpos == std::string::npos) return pts;
+        auto pos = text.find('[', kpos);
+        if (pos == std::string::npos) return pts;
+        int depth = 0;
+        for (std::size_t i = pos; i < text.size(); ++i) {
+            if (text[i] == '[') {
+                ++depth;
+                if (depth == 2) {
+                    double x = 0, y = 0, z = 0;
+                    if (std::sscanf(text.c_str() + i + 1, "%lf , %lf , %lf", &x, &y, &z) == 3) {
+                        pts.push_back({x, y, z});
+                    }
+                }
+            } else if (text[i] == ']') {
+                --depth;
+                if (depth <= 0) break;
+            }
+        }
+        return pts;
+    };
+    auto pts = parse_triples("\"positions_m\"");
+    if (pts.empty()) pts = parse_triples("\"trajectory_positions_m\"");
+    if (!pts.empty()) {
+        summary.has_trajectory = true;
+        summary.playing = true;
+        summary.playback_time_s = 0.0f;
+        summary.duration_s = 2.5f;
+        summary.traj_pos_m = std::move(pts);
+        summary.traj_t_s.resize(summary.traj_pos_m.size());
+        summary.traj_quat_wxyz.assign(summary.traj_pos_m.size(), {1.0, 0.0, 0.0, 0.0});
+        for (std::size_t i = 0; i < summary.traj_pos_m.size(); ++i) {
+            summary.traj_t_s[i] = (summary.traj_pos_m.size() > 1)
+                                      ? (summary.duration_s * static_cast<double>(i) / static_cast<double>(summary.traj_pos_m.size() - 1))
+                                      : 0.0;
+        }
+        return true;
+    }
+    return false;
 }
 
 std::string native_open_file_dialog(const char *filter_desc, const char *ext) {

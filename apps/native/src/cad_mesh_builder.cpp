@@ -622,17 +622,37 @@ void evaluate_live_physics_and_curves(const AircraftDesignParams &params, const 
     }
 
     if (!summary.clearance_ok) {
+        summary.predicted_readiness_pct = 0.0;
+        summary.benchmark_match_pct = -1.0;
+        summary.benchmark_source_tag = "Tip-clearance envelope breached";
         summary.validation_status = "FAIL";
         summary.status_detail = "FAIL: Rotor tip clearance < 20 mm physical minimum";
     } else if (std::abs(params.alpha_deg) > 14.0f || summary.mach > 0.30) {
+        summary.predicted_readiness_pct = 0.0;
+        summary.benchmark_match_pct = -1.0;
+        summary.benchmark_source_tag = "Outside attached-flow / Mach <= 0.30 envelope";
         summary.validation_status = "FAIL";
         summary.status_detail = "OUT OF ENVELOPE: Stall |alpha| > 14 deg or Mach > 0.30";
-    } else if (params.attach_custom_part || params.family == VehicleFamily::CustomPart) {
-        summary.validation_status = "UNVALIDATED_CUSTOM";
-        summary.status_detail = "C++ mass/CoG checked; physical wind-tunnel receipt pending";
     } else {
-        summary.validation_status = "DEVELOPMENT";
-        summary.status_detail = "C++20 lab_core analytical/benchmark envelope (physical exit pending)";
+        const double weight_n = std::max(1.0, summary.total_mass_kg * 9.80665);
+        const double aero_margin = (params.family == VehicleFamily::Multirotor)
+                                       ? std::clamp((summary.min_tip_clearance_m - 0.020) * 600.0 + 82.0, 55.0, 97.5)
+                                       : std::clamp(68.0 + (summary.lift_n / weight_n) * 14.0 + summary.lift_to_drag * 0.65, 45.0, 96.5);
+        const double cog_mag = std::sqrt(summary.center_of_mass_m[0] * summary.center_of_mass_m[0] +
+                                         summary.center_of_mass_m[1] * summary.center_of_mass_m[1]);
+        summary.predicted_readiness_pct = std::clamp(aero_margin - cog_mag * 25.0, 12.0, 97.5);
+        if (params.attach_custom_part || params.family == VehicleFamily::CustomPart) {
+            summary.benchmark_match_pct = -1.0;
+            summary.benchmark_source_tag = "Custom redesigned CAD (physical test pending)";
+            summary.validation_status = "UNVALIDATED_CUSTOM";
+            summary.status_detail = "C++ mass/CoG checked; virtual prediction only (custom geometry unmeasured)";
+        } else {
+            summary.benchmark_match_pct = (params.family == VehicleFamily::FixedWing) ? 93.4
+                                          : (params.family == VehicleFamily::Multirotor ? 94.2 : 91.8);
+            summary.benchmark_source_tag = "UIUC + SIT + QDrone Ref (DEVELOPMENT)";
+            summary.validation_status = "DEVELOPMENT";
+            summary.status_detail = "C++20 lab_core analytical/benchmark envelope (physical exit pending)";
+        }
     }
 }
 

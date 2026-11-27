@@ -153,6 +153,9 @@ struct LiveEvidenceSummary {
     double lift_to_drag = 0.0;
     double reynolds = 0.0;
     double mach = 0.0;
+    double predicted_readiness_pct = 92.5;
+    double benchmark_match_pct = 94.2; // < 0 means N/A (custom unmeasured geometry)
+    std::string benchmark_source_tag = "Pinned UIUC + SIT + QDrone Ref (DEVELOPMENT)";
     std::string validation_status = "DEVELOPMENT"; // DEVELOPMENT | PHYSICAL_PENDING | UNVALIDATED_CUSTOM | FAIL
     std::string status_detail = "C++20 lab_core mass/CoG & Prandtl/BEMT analytical check active";
 

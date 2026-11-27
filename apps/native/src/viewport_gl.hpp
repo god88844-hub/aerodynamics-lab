@@ -25,6 +25,7 @@ public:
     void shutdown();
 
     void upload_scene(const GeneratedCADScene &scene);
+    void upload_trajectory_path(const std::vector<std::array<double, 3>> &traj_pos_m);
     void upload_grid_and_bounds(float extent_m = 2.0f, float step_m = 0.25f);
 
     void render(int width, int height, const CameraOrbitState &cam, ViewportLayout layout, ShadingMode shading,
@@ -62,6 +63,9 @@ private:
 
     gl33::GLuint vao_grid_ = 0, vbo_grid_ = 0;
     gl33::GLsizei grid_vert_count_ = 0;
+
+    gl33::GLuint vao_path_ = 0, vbo_path_ = 0;
+    gl33::GLsizei path_vert_count_ = 0;
 
     gl33::GLuint vao_sky_ = 0, vbo_sky_ = 0;
     gl33::GLuint vao_gizmo_ = 0, vbo_gizmo_ = 0;
