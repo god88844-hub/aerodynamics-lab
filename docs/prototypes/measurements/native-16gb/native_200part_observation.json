@@ -1,0 +1,14 @@
+{
+  "window_mode": "visible_native_opengl_imgui_dwmflush",
+  "parts": 200,
+  "triangles": 9776,
+  "edge_segments": 4060,
+  "frames": 600,
+  "mean_fps": 59.8022,
+  "p50_ms": 16.6675,
+  "p95_ms": 17.1412,
+  "p99_ms": 17.9554,
+  "max_ms": 49.9441,
+  "peak_working_set_bytes": 133738496,
+  "private_bytes": 69197824
+}
