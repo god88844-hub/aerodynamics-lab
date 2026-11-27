@@ -5,21 +5,53 @@
 #include "imgui_impl_glfw.h"
 #include "imgui_impl_opengl3.h"
 
+#include <algorithm>
 #include <chrono>
 #include <cstdio>
+#include <cstdlib>
 #include <cstring>
 #include <filesystem>
+#include <fstream>
+#include <numeric>
 #include <string>
+#include <thread>
 #include <vector>
+
+#ifdef _WIN32
+#ifndef NOMINMAX
+#define NOMINMAX
+#endif
+#include <windows.h>
+#include <dwmapi.h>
+#include <psapi.h>
+#endif
+
+static void pace_compositor_frame(std::chrono::steady_clock::time_point frame_start) {
+#ifdef _WIN32
+    if (SUCCEEDED(DwmFlush())) {
+        return;
+    }
+#endif
+    const auto target = frame_start + std::chrono::microseconds(16667);
+    if (std::chrono::steady_clock::now() < target) {
+        std::this_thread::sleep_until(target);
+    }
+}
 
 int main(int argc, char **argv) {
     bool smoke_test = false;
+    bool benchmark_200 = false;
+    int benchmark_frames = 600;
+    std::string benchmark_out;
     std::string screenshot_path;
     bool four_view = false;
     bool cp_view = false;
     std::string preset_name;
     for (int i = 1; i < argc; ++i) {
         if (std::strcmp(argv[i], "--smoke-test") == 0) smoke_test = true;
+        else if (std::strcmp(argv[i], "--benchmark-200") == 0) benchmark_200 = true;
+        else if (std::strcmp(argv[i], "--frames") == 0 && i + 1 < argc) benchmark_frames = std::max(30, std::atoi(argv[++i]));
+        else if (std::strcmp(argv[i], "--output") == 0 && i + 1 < argc) benchmark_out = argv[++i];
         else if (std::strcmp(argv[i], "--4view") == 0) four_view = true;
         else if (std::strcmp(argv[i], "--cp") == 0) cp_view = true;
         else if (std::strcmp(argv[i], "--preset") == 0 && i + 1 < argc) preset_name = argv[++i];
@@ -34,7 +66,7 @@ int main(int argc, char **argv) {
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-    glfwWindowHint(GLFW_SAMPLES, 4);
+    glfwWindowHint(GLFW_SAMPLES, 0);
     if (smoke_test) {
         glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE);
     }
@@ -46,7 +78,7 @@ int main(int argc, char **argv) {
         return 2;
     }
     glfwMakeContextCurrent(window);
-    glfwSwapInterval(smoke_test ? 0 : 1);
+    glfwSwapInterval(0);
 
     gl33::Dispatch gl;
     if (!gl.load()) {
@@ -75,6 +107,104 @@ int main(int argc, char **argv) {
         glfwTerminate();
         return 4;
     }
+
+    auto render_one_frame = [&](float dt_s) -> int {
+        int fb_w = 1360, fb_h = 840;
+        glfwGetFramebufferSize(window, &fb_w, &fb_h);
+        if (fb_w <= 0 || fb_h <= 0) {
+            fb_w = 1360;
+            fb_h = 840;
+        }
+        ImGui_ImplOpenGL3_NewFrame();
+        ImGui_ImplGlfw_NewFrame();
+        ImGui::NewFrame();
+        app.render_ui_and_scene(dt_s, fb_w, fb_h);
+        ImGui::Render();
+        gl.Viewport(0, 0, fb_w, fb_h);
+        gl.ClearColor(0.95f, 0.96f, 0.98f, 1.0f);
+        gl.Clear(gl33::GL_COLOR_BUFFER_BIT_V | gl33::GL_DEPTH_BUFFER_BIT_V);
+        ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+        glfwSwapBuffers(window);
+        return fb_w * 100000 + fb_h;
+    };
+
+    if (benchmark_200) {
+        app.params.project_name = "200-Part Assembly Benchmark";
+        app.params.family = aerolab::VehicleFamily::Benchmark200;
+        app.camera.distance_m = 2.1f;
+        app.rebuild_geometry();
+
+        for (int w = 0; w < 90; ++w) {
+            const auto t0 = std::chrono::steady_clock::now();
+            glfwPollEvents();
+            render_one_frame(0.016f);
+            pace_compositor_frame(t0);
+        }
+
+        std::vector<double> dt_ms;
+        dt_ms.reserve(benchmark_frames);
+        auto prev = std::chrono::steady_clock::now();
+        for (int f = 0; f < benchmark_frames; ++f) {
+            glfwPollEvents();
+            app.camera.yaw_deg += 0.40f;
+            if (f % 30 == 0 && !app.scene.assembly_parts.empty()) {
+                app.selected_part_idx = (f / 30) % static_cast<int>(app.scene.assembly_parts.size());
+                app.rebuild_geometry();
+            }
+            const auto now = std::chrono::steady_clock::now();
+            const float dt = std::chrono::duration<float>(now - prev).count();
+            render_one_frame(dt);
+            pace_compositor_frame(prev);
+            const auto after = std::chrono::steady_clock::now();
+            dt_ms.push_back(std::chrono::duration<double, std::milli>(after - prev).count());
+            prev = after;
+        }
+        std::sort(dt_ms.begin(), dt_ms.end());
+        const double total_ms = std::accumulate(dt_ms.begin(), dt_ms.end(), 0.0);
+        const double mean_fps = (total_ms > 0.0) ? (1000.0 * benchmark_frames / total_ms) : 0.0;
+        const double p50 = dt_ms[dt_ms.size() * 50 / 100];
+        const double p95 = dt_ms[dt_ms.size() * 95 / 100];
+        const double p99 = dt_ms[dt_ms.size() * 99 / 100];
+        const double mx = dt_ms.back();
+        std::size_t peak_ws_bytes = 0, private_bytes = 0;
+#ifdef _WIN32
+        PROCESS_MEMORY_COUNTERS_EX pmc{};
+        if (GetProcessMemoryInfo(GetCurrentProcess(), reinterpret_cast<PROCESS_MEMORY_COUNTERS *>(&pmc), sizeof(pmc))) {
+            peak_ws_bytes = pmc.PeakWorkingSetSize;
+            private_bytes = pmc.PrivateUsage;
+        }
+#endif
+        if (!benchmark_out.empty()) {
+            const std::filesystem::path bp(benchmark_out);
+            if (bp.has_parent_path()) {
+                std::error_code ec;
+                std::filesystem::create_directories(bp.parent_path(), ec);
+            }
+            std::ofstream ofs(bp);
+            ofs << "{\n"
+                << "  \"window_mode\": \"visible_native_opengl_imgui_dwmflush\",\n"
+                << "  \"parts\": " << app.scene.assembly_parts.size() << ",\n"
+                << "  \"triangles\": " << (app.scene.indices.size() / 3) << ",\n"
+                << "  \"edge_segments\": " << (app.scene.cad_edges.size() / 2) << ",\n"
+                << "  \"frames\": " << benchmark_frames << ",\n"
+                << "  \"mean_fps\": " << mean_fps << ",\n"
+                << "  \"p50_ms\": " << p50 << ",\n"
+                << "  \"p95_ms\": " << p95 << ",\n"
+                << "  \"p99_ms\": " << p99 << ",\n"
+                << "  \"max_ms\": " << mx << ",\n"
+                << "  \"peak_working_set_bytes\": " << peak_ws_bytes << ",\n"
+                << "  \"private_bytes\": " << private_bytes << "\n"
+                << "}\n";
+        }
+        app.shutdown();
+        ImGui_ImplOpenGL3_Shutdown();
+        ImGui_ImplGlfw_Shutdown();
+        ImGui::DestroyContext();
+        glfwDestroyWindow(window);
+        glfwTerminate();
+        return 0;
+    }
+
     if (preset_name == "fixed-wing") app.switch_family(aerolab::VehicleFamily::FixedWing);
     else if (preset_name == "helicopter") app.switch_family(aerolab::VehicleFamily::Helicopter);
     else if (preset_name == "vtol") app.switch_family(aerolab::VehicleFamily::VTOL);
@@ -96,25 +226,9 @@ int main(int argc, char **argv) {
         const float dt = std::chrono::duration<float>(now - last_t).count();
         last_t = now;
 
-        int fb_w = 1360, fb_h = 840;
-        glfwGetFramebufferSize(window, &fb_w, &fb_h);
-        if (fb_w <= 0 || fb_h <= 0) {
-            fb_w = 1360;
-            fb_h = 840;
-        }
-
-        ImGui_ImplOpenGL3_NewFrame();
-        ImGui_ImplGlfw_NewFrame();
-        ImGui::NewFrame();
-
-        app.render_ui_and_scene(dt, fb_w, fb_h);
-
-        ImGui::Render();
-        gl.Viewport(0, 0, fb_w, fb_h);
-        gl.ClearColor(0.95f, 0.96f, 0.98f, 1.0f);
-        gl.Clear(gl33::GL_COLOR_BUFFER_BIT_V | gl33::GL_DEPTH_BUFFER_BIT_V);
-        ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
-        glfwSwapBuffers(window);
+        const int packed = render_one_frame(dt);
+        const int fb_w = packed / 100000;
+        const int fb_h = packed % 100000;
 
         ++frames;
         if (smoke_test && frames == 3 && !screenshot_path.empty()) {
@@ -123,7 +237,6 @@ int main(int argc, char **argv) {
                 std::error_code ec;
                 std::filesystem::create_directories(sp.parent_path(), ec);
             }
-            // Capture full rendered workbench window (menus + panels + OpenGL viewport)
             std::vector<std::uint8_t> win_rgba(static_cast<std::size_t>(fb_w) * fb_h * 4);
             gl.ReadPixels(0, 0, fb_w, fb_h, gl33::GL_RGBA_V, gl33::GL_UNSIGNED_BYTE_V, win_rgba.data());
             if (!aerolab::write_png_rgba(screenshot_path, fb_w, fb_h, win_rgba)) {
@@ -132,6 +245,9 @@ int main(int argc, char **argv) {
         }
         if (smoke_test && frames >= 4) {
             break;
+        }
+        if (!smoke_test) {
+            pace_compositor_frame(now);
         }
     }
 

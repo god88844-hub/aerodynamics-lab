@@ -18,6 +18,8 @@ std::vector<AirfoilSectionPoint> sample_naca4_airfoil(const std::string &code, i
 
 GeneratedCADScene build_cad_scene(const AircraftDesignParams &params, int selected_part_idx = -1);
 
+GeneratedCADScene build_200part_benchmark_scene(int selected_part_idx = -1);
+
 void evaluate_live_physics_and_curves(const AircraftDesignParams &params, const GeneratedCADScene &scene,
                                       LiveEvidenceSummary &summary);
 

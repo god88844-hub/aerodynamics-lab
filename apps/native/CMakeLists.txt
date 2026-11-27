@@ -63,7 +63,7 @@ target_link_libraries(lab_native_engine PUBLIC lab_core imgui_docking glfw OpenG
 target_compile_features(lab_native_engine PUBLIC cxx_std_20)
 
 if(WIN32)
-    target_link_libraries(lab_native_engine PUBLIC comdlg32 shell32 dwmapi)
+    target_link_libraries(lab_native_engine PUBLIC comdlg32 shell32 dwmapi psapi)
 endif()
 
 add_executable(AerodynamicsLab src/main.cpp)

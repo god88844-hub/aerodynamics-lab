@@ -388,6 +388,9 @@ std::vector<AirfoilSectionPoint> sample_naca4_airfoil(const std::string &code, i
 }
 
 GeneratedCADScene build_cad_scene(const AircraftDesignParams &params, int selected_part_idx) {
+    if (params.family == VehicleFamily::Benchmark200) {
+        return build_200part_benchmark_scene(selected_part_idx);
+    }
     GeneratedCADScene out;
     const auto is_sel = [&](int idx) { return idx == selected_part_idx; };
 
@@ -495,6 +498,56 @@ GeneratedCADScene build_cad_scene(const AircraftDesignParams &params, int select
                                       out.custom_part_mass_kg, {0.0, 0.0, -0.08}, true});
     }
 
+    return out;
+}
+
+GeneratedCADScene build_200part_benchmark_scene(int selected_part_idx) {
+    GeneratedCADScene out;
+    int part_i = 0;
+    auto push_part = [&](const std::string &name, const std::string &cat, double m, Vec3 pos) {
+        out.assembly_parts.push_back({name, cat, m, {pos.x, pos.y, pos.z}, false});
+        ++part_i;
+    };
+
+    // 2 plates
+    for (int i = 0; i < 2; ++i) {
+        const bool sel = (part_i == selected_part_idx);
+        add_oriented_box(out, {0.0f, 0.0f, i * 0.05f}, {0.40f, 0.30f, 0.012f}, 0.0f,
+                         sel ? 0.25f : 0.76f, sel ? 0.56f : 0.80f, sel ? 0.90f : 0.85f);
+        push_part("plate_" + std::to_string(part_i), "Plate", 0.28, {0.0f, 0.0f, i * 0.05f});
+    }
+    // 6 arms + 6 motors + 12 blades + 6 battery packs = 30
+    for (int i = 0; i < 6; ++i) {
+        const float ang = 2.0f * kPi * static_cast<float>(i) / 6.0f;
+        const Vec3 tip{0.62f * std::cos(ang), 0.62f * std::sin(ang), 0.04f};
+        add_oriented_box(out, {tip.x * 0.5f, tip.y * 0.5f, 0.015f}, {0.55f, 0.032f, 0.022f}, ang, 0.75f, 0.80f, 0.85f);
+        push_part("arm_" + std::to_string(part_i), "Arm", 0.11, tip);
+
+        add_cylinder_z(out, tip, 0.028f, 0.030f, 16, 0.30f, 0.35f, 0.42f);
+        push_part("motor_" + std::to_string(part_i), "Motor", 0.14, tip);
+
+        for (int b = 0; b < 2; ++b) {
+            add_twisted_propeller(out, {tip.x, tip.y, tip.z + 0.03f}, 0.40f, 15.0f, 1, 0.0f, part_i == selected_part_idx);
+            push_part("blade_" + std::to_string(part_i), "Blade", 0.02, tip);
+        }
+        const Vec3 pk{-0.15f + i * 0.06f, -0.05f, -0.04f};
+        add_oriented_box(out, pk, {0.05f, 0.09f, 0.045f}, 0.0f, 0.28f, 0.34f, 0.44f);
+        push_part("pack_" + std::to_string(part_i), "Battery", 0.32, pk);
+    }
+    // 8 avionics boards
+    for (int i = 0; i < 8; ++i) {
+        const Vec3 bd{-0.08f + (i % 4) * 0.05f, -0.035f + (i / 4) * 0.055f, 0.06f};
+        add_oriented_box(out, bd, {0.04f, 0.04f, 0.008f}, 0.0f, 0.18f, 0.52f, 0.82f);
+        push_part("board_" + std::to_string(part_i), "Board", 0.03, bd);
+    }
+    // 160 fasteners (2 layers of 80)
+    for (int f = 0; f < 160; ++f) {
+        const int layer = f / 80;
+        const int idx = f % 80;
+        const Vec3 fp{-0.18f + (idx % 10) * 0.039f, -0.13f + (idx / 10) * 0.037f, layer * 0.05f};
+        add_cylinder_z(out, fp, 0.004f, 0.010f, 8, 0.55f, 0.58f, 0.63f);
+        push_part("fastener_" + std::to_string(part_i), "Fastener", 0.002, fp);
+    }
     return out;
 }
 

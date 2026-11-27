@@ -13,6 +13,7 @@ enum class VehicleFamily {
     Helicopter = 2,
     VTOL = 3,
     CustomPart = 4,
+    Benchmark200 = 5,
 };
 
 enum class ViewportLayout {
