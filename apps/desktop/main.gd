@@ -253,7 +253,7 @@ func _build_interface() -> void:
 	# Tab 4: Flight & Swarm
 	_add_button(ribbon_panels[4], "Test Ground", _open_test_ground_dialog)
 	_add_button(ribbon_panels[4], "Mission / Seeds", _open_mission_dialog)
-	_add_button(ribbon_panels[4], "Run Authoritative", _run_authoritative_sim)
+	_add_button(ribbon_panels[4], "Run authoritative", _run_authoritative_sim)
 	_add_button(ribbon_panels[4], "Run C++ Kernel", _run_native_cpp_rk4)
 	_add_button(ribbon_panels[4], "VTOL Transition", _run_vtol_transition)
 	_add_button(ribbon_panels[4], "Heli Autorotation", _run_helicopter_autorotation)
