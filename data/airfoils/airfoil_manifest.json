@@ -1,0 +1,23 @@
+{
+  "schema_version": "1.0",
+  "airfoils": [
+    {
+      "id": "naca0012",
+      "filename": "naca0012.dat",
+      "license": "Apache-2.0 clean-room equation",
+      "sha256": "ba47e0b114538396f5d29cc0c963e54abb2c07644f734dc9d0c6701402dcff42"
+    },
+    {
+      "id": "naca2412",
+      "filename": "naca2412.dat",
+      "license": "Apache-2.0 clean-room equation",
+      "sha256": "a1b166dbd09714985f70aebec378c2f4a197fe568d9dd69127a2d8190c7be69c"
+    },
+    {
+      "id": "naca4412",
+      "filename": "naca4412.dat",
+      "license": "Apache-2.0 clean-room equation",
+      "sha256": "9477755acad75d75d55d20a4b09e6b8c697cd8e9d35bdc2ce5a63eab8a83c4cc"
+    }
+  ]
+}
