@@ -259,7 +259,9 @@ def run_helicopter_autorotation_mission(
         xs.append(round(4.5 * t, 4))  # gentle forward autorotative glide
         ys.append(0.0)
         zs.append(round(max(0.0, z), 4))
-        qs.append([1.0, 0.0, -0.04, 0.0] if z > flare_altitude_m else [1.0, 0.0, 0.08, 0.0])
+        pitch_q = -0.04 if z > flare_altitude_m else 0.08
+        inv_n = 1.0 / math.hypot(1.0, pitch_q)
+        qs.append([inv_n, 0.0, pitch_q * inv_n, 0.0])
         rpms.append(round(rpm, 2))
         sinks.append(round(-vz, 3))
 

@@ -161,8 +161,10 @@ def run_multi_drone_swarm(
     min_obs_sep = float("inf")
     verdict = "NO_MODELED_LIMIT_BREACHED"
     abort_reason: str | None = None
+    traj_t: list[float] = [0.0]
+    traj_pos: list[list[list[float]]] = [pos.tolist()]
 
-    for _ in range(steps):
+    for step_idx in range(steps):
         for i in range(n):
             for j in range(i + 1, n):
                 d = float(np.linalg.norm(pos[i] - pos[j]))
@@ -189,6 +191,8 @@ def run_multi_drone_swarm(
                     acc[i] += (diff / dist) * (3.0 / max(0.1, dist - min_separation_m + 0.1))
         vel += acc * dt_s
         pos += vel * dt_s
+        traj_t.append(round((step_idx + 1) * dt_s, 4))
+        traj_pos.append(pos.tolist())
 
     return {
         "schema_version": "1.0",
@@ -198,6 +202,8 @@ def run_multi_drone_swarm(
         "abort_reason": abort_reason,
         "min_observed_separation_m": round(min_obs_sep, 4),
         "final_positions_m": pos.tolist(),
+        "trajectory_t_s": traj_t,
+        "trajectory_positions_m": traj_pos,
         "physical_validation_status": "UNVALIDATED",
     }
 

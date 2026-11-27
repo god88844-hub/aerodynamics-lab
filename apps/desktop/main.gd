@@ -104,7 +104,15 @@ func repository_root() -> String:
 
 func python_command() -> String:
 	var configured: String = OS.get_environment("LAB_PYTHON")
-	return configured if not configured.is_empty() else "python"
+	if not configured.is_empty():
+		return configured
+	var win_venv: String = repository_root().path_join(".venv/Scripts/python.exe")
+	if FileAccess.file_exists(win_venv):
+		return win_venv
+	var posix_venv: String = repository_root().path_join(".venv/bin/python")
+	if FileAccess.file_exists(posix_venv):
+		return posix_venv
+	return "python"
 
 
 func _ready() -> void:
@@ -153,7 +161,7 @@ func _build_interface() -> void:
 	title.add_theme_font_size_override("font_size", 26)
 	layout.add_child(title)
 	project_label = Label.new()
-	project_label.text = "Desktop foundation prototype"
+	project_label.text = "Aerodynamics Lab · Standalone Engineering Desktop"
 	layout.add_child(project_label)
 	var toolbar: HFlowContainer = HFlowContainer.new()
 	layout.add_child(toolbar)
@@ -187,8 +195,10 @@ func _build_interface() -> void:
 	_add_button(toolbar, "Bounded Sweep", _open_sweep_dialog)
 	_add_button(toolbar, "Fixed-Wing VLM", _run_fixed_wing_vlm)
 	_add_button(toolbar, "VTOL Transition", _run_vtol_transition)
+	_add_button(toolbar, "Heli Autorotation", _run_helicopter_autorotation)
 	_add_button(toolbar, "Adverse Weather", _run_adverse_weather)
 	_add_button(toolbar, "Swarm Sim", _run_swarm_sim)
+	_add_button(toolbar, "SITL Autonomy", _run_sitl_mission)
 	_add_button(toolbar, "Run applied-torque experiment", _run_cad_torque)
 	_add_button(toolbar, "Worker limits", _open_limits)
 	_add_button(toolbar, "? Help & Equations", _open_help_dialog)
@@ -1034,6 +1044,12 @@ func _run_vtol_transition() -> void:
 	_start_job("vtol-transition", _write_payload({"mass_kg": 3.0, "wing_area_m2": 0.45, "max_rotor_thrust_n": 45.0}))
 
 
+func _run_helicopter_autorotation() -> void:
+	if job_pid > 0:
+		return
+	_start_job("autorotation-sim", _write_payload({"flare_altitude_m": 8.0, "min_safe_rpm": 950.0}))
+
+
 func _run_adverse_weather() -> void:
 	if job_pid > 0:
 		return
@@ -1044,6 +1060,12 @@ func _run_swarm_sim() -> void:
 	if job_pid > 0:
 		return
 	_start_job("swarm-sim", _write_payload({"initial_positions_m": [[0, 0, 2], [4, 0, 2], [0, 4, 2]], "target_positions_m": [[1, 0, 3], [5, 0, 3], [1, 4, 3]]}))
+
+
+func _run_sitl_mission() -> void:
+	if job_pid > 0:
+		return
+	_start_job("sitl-mission", _write_payload({"firmware_kind": "px4"}))
 
 
 func _run_native_cpp_rk4() -> void:
@@ -1206,6 +1228,38 @@ func _refresh_project() -> bool:
 		marker.position = _scene_position(part["position_m"])
 		aircraft.add_child(marker)
 		item.set_metadata(0, {"marker": marker, "part": part})
+	var hub_inst := MeshInstance3D.new()
+	var hub_mesh := BoxMesh.new()
+	hub_mesh.size = Vector3(0.18, 0.045, 0.18)
+	hub_inst.mesh = hub_mesh
+	hub_inst.material_override = _make_cad_material(false)
+	aircraft.add_child(hub_inst)
+	var disc_mat := StandardMaterial3D.new()
+	disc_mat.albedo_color = Color(0.95, 0.58, 0.18, 0.42)
+	disc_mat.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+	for r_spec in vehicle["snapshot"].get("rotors", []):
+		if not (r_spec is Dictionary):
+			continue
+		var r_pos: Vector3 = _scene_position(r_spec.get("position_m", [0.0, 0.0, 0.0]))
+		var r_len: float = Vector2(r_pos.x, r_pos.z).length()
+		if r_len > 0.02:
+			var arm := MeshInstance3D.new()
+			var arm_m := BoxMesh.new()
+			arm_m.size = Vector3(r_len, 0.022, 0.022)
+			arm.mesh = arm_m
+			arm.position = r_pos * 0.5
+			arm.rotation.y = -atan2(r_pos.z, r_pos.x)
+			arm.material_override = _make_cad_material(false)
+			aircraft.add_child(arm)
+		var disc := MeshInstance3D.new()
+		var dm := CylinderMesh.new()
+		dm.top_radius = 0.17
+		dm.bottom_radius = 0.17
+		dm.height = 0.008
+		disc.mesh = dm
+		disc.position = r_pos + Vector3(0.0, 0.025, 0.0)
+		disc.material_override = disc_mat
+		aircraft.add_child(disc)
 	var properties: Dictionary = engineering.mass_properties(parts)
 	if properties["ok"]:
 		metrics_label.text = "Native C++ mass %.3f kg\nCoG %s m" % [
@@ -1290,7 +1344,7 @@ func _display_mesh(asset: Dictionary) -> MeshInstance3D:
 	var path: String = project_asset_root.path_join(asset["path"])
 	var file: FileAccess = FileAccess.open(path, FileAccess.READ)
 	if file == null or file.get_length() > 16 * 1024 * 1024:
-		status_label.text = "Display mesh is missing or exceeds the prototype's 16 MiB limit."
+		status_label.text = "Display mesh is missing or exceeds the 16 MiB desktop display limit."
 		return null
 	var bytes: PackedByteArray = file.get_buffer(file.get_length())
 	file.close()
@@ -1307,7 +1361,7 @@ func _display_mesh(asset: Dictionary) -> MeshInstance3D:
 	var positions: Array = mesh_data.get("vertices_m", [])
 	var triangles: Array = mesh_data.get("triangles", [])
 	if positions.is_empty() or triangles.is_empty() or triangles.size() > 100000:
-		status_label.text = "Display mesh is empty or exceeds the prototype triangle limit."
+		status_label.text = "Display mesh is empty or exceeds the 100k desktop display triangle limit."
 		return null
 	var vertices: PackedVector3Array = PackedVector3Array()
 	for position in positions:
@@ -1811,6 +1865,7 @@ func _process(delta: float) -> void:
 					status_label.text = "Recovered last valid project (%s)." % str(output.get("project_sha256", "")).left(12)
 			elif job_action == "layout-bom":
 				var mp: Dictionary = output.get("mass_properties", {})
+				_build_procedural_aircraft_family("multirotor_bom", output.get("rotors", []))
 				metrics_label.text = "BOM (%d rotors) · Mass %.3f kg\nCoG %s m\nUnverified: %s" % [
 					int(output.get("n_rotors", 0)), float(mp.get("mass_kg", 0.0)), str(mp.get("cog_m", [])), str(output.get("unverified_bom_items", []))]
 				status_label.text = "Layout BOM and mass properties computed (%d BOM items; physical validation pending)." % output.get("bom", []).size()
@@ -1873,13 +1928,39 @@ func _process(delta: float) -> void:
 					_seek(0.0)
 				status_label.text = "VTOL transition %s (peak temp=%.1f C, verdict=%s) · physical validation pending." % [
 					str(output.get("status")), float(output.get("peak_motor_temp_c", 0.0)), str(output.get("verdict"))]
+			elif job_action == "autorotation-sim":
+				_build_procedural_aircraft_family("helicopter")
+				var ht: Dictionary = output.get("telemetry", {})
+				if not ht.get("t", []).is_empty():
+					result = {"result": {"status": output.get("status", "completed"), "telemetry": ht}}
+					timeline.max_value = float(ht["t"][-1])
+					_seek(0.0)
+				status_label.text = "Helicopter autorotation %s (sink=%.2f m/s, min RPM=%.0f, verdict=%s) · physical validation pending." % [
+					str(output.get("status")), float(output.get("touchdown_sink_m_s", 0.0)), float(output.get("min_observed_rpm", 0.0)), str(output.get("verdict"))]
+			elif job_action == "sitl-mission":
+				status_label.text = "SITL %s (%d waypoints, mean EKF err=%.3f m, clearance=%.2f m, verdict=%s) · SYNTHETIC." % [
+					str(output.get("firmware_kind")), int(output.get("waypoint_count", 0)), float(output.get("mean_ekf_position_error_m", 0.0)), float(output.get("min_lidar_clearance_m", 0.0)), str(output.get("verdict"))]
 			elif job_action == "adverse-weather":
 				var r: Dictionary = output.get("rain", {})
 				var i_res: Dictionary = output.get("icing", {})
 				status_label.text = "Weather: wet CL_max=%.2f (%s), ice=%.4f kg (%s)." % [
 					float(r.get("wet_cl_max", 0.0)), str(r.get("status")), float(i_res.get("accreted_mass_kg", 0.0)), str(i_res.get("verdict", "OK"))]
 			elif job_action == "swarm-sim":
-				_build_procedural_aircraft_family("swarm")
+				var traj_t: Array = output.get("trajectory_t_s", [])
+				var traj_pos: Array = output.get("trajectory_positions_m", [])
+				_build_procedural_aircraft_family("swarm", traj_pos[0] if not traj_pos.is_empty() else [])
+				if not traj_t.is_empty() and traj_pos.size() == traj_t.size():
+					var sx: Array = []
+					var sy: Array = []
+					var sz: Array = []
+					for _k in range(traj_t.size()):
+						sx.append(0.0)
+						sy.append(0.0)
+						sz.append(0.0)
+					result = {"result": {"status": output.get("status", "completed"), "swarm_positions": traj_pos, "telemetry": {
+						"t": traj_t, "x": sx, "y": sy, "z": sz, "q_wxyz": []}}}
+					timeline.max_value = float(traj_t[-1])
+					_seek(0.0)
 				status_label.text = "Swarm (%d drones): %s (min sep=%.2f m) · physical validation pending." % [
 					int(output.get("agent_count", 0)), str(output.get("status")), float(output.get("min_observed_separation_m", 0.0))]
 			elif job_action == "run" or job_action == "cad-torque" or job_action == "simulate":
@@ -1988,8 +2069,8 @@ func _seek(time_s: float) -> void:
 	if attitudes.size() == times.size():
 		var q0: Array = attitudes[index]
 		var q1: Array = attitudes[next]
-		var rotation0: Quaternion = Quaternion(float(q0[1]), float(q0[3]), -float(q0[2]), float(q0[0]))
-		var rotation1: Quaternion = Quaternion(float(q1[1]), float(q1[3]), -float(q1[2]), float(q1[0]))
+		var rotation0: Quaternion = Quaternion(float(q0[1]), float(q0[3]), -float(q0[2]), float(q0[0])).normalized()
+		var rotation1: Quaternion = Quaternion(float(q1[1]), float(q1[3]), -float(q1[2]), float(q1[0])).normalized()
 		aircraft.quaternion = rotation0.slerp(rotation1, fraction)
 	if result.get("experiment_kind") == "cad_torque_1":
 		# The rigid-body state is at its CoG; the CAD mesh retains its original datum.
@@ -2001,10 +2082,20 @@ func _seek(time_s: float) -> void:
 			var nac: Node = aircraft.find_child(nac_name, true, false)
 			if nac is Node3D:
 				(nac as Node3D).rotation_degrees = Vector3(0.0, 0.0, -(90.0 - tilt_deg))
+	var swarm_frames: Array = result.get("result", {}).get("swarm_positions", [])
+	if swarm_frames.size() == times.size():
+		var f0: Array = swarm_frames[index]
+		var f1: Array = swarm_frames[next]
+		for a_idx in range(f0.size()):
+			var ag_node: Node = aircraft.find_child("swarm_agent_%d" % a_idx, true, false)
+			if ag_node is Node3D:
+				var p0: Vector3 = _scene_position(f0[a_idx])
+				var p1: Vector3 = _scene_position(f1[a_idx])
+				(ag_node as Node3D).position = p0.lerp(p1, fraction)
 	_update_camera()
 
 
-func _build_procedural_aircraft_family(family: String) -> void:
+func _build_procedural_aircraft_family(family: String, extra_items: Array = []) -> void:
 	for child in aircraft.get_children():
 		aircraft.remove_child(child)
 		child.queue_free()
@@ -2014,7 +2105,25 @@ func _build_procedural_aircraft_family(family: String) -> void:
 	mat.roughness = 0.35
 	var accent := StandardMaterial3D.new()
 	accent.albedo_color = Color(0.95, 0.55, 0.15)
-	if family == "fixed_wing":
+	if family == "multirotor_bom":
+		var hub := MeshInstance3D.new()
+		var hub_m := BoxMesh.new()
+		hub_m.size = Vector3(0.22, 0.04, 0.22)
+		hub.mesh = hub_m
+		hub.material_override = mat
+		aircraft.add_child(hub)
+		for r_entry in extra_items:
+			if r_entry is Dictionary:
+				var disc := MeshInstance3D.new()
+				var dm := CylinderMesh.new()
+				dm.top_radius = 0.18
+				dm.bottom_radius = 0.18
+				dm.height = 0.015
+				disc.mesh = dm
+				disc.position = _scene_position(r_entry.get("position_m", [0.0, 0.0, 0.0]))
+				disc.material_override = accent
+				aircraft.add_child(disc)
+	elif family == "fixed_wing":
 		var fuse := MeshInstance3D.new()
 		var fuse_m := BoxMesh.new()
 		fuse_m.size = Vector3(1.1, 0.12, 0.14)
@@ -2066,13 +2175,15 @@ func _build_procedural_aircraft_family(family: String) -> void:
 		main_rotor.material_override = accent
 		aircraft.add_child(main_rotor)
 	elif family == "swarm":
-		for offset in [Vector3(-0.6, 0.0, -0.6), Vector3(-0.6, 0.0, 0.6), Vector3(0.6, 0.0, -0.6), Vector3(0.6, 0.0, 0.6)]:
+		var offsets: Array = extra_items if not extra_items.is_empty() else [[-0.6, -0.6, 0.0], [-0.6, 0.6, 0.0], [0.6, -0.6, 0.0], [0.6, 0.6, 0.0]]
+		for s_i in range(offsets.size()):
 			var agent := MeshInstance3D.new()
+			agent.name = "swarm_agent_%d" % s_i
 			var ag_m := SphereMesh.new()
-			ag_m.radius = 0.10
-			ag_m.height = 0.10
+			ag_m.radius = 0.12
+			ag_m.height = 0.12
 			agent.mesh = ag_m
-			agent.position = offset
+			agent.position = _scene_position(offsets[s_i])
 			agent.material_override = accent
 			aircraft.add_child(agent)
 	_fit_camera()
