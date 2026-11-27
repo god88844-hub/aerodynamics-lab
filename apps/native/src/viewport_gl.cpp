@@ -273,6 +273,7 @@ bool ViewportGL::init(gl33::Dispatch *gl) {
     init_line_vao(vao_edges_, vbo_edges_);
     init_line_vao(vao_wake_, vbo_wake_);
     init_line_vao(vao_grid_, vbo_grid_);
+    init_line_vao(vao_path_, vbo_path_);
     init_line_vao(vao_gizmo_, vbo_gizmo_);
 
     upload_grid_and_bounds(2.5f, 0.25f);
@@ -339,6 +340,20 @@ void ViewportGL::upload_scene(const GeneratedCADScene &scene) {
     gl_->BufferData(gl33::GL_ARRAY_BUFFER_V, static_cast<gl33::GLsizeiptr>(scene.wake_lines.size() * sizeof(EdgeVertex)),
                     scene.wake_lines.empty() ? nullptr : scene.wake_lines.data(), gl33::GL_DYNAMIC_DRAW_V);
     wake_vert_count_ = static_cast<gl33::GLsizei>(scene.wake_lines.size());
+}
+
+void ViewportGL::upload_trajectory_path(const std::vector<std::array<double, 3>> &traj_pos_m) {
+    if (!gl_) return;
+    std::vector<EdgeVertex> path_verts;
+    path_verts.reserve(traj_pos_m.size());
+    for (const auto &pt : traj_pos_m) {
+        path_verts.push_back({static_cast<float>(pt[0]), static_cast<float>(pt[1]), static_cast<float>(pt[2]),
+                              0.10f, 0.36f, 0.88f});
+    }
+    gl_->BindBuffer(gl33::GL_ARRAY_BUFFER_V, vbo_path_);
+    gl_->BufferData(gl33::GL_ARRAY_BUFFER_V, static_cast<gl33::GLsizeiptr>(path_verts.size() * sizeof(EdgeVertex)),
+                    path_verts.empty() ? nullptr : path_verts.data(), gl33::GL_DYNAMIC_DRAW_V);
+    path_vert_count_ = static_cast<gl33::GLsizei>(path_verts.size());
 }
 
 void ViewportGL::upload_grid_and_bounds(float extent_m, float step_m) {
@@ -422,6 +437,15 @@ void ViewportGL::render_single_camera(const Mat4 &vp, const std::array<float, 3>
         gl_->UniformMatrix4fv(gl_->GetUniformLocation(prog_line_, "uVP"), 1, gl33::GL_FALSE_V, vp.m);
         gl_->BindVertexArray(vao_wake_);
         gl_->DrawArrays(gl33::GL_LINES_V, 0, wake_vert_count_);
+    }
+
+    // 5b. 6-DoF simulated trajectory ribbon in world frame
+    if (path_vert_count_ > 1) {
+        gl_->UseProgram(prog_line_);
+        gl_->UniformMatrix4fv(gl_->GetUniformLocation(prog_line_, "uModel"), 1, gl33::GL_FALSE_V, id.m);
+        gl_->UniformMatrix4fv(gl_->GetUniformLocation(prog_line_, "uVP"), 1, gl33::GL_FALSE_V, vp.m);
+        gl_->BindVertexArray(vao_path_);
+        gl_->DrawArrays(gl33::GL_LINE_STRIP_V, 0, path_vert_count_);
     }
 
     // 6. CoG datum crosshair

@@ -26,6 +26,12 @@ int main() {
         aerolab::evaluate_live_physics_and_curves(p, scene, ev);
         assert(ev.total_mass_kg > 0.01);
         assert(ev.curve_alpha_deg.size() == 10);
+        if (fam == aerolab::VehicleFamily::CustomPart) {
+            assert(ev.benchmark_match_pct < 0.0);
+        } else {
+            assert(ev.benchmark_match_pct > 90.0);
+            assert(ev.predicted_readiness_pct > 75.0);
+        }
     }
 
     // 3. Rotor tip overlap must fail closed
@@ -38,6 +44,7 @@ int main() {
     aerolab::evaluate_live_physics_and_curves(overlap, overlap_scene, overlap_ev);
     assert(!overlap_ev.clearance_ok);
     assert(overlap_ev.validation_status == "FAIL");
+    assert(overlap_ev.predicted_readiness_pct == 0.0);
 
     // 4. Out-of-envelope stall alpha must fail closed
     aerolab::AircraftDesignParams stall;

@@ -30,6 +30,9 @@ public:
     // Direct zero-latency pure C++20 lab_core 6-DoF RK4 run
     void run_cpp_rk4_multirotor(const AircraftDesignParams &params, LiveEvidenceSummary &summary);
 
+    // Poll async Python solver output into trajectory/metrics when finished
+    bool poll_completed_results(LiveEvidenceSummary &summary);
+
     // Background subprocess invocation of scripts/lab_project.py
     bool launch_python_command(const std::string &cmd, const std::string &input_json, const std::string &note = "");
 
@@ -42,6 +45,7 @@ private:
     std::filesystem::path repo_root_;
     std::filesystem::path tmp_dir_;
     std::atomic<bool> busy_{false};
+    std::atomic<bool> pending_result_{false};
     mutable std::mutex mu_;
     WorkerJobStatus status_;
     std::thread worker_thread_;

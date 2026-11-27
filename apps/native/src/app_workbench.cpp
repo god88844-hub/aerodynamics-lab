@@ -139,6 +139,9 @@ void AppWorkbench::rebuild_geometry() {
 void AppWorkbench::render_ui_and_scene(float dt_s, int fb_w, int fb_h) {
     (void)fb_w;
     (void)fb_h;
+    if (ipc_ && ipc_->poll_completed_results(evidence) && viewport_) {
+        viewport_->upload_trajectory_path(evidence.traj_pos_m);
+    }
     const ImGuiViewport *vp = ImGui::GetMainViewport();
     ImGui::SetNextWindowPos(vp->WorkPos);
     ImGui::SetNextWindowSize(vp->WorkSize);
