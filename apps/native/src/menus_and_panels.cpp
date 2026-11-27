@@ -1,0 +1,567 @@
+#include "app_workbench.hpp"
+
+#include "imgui.h"
+#include "imgui_internal.h"
+
+#include <algorithm>
+#include <cmath>
+#include <cstdio>
+#include <cstring>
+#include <fstream>
+#include <numbers>
+
+namespace aerolab {
+namespace {
+
+constexpr float kPi = std::numbers::pi_v<float>;
+
+void draw_polar_plot(const LiveEvidenceSummary &ev) {
+    if (ev.curve_alpha_deg.size() < 2) return;
+    ImGui::TextUnformatted("Lift Coefficient (CL vs Alpha)");
+    const ImVec2 avail = ImGui::GetContentRegionAvail();
+    const ImVec2 size(std::max(140.0f, avail.x), 118.0f);
+    const ImVec2 p0 = ImGui::GetCursorScreenPos();
+    const ImVec2 p1(p0.x + size.x, p0.y + size.y);
+    ImDrawList *dl = ImGui::GetWindowDrawList();
+
+    dl->AddRectFilled(p0, p1, IM_COL32(250, 252, 255, 255), 4.0f);
+    dl->AddRect(p0, p1, IM_COL32(204, 213, 224, 255), 4.0f);
+
+    const float pad_l = 28.0f, pad_r = 10.0f, pad_t = 10.0f, pad_b = 18.0f;
+    const float gx0 = p0.x + pad_l, gx1 = p1.x - pad_r;
+    const float gy0 = p0.y + pad_t, gy1 = p1.y - pad_b;
+
+    for (int g = 0; g <= 3; ++g) {
+        const float t = static_cast<float>(g) / 3.0f;
+        const float y = gy0 + t * (gy1 - gy0);
+        dl->AddLine(ImVec2(gx0, y), ImVec2(gx1, y), IM_COL32(230, 236, 244, 255));
+    }
+
+    const float cl_min = -0.3f, cl_max = 1.6f;
+    auto to_px = [&](float alpha, float cl) -> ImVec2 {
+        const float u = (alpha + 4.0f) / 18.0f;
+        const float v = std::clamp((cl - cl_min) / (cl_max - cl_min), 0.0f, 1.0f);
+        return ImVec2(gx0 + u * (gx1 - gx0), gy1 - v * (gy1 - gy0));
+    };
+
+    for (std::size_t i = 0; i + 1 < ev.curve_alpha_deg.size(); ++i) {
+        dl->AddLine(to_px(ev.curve_alpha_deg[i], ev.curve_cl[i]),
+                    to_px(ev.curve_alpha_deg[i + 1], ev.curve_cl[i + 1]),
+                    IM_COL32(37, 99, 235, 255), 2.2f);
+    }
+    dl->AddText(ImVec2(p0.x + 4.0f, gy0), IM_COL32(95, 108, 125, 255), "1.6");
+    dl->AddText(ImVec2(p0.x + 4.0f, gy1 - 12.0f), IM_COL32(95, 108, 125, 255), "-.3");
+    dl->AddText(ImVec2(gx0, p1.y - 16.0f), IM_COL32(95, 108, 125, 255), "-4 deg");
+    dl->AddText(ImVec2(gx1 - 42.0f, p1.y - 16.0f), IM_COL32(95, 108, 125, 255), "+14 deg");
+    ImGui::Dummy(size);
+}
+
+void draw_view_cube_and_triad(ImDrawList *dl, ImVec2 vp_pos, ImVec2 vp_size,
+                              CameraOrbitState &cam, ViewportLayout layout) {
+    // 1. Bottom-left RGB Axis Triad
+    const ImVec2 origin(vp_pos.x + 42.0f, vp_pos.y + vp_size.y - 42.0f);
+    const float yaw = cam.yaw_deg * kPi / 180.0f;
+    const float pitch = cam.pitch_deg * kPi / 180.0f;
+    auto proj_dir = [&](float dx, float dy, float dz) -> ImVec2 {
+        const float cx = -std::sin(yaw) * dx + std::cos(yaw) * dy;
+        const float cy = -std::sin(pitch) * (std::cos(yaw) * dx + std::sin(yaw) * dy) + std::cos(pitch) * dz;
+        return ImVec2(origin.x + cx * 28.0f, origin.y - cy * 28.0f);
+    };
+    const ImVec2 ax = proj_dir(1, 0, 0);
+    const ImVec2 ay = proj_dir(0, 1, 0);
+    const ImVec2 az = proj_dir(0, 0, 1);
+    dl->AddLine(origin, ax, IM_COL32(215, 55, 55, 255), 2.2f);
+    dl->AddLine(origin, ay, IM_COL32(45, 165, 68, 255), 2.2f);
+    dl->AddLine(origin, az, IM_COL32(37, 99, 235, 255), 2.2f);
+    dl->AddText(ax, IM_COL32(190, 35, 35, 255), "X");
+    dl->AddText(ay, IM_COL32(30, 130, 50, 255), "Y");
+    dl->AddText(az, IM_COL32(25, 80, 210, 255), "Z");
+
+    // 2. Quadrant divider lines & clean labels in Ortho 4-View
+    if (layout == ViewportLayout::Ortho4View) {
+        const float mx = vp_pos.x + vp_size.x * 0.5f;
+        const float my = vp_pos.y + vp_size.y * 0.5f;
+        dl->AddLine(ImVec2(mx, vp_pos.y), ImVec2(mx, vp_pos.y + vp_size.y), IM_COL32(180, 192, 208, 255), 1.5f);
+        dl->AddLine(ImVec2(vp_pos.x, my), ImVec2(vp_pos.x + vp_size.x, my), IM_COL32(180, 192, 208, 255), 1.5f);
+        dl->AddText(ImVec2(vp_pos.x + 10, vp_pos.y + 8), IM_COL32(45, 55, 72, 255), "TOP (Z+)");
+        dl->AddText(ImVec2(mx + 10, vp_pos.y + 8), IM_COL32(45, 55, 72, 255), "SIDE (Y+)");
+        dl->AddText(ImVec2(vp_pos.x + 10, my + 8), IM_COL32(45, 55, 72, 255), "FRONT (X+)");
+        dl->AddText(ImVec2(mx + 10, my + 8), IM_COL32(45, 55, 72, 255), "3D ISO");
+    }
+
+    // 3. Top-right ViewCube control strip
+    const ImVec2 vc_pos(vp_pos.x + vp_size.x - 166.0f, vp_pos.y + 12.0f);
+    dl->AddRectFilled(vc_pos, ImVec2(vc_pos.x + 154.0f, vc_pos.y + 30.0f), IM_COL32(255, 255, 255, 232), 5.0f);
+    dl->AddRect(vc_pos, ImVec2(vc_pos.x + 154.0f, vc_pos.y + 30.0f), IM_COL32(192, 203, 218, 255), 5.0f);
+
+    const char *labels[4] = {"Top", "Front", "Side", "Iso"};
+    const float yaws[4] = {0.0f, 0.0f, 90.0f, 42.0f};
+    const float pitches[4] = {84.0f, 2.0f, 2.0f, 28.0f};
+    for (int i = 0; i < 4; ++i) {
+        const ImVec2 b0(vc_pos.x + 5.0f + i * 37.0f, vc_pos.y + 4.0f);
+        const ImVec2 b1(b0.x + 33.0f, b0.y + 22.0f);
+        const ImVec2 mp = ImGui::GetIO().MousePos;
+        const bool hovered = mp.x >= b0.x && mp.x <= b1.x && mp.y >= b0.y && mp.y <= b1.y;
+        dl->AddRectFilled(b0, b1, hovered ? IM_COL32(219, 234, 254, 255) : IM_COL32(241, 245, 249, 255), 3.0f);
+        dl->AddText(ImVec2(b0.x + 4.0f, b0.y + 4.0f), IM_COL32(30, 41, 59, 255), labels[i]);
+        if (hovered && ImGui::IsMouseClicked(ImGuiMouseButton_Left)) {
+            cam.yaw_deg = yaws[i];
+            cam.pitch_deg = pitches[i];
+        }
+    }
+}
+
+} // namespace
+
+void AppWorkbench::draw_menu_bar() {
+    if (!ImGui::BeginMenuBar()) return;
+
+    if (ImGui::BeginMenu("File")) {
+        if (ImGui::MenuItem("New Multirotor")) switch_family(VehicleFamily::Multirotor);
+        if (ImGui::MenuItem("New Fixed-Wing Airplane")) switch_family(VehicleFamily::FixedWing);
+        if (ImGui::MenuItem("New Helicopter")) switch_family(VehicleFamily::Helicopter);
+        if (ImGui::MenuItem("New VTOL Tiltrotor")) switch_family(VehicleFamily::VTOL);
+        if (ImGui::MenuItem("New Custom Part Sketch")) switch_family(VehicleFamily::CustomPart);
+        ImGui::Separator();
+        if (ImGui::MenuItem("Open Project (.json)...")) {
+            const auto path = native_open_file_dialog("Aerodynamics Lab Project", "json");
+            if (!path.empty()) export_banner = "Opened: " + path;
+        }
+        if (ImGui::MenuItem("Save Project Copy...")) {
+            const auto path = native_save_file_dialog("project.json", "JSON Project", "json");
+            if (!path.empty()) {
+                std::ofstream ofs(path);
+                ofs << ipc_->build_project_payload_json(params);
+                export_banner = "Saved project snapshot to " + path;
+            }
+        }
+        ImGui::Separator();
+        if (ImGui::MenuItem("Build Exact Part STEP/STL/DXF (OCCT Worker)")) {
+            ipc_->launch_python_command("build-custom-part",
+                                        ipc_->build_part_payload_json(params, repo_root_ / ".local" / "tmp" / "native_exports"));
+            show_part_export_modal = true;
+        }
+        if (ImGui::MenuItem("Export 2D Wing Drawing (SVG / DXF)")) {
+            ipc_->launch_python_command("export-drawing", ipc_->build_project_payload_json(params));
+        }
+        ImGui::Separator();
+        if (ImGui::MenuItem("Exit")) {
+            std::exit(0);
+        }
+        ImGui::EndMenu();
+    }
+
+    if (ImGui::BeginMenu("Edit")) {
+        if (ImGui::MenuItem("Undo", "Ctrl+Z", false, !undo_stack_.empty())) undo();
+        if (ImGui::MenuItem("Redo", "Ctrl+Y", false, !redo_stack_.empty())) redo();
+        ImGui::Separator();
+        if (ImGui::MenuItem("Reset Camera View")) {
+            camera = CameraOrbitState{};
+        }
+        ImGui::EndMenu();
+    }
+
+    if (ImGui::BeginMenu("View")) {
+        if (ImGui::MenuItem("Single 3D Perspective", nullptr, viewport_layout == ViewportLayout::Single3D))
+            viewport_layout = ViewportLayout::Single3D;
+        if (ImGui::MenuItem("4-Quadrant Engineering View (Top/Side/Front/Iso)", nullptr, viewport_layout == ViewportLayout::Ortho4View))
+            viewport_layout = ViewportLayout::Ortho4View;
+        ImGui::Separator();
+        if (ImGui::MenuItem("Shaded + CAD Edges", nullptr, shading_mode == ShadingMode::ShadedEdges))
+            shading_mode = ShadingMode::ShadedEdges;
+        if (ImGui::MenuItem("Shaded Smooth", nullptr, shading_mode == ShadingMode::ShadedOnly))
+            shading_mode = ShadingMode::ShadedOnly;
+        if (ImGui::MenuItem("Wireframe", nullptr, shading_mode == ShadingMode::Wireframe))
+            shading_mode = ShadingMode::Wireframe;
+        if (ImGui::MenuItem("Aerodynamic Cp Contour", nullptr, shading_mode == ShadingMode::SurfaceCp))
+            shading_mode = ShadingMode::SurfaceCp;
+        ImGui::Separator();
+        ImGui::MenuItem("Show Vortex Wake Lines", nullptr, &show_wake);
+        ImGui::MenuItem("Show CoG Datum", nullptr, &show_cog);
+        ImGui::MenuItem("Dark Viewport Canvas", nullptr, &dark_canvas);
+        ImGui::EndMenu();
+    }
+
+    if (ImGui::BeginMenu("Sketch")) {
+        if (ImGui::MenuItem("New Rounded Plate / Arm Sketch")) {
+            push_undo_snapshot();
+            params.active_part.sketch_kind = SketchShapeKind::RoundedPlate;
+            params.active_part.revolve_360 = false;
+            switch_family(VehicleFamily::CustomPart);
+        }
+        if (ImGui::MenuItem("New Ducted Shroud / Ring Sketch")) {
+            push_undo_snapshot();
+            params.active_part.sketch_kind = SketchShapeKind::RingDuct;
+            params.active_part.revolve_360 = false;
+            switch_family(VehicleFamily::CustomPart);
+        }
+        if (ImGui::MenuItem("New NACA Airfoil Rib Sketch")) {
+            push_undo_snapshot();
+            params.active_part.sketch_kind = SketchShapeKind::AirfoilSection;
+            params.active_part.revolve_360 = false;
+            switch_family(VehicleFamily::CustomPart);
+        }
+        ImGui::EndMenu();
+    }
+
+    if (ImGui::BeginMenu("Model")) {
+        if (ImGui::MenuItem("Attach / Swap Custom Part on Current Aircraft", nullptr, params.attach_custom_part)) {
+            push_undo_snapshot();
+            params.attach_custom_part = !params.attach_custom_part;
+            rebuild_geometry();
+        }
+        if (ImGui::MenuItem("Toggle 360 deg Revolve Feature", nullptr, params.active_part.revolve_360)) {
+            push_undo_snapshot();
+            params.active_part.revolve_360 = !params.active_part.revolve_360;
+            rebuild_geometry();
+        }
+        if (ImGui::MenuItem("Quad Circular Pattern (4x)")) {
+            push_undo_snapshot();
+            params.active_part.circular_pattern_count = 4;
+            rebuild_geometry();
+        }
+        ImGui::EndMenu();
+    }
+
+    if (ImGui::BeginMenu("Aero")) {
+        if (ImGui::MenuItem("Enable Cp Pressure Surface View")) {
+            shading_mode = ShadingMode::SurfaceCp;
+        }
+        if (ImGui::MenuItem("Run Lifting-Line / Fixed-Wing Solver (Python)")) {
+            ipc_->launch_python_command("fixed-wing-sim", ipc_->build_project_payload_json(params));
+        }
+        if (ImGui::MenuItem("Evaluate Assembly Layout & BOM")) {
+            ipc_->launch_python_command("layout-bom", ipc_->build_project_payload_json(params));
+        }
+        ImGui::EndMenu();
+    }
+
+    if (ImGui::BeginMenu("Flight")) {
+        if (ImGui::MenuItem("Run 6-DoF RK4 Flight Simulation (C++20)")) {
+            ipc_->run_cpp_rk4_multirotor(params, evidence);
+        }
+        if (ImGui::MenuItem("Run 6-DoF Fixed-Wing Mission (Python Worker)")) {
+            ipc_->launch_python_command("6dof-fixed-wing", ipc_->build_project_payload_json(params));
+        }
+        if (ImGui::MenuItem("Run VTOL Transition Corridor")) {
+            ipc_->launch_python_command("vtol-transition", ipc_->build_project_payload_json(params));
+        }
+        if (ImGui::MenuItem("Run Helicopter Autorotation Sim")) {
+            ipc_->launch_python_command("autorotation-sim", ipc_->build_project_payload_json(params));
+        }
+        if (ImGui::MenuItem("Run Adverse Weather / Icing Check")) {
+            ipc_->launch_python_command("adverse-weather", ipc_->build_project_payload_json(params));
+        }
+        ImGui::EndMenu();
+    }
+
+    if (ImGui::BeginMenu("Verification")) {
+        if (ImGui::MenuItem("Open Verification & Benchmark Scorecard")) show_verification_modal = true;
+        if (ImGui::MenuItem("Run Twin % Source Comparison")) {
+            ipc_->launch_python_command("compare-source", ipc_->build_project_payload_json(params));
+        }
+        if (ImGui::MenuItem("Run Bounded Parameter Sweep")) {
+            ipc_->launch_python_command("bounded-sweep", ipc_->build_project_payload_json(params));
+        }
+        if (ImGui::MenuItem("Equations & Physical Limits Reference")) show_equations_modal = true;
+        ImGui::EndMenu();
+    }
+
+    if (ImGui::BeginMenu("Help")) {
+        if (ImGui::MenuItem("About Aerodynamics Lab")) show_about_modal = true;
+        ImGui::EndMenu();
+    }
+
+    ImGui::EndMenuBar();
+}
+
+void AppWorkbench::draw_quick_toolstrip() {
+    ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(10.0f, 5.0f));
+    ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(6.0f, 4.0f));
+    if (ImGui::Button("Multirotor")) switch_family(VehicleFamily::Multirotor);
+    ImGui::SameLine();
+    if (ImGui::Button("Fixed-Wing")) switch_family(VehicleFamily::FixedWing);
+    ImGui::SameLine();
+    if (ImGui::Button("Helicopter")) switch_family(VehicleFamily::Helicopter);
+    ImGui::SameLine();
+    if (ImGui::Button("VTOL")) switch_family(VehicleFamily::VTOL);
+    ImGui::SameLine();
+    if (ImGui::Button("Part Designer")) switch_family(VehicleFamily::CustomPart);
+    ImGui::SameLine();
+    ImGui::SeparatorEx(ImGuiSeparatorFlags_Vertical);
+    ImGui::SameLine();
+    if (ImGui::Button(viewport_layout == ViewportLayout::Single3D ? "4-View Ortho" : "Single 3D")) {
+        viewport_layout = (viewport_layout == ViewportLayout::Single3D) ? ViewportLayout::Ortho4View : ViewportLayout::Single3D;
+    }
+    ImGui::SameLine();
+    if (ImGui::Button(shading_mode == ShadingMode::SurfaceCp ? "CAD Shaded+Edges" : "Aero Cp Map")) {
+        shading_mode = (shading_mode == ShadingMode::SurfaceCp) ? ShadingMode::ShadedEdges : ShadingMode::SurfaceCp;
+    }
+    ImGui::SameLine();
+    if (ImGui::Button("Run 6-DoF (C++)")) {
+        ipc_->run_cpp_rk4_multirotor(params, evidence);
+    }
+    ImGui::SameLine();
+    if (ImGui::Button("Reset View")) {
+        camera = CameraOrbitState{};
+    }
+    ImGui::PopStyleVar(2);
+    ImGui::Separator();
+}
+
+void AppWorkbench::draw_left_feature_tree() {
+    ImGui::Begin("Model & Feature Tree");
+    ImGui::Text("Project: %s", params.project_name.c_str());
+    ImGui::Separator();
+
+    if (ImGui::CollapsingHeader("Feature History", ImGuiTreeNodeFlags_DefaultOpen)) {
+        for (std::size_t i = 0; i < feature_tree.size(); ++i) {
+            auto &node = feature_tree[i];
+            ImGui::PushID(static_cast<int>(i));
+            ImGui::BulletText("[%s] %s", node.kind.c_str(), node.label.c_str());
+            ImGui::PopID();
+        }
+        if (ImGui::Button("Undo", ImVec2(64, 0))) undo();
+        ImGui::SameLine();
+        if (ImGui::Button("Redo", ImVec2(64, 0))) redo();
+    }
+
+    ImGui::Spacing();
+    if (ImGui::CollapsingHeader("Assembly Components", ImGuiTreeNodeFlags_DefaultOpen)) {
+        for (int i = 0; i < static_cast<int>(scene.assembly_parts.size()); ++i) {
+            const auto &part = scene.assembly_parts[i];
+            char label[160];
+            std::snprintf(label, sizeof(label), "%s  (%.3f kg)", part.name.c_str(), part.mass_kg);
+            if (ImGui::Selectable(label, selected_part_idx == i)) {
+                selected_part_idx = (selected_part_idx == i) ? -1 : i;
+                rebuild_geometry();
+            }
+        }
+    }
+
+    ImGui::Spacing();
+    if (ImGui::CollapsingHeader("Worker Status", ImGuiTreeNodeFlags_DefaultOpen)) {
+        const auto st = ipc_->snapshot_status();
+        ImGui::TextWrapped("%s", st.summary_line.c_str());
+    }
+    ImGui::End();
+}
+
+void AppWorkbench::draw_center_viewport(float dt_s) {
+    ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0, 0));
+    ImGui::Begin("3D CAD Viewport");
+
+    std::array<double, 3> v_pos{0.0, 0.0, 0.0};
+    std::array<double, 4> v_quat{1.0, 0.0, 0.0, 0.0};
+    if (evidence.has_trajectory && !evidence.traj_pos_m.empty()) {
+        if (evidence.playing) {
+            evidence.playback_time_s += dt_s;
+            if (evidence.playback_time_s > evidence.duration_s) evidence.playback_time_s = 0.0f;
+        }
+        const float u = evidence.duration_s > 0.0f ? (evidence.playback_time_s / evidence.duration_s) : 0.0f;
+        const std::size_t idx = std::min(evidence.traj_pos_m.size() - 1,
+                                         static_cast<std::size_t>(u * static_cast<float>(evidence.traj_pos_m.size() - 1)));
+        v_pos = evidence.traj_pos_m[idx];
+        v_quat = evidence.traj_quat_wxyz[idx];
+    }
+
+    const ImVec2 avail = ImGui::GetContentRegionAvail();
+    const float bar_h = evidence.has_trajectory ? 34.0f : 0.0f;
+    last_vp_w_ = std::max(64, static_cast<int>(avail.x));
+    last_vp_h_ = std::max(64, static_cast<int>(avail.y - bar_h));
+
+    viewport_->render(last_vp_w_, last_vp_h_, camera, viewport_layout, shading_mode, dark_canvas,
+                      show_wake, show_cog, evidence.center_of_mass_m, v_pos, v_quat);
+
+    const ImVec2 vp_pos = ImGui::GetCursorScreenPos();
+    const ImVec2 vp_size(static_cast<float>(last_vp_w_), static_cast<float>(last_vp_h_));
+    ImGui::Image(static_cast<ImTextureID>(viewport_->texture_id()), vp_size, ImVec2(0, 1), ImVec2(1, 0));
+
+    if (ImGui::IsItemHovered()) {
+        const ImGuiIO &io = ImGui::GetIO();
+        if (ImGui::IsMouseDragging(ImGuiMouseButton_Right) || ImGui::IsMouseDragging(ImGuiMouseButton_Left)) {
+            if (!io.KeyShift) {
+                camera.yaw_deg -= io.MouseDelta.x * 0.45f;
+                camera.pitch_deg = std::clamp(camera.pitch_deg + io.MouseDelta.y * 0.40f, -82.0f, 82.0f);
+            } else {
+                camera.target_m[2] += io.MouseDelta.y * 0.002f;
+            }
+        }
+        if (io.MouseWheel != 0.0f) {
+            camera.distance_m = std::clamp(camera.distance_m * std::pow(0.90f, io.MouseWheel), 0.35f, 14.0f);
+        }
+    }
+
+    draw_view_cube_and_triad(ImGui::GetWindowDrawList(), vp_pos, vp_size, camera, viewport_layout);
+
+    if (evidence.has_trajectory) {
+        ImGui::SetCursorPos(ImVec2(8.0f, vp_size.y + 6.0f));
+        if (ImGui::Button(evidence.playing ? "Pause" : "Play")) {
+            evidence.playing = !evidence.playing;
+        }
+        ImGui::SameLine();
+        ImGui::SetNextItemWidth(std::max(120.0f, vp_size.x - 210.0f));
+        ImGui::SliderFloat("t (s)", &evidence.playback_time_s, 0.0f, std::max(0.1f, evidence.duration_s), "%.2f s");
+        ImGui::SameLine();
+        if (ImGui::Button("Clear Replay")) {
+            evidence.has_trajectory = false;
+            evidence.playing = false;
+        }
+    }
+
+    ImGui::End();
+    ImGui::PopStyleVar();
+}
+
+void AppWorkbench::draw_right_inspector() {
+    ImGui::Begin("Parameters & Evidence");
+
+    bool changed = false;
+    ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x * 0.48f);
+    if (ImGui::CollapsingHeader("Live Design Parameters", ImGuiTreeNodeFlags_DefaultOpen)) {
+        if (params.family == VehicleFamily::Multirotor) {
+            changed |= ImGui::SliderInt("Rotors", &params.rotor_count, 3, 8);
+            changed |= ImGui::SliderFloat("Arm Length (m)", &params.arm_length_m, 0.14f, 0.65f, "%.3f");
+            changed |= ImGui::SliderFloat("Prop Diameter (m)", &params.prop_diameter_m, 0.15f, 0.65f, "%.3f");
+            changed |= ImGui::SliderFloat("Blade Pitch (deg)", &params.prop_pitch_deg, 6.0f, 28.0f, "%.1f");
+            changed |= ImGui::SliderInt("Prop Blades", &params.prop_blades, 2, 5);
+        } else if (params.family == VehicleFamily::FixedWing || params.family == VehicleFamily::VTOL) {
+            changed |= ImGui::SliderFloat("Wingspan (m)", &params.wingspan_m, 0.6f, 3.8f, "%.2f");
+            changed |= ImGui::SliderFloat("Root Chord (m)", &params.root_chord_m, 0.12f, 0.55f, "%.3f");
+            changed |= ImGui::SliderFloat("Tip Chord (m)", &params.tip_chord_m, 0.06f, 0.45f, "%.3f");
+            changed |= ImGui::SliderFloat("Sweep (deg)", &params.sweep_deg, -10.0f, 38.0f, "%.1f");
+            changed |= ImGui::SliderFloat("Dihedral (deg)", &params.dihedral_deg, -5.0f, 12.0f, "%.1f");
+            changed |= ImGui::SliderFloat("Washout Twist (deg)", &params.twist_tip_deg, -6.0f, 4.0f, "%.1f");
+            if (params.family == VehicleFamily::VTOL) {
+                changed |= ImGui::SliderFloat("Rotor Tilt (deg)", &params.vtol_tilt_deg, 0.0f, 90.0f, "%.0f");
+            }
+            const char *airfoils[] = {"2412", "0012", "4412", "23012", "6412"};
+            for (int a = 0; a < 4; ++a) {
+                if (a > 0) ImGui::SameLine();
+                if (ImGui::SmallButton(airfoils[a])) {
+                    params.airfoil_code = airfoils[a];
+                    changed = true;
+                }
+            }
+        } else if (params.family == VehicleFamily::Helicopter) {
+            changed |= ImGui::SliderFloat("Main Rotor Dia (m)", &params.main_rotor_diameter_m, 0.8f, 2.8f, "%.2f");
+            changed |= ImGui::SliderFloat("Tail Boom (m)", &params.tail_boom_length_m, 0.45f, 1.5f, "%.2f");
+            changed |= ImGui::SliderInt("Main Blades", &params.prop_blades, 2, 5);
+        }
+
+        if (params.family == VehicleFamily::CustomPart || params.attach_custom_part) {
+            ImGui::Separator();
+            ImGui::Text("Custom Part Sketch & Solid Feature:");
+            const char *kinds[] = {"Rounded Arm/Plate", "Ring Duct", "NACA Airfoil Rib", "Hex Mount"};
+            int k = static_cast<int>(params.active_part.sketch_kind);
+            if (ImGui::Combo("Sketch Profile", &k, kinds, 4)) {
+                params.active_part.sketch_kind = static_cast<SketchShapeKind>(k);
+                changed = true;
+            }
+            changed |= ImGui::SliderFloat("Part Length (m)", &params.active_part.length_m, 0.04f, 0.60f, "%.3f");
+            changed |= ImGui::SliderFloat("Part Width (m)", &params.active_part.width_m, 0.015f, 0.25f, "%.3f");
+            changed |= ImGui::SliderFloat("Thickness (m)", &params.active_part.thickness_m, 0.004f, 0.08f, "%.3f");
+            changed |= ImGui::SliderFloat("Cut Hole R (m)", &params.active_part.hole_radius_m, 0.0f, 0.06f, "%.3f");
+            changed |= ImGui::Checkbox("360 deg Revolve", &params.active_part.revolve_360);
+            changed |= ImGui::SliderInt("Circular Pattern", &params.active_part.circular_pattern_count, 1, 8);
+        }
+
+        ImGui::Separator();
+        changed |= ImGui::SliderFloat("Battery Mass (kg)", &params.battery_mass_kg, 0.2f, 4.5f, "%.2f");
+        changed |= ImGui::SliderFloat("Alpha (deg)", &params.alpha_deg, -4.0f, 16.0f, "%.1f");
+        changed |= ImGui::SliderFloat("Airspeed (m/s)", &params.airspeed_m_s, 3.0f, 45.0f, "%.1f");
+    }
+    ImGui::PopItemWidth();
+
+    if (changed) {
+        rebuild_geometry();
+    }
+
+    ImGui::Spacing();
+    if (ImGui::CollapsingHeader("C++20 Mass & Aerodynamics", ImGuiTreeNodeFlags_DefaultOpen)) {
+        ImGui::Text("Total Mass: %.3f kg", evidence.total_mass_kg);
+        ImGui::Text("CoG (m): [%.3f, %.3f, %.3f]",
+                    evidence.center_of_mass_m[0], evidence.center_of_mass_m[1], evidence.center_of_mass_m[2]);
+        ImGui::Text("Tip Clearance: %.1f mm (%s)", evidence.min_tip_clearance_m * 1000.0,
+                    evidence.clearance_ok ? "CLEAR" : "COLLISION FAIL");
+        ImGui::Separator();
+        ImGui::Text("CL: %.3f   CD: %.4f   L/D: %.2f", evidence.cl, evidence.cd, evidence.lift_to_drag);
+        ImGui::Text("Lift: %.1f N   Drag: %.1f N", evidence.lift_n, evidence.drag_n);
+        ImGui::Text("Re: %.2e   Mach: %.3f", evidence.reynolds, evidence.mach);
+        ImGui::Spacing();
+        draw_polar_plot(evidence);
+    }
+
+    ImGui::Spacing();
+    if (ImGui::CollapsingHeader("Virtual vs Real Evidence", ImGuiTreeNodeFlags_DefaultOpen)) {
+        const ImVec4 badge_col = (evidence.validation_status == "FAIL")
+                                     ? ImVec4(0.82f, 0.16f, 0.16f, 1.0f)
+                                     : (evidence.validation_status == "UNVALIDATED_CUSTOM"
+                                            ? ImVec4(0.75f, 0.45f, 0.08f, 1.0f)
+                                            : ImVec4(0.10f, 0.42f, 0.80f, 1.0f));
+        ImGui::TextColored(badge_col, "Status: %s", evidence.validation_status.c_str());
+        ImGui::TextWrapped("%s", evidence.status_detail.c_str());
+    }
+
+    ImGui::End();
+}
+
+void AppWorkbench::draw_modals() {
+    if (show_verification_modal) {
+        ImGui::OpenPopup("Verification & Benchmark Scorecard");
+        show_verification_modal = false;
+    }
+    if (ImGui::BeginPopupModal("Verification & Benchmark Scorecard", nullptr, ImGuiWindowFlags_AlwaysAutoResize)) {
+        ImGui::Text("Authoritative Local Verification (Zero HTTP Server / Zero Game Engine)");
+        ImGui::Separator();
+        ImGui::BulletText("C++20 lab_core: mass/CoG, tip clearance, and 6-DoF RK4 run natively.");
+        ImGui::BulletText("Pinned Campaigns: SIT battery, UIUC propeller, QDrone, Fixed-Wing, Rotorcraft -> DEVELOPMENT.");
+        ImGui::BulletText("Physical validation remains explicit until real matched test logs pass held-out criteria.");
+        if (ImGui::Button("Run Twin % Source Comparison")) {
+            ipc_->launch_python_command("compare-source", ipc_->build_project_payload_json(params));
+        }
+        ImGui::SameLine();
+        if (ImGui::Button("Run Bounded Parameter Sweep")) {
+            ipc_->launch_python_command("bounded-sweep", ipc_->build_project_payload_json(params));
+        }
+        ImGui::SameLine();
+        if (ImGui::Button("Close")) ImGui::CloseCurrentPopup();
+        ImGui::EndPopup();
+    }
+
+    if (show_part_export_modal) {
+        ImGui::OpenPopup("CAD Part Build Worker");
+        show_part_export_modal = false;
+    }
+    if (ImGui::BeginPopupModal("CAD Part Build Worker", nullptr, ImGuiWindowFlags_AlwaysAutoResize)) {
+        const auto st = ipc_->snapshot_status();
+        ImGui::TextWrapped("%s", st.summary_line.c_str());
+        if (ImGui::Button("Close")) ImGui::CloseCurrentPopup();
+        ImGui::EndPopup();
+    }
+
+    if (show_equations_modal) {
+        ImGui::OpenPopup("Aerospace Equations & Assumptions");
+        show_equations_modal = false;
+    }
+    if (ImGui::BeginPopupModal("Aerospace Equations & Assumptions", nullptr, ImGuiWindowFlags_AlwaysAutoResize)) {
+        ImGui::Text("1. Coordinates: Right-handed SI (+X forward, +Y left, +Z up), active Hamilton wxyz quaternions.");
+        ImGui::Text("2. Lifting-Line: Prandtl finite-wing CL = 2*pi*AR/(AR+2) * (alpha - alpha0), incompressible M <= 0.30.");
+        ImGui::Text("3. Multirotor Clearance: Pairwise Euclidean center spacing minus (Ri + Rj) >= 20 mm.");
+        if (ImGui::Button("Close")) ImGui::CloseCurrentPopup();
+        ImGui::EndPopup();
+    }
+
+    if (show_about_modal) {
+        ImGui::OpenPopup("About Aerodynamics Lab");
+        show_about_modal = false;
+    }
+    if (ImGui::BeginPopupModal("About Aerodynamics Lab", nullptr, ImGuiWindowFlags_AlwaysAutoResize)) {
+        ImGui::Text("Aerodynamics Lab — Standalone Zero-Engine Engineering Workbench");
+        ImGui::Text("Stack: C++20 + OpenGL 3.3 Core + Dear ImGui Docking + lab_core + Open CASCADE / Python");
+        if (ImGui::Button("Close")) ImGui::CloseCurrentPopup();
+        ImGui::EndPopup();
+    }
+}
+
+} // namespace aerolab

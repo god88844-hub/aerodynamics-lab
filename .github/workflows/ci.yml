@@ -32,6 +32,11 @@ jobs:
         run: |
           python scripts/export_contracts.py --check
           python -m pytest tests/cad/test_reusable_worker.py tests/cad/test_worker_resources.py tests/integration/test_worker_admission.py tests/integration/test_worker_record_locking.py tests/integration/test_worker_retirement.py -o addopts='' -ra -s
+      - name: Build and test zero-engine native C++20 workbench (Windows)
+        run: |
+          cmake -S apps/native -B apps/native/build -DCMAKE_BUILD_TYPE=Release
+          cmake --build apps/native/build --config Release --parallel 4
+          ctest --test-dir apps/native/build -C Release --output-on-failure
 
   desktop-foundation:
     runs-on: ubuntu-latest
@@ -60,8 +65,15 @@ jobs:
           echo "cadd3204e728a35d3f13adb7fd0d7902636b79f6b95c40c265eb73b6c35329e4  godot.zip" | sha256sum --check
           unzip -q godot.zip -d /tmp/aerodynamics-godot
           rm godot.zip
-      - name: Build native engineering core
+      - name: Build native engineering core and zero-engine workbench
         run: |
+          sudo apt-get update
+          sudo apt-get install -y libxrandr-dev libxinerama-dev libxcursor-dev libxi-dev libgl1-mesa-dev
+          cmake -S apps/native -B apps/native/build -DCMAKE_BUILD_TYPE=Release
+          cmake --build apps/native/build --parallel 2
+          ctest --test-dir apps/native/build --output-on-failure
+          xvfb-run -a ./apps/native/build/AerodynamicsLab --smoke-test --screenshot /tmp/native_smoke.png
+          test -s /tmp/native_smoke.png
           cmake -S packages/engineering-core -B packages/engineering-core/build -DCMAKE_BUILD_TYPE=Release -DLAB_BUILD_GDEXTENSION=ON
           cmake --build packages/engineering-core/build --parallel 2
       - name: Run native and desktop integration checks
