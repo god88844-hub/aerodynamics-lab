@@ -19,6 +19,11 @@ from physics.dynamics.design_adapter import build_multirotor
 from physics.dynamics.quaternion import normalize
 from physics.dynamics.quadrotor import MultirotorPlant, Rotor
 from physics.dynamics.rigid_body import RigidBody, make_state, normalize_state
+from physics.environment.adverse_weather import (
+    evaluate_icing_and_shedding,
+    evaluate_rain_wet_effects,
+    evaluate_spatial_turbulence,
+)
 from physics.integration.rk4 import rk4_step
 from physics.propulsion.dataset import PowertrainDataset
 from physics.propulsion.loader import ComponentLibrary
@@ -153,6 +158,38 @@ def run_authoritative_desktop_simulation(
         raise ValueError(f"step_budget_exceeded: requested {steps} steps > step_budget {step_budget}")
 
     plant, limits, unverified = _extract_plant_and_limits(project)
+    base_wind = plant.wind_world.copy()
+    wx_spec = params.get("adverse_weather") if isinstance(params.get("adverse_weather"), dict) else None
+    wx_gusts = None
+    wx_mass_penalty_kg = 0.0
+    wx_drag_mult = 1.0
+    wx_thrust_cap_scale = 1.0
+    wx_summary: dict[str, Any] | None = None
+    if wx_spec is not None:
+        turb = evaluate_spatial_turbulence(
+            altitude_m=10.0,
+            mean_wind_10m_m_s=(float(base_wind[0]), float(base_wind[1]), float(base_wind[2])),
+            turbulence_intensity=float(wx_spec.get("turbulence_intensity", 0.15)),
+            seed=int(params.get("seed", project.experiment.seed)),
+            n_samples=64,
+        )
+        rain = evaluate_rain_wet_effects(rain_mm_h=float(wx_spec.get("rain_mm_h", 0.0)))
+        icing = evaluate_icing_and_shedding(
+            oat_c=float(wx_spec.get("oat_c", 15.0)),
+            lwc_g_m3=float(wx_spec.get("lwc_g_m3", 0.0)),
+            exposure_s=float(wx_spec.get("icing_exposure_s", 0.0)),
+        )
+        wx_gusts = np.array(turb["gust_samples_m_s"], dtype=float)
+        wx_mass_penalty_kg = float(icing["accreted_mass_kg"])
+        wx_drag_mult = float(icing["drag_multiplier"]) * (1.0 + 2.5 * (rain["wet_cd0"] - 0.025))
+        wx_thrust_cap_scale = max(0.65, rain["wet_cl_max"] / 1.45)
+        if plant.drag is not None:
+            plant.drag = AirframeDrag(cd_a_m2=plant.drag.cd_a_m2 * wx_drag_mult, rho_kg_m3=plant.drag.rho_kg_m3)
+        plant.body = RigidBody(mass_kg=plant.body.mass_kg + wx_mass_penalty_kg, inertia_about_cog=plant.body.inertia_about_cog)
+        wx_summary = {"rain": rain, "icing": icing, "turbulence_seed": turb["seed"], "caveat_status": "SUPPORTED_WITH_CAVEATS"}
+        if icing.get("verdict") == "FAIL":
+            unverified.append("SEVERE_ICE_ACCRETION_LIMIT")
+
     rho_scale = (plant.drag.rho_kg_m3 / SEA_LEVEL_AIR_DENSITY) if plant.drag is not None else 1.0
     seed = int(mission.get("seed", project.experiment.seed) if mission else project.experiment.seed)
     noise_std = float(mission.get("sensor_noise_z_std_m", 0.0) if mission else 0.0)
@@ -160,7 +197,7 @@ def run_authoritative_desktop_simulation(
 
     n_rotors = len(plant.rotors)
     hover_trim = plant.hover_trim(STANDARD_GRAVITY)
-    max_per_rotor_n = (limits["max_total_thrust_n"] / max(1, n_rotors)) * rho_scale
+    max_per_rotor_n = (limits["max_total_thrust_n"] / max(1, n_rotors)) * rho_scale * wx_thrust_cap_scale
     initial_z = 2.0 if not phases else (float(phases[0].get("target_altitude_m", 2.0)) if phases[0].get("phase") == "hover" else 0.0)
     state = make_state(
         r_world=np.array([0.0, 0.0, initial_z], dtype=float),
@@ -185,6 +222,8 @@ def run_authoritative_desktop_simulation(
         if time.perf_counter() - started_perf > wall_budget_s:
             abort_reason = f"wall_budget_exceeded: elapsed > {wall_budget_s}s"
             break
+        if wx_gusts is not None:
+            plant.wind_world = wx_gusts[step_idx % len(wx_gusts)]
         h = min(requested_dt_s, duration_s - t)
         effective_dt = h
         target_z = _mission_altitude_target(t, phases, initial_z)
@@ -267,6 +306,7 @@ def run_authoritative_desktop_simulation(
         "project_sha256": sha256(project.canonical_bytes()).hexdigest(),
         "model_environment": provenance,
         "physical_validation_status": "unvalidated",
+        "adverse_weather_summary": wx_summary,
         "component_verdicts": verdicts,
         "unverified_parameters": unverified,
         "execution_fidelity": execution_fidelity,
