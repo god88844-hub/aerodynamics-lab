@@ -85,6 +85,7 @@ var hypothesis_input: LineEdit
 var learning_fields: Dictionary = {}
 var sweep_dialog: AcceptDialog
 var sweep_fields: Dictionary = {}
+var help_dialog: AcceptDialog
 var playback_state: String = "IDLE"
 var world_env: WorldEnvironment
 var ground_props: Node3D
@@ -190,6 +191,7 @@ func _build_interface() -> void:
 	_add_button(toolbar, "Swarm Sim", _run_swarm_sim)
 	_add_button(toolbar, "Run applied-torque experiment", _run_cad_torque)
 	_add_button(toolbar, "Worker limits", _open_limits)
+	_add_button(toolbar, "? Help & Equations", _open_help_dialog)
 	cad_material_select = OptionButton.new()
 	cad_material_select.add_item("CAD Mat: Anodized Blue")
 	cad_material_select.add_item("CAD Mat: Alu 6061-T6")
@@ -205,6 +207,23 @@ func _build_interface() -> void:
 	visual_profile_button.text = "Visual: Auto"
 	visual_profile_button.pressed.connect(_cycle_visual_profile)
 	toolbar.add_child(visual_profile_button)
+	help_dialog = AcceptDialog.new()
+	help_dialog.title = "Physics Equations, Units Contract & Accessibility Shortcuts"
+	var help_lbl: Label = Label.new()
+	help_lbl.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	help_lbl.custom_minimum_size = Vector2(540, 240)
+	help_lbl.text = (
+		"CONVENTIONS: Right-handed Z-up body/world (m, kg, s, N, rad) | Hamilton wxyz quaternions | Strict SI.\n\n"
+		+ "EQUATIONS & ASSUMPTIONS (All virtual results remain UNVALIDATED until physical custody/review receipts):\n"
+		+ "1) 6-DoF RK4: m*dv/dt = R(q_bw)*f_body + m*g; dq/dt = 0.5 * q (*) [0, omega].\n"
+		+ "2) ISA 1976 & Drag: rho = P / (R_air * T); F_drag = -0.5 * rho * CdA * |v_rel| * v_rel.\n"
+		+ "3) Fixed-Wing Lifting-Line: CL = pi * AR * A1; CDi = CL^2 / (pi * AR * e); Mach <= 0.30.\n"
+		+ "4) Rotorcraft BEMT + Cheeseman-Bennett IGE + Pitt-Peters 3-State Dynamic Inflow.\n"
+		+ "5) 2-RC Thevenin Battery + ES-EKF State Estimation (IMU + Baro/GPS).\n\n"
+		+ "SHORTCUTS & MOBILE TOUCH: Drag/Touch-Drag=Orbit | Shift+Drag=Pan | Wheel/Pinch=Zoom | Tab=Focus UI Controls."
+	)
+	help_dialog.add_child(help_lbl)
+	add_child(help_dialog)
 	var split: HSplitContainer = HSplitContainer.new()
 	split.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	layout.add_child(split)
@@ -557,6 +576,10 @@ func _open_limits() -> void:
 		if admitted is Dictionary:
 			limits_status.text = "Last session: %s\nRequested: %s\nEffective: %s\nReasons: %s" % [admitted.get("status"), str(admitted.get("requested")), str(admitted.get("effective")), str(admitted.get("reasons"))]
 	limits_dialog.popup_centered(Vector2i(720, 440))
+
+
+func _open_help_dialog() -> void:
+	help_dialog.popup_centered(Vector2i(620, 340))
 
 
 func _apply_limits() -> void:

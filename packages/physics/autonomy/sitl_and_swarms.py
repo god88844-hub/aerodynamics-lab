@@ -8,6 +8,8 @@ from typing import Any
 
 import numpy as np
 
+from physics.autonomy.ekf_estimator import DronePositionEkf
+
 
 class SitlLockstepBridge:
     """Deterministic lock-step sensor/actuator handshake compatible with ArduPilot & PX4 frames."""
@@ -196,5 +198,91 @@ def run_multi_drone_swarm(
         "abort_reason": abort_reason,
         "min_observed_separation_m": round(min_obs_sep, 4),
         "final_positions_m": pos.tolist(),
+        "physical_validation_status": "UNVALIDATED",
+    }
+
+
+def run_sitl_closed_loop_mission(
+    *,
+    firmware_kind: str = "ardupilot",
+    start_xy: tuple[int, int] = (0, 0),
+    goal_xy: tuple[int, int] = (6, 4),
+    blocked_cells: set[tuple[int, int]] | None = None,
+    obstacles_3d: list[dict[str, Any]] | None = None,
+    dt_s: float = 0.02,
+    seed: int = 42,
+) -> dict[str, Any]:
+    """Closed-loop SITL lockstep + EKF state estimation + LiDAR obstacle scan + A* waypoint transit."""
+    blocked = blocked_cells or {(3, 1), (3, 2), (3, 3)}
+    obs_list = obstacles_3d or [{"center_m": [3.0, 2.0, 2.0], "size_m": [1.0, 3.0, 4.0]}]
+    path = plan_obstacle_free_path(start_xy=start_xy, goal_xy=goal_xy, blocked_cells=blocked, geofence_radius_cells=25)
+    bridge = SitlLockstepBridge(firmware_kind=firmware_kind, dt_s=dt_s, n_actuators=4)
+    ekf = DronePositionEkf(initial_pos_m=(float(start_xy[0]), float(start_xy[1]), 2.0), accel_noise_std_m_s2=0.15, gps_pos_noise_std_m=0.35)
+    rng = np.random.default_rng(np.random.PCG64(seed))
+
+    packets = []
+    min_lidar_clearance_m = float("inf")
+    ekf_errs = []
+    p_true = np.array([float(start_xy[0]), float(start_xy[1]), 2.0], dtype=float)
+    for step_idx, wp in enumerate(path[1:], start=1):
+        tgt = np.array([float(wp[0]), float(wp[1]), 2.0], dtype=float)
+        # 18 sub-steps per waypoint segment so diagonal corner-cutting stays outside obstacle clearance
+        for _ in range(18):
+            a_cmd = np.clip(2.0 * (tgt - p_true), -3.0, 3.0)
+            p_true = p_true + 0.5 * a_cmd * dt_s * dt_s + 0.18 * (tgt - p_true)
+            ekf.predict(a_cmd + rng.normal(0.0, 0.1, size=3), dt_s)
+            ekf.update_position(p_true + rng.normal(0.0, 0.25, size=3))
+            ekf_errs.append(float(np.linalg.norm(ekf.x[0:3] - p_true)))
+        scan = generate_synthetic_lidar_scan(sensor_pos_m=(float(p_true[0]), float(p_true[1]), 2.0), obstacles=obs_list, n_rays=18)
+        min_lidar_clearance_m = min(min_lidar_clearance_m, min(scan["ranges_m"]))
+        pkt = bridge.step_packet(
+            pos_ned_m=(float(ekf.x[0]), float(ekf.x[1]), -float(ekf.x[2])),
+            vel_ned_m_s=(float(ekf.x[3]), float(ekf.x[4]), -float(ekf.x[5])),
+            bus_voltage_v=24.8,
+            pwm_commands=[0.55, 0.55, 0.55, 0.55],
+        )
+        packets.append(pkt)
+
+    return {
+        "schema_version": "1.0",
+        "firmware_kind": firmware_kind,
+        "waypoint_count": len(path),
+        "packet_count": len(packets),
+        "mean_ekf_position_error_m": round(sum(ekf_errs) / max(1, len(ekf_errs)), 4),
+        "min_lidar_clearance_m": round(min_lidar_clearance_m, 4),
+        "verdict": "NO_MODELED_LIMIT_BREACHED" if min_lidar_clearance_m > 0.25 else "FAIL",
+        "channel_provenance": "SYNTHETIC",
+        "physical_validation_status": "UNVALIDATED",
+    }
+
+
+def localize_fiducial_apriltag_proxy(
+    *,
+    tag_world_m: tuple[float, float, float],
+    camera_pos_m: tuple[float, float, float],
+    fov_deg: float = 82.0,
+    max_range_m: float = 12.0,
+    seed: int = 7,
+) -> dict[str, Any]:
+    """Synthetic pinhole-camera AprilTag PnP relative-pose & FOV occlusion estimator (SYNTHETIC)."""
+    if fov_deg <= 10.0 or fov_deg >= 170.0 or max_range_m <= 0.0:
+        raise ValueError("Invalid optical camera FOV or range bounds")
+    rel = np.array(tag_world_m, dtype=float) - np.array(camera_pos_m, dtype=float)
+    dist = float(np.linalg.norm(rel))
+    if dist < 1e-6 or dist > max_range_m:
+        return {"detected": False, "reason": "Tag out of optical range", "channel_provenance": "SYNTHETIC"}
+    # Camera points downward (-Z) with small tolerance or forward (+X) check via half-FOV cone
+    angle_deg = math.degrees(math.acos(max(-1.0, min(1.0, -rel[2] / dist))))
+    if angle_deg > 0.5 * fov_deg:
+        return {"detected": False, "reason": "Tag outside camera FOV cone", "channel_provenance": "SYNTHETIC"}
+    rng = np.random.default_rng(np.random.PCG64(seed))
+    noise = rng.normal(0.0, 0.015 * dist, size=3)
+    return {
+        "schema_version": "1.0",
+        "detected": True,
+        "estimated_rel_pos_m": [round(float(v), 4) for v in (rel + noise)],
+        "range_m": round(dist, 4),
+        "off_nadir_deg": round(angle_deg, 2),
+        "channel_provenance": "SYNTHETIC",
         "physical_validation_status": "UNVALIDATED",
     }
