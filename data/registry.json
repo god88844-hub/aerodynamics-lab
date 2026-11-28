@@ -27,8 +27,8 @@
     },
     {
       "path": "data/benchmarks/public_sources.json",
-      "bytes_hashed": 5828,
-      "sha256": "9bf401a5fcdf2687644035f38d563b52a6590b687f86935f2cab56899c7f088a",
+      "bytes_hashed": 8904,
+      "sha256": "1d86f711e584f9c1ba08328331c87c6825c1a77865fa8b7acc3ad81d59640b5a",
       "hash_semantics": "LF_NORMALIZED_REPOSITORY_TEXT"
     },
     {
@@ -2224,6 +2224,98 @@
       ],
       "campaigns": [],
       "policy_role": "DEVELOPMENT",
+      "physical_acceptance": "UNVALIDATED",
+      "unacquired_original_sha256": null,
+      "original_hash_location": "Linked campaign pins and dated custody; null means unacquired/unidentified, not a missing hash to invent"
+    },
+    {
+      "id": "mendeley_airfoil360_2022",
+      "title": "Kent State Airfoil 360 Wind Tunnel Dataset (NACA 0012 & NACA 2412)",
+      "kind": "independent_wind_tunnel_airfoil_polars",
+      "urls": [
+        "https://data.mendeley.com/datasets/dz4bv26ncd/1"
+      ],
+      "license": {
+        "identifier": "CC BY 4.0",
+        "scope": "Legacy metadata claim; inspect dataset-specific original terms before acquisition/reuse",
+        "terms_url": "https://data.mendeley.com/datasets/dz4bv26ncd/1",
+        "redistribution": "Not granted by this registry"
+      },
+      "uncertainty_and_gaps": [
+        "complete 3D aircraft drag polar calibration or physical acceptance without full aircraft tests"
+      ],
+      "catalog_reference": "data/benchmarks/public_sources.json#/datasets/8",
+      "campaigns": [],
+      "policy_role": "UNASSIGNED_BEFORE_ACQUISITION_AND_PROTOCOL_REVIEW",
+      "physical_acceptance": "UNVALIDATED",
+      "unacquired_original_sha256": null,
+      "original_hash_location": "Linked campaign pins and dated custody; null means unacquired/unidentified, not a missing hash to invent"
+    },
+    {
+      "id": "nasa_caradonna_tung_1981",
+      "title": "NASA TM-81232 Caradonna & Tung Hovering Rotor Benchmark",
+      "kind": "independent_hovering_helicopter_rotor_thrust_power",
+      "urls": [
+        "https://github.com/PuddingTower/rotor-propeller-benchmarks/tree/main/05_%E7%BB%8F%E5%85%B8%E6%82%AC%E5%81%9C%E6%A8%A1%E5%9E%8B%E6%97%8B%E7%BF%BC_Caradonna_Tung"
+      ],
+      "license": {
+        "identifier": "NASA Public Domain (data) / MIT (table scripts)",
+        "scope": "Legacy metadata claim; inspect dataset-specific original terms before acquisition/reuse",
+        "terms_url": "https://github.com/PuddingTower/rotor-propeller-benchmarks/tree/main/05_%E7%BB%8F%E5%85%B8%E6%82%AC%E5%81%9C%E6%A8%A1%E5%9E%8B%E6%97%8B%E7%BF%BC_Caradonna_Tung",
+        "redistribution": "Not granted by this registry"
+      },
+      "uncertainty_and_gaps": [
+        "untested helicopter fuselage/tail/flight certification or transonic tip-shock acoustics"
+      ],
+      "catalog_reference": "data/benchmarks/public_sources.json#/datasets/9",
+      "campaigns": [],
+      "policy_role": "UNASSIGNED_BEFORE_ACQUISITION_AND_PROTOCOL_REVIEW",
+      "physical_acceptance": "UNVALIDATED",
+      "unacquired_original_sha256": null,
+      "original_hash_location": "Linked campaign pins and dated custody; null means unacquired/unidentified, not a missing hash to invent"
+    },
+    {
+      "id": "px4_vtol_2572d282",
+      "title": "PX4 Flight Review Public VTOL Standard Telemetry Log (2572d282)",
+      "kind": "measured_vtol_hover_transition_fw_flight_log",
+      "urls": [
+        "https://review.px4.io/plot_app?log=2572d282-1b13-4666-88bd-d33893fda64a"
+      ],
+      "license": {
+        "identifier": "CC BY 4.0 (PX4 Flight Review)",
+        "scope": "Legacy metadata claim; inspect dataset-specific original terms before acquisition/reuse",
+        "terms_url": "https://review.px4.io/plot_app?log=2572d282-1b13-4666-88bd-d33893fda64a",
+        "redistribution": "Not granted by this registry"
+      },
+      "uncertainty_and_gaps": [
+        "arbitrary VTOL frame physical certification without matching lab rig and independent review"
+      ],
+      "catalog_reference": "data/benchmarks/public_sources.json#/datasets/10",
+      "campaigns": [],
+      "policy_role": "UNASSIGNED_BEFORE_ACQUISITION_AND_PROTOCOL_REVIEW",
+      "physical_acceptance": "UNVALIDATED",
+      "unacquired_original_sha256": null,
+      "original_hash_location": "Linked campaign pins and dated custody; null means unacquired/unidentified, not a missing hash to invent"
+    },
+    {
+      "id": "nasa_crm_irt_icing",
+      "title": "NASA Glenn Common Research Model IRT Icing Wind Tunnel Database",
+      "kind": "measured_icing_tunnel_accretion_mass_and_conditions",
+      "urls": [
+        "https://commonresearchmodel.larc.nasa.gov/home-2/icing-research/ice-accretion-database-2/irt-test-campaign-experimental-results-2/"
+      ],
+      "license": {
+        "identifier": "NASA Public Domain",
+        "scope": "Legacy metadata claim; inspect dataset-specific original terms before acquisition/reuse",
+        "terms_url": "https://commonresearchmodel.larc.nasa.gov/home-2/icing-research/ice-accretion-database-2/irt-test-campaign-experimental-results-2/",
+        "redistribution": "Not granted by this registry"
+      },
+      "uncertainty_and_gaps": [
+        "rotating drone propeller icing, ice shedding loads, or wet electronics without rotor icing rigs"
+      ],
+      "catalog_reference": "data/benchmarks/public_sources.json#/datasets/11",
+      "campaigns": [],
+      "policy_role": "UNASSIGNED_BEFORE_ACQUISITION_AND_PROTOCOL_REVIEW",
       "physical_acceptance": "UNVALIDATED",
       "unacquired_original_sha256": null,
       "original_hash_location": "Linked campaign pins and dated custody; null means unacquired/unidentified, not a missing hash to invent"
@@ -7911,9 +8003,33 @@
       "hash_semantics": "LF_NORMALIZED_REPOSITORY_TEXT"
     },
     {
+      "path": "data/benchmarks/public/airfoil360_2022/airfoil360_naca_0012_2412.json",
+      "bytes_hashed": 6061,
+      "sha256": "a08db7de02e71ba89672c7138f4d43cdbd3d7e5cec40d45be9e8408a158770f3",
+      "hash_semantics": "LF_NORMALIZED_REPOSITORY_TEXT"
+    },
+    {
+      "path": "data/benchmarks/public/caradonna_tung_1981/hover_performance.json",
+      "bytes_hashed": 1983,
+      "sha256": "9dd5e06ab37308dc729b4ea3a62bc844b430ccabd630711084a4f2f5fb6ad7e7",
+      "hash_semantics": "LF_NORMALIZED_REPOSITORY_TEXT"
+    },
+    {
       "path": "data/benchmarks/public/g30_2025/bench_table_5.json",
       "bytes_hashed": 3716,
       "sha256": "f0e2d02e91d88f3fa23ed268a28e6597ed8f3fc01d0a18ec46eeb6b4df8d11fb",
+      "hash_semantics": "LF_NORMALIZED_REPOSITORY_TEXT"
+    },
+    {
+      "path": "data/benchmarks/public/nasa_crm_irt_icing/irt_midspan_ice_mass.json",
+      "bytes_hashed": 1389,
+      "sha256": "324597f5d07b9cfe2a44fcfa982bcbfb337ee604d6e8535fd4d6b3b7d5155d8f",
+      "hash_semantics": "LF_NORMALIZED_REPOSITORY_TEXT"
+    },
+    {
+      "path": "data/benchmarks/public/px4_vtol_2572d282/vtol_transition_summary.json",
+      "bytes_hashed": 29766,
+      "sha256": "cafc9bcf8be44c9f0df30cfc619a74fc5fb73d62bf9536ea6c1fb0fa8f3172f8",
       "hash_semantics": "LF_NORMALIZED_REPOSITORY_TEXT"
     },
     {
@@ -7936,8 +8052,8 @@
     },
     {
       "path": "data/benchmarks/public_sources.json",
-      "bytes_hashed": 5828,
-      "sha256": "9bf401a5fcdf2687644035f38d563b52a6590b687f86935f2cab56899c7f088a",
+      "bytes_hashed": 8904,
+      "sha256": "1d86f711e584f9c1ba08328331c87c6825c1a77865fa8b7acc3ad81d59640b5a",
       "hash_semantics": "LF_NORMALIZED_REPOSITORY_TEXT"
     },
     {
