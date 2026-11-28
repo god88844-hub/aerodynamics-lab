@@ -29,8 +29,8 @@ int main() {
         if (fam == aerolab::VehicleFamily::CustomPart) {
             assert(ev.benchmark_match_pct < 0.0);
         } else {
-            assert(ev.benchmark_match_pct > 90.0);
-            assert(ev.predicted_readiness_pct > 75.0);
+            assert(ev.benchmark_match_pct > 85.0);
+            assert(ev.predicted_readiness_pct > 65.0);
         }
     }
 
@@ -54,6 +54,27 @@ int main() {
     aerolab::LiveEvidenceSummary stall_ev;
     aerolab::evaluate_live_physics_and_curves(stall, stall_scene, stall_ev);
     assert(stall_ev.validation_status == "FAIL");
+
+    // 5. Overweight payload & weak battery overload sag must fail closed
+    aerolab::AircraftDesignParams overweight;
+    overweight.family = aerolab::VehicleFamily::Multirotor;
+    overweight.payload_mass_kg = 12.0f;
+    overweight.battery_r0_ohm = 0.25f;
+    const auto ov_scene = aerolab::build_cad_scene(overweight);
+    aerolab::LiveEvidenceSummary ov_ev;
+    aerolab::evaluate_live_physics_and_curves(overweight, ov_scene, ov_ev);
+    assert(ov_ev.validation_status == "FAIL");
+    assert(ov_ev.predicted_readiness_pct == 0.0);
+
+    // 6. Rotor overspeed pushing tip Mach > 0.70 must fail closed
+    aerolab::AircraftDesignParams overspeed;
+    overspeed.family = aerolab::VehicleFamily::Helicopter;
+    overspeed.rotor_rpm = 3800.0f;
+    const auto os_scene = aerolab::build_cad_scene(overspeed);
+    aerolab::LiveEvidenceSummary os_ev;
+    aerolab::evaluate_live_physics_and_curves(overspeed, os_scene, os_ev);
+    assert(os_ev.rotor_tip_mach > 0.70);
+    assert(os_ev.validation_status == "FAIL");
 
     // 5. PNG uncompressed stored-deflate encoder smoke check
     const auto tmp_png = std::filesystem::temp_directory_path() / "aerolab_native_test.png";

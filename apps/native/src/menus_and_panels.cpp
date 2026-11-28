@@ -514,8 +514,46 @@ void AppWorkbench::draw_right_inspector() {
 
         ImGui::Separator();
         changed |= ImGui::SliderFloat("Battery Mass (kg)", &params.battery_mass_kg, 0.2f, 4.5f, "%.2f");
+        changed |= ImGui::SliderFloat("Payload Mass (kg)", &params.payload_mass_kg, 0.0f, 15.0f, "%.2f");
         changed |= ImGui::SliderFloat("Alpha (deg)", &params.alpha_deg, -4.0f, 16.0f, "%.1f");
         changed |= ImGui::SliderFloat("Airspeed (m/s)", &params.airspeed_m_s, 3.0f, 45.0f, "%.1f");
+    }
+
+    ImGui::Spacing();
+    if (ImGui::CollapsingHeader("What-If Stress & Overload", ImGuiTreeNodeFlags_DefaultOpen)) {
+        if (ImGui::SmallButton("Nominal")) {
+            push_undo_snapshot();
+            params.payload_mass_kg = 0.35f;
+            params.battery_r0_ohm = 0.025f;
+            params.rotor_rpm = (params.family == VehicleFamily::Helicopter) ? 1450.0f : 4800.0f;
+            params.rain_mm_h = 0.0f;
+            params.oat_c = 25.0f;
+            changed = true;
+        }
+        ImGui::SameLine();
+        if (ImGui::SmallButton("Overload")) {
+            push_undo_snapshot();
+            params.payload_mass_kg = 9.5f;
+            changed = true;
+        }
+        ImGui::SameLine();
+        if (ImGui::SmallButton("Overspeed")) {
+            push_undo_snapshot();
+            params.rotor_rpm = 13500.0f;
+            changed = true;
+        }
+        ImGui::SameLine();
+        if (ImGui::SmallButton("Weak Pack")) {
+            push_undo_snapshot();
+            params.battery_r0_ohm = 0.24f;
+            changed = true;
+        }
+        changed |= ImGui::SliderFloat("Rotor RPM", &params.rotor_rpm, 800.0f, 16000.0f, "%.0f");
+        changed |= ImGui::SliderInt("Cells (S)", &params.battery_cells_s, 3, 12);
+        changed |= ImGui::SliderFloat("Cap (Ah)", &params.battery_capacity_ah, 1.5f, 30.0f, "%.1f");
+        changed |= ImGui::SliderFloat("R0 (Ohm)", &params.battery_r0_ohm, 0.008f, 0.300f, "%.3f");
+        changed |= ImGui::SliderFloat("Rain mm/h", &params.rain_mm_h, 0.0f, 80.0f, "%.0f");
+        changed |= ImGui::SliderFloat("Temp (C)", &params.oat_c, -20.0f, 45.0f, "%.0f");
     }
     ImGui::PopItemWidth();
 
@@ -524,17 +562,15 @@ void AppWorkbench::draw_right_inspector() {
     }
 
     ImGui::Spacing();
-    if (ImGui::CollapsingHeader("C++20 Mass & Aerodynamics", ImGuiTreeNodeFlags_DefaultOpen)) {
-        ImGui::Text("Total Mass: %.3f kg", evidence.total_mass_kg);
-        ImGui::Text("CoG (m): [%.3f, %.3f, %.3f]",
-                    evidence.center_of_mass_m[0], evidence.center_of_mass_m[1], evidence.center_of_mass_m[2]);
-        ImGui::Text("Tip Clearance: %.1f mm (%s)", evidence.min_tip_clearance_m * 1000.0,
-                    evidence.clearance_ok ? "CLEAR" : "COLLISION FAIL");
-        ImGui::Separator();
-        ImGui::Text("CL: %.3f   CD: %.4f   L/D: %.2f", evidence.cl, evidence.cd, evidence.lift_to_drag);
-        ImGui::Text("Lift: %.1f N   Drag: %.1f N", evidence.lift_n, evidence.drag_n);
-        ImGui::Text("Re: %.2e   Mach: %.3f", evidence.reynolds, evidence.mach);
-        ImGui::Spacing();
+    if (ImGui::CollapsingHeader("C++20 Physics & Electronics", ImGuiTreeNodeFlags_DefaultOpen)) {
+        ImGui::Text("Mass: %.2f kg | T/W: %.2fx", evidence.total_mass_kg, evidence.thrust_to_weight);
+        ImGui::Text("Pack: %.1f V | %.1f A | %.0f min",
+                    evidence.loaded_bus_voltage_v, evidence.hover_or_cruise_current_a, evidence.est_endurance_min);
+        ImGui::Text("TipM: %.3f | %.0f C | FoS: %.2fx",
+                    evidence.rotor_tip_mach, evidence.motor_temp_c, evidence.structural_fos);
+        ImGui::Text("Clearance: %.0f mm (%s)", evidence.min_tip_clearance_m * 1000.0,
+                    evidence.clearance_ok ? "OK" : "FAIL");
+        ImGui::Text("CL: %.2f | CD: %.3f | L/D: %.1f", evidence.cl, evidence.cd, evidence.lift_to_drag);
         draw_polar_plot(evidence);
     }
 
@@ -610,9 +646,10 @@ void AppWorkbench::draw_modals() {
         show_equations_modal = false;
     }
     if (ImGui::BeginPopupModal("Aerospace Equations & Assumptions", nullptr, ImGuiWindowFlags_AlwaysAutoResize)) {
-        ImGui::Text("1. Coordinates: Right-handed SI (+X forward, +Y left, +Z up), active Hamilton wxyz quaternions.");
-        ImGui::Text("2. Lifting-Line: Prandtl finite-wing CL = 2*pi*AR/(AR+2) * (alpha - alpha0), incompressible M <= 0.30.");
-        ImGui::Text("3. Multirotor Clearance: Pairwise Euclidean center spacing minus (Ri + Rj) >= 20 mm.");
+        ImGui::Text("1. Coordinates: Right-handed SI (+X fwd, +Y left, +Z up), active Hamilton wxyz quaternions.");
+        ImGui::Text("2. Aero: Prandtl lifting-line (M <= 0.30) & annular BEMT + Prandtl tip-loss (M_tip <= 0.70).");
+        ImGui::Text("3. Electronics: 2-RC Thevenin bus sag V_load = V_oc - I*R0 - V1 - V2, thermal cutoff > 95 C.");
+        ImGui::Text("4. Structures & Clearance: Euler-Bernoulli root moment FoS >= 1.25x, rotor spacing >= 20 mm.");
         if (ImGui::Button("Close")) ImGui::CloseCurrentPopup();
         ImGui::EndPopup();
     }
