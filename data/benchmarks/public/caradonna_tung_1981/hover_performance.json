@@ -1,0 +1,87 @@
+{
+  "schema_version": "1.0",
+  "source_id": "nasa_caradonna_tung_1981",
+  "license": "NASA Public Domain (NASA TM-81232) + MIT benchmark table repo",
+  "url": "https://github.com/PuddingTower/rotor-propeller-benchmarks/tree/main/05_%E7%BB%8F%E5%85%B8%E6%82%AC%E5%81%9C%E6%A8%A1%E5%9E%8B%E6%97%8B%E7%BF%BC_Caradonna_Tung",
+  "geometry": {
+    "radius_m": 1.143,
+    "chord_m": 0.1905,
+    "n_blades": 2,
+    "airfoil": "NACA0012"
+  },
+  "raw_csv_sha256": "5c20577222632325aa2c9c90dc8563f46daf4bfe0eca3e2eb3a232cfa417bf18",
+  "rows": [
+    {
+      "collective_deg": 0.0,
+      "rpm": 1250.0,
+      "tip_mach": 0.439,
+      "ct": 0.0,
+      "cq": 0.0001,
+      "cp": 0.0001,
+      "figure_of_merit": 0.0
+    },
+    {
+      "collective_deg": 5.0,
+      "rpm": 1250.0,
+      "tip_mach": 0.439,
+      "ct": 0.0021,
+      "cq": 0.00018,
+      "cp": 0.00018,
+      "figure_of_merit": 0.38
+    },
+    {
+      "collective_deg": 5.0,
+      "rpm": 2050.0,
+      "tip_mach": 0.727,
+      "ct": 0.0028,
+      "cq": 0.00025,
+      "cp": 0.00025,
+      "figure_of_merit": 0.42
+    },
+    {
+      "collective_deg": 8.0,
+      "rpm": 1250.0,
+      "tip_mach": 0.439,
+      "ct": 0.00459,
+      "cq": 0.00036,
+      "cp": 0.00036,
+      "figure_of_merit": 0.611
+    },
+    {
+      "collective_deg": 8.0,
+      "rpm": 2050.0,
+      "tip_mach": 0.727,
+      "ct": 0.00461,
+      "cq": 0.00039,
+      "cp": 0.00039,
+      "figure_of_merit": 0.567
+    },
+    {
+      "collective_deg": 8.0,
+      "rpm": 2500.0,
+      "tip_mach": 0.877,
+      "ct": 0.00464,
+      "cq": 0.00045,
+      "cp": 0.00045,
+      "figure_of_merit": 0.497
+    },
+    {
+      "collective_deg": 12.0,
+      "rpm": 1250.0,
+      "tip_mach": 0.439,
+      "ct": 0.0079,
+      "cq": 0.00078,
+      "cp": 0.00078,
+      "figure_of_merit": 0.635
+    },
+    {
+      "collective_deg": 12.0,
+      "rpm": 2050.0,
+      "tip_mach": 0.727,
+      "ct": 0.0067,
+      "cq": 0.00085,
+      "cp": 0.00085,
+      "figure_of_merit": 0.457
+    }
+  ]
+}

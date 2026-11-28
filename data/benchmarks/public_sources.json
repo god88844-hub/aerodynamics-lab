@@ -100,6 +100,54 @@
       "can_validate": "physical phenomena of mounting-plate installation interference for a G30 propeller and a different MN1010 motor",
       "cannot_validate": "AeroForge P80 III motor power, installed thrust, ground effect, full-aircraft flight or hardware-safe capability",
       "note": "Nine points include Table 5 row 2 reported 3234 W inconsistent with 46.2 V times 0.7 A (32.34 W); do not correct source silently"
+    },
+    {
+      "id": "mendeley_airfoil360_2022",
+      "name": "Kent State Airfoil 360 Wind Tunnel Dataset (NACA 0012 & NACA 2412)",
+      "url": "https://data.mendeley.com/datasets/dz4bv26ncd/1",
+      "type": "independent_wind_tunnel_airfoil_polars",
+      "source_status": "CHECKSUM_VERIFIED_EXTRACT_INCLUDED",
+      "license_status": "CC BY 4.0",
+      "ingestion_status": "NACA_0012_2412_RE50K_100K_EXTRACTED",
+      "aircraft_model_match": false,
+      "can_validate": "attached-flow thin-airfoil and boundary-layer polar trends at low Reynolds numbers (DEVELOPMENT)",
+      "cannot_validate": "complete 3D aircraft drag polar calibration or physical acceptance without full aircraft tests"
+    },
+    {
+      "id": "nasa_caradonna_tung_1981",
+      "name": "NASA TM-81232 Caradonna & Tung Hovering Rotor Benchmark",
+      "url": "https://github.com/PuddingTower/rotor-propeller-benchmarks/tree/main/05_%E7%BB%8F%E5%85%B8%E6%82%AC%E5%81%9C%E6%A8%A1%E5%9E%8B%E6%97%8B%E7%BF%BC_Caradonna_Tung",
+      "type": "independent_hovering_helicopter_rotor_thrust_power",
+      "source_status": "CHECKSUM_VERIFIED_EXTRACT_INCLUDED",
+      "license_status": "NASA Public Domain (data) / MIT (table scripts)",
+      "ingestion_status": "HOVER_CT_CP_FM_EXTRACTED",
+      "aircraft_model_match": false,
+      "can_validate": "rotorcraft hover BEMT + Prandtl tip-loss thrust/power scaling trends (DEVELOPMENT)",
+      "cannot_validate": "untested helicopter fuselage/tail/flight certification or transonic tip-shock acoustics"
+    },
+    {
+      "id": "px4_vtol_2572d282",
+      "name": "PX4 Flight Review Public VTOL Standard Telemetry Log (2572d282)",
+      "url": "https://review.px4.io/plot_app?log=2572d282-1b13-4666-88bd-d33893fda64a",
+      "type": "measured_vtol_hover_transition_fw_flight_log",
+      "source_status": "CHECKSUM_VERIFIED_LOCAL_ULOG_AND_SUMMARY_INCLUDED",
+      "license_status": "CC BY 4.0 (PX4 Flight Review)",
+      "ingestion_status": "TRANSITION_1HZ_TIMELINE_EXTRACTED",
+      "aircraft_model_match": false,
+      "can_validate": "VTOL hover-to-cruise speed corridor, airspeed, and 6S pack current-sag comparison (DEVELOPMENT)",
+      "cannot_validate": "arbitrary VTOL frame physical certification without matching lab rig and independent review"
+    },
+    {
+      "id": "nasa_crm_irt_icing",
+      "name": "NASA Glenn Common Research Model IRT Icing Wind Tunnel Database",
+      "url": "https://commonresearchmodel.larc.nasa.gov/home-2/icing-research/ice-accretion-database-2/irt-test-campaign-experimental-results-2/",
+      "type": "measured_icing_tunnel_accretion_mass_and_conditions",
+      "source_status": "CHECKSUM_VERIFIED_EXTRACT_INCLUDED",
+      "license_status": "NASA Public Domain",
+      "ingestion_status": "IRT_MIDSPAN_RUNSHEET_AND_ICE_MASS_EXTRACTED",
+      "aircraft_model_match": false,
+      "can_validate": "freezing-fraction rime vs glaze icing accretion scaling across OAT/LWC/spray time (DEVELOPMENT)",
+      "cannot_validate": "rotating drone propeller icing, ice shedding loads, or wet electronics without rotor icing rigs"
     }
   ]
 }

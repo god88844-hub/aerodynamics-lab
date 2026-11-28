@@ -81,8 +81,9 @@ def solve_helicopter_bemt_rotor(
     altitude_agl_m: float = 50.0,
     rho_kg_m3: float = 1.225,
     n_elements: int = 20,
+    use_prandtl_tip_loss: bool = True,
 ) -> dict[str, Any]:
-    """Annular Blade Element Momentum Theory (BEMT) rotor solver + Cheeseman-Bennett ground effect."""
+    """Annular Blade Element Momentum Theory (BEMT) rotor solver + Prandtl tip-loss + Cheeseman-Bennett IGE."""
     if radius_m <= root_cutout_m or root_cutout_m < 0.0 or chord_m <= 0.0 or n_blades < 2 or omega_rad_s <= 0.0:
         raise ValueError("Invalid helicopter rotor geometry or angular rate")
     tip_mach = (omega_rad_s * radius_m) / 340.3
@@ -108,14 +109,23 @@ def solve_helicopter_bemt_rotor(
 
     for r_i, sig_i in zip(r_mid, sigma_local):
         ut = omega_rad_s * float(r_i)
-        # Local momentum-BEMT inflow velocity vi
-        # Quadratic solve for vi in climb/hover annulus
-        b_coef = climb_speed_m_s + 0.25 * a_slope * sig_i * ut
-        c_coef = 0.25 * a_slope * sig_i * ut * (climb_speed_m_s - theta0 * ut)
-        disc = max(0.0, b_coef * b_coef - 4.0 * c_coef)
-        vi = max(0.1, 0.5 * (-b_coef + math.sqrt(disc)))
+        r_ratio = float(r_i) / radius_m
+        f_tip = 1.0
+        n_iter = 6 if use_prandtl_tip_loss else 1
+        vi = 0.5
+        phi = 0.05
+        for _ in range(n_iter):
+            sig_eff = sig_i / max(0.20, f_tip)
+            b_coef = climb_speed_m_s + 0.25 * a_slope * sig_eff * ut
+            c_coef = 0.25 * a_slope * sig_eff * ut * (climb_speed_m_s - theta0 * ut)
+            disc = max(0.0, b_coef * b_coef - 4.0 * c_coef)
+            vi = max(0.1, 0.5 * (-b_coef + math.sqrt(disc)))
+            up = climb_speed_m_s + vi
+            phi = math.atan2(up, ut)
+            if use_prandtl_tip_loss:
+                f_val = 0.5 * n_blades * (1.0 - r_ratio) / max(1e-4, r_ratio * abs(math.sin(phi)))
+                f_tip = max(0.15, (2.0 / math.pi) * math.acos(min(1.0, math.exp(-min(50.0, f_val)))))
         up = climb_speed_m_s + vi
-        phi = math.atan2(up, ut)
         alpha = theta0 - phi
         if abs(math.degrees(alpha)) > 15.0:
             raise ValueError(f"Rotor blade element stall detected at r={r_i:.3f} m (alpha={math.degrees(alpha):.2f} deg)")

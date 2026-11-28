@@ -1,0 +1,49 @@
+{
+  "schema_version": "1.0",
+  "source_id": "nasa_crm_irt_icing",
+  "license": "NASA Public Domain (commonresearchmodel.larc.nasa.gov)",
+  "url": "https://commonresearchmodel.larc.nasa.gov/home-2/icing-research/ice-accretion-database-2/irt-test-campaign-experimental-results-2/",
+  "raw_ice_mass_csv_sha256": "9fbdc212914a35dfb8d3cb8328dd224ac69df15bd9915bd90dcd5c8fe4b455bd",
+  "raw_runsheet_csv_sha256": "c7049f3823d1dbf415862c52993a8b21478c22a62d56cdec6456d746ea752417",
+  "runs": [
+    {
+      "run_id": "TH2450",
+      "oat_c": -6.3,
+      "velocity_kts": 130.0,
+      "velocity_m_s": 66.878,
+      "mvd_um": 25.0,
+      "lwc_g_m3": 1.0,
+      "aoa_deg": 3.7,
+      "flap_deg": 25.0,
+      "spray_time_min": 29.0,
+      "span_m": 0.254,
+      "measured_ice_mass_kg": 1.631
+    },
+    {
+      "run_id": "TH2459",
+      "oat_c": -23.8,
+      "velocity_kts": 130.0,
+      "velocity_m_s": 66.878,
+      "mvd_um": 25.0,
+      "lwc_g_m3": 1.0,
+      "aoa_deg": 3.7,
+      "flap_deg": 25.0,
+      "spray_time_min": 29.0,
+      "span_m": 0.254,
+      "measured_ice_mass_kg": 1.651
+    },
+    {
+      "run_id": "TH2464",
+      "oat_c": -1.4,
+      "velocity_kts": 130.0,
+      "velocity_m_s": 66.878,
+      "mvd_um": 25.0,
+      "lwc_g_m3": 1.0,
+      "aoa_deg": 3.7,
+      "flap_deg": 25.0,
+      "spray_time_min": 29.0,
+      "span_m": 0.254,
+      "measured_ice_mass_kg": 1.058
+    }
+  ]
+}
