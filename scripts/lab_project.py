@@ -47,6 +47,7 @@ from physics.propulsion.loader import ComponentLibrary  # noqa: E402
 from physics.scenarios.desktop_runner import run_authoritative_desktop_simulation  # noqa: E402
 from physics.scenarios.mission_authoring import author_mission, run_authored_mission  # noqa: E402
 from physics.validation.phase1_dataset_eval import evaluate_all_phase1_datasets  # noqa: E402
+from physics.aerodynamics.phase3_phase4_eval import evaluate_all_phase3_and_phase4_benchmarks  # noqa: E402
 from physics.validation.protocol_registry import load_frozen_protocol_catalog, register_validation_protocol  # noqa: E402
 
 
@@ -88,6 +89,7 @@ def main() -> int:
             "multiphysics-audit",
             "rocket-sim",
             "cfd-fea-export",
+            "phase3-4-eval",
             "run",
         ),
     )
@@ -410,6 +412,8 @@ def main() -> int:
                 output_dir=export_dir,
             )
             write_result(args.output, payload)
+        elif args.command == "phase3-4-eval":
+            write_result(args.output, evaluate_all_phase3_and_phase4_benchmarks())
         elif args.command == "import-legacy":
             raw = json.loads(args.input.read_text(encoding="utf-8"))
             project = import_legacy_project(raw)

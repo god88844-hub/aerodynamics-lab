@@ -131,6 +131,7 @@ std::string WorkerIPC::build_project_payload_json(const AircraftDesignParams &pa
     else if (params.family == VehicleFamily::Tailsitter) fam = "tailsitter";
     else if (params.family == VehicleFamily::FlyingWing) fam = "flying_wing";
     else if (params.family == VehicleFamily::RocketSpacecraft) fam = "rocket_spacecraft";
+    else if (params.family == VehicleFamily::Airliner) fam = "airliner";
     else if (params.family == VehicleFamily::CustomPart) fam = "custom_part";
 
     const char *kind = "rounded_plate";
@@ -148,6 +149,8 @@ std::string WorkerIPC::build_project_payload_json(const AircraftDesignParams &pa
         << "  \"name\": \"" << params.project_name << "\",\n"
         << "  \"aircraft_family\": \"" << fam << "\",\n"
         << "  \"mass_kg\": " << est_mass << ",\n"
+        << "  \"frame_mass_kg\": " << params.frame_mass_kg << ",\n"
+        << "  \"motor_mass_kg\": " << params.motor_mass_kg << ",\n"
         << "  \"wingspan_m\": " << params.wingspan_m << ",\n"
         << "  \"root_chord_m\": " << params.root_chord_m << ",\n"
         << "  \"tip_chord_m\": " << params.tip_chord_m << ",\n"
@@ -207,6 +210,9 @@ std::string WorkerIPC::build_project_payload_json(const AircraftDesignParams &pa
         << "  \"rocket_nose_radius_m\": " << params.rocket_nose_radius_m << ",\n"
         << "  \"reentry_speed_km_s\": " << params.reentry_speed_km_s << ",\n"
         << "  \"reentry_alt_km\": " << params.reentry_alt_km << ",\n"
+        << "  \"jet_afterburner\": " << (params.jet_afterburner ? "true" : "false") << ",\n"
+        << "  \"jet_ramjet\": " << (params.jet_ramjet ? "true" : "false") << ",\n"
+        << "  \"rocket_saturn_v_preset\": " << (params.rocket_saturn_v_preset ? "true" : "false") << ",\n"
         << "  \"flap_freq_hz\": " << params.flap_freq_hz << ",\n"
         << "  \"stroke_amp_deg\": " << params.stroke_amp_deg << ",\n"
         << "  \"morph_tuck_pct\": " << params.morph_tuck_pct << ",\n"
@@ -296,13 +302,16 @@ std::string WorkerIPC::build_compare_payload_json(const AircraftDesignParams &pa
         << "  \"unit\": \"V\",\n"
         << "  \"tolerance_abs\": 0.8,\n"
         << "  \"frozen_run\": {\n"
-        << "    \"t_s\": [0.0, 0.5, 1.0],\n"
-        << "    \"bus_voltage\": [" << hover_ref << ", " << (hover_ref - 0.15) << ", " << (hover_ref - 0.30) << "]\n"
+        << "    \"telemetry\": {\n"
+        << "      \"t\": [0.0, 0.5, 1.0],\n"
+        << "      \"bus_voltage\": [" << hover_ref << ", " << (hover_ref - 0.15) << ", " << (hover_ref - 0.30) << "]\n"
+        << "    }\n"
         << "  },\n"
         << "  \"source_record\": {\n"
         << "    \"source_id\": \"" << (params.attach_custom_part ? "custom_physics_only" : "pinned_sit_uiuc_dev") << "\",\n"
+        << "    \"unit\": \"V\",\n"
         << "    \"t_s\": [0.0, 0.5, 1.0],\n"
-        << "    \"bus_voltage\": [" << (hover_ref + 0.1) << ", " << (hover_ref - 0.08) << ", " << (hover_ref - 0.22) << "]\n"
+        << "    \"values\": [" << (hover_ref + 0.1) << ", " << (hover_ref - 0.08) << ", " << (hover_ref - 0.22) << "]\n"
         << "  }\n"
         << "}\n";
     return oss.str();
@@ -347,6 +356,7 @@ bool WorkerIPC::load_project_payload_json(const std::string &json_text, Aircraft
     else if (fam == "tailsitter") params.family = VehicleFamily::Tailsitter;
     else if (fam == "flying_wing") params.family = VehicleFamily::FlyingWing;
     else if (fam == "rocket_spacecraft") params.family = VehicleFamily::RocketSpacecraft;
+    else if (fam == "airliner") params.family = VehicleFamily::Airliner;
     else if (fam == "custom_part") params.family = VehicleFamily::CustomPart;
 
     if (const auto n = find_val("name"); !n.empty()) params.project_name = n;
@@ -367,6 +377,8 @@ bool WorkerIPC::load_project_payload_json(const std::string &json_text, Aircraft
     read_i("prop_blades", params.prop_blades);
     read_f("main_rotor_diameter_m", params.main_rotor_diameter_m);
     read_f("tail_boom_length_m", params.tail_boom_length_m);
+    read_f("frame_mass_kg", params.frame_mass_kg);
+    read_f("motor_mass_kg", params.motor_mass_kg);
     read_f("battery_mass_kg", params.battery_mass_kg);
     read_f("payload_mass_kg", params.payload_mass_kg);
     read_i("battery_cells_s", params.battery_cells_s);
@@ -408,6 +420,10 @@ bool WorkerIPC::load_project_payload_json(const std::string &json_text, Aircraft
     read_f("rocket_thrust_kn", params.rocket_thrust_kn);
     read_f("rocket_nose_radius_m", params.rocket_nose_radius_m);
     read_f("reentry_speed_km_s", params.reentry_speed_km_s);
+    read_f("reentry_alt_km", params.reentry_alt_km);
+    if (const auto ja = find_val("jet_afterburner"); !ja.empty()) params.jet_afterburner = (ja == "true");
+    if (const auto jr = find_val("jet_ramjet"); !jr.empty()) params.jet_ramjet = (jr == "true");
+    if (const auto rsv = find_val("rocket_saturn_v_preset"); !rsv.empty()) params.rocket_saturn_v_preset = (rsv == "true");
     read_f("reentry_alt_km", params.reentry_alt_km);
     read_f("flap_freq_hz", params.flap_freq_hz);
     read_f("stroke_amp_deg", params.stroke_amp_deg);

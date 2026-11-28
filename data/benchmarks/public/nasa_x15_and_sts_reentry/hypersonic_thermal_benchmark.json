@@ -1,0 +1,24 @@
+{
+  "schema_version": "1.0",
+  "source_id": "nasa_x15_and_sts_reentry",
+  "license": "NASA Public Domain (X-15A-2 Flight 188 & Space Shuttle STS Aerothermodynamics)",
+  "cases": [
+    {
+      "id": "x15a2_flight_188",
+      "mach": 6.70,
+      "altitude_m": 31120.0,
+      "speed_m_s": 2020.0,
+      "nose_radius_m": 0.15,
+      "shock_interference_peak_temp_c": 1480.0,
+      "inconel_x_structural_limit_c": 1100.0
+    },
+    {
+      "id": "sts_orbiter_peak_heating",
+      "mach": 23.8,
+      "altitude_m": 72500.0,
+      "speed_m_s": 7400.0,
+      "nose_radius_m": 0.85,
+      "rcc_nosecap_limit_c": 1650.0
+    }
+  ]
+}

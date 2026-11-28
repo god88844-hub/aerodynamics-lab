@@ -53,14 +53,16 @@ CoupledJetResult evaluate_coupled_jet_cycle(const CoupledJetParams &p) {
     const double th = std::clamp(p.throttle_frac, 0.0, 1.08);
     const double nozzle_exp_gain = 1.0 - 0.18 * std::pow(std::clamp(p.nozzle_area_ratio, 0.7, 2.2) - (1.0 + 0.35 * p.mach), 2.0);
     if (p.is_turbine) {
-        const double ram_mult = 1.0 + 0.14 * std::min(p.mach * p.mach, 1.8);
+        const double ram_mult = p.ramjet_mode ? (1.15 + 0.32 * std::min(p.mach * p.mach, 12.0)) : (1.0 + 0.14 * std::min(p.mach * p.mach, 3.2));
+        const double ab_thrust_mult = p.afterburner_on ? 1.54 : 1.0;
+        const double ab_fuel_mult = p.afterburner_on ? 1.85 : 1.0;
         out.nozzle_thrust_n = p.static_thrust_n * std::pow(sigma, 0.85) * eta_r * throat_choke_factor * ram_mult *
-                              nozzle_exp_gain * th * tol_factor;
+                              nozzle_exp_gain * th * ab_thrust_mult * tol_factor;
         out.mdot_kg_s = (0.11 + 0.04 * (p.static_thrust_n / 45.0)) * sigma * eta_r * th * (p.intake_area_m2 / 0.0032);
-        const double mdot_fuel_kg_min = std::max(0.01, p.fuel_flow_max_kg_min * (0.20 + 0.80 * th) / std::max(0.55, eta_r));
+        const double mdot_fuel_kg_min = std::max(0.01, p.fuel_flow_max_kg_min * ab_fuel_mult * (0.20 + 0.80 * th) / std::max(0.55, eta_r));
         out.fuel_endurance_min = (p.fuel_mass_kg * tol_factor) / mdot_fuel_kg_min;
         out.egt_c = 280.0 + 435.0 * std::pow(th, 1.25) + 0.5 * p.oat_c + 65.0 * alt / 8000.0 +
-                    (p.cooling_grade == 0 ? 48.0 : 0.0) + (throat_choke_factor < 0.90 ? 65.0 : 0.0);
+                    (p.afterburner_on ? 95.0 : 0.0) + (p.cooling_grade == 0 ? 48.0 : 0.0) + (throat_choke_factor < 0.90 ? 65.0 : 0.0);
     } else {
         out.nozzle_thrust_n = p.static_thrust_n * sigma * eta_r * throat_choke_factor *
                               std::max(0.05, 1.0 - 0.52 * p.mach) * nozzle_exp_gain * std::pow(th, 1.35) * tol_factor;
@@ -69,11 +71,35 @@ CoupledJetResult evaluate_coupled_jet_cycle(const CoupledJetParams &p) {
         out.egt_c = p.oat_c + 58.0 * std::pow(th, 1.6) + (p.cooling_grade == 0 ? 18.0 : 0.0);
     }
 
+    // Adiabatic wall stagnation skin heating T_aw = T_inf * (1 + r * 0.2 * M^2), r=0.89 turbulent recovery
+    out.skin_temp_c = (t_k * (1.0 + 0.89 * 0.2 * p.mach * p.mach)) - 273.15;
+
     const double cd_total = 0.020 + out.spillage_cd + out.cd_wave + (p.cl_incomp * p.cl_incomp) / (kPi * 5.2 * 0.82);
     const double total_drag_n = q * p.wing_area_m2 * cd_total;
-    out.egt_ok = (out.egt_c <= p.max_egt_c);
-    out.mach_ok = (p.mach <= p.max_mach);
+    out.egt_ok = p.ramjet_mode ? (out.egt_c <= p.max_egt_c + 220.0) : (out.egt_c <= p.max_egt_c);
+    out.skin_ok = (out.skin_temp_c <= p.skin_limit_c);
+    out.mach_ok = p.ramjet_mode ? (p.mach <= std::max(p.max_mach, 5.5)) : (p.mach <= (p.afterburner_on ? std::max(p.max_mach, 2.2) : p.max_mach));
     out.thrust_ok = (out.nozzle_thrust_n >= total_drag_n * 0.95);
+    out.valid = true;
+    return out;
+}
+
+AirlinerPressurizationResult evaluate_airliner_pressurization(const AirlinerPressurizationParams &p) {
+    AirlinerPressurizationResult out{};
+    if (p.altitude_m < 0.0 || p.fuselage_radius_m <= 0.1 || p.skin_thickness_m <= 1e-4) {
+        return out;
+    }
+    const double p_ext = 101325.0 * std::pow(1.0 - (0.0065 * std::min(16000.0, p.altitude_m)) / 288.15, 5.25588);
+    // Target cabin altitude held >= 75 kPa (~2400 m equivalent), capped at 60 kPa differential
+    const double p_cab = std::max(75000.0, p_ext);
+    const double dp_pa = std::clamp(p_cab - p_ext, 0.0, 62000.0);
+    out.cabin_delta_p_kpa = dp_pa * 0.001;
+    const double hoop_pa = (dp_pa * p.fuselage_radius_m) / p.skin_thickness_m;
+    out.hoop_stress_mpa = hoop_pa * 1e-6;
+    out.hoop_fos = p.alloy_allowable_pa / std::max(1e5, hoop_pa);
+    out.lift_to_drag = p.cl_design / std::max(1e-4, p.cd_total);
+    out.press_ok = (out.hoop_fos >= 2.2);
+    out.crm_ld_ok = (out.lift_to_drag >= 14.0);
     out.valid = true;
     return out;
 }

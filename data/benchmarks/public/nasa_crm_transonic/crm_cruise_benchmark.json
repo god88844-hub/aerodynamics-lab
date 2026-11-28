@@ -1,0 +1,13 @@
+{
+  "schema_version": "1.0",
+  "source_id": "nasa_crm_transonic",
+  "license": "NASA Public Domain (AIAA Drag Prediction Workshop / NASA Common Research Model)",
+  "design_mach": 0.85,
+  "cruise_altitude_m": 12500.0,
+  "design_cl": 0.50,
+  "reference_ld_min": 16.0,
+  "reference_ld_max": 20.0,
+  "sweep_c4_deg": 35.0,
+  "aspect_ratio": 9.0,
+  "cabin_delta_p_kpa": 58.0
+}

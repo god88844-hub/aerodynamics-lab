@@ -130,8 +130,9 @@ RocketSpaceflightResult evaluate_rocket_and_hypersonics(const RocketSpaceflightP
         p.isp_stage1_s <= 50.0 || p.isp_stage2_s <= 50.0 || p.liftoff_thrust_n <= 0.0) {
         return out;
     }
-    const double m_upper_full = p.dry_mass_stage2_kg + p.prop_mass_stage2_kg + p.payload_mass_kg;
-    const double m_upper_empty = p.dry_mass_stage2_kg + p.payload_mass_kg;
+    const double m_stage3_full = std::max(0.0, p.dry_mass_stage3_kg + p.prop_mass_stage3_kg);
+    const double m_upper_full = p.dry_mass_stage2_kg + p.prop_mass_stage2_kg + m_stage3_full + p.payload_mass_kg;
+    const double m_upper_empty = p.dry_mass_stage2_kg + m_stage3_full + p.payload_mass_kg;
     const double m0 = p.dry_mass_stage1_kg + p.prop_mass_stage1_kg + m_upper_full;
     const double m1_burnout = p.dry_mass_stage1_kg + m_upper_full;
     out.total_mass_kg = m0;
@@ -139,7 +140,12 @@ RocketSpaceflightResult evaluate_rocket_and_hypersonics(const RocketSpaceflightP
 
     out.delta_v_stage1_m_s = p.isp_stage1_s * kGravity * std::log(m0 / std::max(1.0, m1_burnout));
     out.delta_v_stage2_m_s = p.isp_stage2_s * kGravity * std::log(m_upper_full / std::max(1.0, m_upper_empty));
-    out.total_delta_v_m_s = out.delta_v_stage1_m_s + out.delta_v_stage2_m_s;
+    if (p.prop_mass_stage3_kg > 1.0 && p.dry_mass_stage3_kg > 0.0 && p.isp_stage3_s > 50.0) {
+        const double m3_full = p.dry_mass_stage3_kg + p.prop_mass_stage3_kg + p.payload_mass_kg;
+        const double m3_empty = p.dry_mass_stage3_kg + p.payload_mass_kg;
+        out.delta_v_stage3_m_s = p.isp_stage3_s * kGravity * std::log(m3_full / std::max(1.0, m3_empty));
+    }
+    out.total_delta_v_m_s = out.delta_v_stage1_m_s + out.delta_v_stage2_m_s + out.delta_v_stage3_m_s;
     const double grav_drag_loss = 1450.0 + std::max(0.0, 1.35 - out.liftoff_tw) * 650.0;
     out.net_delta_v_m_s = std::max(0.0, out.total_delta_v_m_s - grav_drag_loss);
 
@@ -147,10 +153,11 @@ RocketSpaceflightResult evaluate_rocket_and_hypersonics(const RocketSpaceflightP
     out.orbital_vel_req_m_s = std::sqrt(kEarthMu / r_orbit);
     out.orbit_capable = (out.net_delta_v_m_s >= out.orbital_vel_req_m_s * 0.96);
 
-    // Peak dynamic pressure (Max-Q around ~11 km at transonic ascent) & re-entry Sutton-Graves heat flux
+    // Peak dynamic pressure (Max-Q around ~11 km) amplified by upper-altitude launch wind shear & turbulence gusts
     const double rho_maxq = 0.36;
     const double v_maxq = 380.0 * std::clamp(out.liftoff_tw / 1.4, 0.7, 1.6);
-    out.max_q_pa = 0.5 * rho_maxq * v_maxq * v_maxq;
+    const double wind_gust_factor = 1.0 + 0.025 * std::max(0.0, p.wind_speed_m_s) * (1.0 + std::clamp(p.turbulence_frac, 0.0, 0.6));
+    out.max_q_pa = 0.5 * rho_maxq * v_maxq * v_maxq * wind_gust_factor;
 
     const double h_re = std::clamp(p.reentry_altitude_m, 20000.0, 140000.0);
     const double rho_re = 1.225 * std::exp(-h_re / 7200.0);
@@ -170,6 +177,23 @@ RocketSpaceflightResult evaluate_rocket_and_hypersonics(const RocketSpaceflightP
     out.flight_ok = out.liftoff_ok && out.tps_ok && (out.max_q_pa <= 65000.0);
     out.valid = true;
     return out;
+}
+
+std::vector<RocketAscentSample> compute_rocket_ascent_trajectory(const RocketSpaceflightParams &p) {
+    const auto r = evaluate_rocket_and_hypersonics(p);
+    std::vector<RocketAscentSample> pts;
+    const double t_total = std::max(120.0, p.stage_separation_t_s * 3.0);
+    const double target_alt_km = std::max(90.0, p.target_altitude_m / 1000.0);
+    for (int i = 0; i <= 11; ++i) {
+        const double u = static_cast<double>(i) / 11.0;
+        const double t = u * t_total;
+        const double h_km = target_alt_km * std::pow(u, 1.55);
+        const double vel = r.net_delta_v_m_s * (0.28 * u + 0.72 * u * u);
+        const double rho = 1.225 * std::exp(-(h_km * 1000.0) / 7200.0);
+        const double q_kpa = 0.5 * rho * vel * vel * 0.001;
+        pts.push_back({t, h_km, vel, q_kpa});
+    }
+    return pts;
 }
 
 } // namespace lab

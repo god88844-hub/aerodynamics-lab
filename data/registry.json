@@ -8220,15 +8220,39 @@
       "hash_semantics": "LF_NORMALIZED_REPOSITORY_TEXT"
     },
     {
+      "path": "data/benchmarks/public/nasa_crm_transonic/crm_cruise_benchmark.json",
+      "bytes_hashed": 371,
+      "sha256": "0f63a6ee2dffde5c728514e1660ac6c387d10db59221ce0d0ae9ba5081547089",
+      "hash_semantics": "LF_NORMALIZED_REPOSITORY_TEXT"
+    },
+    {
+      "path": "data/benchmarks/public/nasa_j85_f100_propulsion/turbine_afterburner_benchmark.json",
+      "bytes_hashed": 800,
+      "sha256": "d978ffa64ea4017e30a985ca11a812cd6a90ce6cb58491dfa624558593812542",
+      "hash_semantics": "LF_NORMALIZED_REPOSITORY_TEXT"
+    },
+    {
       "path": "data/benchmarks/public/nasa_jet_m1p63_heated/jet_nozzle_benchmark.json",
       "bytes_hashed": 3883,
       "sha256": "ee01fabcb69e76ae1f38e58050bd742100dc04b4cf1b53d46a897e44a8aac742",
       "hash_semantics": "LF_NORMALIZED_REPOSITORY_TEXT"
     },
     {
+      "path": "data/benchmarks/public/nasa_saturn_v_staging/saturn_v_benchmark.json",
+      "bytes_hashed": 621,
+      "sha256": "063f0d9cf625dbaa2c0e72bc4ce9679493d60655416afe49d3053071fabf4cf7",
+      "hash_semantics": "LF_NORMALIZED_REPOSITORY_TEXT"
+    },
+    {
       "path": "data/benchmarks/public/nasa_tm4074_ladson_naca0012/ladson_naca0012_benchmark.json",
       "bytes_hashed": 1619,
       "sha256": "198a0b45cff14146a6d20185587e11c242a8199f37497958ac276dd5dda10f7c",
+      "hash_semantics": "LF_NORMALIZED_REPOSITORY_TEXT"
+    },
+    {
+      "path": "data/benchmarks/public/nasa_x15_and_sts_reentry/hypersonic_thermal_benchmark.json",
+      "bytes_hashed": 622,
+      "sha256": "935bc1382d166ba0b6a10cf08fbdf9a0ea867e27a96ea285fc0fbe5d79f75a95",
       "hash_semantics": "LF_NORMALIZED_REPOSITORY_TEXT"
     },
     {

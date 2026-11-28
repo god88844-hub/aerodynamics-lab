@@ -33,6 +33,7 @@ PACKAGE_TREE_ITEMS = (
     "scripts/lab_cad_analysis.py",
     "scripts/export_sbom.py",
     "data/airfoils",
+    "data/benchmarks/public",
     "data/components",
     "data/designs",
     "data/failure_examples",

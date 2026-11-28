@@ -22,6 +22,9 @@ struct CoupledJetParams {
     double mfg_tolerance_frac = 0.05;
     int cooling_grade = 1; // 0=poor, 1=med, 2=good
     bool is_turbine = true;
+    bool afterburner_on = false;
+    bool ramjet_mode = false;
+    double skin_limit_c = 1100.0; // Inconel-X / Titanium high-Mach limit
 };
 
 struct CoupledJetResult {
@@ -31,13 +34,35 @@ struct CoupledJetResult {
     double nozzle_thrust_n = 0.0;
     double mdot_kg_s = 0.0;
     double egt_c = 500.0;
+    double skin_temp_c = 25.0;
     double mach_dd = 0.80;
     double cd_wave = 0.0;
     double mach_cone_half_angle_deg = 90.0;
     double fuel_endurance_min = 0.0;
     bool egt_ok = true;
+    bool skin_ok = true;
     bool mach_ok = true;
     bool thrust_ok = true;
+};
+
+struct AirlinerPressurizationParams {
+    double altitude_m = 12500.0;
+    double mach = 0.85;
+    double fuselage_radius_m = 2.85;
+    double skin_thickness_m = 0.0022;
+    double alloy_allowable_pa = 240.0e6;
+    double cl_design = 0.50;
+    double cd_total = 0.027;
+};
+
+struct AirlinerPressurizationResult {
+    bool valid = false;
+    double cabin_delta_p_kpa = 0.0;
+    double hoop_stress_mpa = 0.0;
+    double hoop_fos = 0.0;
+    double lift_to_drag = 0.0;
+    bool press_ok = true;
+    bool crm_ld_ok = true;
 };
 
 struct CargoSlungLoadParams {
@@ -111,6 +136,7 @@ struct FastenerHarnessResult {
 };
 
 CoupledJetResult evaluate_coupled_jet_cycle(const CoupledJetParams &p);
+AirlinerPressurizationResult evaluate_airliner_pressurization(const AirlinerPressurizationParams &p);
 CargoSlungLoadResult evaluate_cargo_slung_load(const CargoSlungLoadParams &p);
 CreatorArchetypeResult evaluate_creator_archetypes(const CreatorArchetypeParams &p);
 FastenerHarnessResult evaluate_fastener_and_harness_safety(const FastenerHarnessParams &p);

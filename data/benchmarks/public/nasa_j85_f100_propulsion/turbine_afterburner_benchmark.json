@@ -1,0 +1,30 @@
+{
+  "schema_version": "1.0",
+  "source_id": "nasa_j85_f100_propulsion",
+  "license": "Public Domain Aerospace Engine Specifications (NASA / GE / Pratt & Whitney)",
+  "engines": [
+    {
+      "id": "ge_j85_ge_13",
+      "type": "afterburning_turbojet",
+      "dry_thrust_kn": 12.1,
+      "wet_afterburner_thrust_kn": 18.1,
+      "tsfc_dry_lb_lbf_hr": 1.26,
+      "tsfc_wet_lb_lbf_hr": 2.22,
+      "airflow_kg_s": 20.0,
+      "opr": 6.8,
+      "max_mach": 2.1
+    },
+    {
+      "id": "pw_f100_pw_229",
+      "type": "afterburning_low_bypass_turbofan",
+      "dry_thrust_kn": 79.2,
+      "wet_afterburner_thrust_kn": 129.7,
+      "tsfc_dry_lb_lbf_hr": 0.73,
+      "tsfc_wet_lb_lbf_hr": 2.06,
+      "airflow_kg_s": 113.5,
+      "opr": 32.4,
+      "bypass_ratio": 0.36,
+      "max_mach": 2.5
+    }
+  ]
+}

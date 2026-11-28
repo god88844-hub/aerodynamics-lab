@@ -226,12 +226,18 @@ int main(int argc, char **argv) {
     else if (preset_name == "tailsitter") app.switch_family(aerolab::VehicleFamily::Tailsitter);
     else if (preset_name == "flying-wing") app.switch_family(aerolab::VehicleFamily::FlyingWing);
     else if (preset_name == "rocket") app.switch_family(aerolab::VehicleFamily::RocketSpacecraft);
+    else if (preset_name == "airliner") app.switch_family(aerolab::VehicleFamily::Airliner);
     else if (preset_name == "part") app.switch_family(aerolab::VehicleFamily::CustomPart);
     if (override_airspeed > 0.5f) {
         app.params.airspeed_m_s = override_airspeed;
         if (app.params.family == aerolab::VehicleFamily::Jet && override_airspeed > 330.0f) {
             app.params.hardware_catalog_idx = 5;
             app.params.jet_throttle_pct = 100.0f;
+            app.params.jet_afterburner = true;
+            if (override_airspeed > 600.0f) {
+                app.params.jet_ramjet = true;
+                app.params.altitude_asl_m = 31120.0f;
+            }
         }
         app.rebuild_geometry();
     }
