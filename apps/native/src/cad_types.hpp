@@ -17,6 +17,7 @@ enum class VehicleFamily {
     Seaplane = 6,
     Jet = 7,
     InsectFlapper = 8,
+    MorphingWing = 9,
 };
 
 enum class ViewportLayout {
@@ -115,9 +116,14 @@ struct AircraftDesignParams {
     float wing_tc_ratio = 0.09f;
 
     // Tiny Insect-Sized Flapping & Morphing MAV (Uncrewed)
-    float flap_freq_hz = 38.0f;
+    float flap_freq_hz = 40.0f;
     float stroke_amp_deg = 78.0f;
     float morph_tuck_pct = 0.0f;
+    float wing_asymmetry_diff = 0.0f;
+    float tail_spread_pct = 70.0f;
+    float tail_tilt_deg = 5.0f;
+    bool animate_flapping = false;
+    float flap_anim_phase_rad = 0.0f;
 
     // Editable Part Studio feature
     CustomPartParams active_part{};
@@ -200,6 +206,14 @@ struct LiveEvidenceSummary {
     double cd_wave = 0.0;
     double hump_resistance_n = 0.0;
     double strouhal = 0.0;
+    double theodorsen_ck = 1.0;
+    double wagner_phi = 1.0;
+    double flex_tip_deflection_mm = 0.0;
+    double first_bending_mode_hz = 0.0;
+    double fatigue_stress_ratio = 0.0;
+    double divergence_margin = 10.0;
+    double yaw_damping_cn = 0.0;
+    double roll_moment_nm = 0.0;
     double predicted_readiness_pct = 92.5;
     double benchmark_match_pct = 94.2; // < 0 means N/A (custom unmeasured geometry)
     std::string benchmark_source_tag = "Pinned UIUC + SIT + QDrone Ref (DEVELOPMENT)";

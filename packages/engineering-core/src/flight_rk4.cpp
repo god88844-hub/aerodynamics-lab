@@ -116,7 +116,7 @@ MultirotorSimStepResult run_multirotor_rk4(const MultirotorSimConfig &cfg) {
     res.positions_m.push_back({s[0], s[1], s[2]});
     res.quaternions_wxyz.push_back({s[6], s[7], s[8], s[9]});
     res.max_altitude_m = s[2];
-    res.min_bus_voltage_v = 25.2;
+    res.min_bus_voltage_v = cfg.nominal_bus_voltage_v;
 
     const double rho_scale = cfg.air_density_kg_m3 / 1.225;
     const double max_thrust_scaled = cfg.max_total_thrust_n * rho_scale;
@@ -133,8 +133,9 @@ MultirotorSimStepResult run_multirotor_rk4(const MultirotorSimConfig &cfg) {
             res.error_or_reason = "Propulsion thrust demand exceeds density-scaled max thrust";
             break;
         }
-        const double est_current_a = total_thrust_cmd * 1.4;
-        const double v_bus = std::max(0.0, 25.2 - 0.05 * est_current_a - 0.015 * idx * h);
+        const double est_current_a = total_thrust_cmd * std::max(0.1, cfg.current_per_n_a);
+        const double sag_rate = 0.0006 * cfg.nominal_bus_voltage_v;
+        const double v_bus = std::max(0.0, cfg.nominal_bus_voltage_v - cfg.pack_r0_ohm * est_current_a - sag_rate * idx * h);
         if (v_bus < cfg.min_bus_voltage_v) {
             res.aborted = true;
             res.error_or_reason = "Battery bus voltage dropped below cutoff threshold";

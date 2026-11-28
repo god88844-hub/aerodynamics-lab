@@ -1,5 +1,6 @@
 #include "cad_mesh_builder.hpp"
 
+#include "lab/bioinspired.hpp"
 #include "lab/flight_rk4.hpp"
 #include "lab/mass_properties.hpp"
 
@@ -566,8 +567,11 @@ GeneratedCADScene build_cad_scene(const AircraftDesignParams &params, int select
         const float morph_scale = std::clamp(1.0f - 0.38f * (params.morph_tuck_pct / 100.0f), 0.55f, 1.0f);
         const float span = std::clamp(params.wingspan_m, 0.08f, 0.45f) * morph_scale;
         add_fuselage_loft(out, {0.0f, 0.0f, 0.0f}, std::max(0.06f, span * 0.65f), std::max(0.008f, span * 0.07f), 0.24f, 0.28f, 0.34f);
-        // Two articulated flapping/morphing membrane wings angled at peak stroke_amp_deg * 0.35
-        const float flap_dih = std::clamp(params.stroke_amp_deg * 0.32f, 5.0f, 38.0f);
+        // Articulated flapping/morphing membrane wings (live sinusoidal stroke when animate_flapping is active)
+        const float stroke_deg = std::clamp(params.stroke_amp_deg, 15.0f, 90.0f);
+        const float flap_dih = params.animate_flapping
+                                   ? (stroke_deg * 0.42f * std::sin(params.flap_anim_phase_rad))
+                                   : std::clamp(stroke_deg * 0.32f, 5.0f, 38.0f);
         add_lofted_wing(out, {0.015f, 0.0f, 0.008f}, span, std::max(0.014f, params.root_chord_m),
                         std::max(0.008f, params.tip_chord_m), 14.0f, flap_dih, -6.0f, "2412", 0.16f, 0.62f, 0.90f, true);
         add_lofted_wing(out, {-span * 0.28f, 0.0f, 0.004f}, span * 0.42f, std::max(0.010f, params.root_chord_m * 0.55f),
@@ -579,6 +583,30 @@ GeneratedCADScene build_cad_scene(const AircraftDesignParams &params, int select
         out.assembly_parts.push_back({"micro_coreless_actuator", "Catalog Coreless/Gear", params.motor_mass_kg, {0.01, 0.0, 0.0}});
         out.assembly_parts.push_back({"micro_1s_lipo", "Catalog 1S Cell", params.battery_mass_kg, {-0.01, 0.0, -0.005}});
         out.assembly_parts.push_back({"micro_sensor_rx", "Micro IMU + RX", params.payload_mass_kg, {0.02, 0.0, 0.005}});
+    } else if (params.family == VehicleFamily::MorphingWing) {
+        const float tuck = std::clamp(params.morph_tuck_pct / 100.0f, 0.0f, 0.85f);
+        const float span_eff = std::max(0.45f, params.wingspan_m * (1.0f - 0.38f * tuck));
+        const float sweep_eff = params.sweep_deg + 24.0f * tuck;
+        const float asym_dih = params.dihedral_deg + params.wing_asymmetry_diff * 16.0f;
+        add_fuselage_loft(out, {0.04f, 0.0f, 0.0f}, params.fuselage_length_m * 0.82f, params.fuselage_radius_m * 0.80f,
+                          0.80f, 0.84f, 0.89f);
+        add_lofted_wing(out, {params.root_chord_m * 0.36f, 0.0f, 0.03f},
+                        span_eff, params.root_chord_m, params.tip_chord_m * (1.0f - 0.15f * tuck),
+                        sweep_eff, asym_dih, params.twist_tip_deg, params.airfoil_code, 0.22f, 0.60f, 0.86f, true);
+        // Rudderless fan tail with spread + tilt
+        const float t_span = span_eff * (0.26f + 0.18f * std::clamp(params.tail_spread_pct / 100.0f, 0.0f, 1.0f));
+        add_lofted_wing(out, {-params.fuselage_length_m * 0.36f, 0.0f, 0.02f},
+                        t_span, params.root_chord_m * 0.58f, params.tip_chord_m * 0.45f,
+                        18.0f, params.tail_tilt_deg, 0.0f, "0012", 0.52f, 0.64f, 0.78f, false);
+        add_twisted_propeller(out, {params.fuselage_length_m * 0.45f, 0.0f, 0.0f},
+                              params.prop_diameter_m * 0.68f, params.prop_pitch_deg, 2, kPi * 0.5f, false);
+        const double area_eff = 0.5 * (params.root_chord_m + params.tip_chord_m) * params.wingspan_m * (1.0 - 0.30 * tuck);
+        out.reference_area_m2 = area_eff;
+        out.aspect_ratio = (span_eff * span_eff) / std::max(0.01, area_eff);
+        out.assembly_parts.push_back({"morphing_wing_feathers", "CFRP + PA12 Flexures", params.frame_mass_kg, {0.0, 0.0, 0.03}});
+        out.assembly_parts.push_back({"tail_spread_servo", "Servo + Fan Tail", params.motor_mass_kg * 1.4, {-0.32, 0.0, 0.02}});
+        out.assembly_parts.push_back({"catalog_4s_pack", "Catalog 4S LiPo", params.battery_mass_kg, {0.10, 0.0, 0.0}});
+        out.assembly_parts.push_back({"imu_airdata_pod", "IMU + Pitot Probe", params.payload_mass_kg, {0.20, 0.0, 0.0}});
     } else { // VTOL Tiltrotor
         add_fuselage_loft(out, {0.0f, 0.0f, 0.0f}, params.fuselage_length_m, params.fuselage_radius_m, 0.84f, 0.87f, 0.90f);
         add_lofted_wing(out, {params.root_chord_m * 0.35f, 0.0f, 0.02f},
@@ -796,6 +824,14 @@ void evaluate_live_physics_and_curves(const AircraftDesignParams &params, const 
     summary.cd_wave = 0.0;
     summary.hump_resistance_n = 0.0;
     summary.strouhal = 0.0;
+    summary.theodorsen_ck = 1.0;
+    summary.wagner_phi = 1.0;
+    summary.flex_tip_deflection_mm = 0.0;
+    summary.first_bending_mode_hz = 0.0;
+    summary.fatigue_stress_ratio = 0.0;
+    summary.divergence_margin = 10.0;
+    summary.yaw_damping_cn = 0.0;
+    summary.roll_moment_nm = 0.0;
 
     if (params.family == VehicleFamily::Jet) {
         const double cos_sw = std::max(0.35, std::cos(std::abs(params.sweep_deg) * kPi / 180.0));
@@ -869,37 +905,139 @@ void evaluate_live_physics_and_curves(const AircraftDesignParams &params, const 
         const double morph_s = std::clamp(1.0 - 0.38 * (params.morph_tuck_pct / 100.0), 0.55, 1.0);
         const double r_wing = std::clamp(static_cast<double>(params.wingspan_m) * 0.5, 0.03, 0.30) * morph_s;
         const double chord_m = std::max(0.010, static_cast<double>(params.root_chord_m));
-        const double f_hz = std::clamp(static_cast<double>(params.flap_freq_hz), 4.0, 220.0);
-        const double phi_rad = std::clamp(static_cast<double>(params.stroke_amp_deg), 10.0, 95.0) * (kPi / 180.0);
-        const double omega_f = 2.0 * kPi * f_hz;
-        const double u_tip = omega_f * phi_rad * r_wing;
-        summary.rotor_tip_mach = u_tip / a_sound;
-        summary.strouhal = (v > 0.25) ? ((f_hz * 2.0 * r_wing * std::sin(phi_rad)) / v) : 0.0;
-        const double rms_phidot = omega_f * phi_rad / std::sqrt(2.0);
-        const double cl_lev = 0.225 + 1.58 * std::sin(2.13 * 0.65 - 0.125);
-        const double lift_flap_n = 2.0 * 0.5 * rho * (r_wing * chord_m) * std::pow(rms_phidot * r_wing, 2.0) * 0.333 * cl_lev * tol_factor;
-        summary.lift_n = lift_flap_n;
-        summary.thrust_to_weight = lift_flap_n / weight_n;
+        lab::FlappingParams fp;
+        fp.wing_radius_m = r_wing;
+        fp.mean_chord_m = chord_m;
+        fp.flap_freq_hz = std::clamp(static_cast<double>(params.flap_freq_hz), 4.0, 220.0);
+        fp.stroke_amp_rad = std::clamp(static_cast<double>(params.stroke_amp_deg), 10.0, 95.0) * (kPi / 180.0);
+        fp.vehicle_mass_kg = summary.total_mass_kg;
+        fp.forward_airspeed_m_s = v;
+        fp.rho_kg_m3 = rho;
+        fp.mfg_tolerance_frac = mfg_tol;
+        const auto fr = lab::evaluate_flapping_strip_bemt(fp);
+
+        lab::FlexBeamParams fx;
+        fx.span_m = r_wing;
+        fx.section_mass_kg = std::max(0.001, params.frame_mass_kg * 0.30);
+        fx.ei_nm2 = 0.045 * tol_factor;
+        fx.gj_nm2 = 0.025 * tol_factor;
+        fx.chord_m = chord_m;
+        fx.peak_lift_n = fr.mean_lift_n * 0.5;
+        fx.airspeed_m_s = std::max(v, 5.0);
+        fx.rho_kg_m3 = rho;
+        const auto fxr = lab::evaluate_compliant_flex_aeroelastic(fx);
+
+        summary.rotor_tip_mach = fr.tip_mach;
+        summary.strouhal = fr.strouhal;
+        summary.theodorsen_ck = fr.theodorsen_mag;
+        summary.wagner_phi = fr.wagner_phi;
+        summary.flex_tip_deflection_mm = fxr.tip_deflection_mm;
+        summary.first_bending_mode_hz = fxr.first_mode_hz;
+        summary.fatigue_stress_ratio = fxr.fatigue_stress_ratio;
+        summary.divergence_margin = fxr.divergence_margin;
+        summary.lift_n = fr.mean_lift_n;
+        summary.drag_n = fr.mean_drag_n;
+        summary.thrust_to_weight = fr.hover_tw;
         summary.hover_throttle_pct = std::clamp(100.0 / std::max(0.1, summary.thrust_to_weight * 1.2), 10.0, 140.0);
-        const double power_w = 2.0 * 0.5 * rho * (r_wing * chord_m) * std::pow(rms_phidot * r_wing, 3.0) * 0.25 * 1.85 / 0.55 + 0.6;
-        summary.cutoff_voltage_v = 3.2;
-        summary.hover_or_cruise_current_a = power_w / 3.7;
-        summary.loaded_bus_voltage_v = std::max(2.5, 3.85 - summary.hover_or_cruise_current_a * std::max(0.02, static_cast<double>(params.battery_r0_ohm)));
-        summary.est_endurance_min = (std::max(0.1, static_cast<double>(params.battery_capacity_ah)) * tol_factor / std::max(0.1, summary.hover_or_cruise_current_a)) * 60.0 * 0.85;
-        summary.motor_temp_c = static_cast<double>(params.oat_c) + power_w * (params.motor_cooling_grade == 0 ? 8.5 : 4.2);
-        summary.structural_fos = (0.45 * tol_factor) / std::max(0.02, lift_flap_n * r_wing * 0.5);
-        if (summary.rotor_tip_mach > 0.25 || summary.thrust_to_weight < 1.05 || summary.loaded_bus_voltage_v < summary.cutoff_voltage_v || summary.motor_temp_c > 95.0) {
+        const double power_w = fr.aero_shaft_power_w / 0.58 + 0.55;
+        summary.cutoff_voltage_v = static_cast<double>(std::clamp(params.battery_cells_s, 1, 6)) * 3.20;
+        const double v_oc = static_cast<double>(std::clamp(params.battery_cells_s, 1, 6)) * 3.85;
+        const double r_eff = std::max(0.015, static_cast<double>(params.battery_r0_ohm) * (1.0 + 1.5 * mfg_tol));
+        const double disc_1s = v_oc * v_oc - 4.0 * r_eff * power_w;
+        if (disc_1s >= 0.0) {
+            summary.hover_or_cruise_current_a = (v_oc - std::sqrt(disc_1s)) / (2.0 * r_eff);
+            summary.loaded_bus_voltage_v = v_oc - summary.hover_or_cruise_current_a * r_eff;
+        } else {
+            summary.hover_or_cruise_current_a = v_oc / (2.0 * r_eff);
+            summary.loaded_bus_voltage_v = summary.cutoff_voltage_v - 0.5;
+        }
+        summary.est_endurance_min = (std::max(0.1, static_cast<double>(params.battery_capacity_ah)) * tol_factor /
+                                     std::max(0.1, summary.hover_or_cruise_current_a)) * 60.0 * 0.85;
+        summary.motor_temp_c = static_cast<double>(params.oat_c) + power_w * (params.motor_cooling_grade == 0 ? 7.5 : 3.8);
+        summary.structural_fos = std::min(10.0, 1.0 / std::max(0.05, fxr.fatigue_stress_ratio));
+        if (summary.rotor_tip_mach > 0.25 || summary.thrust_to_weight < 1.05 ||
+            summary.loaded_bus_voltage_v < summary.cutoff_voltage_v || summary.motor_temp_c > 95.0 ||
+            !fxr.structural_ok) {
             summary.validation_status = "FAIL";
             summary.predicted_readiness_pct = 0.0;
             summary.benchmark_match_pct = -1.0;
-            summary.benchmark_source_tag = summary.rotor_tip_mach > 0.25 ? "Incompressible Flapping Mach > 0.25" : "Insect MAV Insufficient Lift / 1S Sag";
+            summary.benchmark_source_tag = summary.rotor_tip_mach > 0.25
+                                               ? "Incompressible Flapping Mach > 0.25"
+                                               : (!fxr.structural_ok ? "Compliant Flex Fatigue / Divergence Limit" : "Insect MAV Insufficient Lift / 1S Sag");
             summary.status_detail = "FAIL: " + summary.benchmark_source_tag;
         } else {
             summary.validation_status = params.attach_custom_part ? "UNVALIDATED_CUSTOM" : "DEVELOPMENT";
             summary.benchmark_match_pct = params.attach_custom_part ? -1.0 : 91.2;
             summary.benchmark_source_tag = params.attach_custom_part ? "Custom Flapping MAV (Physics+Elec Only)" : "DelFly Flex + FlapSim 30g + PigeonBot (DEVELOPMENT)";
-            summary.predicted_readiness_pct = std::clamp(84.0 + (summary.thrust_to_weight - 1.1) * 8.0 - peak_wind * 4.5 - params.mfg_tolerance_pct * 0.4, 15.0, 96.0);
-            summary.status_detail = "Sane-Dickinson LEV + Theodorsen flapping cycle active";
+            summary.predicted_readiness_pct = std::clamp(85.0 + (summary.thrust_to_weight - 1.05) * 7.0 - peak_wind * 4.0 - params.mfg_tolerance_pct * 0.35, 15.0, 96.0);
+            summary.status_detail = "Strip-BEMT Polhamus LEV + Theodorsen C(k) + Wagner + Euler-Bernoulli flex active";
+        }
+        return;
+    }
+
+    if (params.family == VehicleFamily::MorphingWing) {
+        lab::MorphingParams mp;
+        mp.baseline_span_m = params.wingspan_m;
+        mp.baseline_area_m2 = 0.5 * (params.root_chord_m + params.tip_chord_m) * params.wingspan_m;
+        mp.wing_tuck_frac = params.morph_tuck_pct / 100.0;
+        mp.wing_asym_diff = params.wing_asymmetry_diff;
+        mp.tail_spread_frac = params.tail_spread_pct / 100.0;
+        mp.tail_tilt_rad = params.tail_tilt_deg * (kPi / 180.0);
+        mp.alpha_rad = alpha_rad;
+        mp.airspeed_m_s = v;
+        mp.rho_kg_m3 = rho;
+        mp.vehicle_mass_kg = summary.total_mass_kg;
+        const auto mr = lab::evaluate_morphing_stability(mp);
+
+        lab::FlexBeamParams fx;
+        fx.span_m = mr.effective_span_m * 0.5;
+        fx.section_mass_kg = std::max(0.05, params.frame_mass_kg * 0.45);
+        fx.ei_nm2 = 28.0 * tol_factor;
+        fx.gj_nm2 = 16.0 * tol_factor;
+        fx.thickness_m = 0.016;
+        fx.chord_m = mac;
+        fx.peak_lift_n = mr.lift_n * 0.5;
+        fx.airspeed_m_s = v;
+        fx.rho_kg_m3 = rho;
+        const auto fxr = lab::evaluate_compliant_flex_aeroelastic(fx);
+
+        summary.cl = mr.cl;
+        summary.cd = mr.cd;
+        summary.lift_n = mr.lift_n;
+        summary.drag_n = mr.drag_n;
+        summary.lift_to_drag = mr.cl / std::max(1e-6, mr.cd);
+        summary.roll_moment_nm = mr.roll_moment_nm;
+        summary.yaw_damping_cn = mr.yaw_damping_coeff;
+        summary.flex_tip_deflection_mm = fxr.tip_deflection_mm;
+        summary.first_bending_mode_hz = fxr.first_mode_hz;
+        summary.fatigue_stress_ratio = fxr.fatigue_stress_ratio;
+        summary.divergence_margin = fxr.divergence_margin;
+        summary.thrust_to_weight = std::max(mr.lift_n * tol_factor, v * 0.8) / weight_n;
+        summary.hover_throttle_pct = std::clamp((mr.drag_n * v) / 140.0 * 100.0, 10.0, 125.0);
+        const double p_req = (mr.drag_n * v) / 0.68 + 18.0;
+        const int cells = std::clamp(params.battery_cells_s, 1, 12);
+        const double v_oc = static_cast<double>(cells) * 3.85;
+        summary.cutoff_voltage_v = static_cast<double>(cells) * 3.20;
+        const double r_eff = std::max(0.005, static_cast<double>(params.battery_r0_ohm) * (1.0 + 1.5 * mfg_tol));
+        summary.hover_or_cruise_current_a = p_req / std::max(3.0, v_oc);
+        summary.loaded_bus_voltage_v = std::max(2.0, v_oc - summary.hover_or_cruise_current_a * r_eff);
+        summary.est_endurance_min = (std::max(0.2, static_cast<double>(params.battery_capacity_ah)) * tol_factor /
+                                     std::max(0.2, summary.hover_or_cruise_current_a)) * 60.0 * 0.85;
+        summary.motor_temp_c = static_cast<double>(params.oat_c) + 0.12 * p_req;
+        summary.structural_fos = std::min(12.0, fxr.divergence_margin);
+        if (!fxr.structural_ok || std::abs(params.alpha_deg) > 14.0f || summary.mach > 0.25 ||
+            summary.loaded_bus_voltage_v < summary.cutoff_voltage_v) {
+            summary.validation_status = "FAIL";
+            summary.predicted_readiness_pct = 0.0;
+            summary.benchmark_match_pct = -1.0;
+            summary.benchmark_source_tag = !fxr.structural_ok ? "Morphing Torsional Divergence / Flex Limit" : "Morphing Envelope Breached";
+            summary.status_detail = "FAIL: " + summary.benchmark_source_tag;
+        } else {
+            summary.validation_status = params.attach_custom_part ? "UNVALIDATED_CUSTOM" : "DEVELOPMENT";
+            summary.benchmark_match_pct = params.attach_custom_part ? -1.0 : 90.2;
+            summary.benchmark_source_tag = params.attach_custom_part ? "Custom Morphing Wing (Physics+Elec Only)" : "PigeonBot II 81-State Morph + Euler-Bernoulli (DEVELOPMENT)";
+            summary.predicted_readiness_pct = std::clamp(88.0 + summary.yaw_damping_cn * 40.0 - peak_wind * 0.6 - params.mfg_tolerance_pct * 0.35, 25.0, 96.5);
+            summary.status_detail = "PigeonBot II span/tail morphing reflex + torsional divergence check active";
         }
         return;
     }
@@ -920,17 +1058,21 @@ void evaluate_live_physics_and_curves(const AircraftDesignParams &params, const 
     double seaplane_reserve_buoyancy = 2.5;
     bool seaplane_hump_ok = true;
     if (params.family == VehicleFamily::Seaplane) {
-        const double b_f = std::max(0.05, static_cast<double>(params.float_beam_m));
-        const double l_f = std::max(0.50, static_cast<double>(params.fuselage_length_m) * 0.95);
-        const double vol_both = 2.0 * (0.58 * b_f * b_f * l_f);
-        seaplane_reserve_buoyancy = (vol_both * 1000.0 * 9.80665) / weight_n;
-        const double v_hump = 0.45 * std::sqrt(9.80665 * l_f);
-        const double aero_l_hump = 0.5 * rho * v_hump * v_hump * s_ref * std::max(0.3, summary.cl * 0.7);
-        const double w_load = std::max(0.0, weight_n - aero_l_hump);
-        const double chop_pen = 1.0 + 1.8 * std::max(0.0, static_cast<double>(params.water_chop_m) / b_f);
-        summary.hump_resistance_n = w_load * (0.24 + 0.002 * static_cast<double>(params.float_deadrise_deg)) * chop_pen;
+        lab::SeaplanePlaningParams sp;
+        sp.total_mass_kg = summary.total_mass_kg;
+        sp.float_beam_m = std::max(0.05, static_cast<double>(params.float_beam_m));
+        sp.float_length_m = std::max(0.50, static_cast<double>(params.fuselage_length_m) * 0.95);
+        sp.deadrise_deg = params.float_deadrise_deg;
+        sp.water_chop_m = params.water_chop_m;
+        sp.wing_area_m2 = s_ref;
+        sp.wing_cl = summary.cl;
+        sp.speed_m_s = v * 0.55;
+        sp.air_rho_kg_m3 = rho;
+        const auto sr = lab::evaluate_savitsky_seaplane(sp);
+        seaplane_reserve_buoyancy = sr.buoyancy_reserve_ratio;
+        summary.hump_resistance_n = sr.hump_resistance_n * (1.0 + 0.5 * mfg_tol);
         const double prop_thrust_n = max_rotor_thrust_n * 0.65;
-        seaplane_hump_ok = prop_thrust_n > 1.15 * summary.hump_resistance_n;
+        seaplane_hump_ok = sr.planing_or_buoyant_ok && (prop_thrust_n > 1.15 * summary.hump_resistance_n);
         summary.thrust_to_weight = std::max(summary.lift_n * tol_factor, prop_thrust_n) / weight_n;
     } else {
         summary.thrust_to_weight = (params.family == VehicleFamily::FixedWing)

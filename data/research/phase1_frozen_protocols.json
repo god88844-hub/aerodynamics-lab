@@ -1,0 +1,67 @@
+{
+  "schema_version": "1.0",
+  "phase": 1,
+  "policy_role": "DEVELOPMENT",
+  "physical_acceptance_granted": false,
+  "scope": "Tiny insect/flapping MAVs, morphing UAVs & seaplanes (uncrewed only); bio-human wings deferred",
+  "protocols": [
+    {
+      "protocol_id": "p1_flapping_delfly_flex_and_flapsim",
+      "family": "flapping_wing",
+      "sources": [
+        {
+          "id": "delfly_flex_2026",
+          "path": "data/benchmarks/public/delfly_flex_2026/forces_moments_benchmark.json",
+          "license": "CC-BY-4.0",
+          "partition_split": "whole_maneuver_series_dev_only"
+        },
+        {
+          "id": "flapsim_single_thrust_flapper",
+          "path": "data/benchmarks/public/flapsim_single_thrust_flapper/wing_parameters.json",
+          "license": "Apache-2.0",
+          "partition_split": "reference_analytical_baseline"
+        }
+      ],
+      "acceptance_tolerances": {
+        "max_tip_mach": 0.25,
+        "strip_convergence_rel_tol": 0.02,
+        "hover_force_rel_tol": 0.15,
+        "fatigue_safety_factor_min": 1.25
+      }
+    },
+    {
+      "protocol_id": "p1_morphing_pigeonbot_ii",
+      "family": "morphing_wing",
+      "sources": [
+        {
+          "id": "pigeonbot_ii_2024",
+          "path": "data/benchmarks/public/pigeonbot_ii_2024/morph_matrix_manifest.json",
+          "license": "CC0-1.0",
+          "partition_split": "turbulence_stratified_manifest_dev_only"
+        }
+      ],
+      "acceptance_tolerances": {
+        "min_yaw_damping_gain": 0.04,
+        "torsion_divergence_safety_factor_min": 1.50,
+        "max_tip_deflection_span_ratio": 0.25
+      }
+    },
+    {
+      "protocol_id": "p1_seaplane_savitsky_planing",
+      "family": "seaplane",
+      "sources": [
+        {
+          "id": "savitsky_1964_planing",
+          "path": "data/benchmarks/public/savitsky_1964_planing/savitsky_worked_benchmark.json",
+          "license": "Public Domain / SNAME",
+          "partition_split": "worked_planing_equilibrium_dev_only"
+        }
+      ],
+      "acceptance_tolerances": {
+        "lift_rel_tol": 0.05,
+        "min_buoyancy_reserve_ratio": 1.80,
+        "hump_thrust_margin_min": 1.15
+      }
+    }
+  ]
+}

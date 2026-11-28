@@ -16,11 +16,12 @@ int main() {
         assert(std::abs(airfoil.front().x - 1.0f) < 1e-4f);
     }
 
-    // 2. Build all 8 VehicleFamily CAD scenes and verify non-empty triangles + CAD edges + realistic T/W
+    // 2. Build all 9 VehicleFamily CAD scenes and verify non-empty triangles + CAD edges + realistic T/W
     for (auto fam : {aerolab::VehicleFamily::Multirotor, aerolab::VehicleFamily::FixedWing,
                      aerolab::VehicleFamily::Helicopter, aerolab::VehicleFamily::VTOL,
                      aerolab::VehicleFamily::Seaplane, aerolab::VehicleFamily::Jet,
-                     aerolab::VehicleFamily::InsectFlapper, aerolab::VehicleFamily::CustomPart}) {
+                     aerolab::VehicleFamily::InsectFlapper, aerolab::VehicleFamily::MorphingWing,
+                     aerolab::VehicleFamily::CustomPart}) {
         aerolab::AircraftDesignParams p;
         p.family = fam;
         if (fam == aerolab::VehicleFamily::Helicopter) p.rotor_rpm = 1450.0f;
@@ -30,9 +31,17 @@ int main() {
             p.hardware_catalog_idx = 4; p.wingspan_m = 1.35f; p.root_chord_m = 0.38f;
             p.tip_chord_m = 0.14f; p.sweep_deg = 26.0f; p.alpha_deg = 2.2f; p.airspeed_m_s = 92.0f;
         } else if (fam == aerolab::VehicleFamily::InsectFlapper) {
-            p.hardware_catalog_idx = 3; p.frame_mass_kg = 0.016f; p.battery_mass_kg = 0.010f;
-            p.payload_mass_kg = 0.004f; p.motor_mass_kg = 0.004f; p.wingspan_m = 0.16f;
-            p.root_chord_m = 0.028f; p.tip_chord_m = 0.016f; p.flap_freq_hz = 38.0f; p.airspeed_m_s = 2.2f;
+            p.hardware_catalog_idx = 3; p.frame_mass_kg = 0.014f; p.battery_mass_kg = 0.010f;
+            p.payload_mass_kg = 0.004f; p.motor_mass_kg = 0.004f; p.battery_cells_s = 1;
+            p.battery_capacity_ah = 0.50f; p.battery_r0_ohm = 0.065f; p.wingspan_m = 0.16f;
+            p.root_chord_m = 0.028f; p.tip_chord_m = 0.016f; p.flap_freq_hz = 40.0f; p.airspeed_m_s = 2.2f;
+        } else if (fam == aerolab::VehicleFamily::MorphingWing) {
+            p.hardware_catalog_idx = 1; p.frame_mass_kg = 0.65f; p.battery_mass_kg = 0.35f;
+            p.payload_mass_kg = 0.12f; p.motor_mass_kg = 0.055f; p.battery_cells_s = 4;
+            p.battery_capacity_ah = 4.5f; p.battery_r0_ohm = 0.018f; p.wingspan_m = 1.15f;
+            p.root_chord_m = 0.22f; p.tip_chord_m = 0.14f; p.sweep_deg = 16.0f;
+            p.morph_tuck_pct = 25.0f; p.wing_asymmetry_diff = 0.10f; p.tail_spread_pct = 75.0f;
+            p.airspeed_m_s = 14.0f; p.alpha_deg = 4.5f;
         }
         const auto scene = aerolab::build_cad_scene(p);
         assert(!scene.vertices.empty());
@@ -48,6 +57,7 @@ int main() {
         } else {
             assert(ev.benchmark_match_pct > 85.0);
             assert(ev.predicted_readiness_pct > 55.0);
+            assert(ev.validation_status == "DEVELOPMENT");
             assert(ev.thrust_to_weight > 0.8 && ev.thrust_to_weight < 8.0);
         }
     }
@@ -171,6 +181,44 @@ int main() {
     assert(std::abs(roundtrip_out.mfg_tolerance_pct - 12.0f) < 1e-3f);
     assert(roundtrip_out.attach_custom_part);
     assert(roundtrip_out.active_part.sketch_kind == aerolab::SketchShapeKind::CustomBodyShell);
+
+    aerolab::AircraftDesignParams morph_in;
+    morph_in.family = aerolab::VehicleFamily::MorphingWing;
+    morph_in.morph_tuck_pct = 35.0f;
+    morph_in.wing_asymmetry_diff = 0.18f;
+    morph_in.tail_spread_pct = 82.0f;
+    morph_in.tail_tilt_deg = 12.0f;
+    const std::string morph_json = ipc.build_project_payload_json(morph_in);
+    aerolab::AircraftDesignParams morph_out;
+    assert(aerolab::WorkerIPC::load_project_payload_json(morph_json, morph_out));
+    assert(morph_out.family == aerolab::VehicleFamily::MorphingWing);
+    assert(std::abs(morph_out.morph_tuck_pct - 35.0f) < 1e-3f);
+    assert(std::abs(morph_out.wing_asymmetry_diff - 0.18f) < 1e-3f);
+    assert(std::abs(morph_out.tail_tilt_deg - 12.0f) < 1e-3f);
+
+    // Phase 1 InsectFlapper (1S, ~32 g) and Seaplane/Jet JSON roundtrip + 6-DoF RK4 run
+    aerolab::AircraftDesignParams insect_rt;
+    insect_rt.family = aerolab::VehicleFamily::InsectFlapper;
+    insect_rt.hardware_catalog_idx = 3;
+    insect_rt.frame_mass_kg = 0.014f;
+    insect_rt.battery_mass_kg = 0.010f;
+    insect_rt.payload_mass_kg = 0.004f;
+    insect_rt.motor_mass_kg = 0.004f;
+    insect_rt.battery_cells_s = 1;
+    insect_rt.battery_capacity_ah = 0.50f;
+    insect_rt.battery_r0_ohm = 0.065f;
+    insect_rt.wingspan_m = 0.16f;
+    insect_rt.root_chord_m = 0.028f;
+    insect_rt.flap_freq_hz = 40.0f;
+    aerolab::AircraftDesignParams insect_out;
+    assert(aerolab::WorkerIPC::load_project_payload_json(ipc.build_project_payload_json(insect_rt), insect_out));
+    assert(insect_out.family == aerolab::VehicleFamily::InsectFlapper);
+    assert(insect_out.battery_cells_s == 1);
+    aerolab::LiveEvidenceSummary insect_ev;
+    aerolab::evaluate_live_physics_and_curves(insect_out, aerolab::build_cad_scene(insect_out), insect_ev);
+    assert(insect_ev.validation_status == "DEVELOPMENT" && insect_ev.thrust_to_weight >= 1.2);
+    ipc.run_cpp_rk4_multirotor(insect_out, insect_ev);
+    assert(ipc.snapshot_status().last_ok && insect_ev.has_trajectory && insect_ev.max_altitude_m > 3.0);
 
     aerolab::AircraftDesignParams calm_quad;
     calm_quad.family = aerolab::VehicleFamily::Multirotor;
