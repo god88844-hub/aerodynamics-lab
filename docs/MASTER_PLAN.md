@@ -1254,26 +1254,28 @@ Tasks with several WPs appear in each relevant issue but retain one canonical ID
   - Acceptance: Phase 1 exit and Phase 0 acceptance are complete; owner explicitly authorizes Jets/high-speed phase (promoted ahead of deferred crewed/bio-human wings).
 
 <a name="p3-002"></a>
-- [ ] **P3-002 — Define compressible-flow, turbine and thermal interfaces** (future phase; actor: builder)
+- [ ] **P3-002 — Define compressible, intake/nozzle, fastener BOM & Electrophysics bridge interfaces** (future phase; actor: builder)
   - Prerequisites: P3-001. Proof: [docs/acceptance/P3-002.md](acceptance/P3-002.md).
   - Acceptance: Contracts/registries identify Mach/Reynolds/temperature ranges, gas properties, compressor/turbine data, flutter and thermal/structural boundaries with exact source/license roles.
   - Language: Python.
-  - Target files: `packages/physics/aerodynamics/compressible_jet.py`; `data/benchmarks/public/nasa_jet_m1p63_heated/`; `data/benchmarks/public/nasa_tm4074_ladson_naca0012/`; `docs/JETS_AND_SEAPLANES_RESEARCH_AND_PLAN.md`; `tests/acceptance/test_p3_002.py`.
+  - Target files: `packages/physics/aerodynamics/compressible_jet.py`; `data/benchmarks/public/nasa_jet_m1p63_heated/`; `data/benchmarks/public/nasa_tm4074_ladson_naca0012/`; `data/components/fasteners/iso_4762_metric_screws.json`; `data/components/turbines/micro_turbines_and_edfs.json`; `data/failure_examples/failure_atlas.json`; `docs/WHOLE_AIRCRAFT_AND_CREATOR_RESEARCH.md`; `tests/acceptance/test_p3_002.py`.
   - Todos:
-    - [ ] 1. Define compressible Prandtl-Glauert/Karman-Tsien, Modified Korn wave drag M_DD, Brayton turbine/EDF thrust lapse, and NASA Mach 1.63 Jet / TM-4074 benchmarks cleanly in data/registry.json.
-    - [ ] 2. Separate preloaded turbine/EDF hardware catalog parameters from custom swept/transonic airframe design parameters.
+    - [ ] 1. Lock ISO 4762 M2-M6 fasteners, bearings, servos, AWG 10-22 wiring, KingTech/JetCat/FMS-EDF specs, and Electrophysics Lab PowerPack bridge contract.
+    - [ ] 2. Freeze 10 curated failure cases in data/failure_examples/failure_atlas.json and register NASA Mach 1.63 / TM-4074 DEVELOPMENT sources.
+    - [ ] 3. Lock Cargo slung-load pendulum, Tailsitter propwash, Ducted/Sub-100g, and Flying-Wing reflex contracts.
   - Verify: `pytest tests/acceptance/test_jet_and_seaplane_models.py -q` | `python scripts/reconcile_registry.py --check`
   - Planned verification: `pytest tests/acceptance/test_p3_002.py`; required current-head CI.
 
 <a name="p3-003"></a>
-- [ ] **P3-003 — Implement selected compressible and propulsion models** (future phase; actor: builder)
+- [ ] **P3-003 — Implement coupled jet intake/nozzle, cargo slung-load & creator experimental solvers** (future phase; actor: builder)
   - Prerequisites: P3-002. Proof: [docs/acceptance/P3-003.md](acceptance/P3-003.md).
   - Acceptance: Supported shock/viscous/transition/propulsion mechanisms have code verification and mesh/time/iteration studies; closure assumptions and calculation-only benchmarks are explicit.
   - Language: Python, C++20.
-  - Target files: `packages/physics/aerodynamics/compressible_jet.py`; `apps/native/src/cad_mesh_builder.cpp`.
+  - Target files: `packages/physics/aerodynamics/compressible_jet.py`; `packages/physics/dynamics/slung_load_and_tailsitter.py`; `packages/engineering-core/`; `apps/native/src/cad_mesh_builder.cpp`; `tests/acceptance/test_p3_003.py`.
   - Todos:
-    - [ ] 1. Implement compressible CL/CD_wave, Brayton thrust lapse & EGT thermal limit, and aeroelastic divergence check with fail-closed M > 1.8 / EGT > limit.
-    - [ ] 2. Wire Jet/Turbofan/EDF simulation mode into AerodynamicsLab.exe.
+    - [ ] 1. Implement MIL-E-5008B inlet pressure recovery, choked C-D nozzle mass flow/thrust, fuel-burn CoG shift, and KingTech/JetCat EGT limits.
+    - [ ] 2. Implement Cargo slung-load pendulum/blowback dynamics, Tailsitter propwash elevon authority, Flying-Wing reflex stability, and Ducted shroud augmentation.
+    - [ ] 3. Couple ISO fastener bolt-shear and Failure Atlas root-cause diagnostics into C++20 lab_core and Python physics.
   - Verify: `pytest tests/acceptance/test_jet_and_seaplane_models.py -q` | `ctest --test-dir apps/native/build --output-on-failure`
   - Planned verification: `pytest tests/acceptance/test_p3_003.py`; required current-head CI.
 
@@ -1289,9 +1291,14 @@ Tasks with several WPs appear in each relevant issue but retain one canonical ID
   - Acceptance: Qualified custodian provides independent compatible rig/wind-tunnel/flight measurements with geometry, boundaries, calibration and clocks; CFD output is not physical data.
 
 <a name="p3-006"></a>
-- [ ] **P3-006 — Integrate and verify high-speed desktop and worker workflows** (future phase; actor: builder)
+- [ ] **P3-006 — Integrate whole-aircraft visual physics, virtual/USB RC controller & Failure Atlas UI** (future phase; actor: builder)
   - Prerequisites: P3-005. Proof: [docs/acceptance/P3-006.md](acceptance/P3-006.md).
   - Acceptance: Supported design/mesh/run/control/cancel/compare paths pass convergence, energy, shock/propulsion limiting cases and prior-family regressions under measured budgets.
+  - Target files: `apps/native/src/`; `apps/native/tests/native_cad_tests.cpp`; `tests/acceptance/test_p3_006.py`.
+  - Todos:
+    - [ ] 1. Render real physics visuals in OpenGL 3.3: Mach shock cone & Prandtl-Glauert disk (M>=0.95), supersonic exhaust shock diamonds, rotating blades, deflecting surfaces, and Euler-Bernoulli wing flex.
+    - [ ] 2. Add Build-From-Scratch assembly parts/screws BOM inspector, Failure Atlas one-click loader, and Cargo/Tailsitter/FlyingWing/Jet presets.
+    - [ ] 3. Add On-Screen Virtual Dual-Stick RC Transmitter HUD and GLFW USB HID controller input driving closed-loop flight & payload drop.
   - Planned verification: `pytest tests/acceptance/test_p3_006.py`; required current-head CI.
 
 <a name="p3-007"></a>

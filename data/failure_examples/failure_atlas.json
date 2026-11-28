@@ -1,0 +1,107 @@
+{
+  "schema_version": "1.0",
+  "policy_role": "DEVELOPMENT",
+  "purpose": "Curated failure cases, regression anomalies, and physical limit breaches used to calibrate readiness penalties, surface exact math/physics root causes, and educate beginners and aerospace designers.",
+  "failure_cases": [
+    {
+      "id": "sit_module_voltage_collapse",
+      "category": "electrical_battery",
+      "family": "multirotor",
+      "source_ref": "docs/campaigns/M21_11_15_SIT_CUTOFF_FORECAST.md",
+      "root_cause": "Aged cell internal resistance R0 + polarization V_rc drives constant-power quadratic discriminant negative (P > V_th^2 / 4R) before nominal cutoff.",
+      "physics_law": "V_bus = (V_th + sqrt(V_th^2 - 4 P R0)) / 2",
+      "threshold": "V_bus < V_cutoff (3.20 V/cell) or voltage collapse",
+      "severity": "FAIL"
+    },
+    {
+      "id": "qdrone_undervoltage_altitude_collapse",
+      "category": "flight_control_power",
+      "family": "multirotor",
+      "source_ref": "docs/campaigns/M26_50_54_QDRONE_VOLTAGE_TRANSFER.md",
+      "root_cause": "Bus voltage sag below 14 V study line saturates thrust below hover weight, inducing uncontrolled descent in closed loop.",
+      "physics_law": "T_max(V_bus) < m * g",
+      "threshold": "z_dot < 0 at full throttle cmd",
+      "severity": "FAIL"
+    },
+    {
+      "id": "uav_fd_esc_rotor_fault",
+      "category": "propulsion_health",
+      "family": "multirotor",
+      "source_ref": "docs/campaigns/M25_7_11_UAV_FD_ESC_POWER.md",
+      "root_cause": "1P rotor imbalance / single-branch ESC power asymmetry compensated by autopilot RPM (+13-20%) masks steady hover fault until saturation.",
+      "physics_law": "I_branch^2 * R_m thermal runaway / 1P vibration energy",
+      "threshold": "Motor temp > 95 C or branch cutoff",
+      "severity": "FAIL"
+    },
+    {
+      "id": "cfrp_arm_buckling_and_bolt_shear",
+      "category": "structural_fasteners",
+      "family": "cargo_uav",
+      "source_ref": "docs/campaigns/M25_17_21_COLUMN_COMPRESSION.md",
+      "root_cause": "Excessive arm moment or undersized ISO 4762 M2/M3 fasteners under heavy payload climb exceeds bending yield or bolt shear capacity.",
+      "physics_law": "sigma_max = M*c/I, V_bolt > tau_allow * A_s, P_cr = pi^2 E I / L^2",
+      "threshold": "FoS < 1.25",
+      "severity": "FAIL"
+    },
+    {
+      "id": "slung_cargo_pendulum_blowback",
+      "category": "payload_dynamics",
+      "family": "cargo_uav",
+      "source_ref": "data/research/slung_load_reference",
+      "root_cause": "Bluff-body cargo box drag (Cd ~ 1.4) + off-CG tether attachment excites cable pendulum frequency omega = sqrt(g/L) and pitch-back saturation.",
+      "physics_law": "omega_pend = sqrt(g/L), tau_cg = r_tether x F_cable, F_D = 0.5*rho*V^2*Cd*A",
+      "threshold": "Trail angle > 35 deg or residual control authority < 15%",
+      "severity": "FAIL"
+    },
+    {
+      "id": "jet_intake_surge_and_egt_overheat",
+      "category": "compressible_propulsion",
+      "family": "jet",
+      "source_ref": "data/benchmarks/public/nasa_jet_m1p63_heated/jet_nozzle_benchmark.json",
+      "root_cause": "Overspeed past Korn M_DD steepens wave drag Cd_w = 20*(M - M_cr)^4 while choked intake / poor cooling raises turbine EGT > 720-730 C.",
+      "physics_law": "MIL-E-5008B eta_r, choked m_dot_max, EGT thermal cap",
+      "threshold": "EGT > max_temp or M > M_max or T_net < D_total",
+      "severity": "FAIL"
+    },
+    {
+      "id": "tailsitter_propwash_transition_stall",
+      "category": "vtol_transition",
+      "family": "tailsitter",
+      "source_ref": "docs/WHOLE_AIRCRAFT_AND_CREATOR_RESEARCH.md",
+      "root_cause": "Transitioning horizontally too slowly or with insufficient propwash slipstream over elevons causes deep pitch-up stall.",
+      "physics_law": "V_slip = sqrt(V_inf^2 + 2*T/(rho*A_d))",
+      "threshold": "Pitch moment margin < 1.1x or |alpha| > 14 deg without stall protection",
+      "severity": "FAIL"
+    },
+    {
+      "id": "seaplane_chop_hump_lock",
+      "category": "hydrodynamics",
+      "family": "seaplane",
+      "source_ref": "data/benchmarks/public/savitsky_1964_planing/savitsky_worked_benchmark.json",
+      "root_cause": "High water chop + heavy float loading traps aircraft behind displacement hump speed Fn_L = 0.45 where R_hump >= Thrust.",
+      "physics_law": "Savitsky 1964 planing lift + NACA hump drag R_hump",
+      "threshold": "T_avail < 1.15 * R_hump or buoyancy < 1.8x W",
+      "severity": "FAIL"
+    },
+    {
+      "id": "insect_mav_tip_mach_and_fatigue",
+      "category": "unsteady_aeroelasticity",
+      "family": "insect_flapper",
+      "source_ref": "data/benchmarks/public/delfly_flex_2026/forces_moments_benchmark.json",
+      "root_cause": "Excessive flap frequency / stroke pushes M_tip > 0.25 or cyclic bending stress past hinge fatigue limit S_e.",
+      "physics_law": "M_tip = omega*Phi*R/a, sigma_root/S_e, q/q_D",
+      "threshold": "M_tip > 0.25 or FoS_fatigue < 1.25 or q_D/q < 1.5",
+      "severity": "FAIL"
+    },
+    {
+      "id": "nasa_icing_clmax_collapse",
+      "category": "adverse_weather",
+      "family": "fixed_wing",
+      "source_ref": "data/benchmarks/public/nasa_crm_irt_icing/",
+      "root_cause": "Supercooled LWC ice accretion erodes leading-edge suction peak, collapsing CL_max and tripling parasitic profile drag.",
+      "physics_law": "packages/physics/environment/adverse_weather.py icing model",
+      "threshold": "Ice thickness / CL loss exceeds stall margin",
+      "severity": "FAIL"
+    }
+  ]
+}

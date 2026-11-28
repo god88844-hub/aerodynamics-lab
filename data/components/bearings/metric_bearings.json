@@ -1,0 +1,7 @@
+{
+  "schema_version": "1.0",
+  "bearings": [
+    {"id": "mr105zz", "name": "MR105ZZ Shielded Bearing", "bore_mm": 5.0, "od_mm": 10.0, "width_mm": 4.0, "mass_kg": 0.0013, "dynamic_load_cr_n": 475.0, "static_load_cor_n": 168.0},
+    {"id": "608zz", "name": "608ZZ Deep Groove Bearing", "bore_mm": 8.0, "od_mm": 22.0, "width_mm": 7.0, "mass_kg": 0.0120, "dynamic_load_cr_n": 3350.0, "static_load_cor_n": 1400.0}
+  ]
+}
