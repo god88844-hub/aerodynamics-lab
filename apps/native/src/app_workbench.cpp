@@ -147,6 +147,9 @@ void AppWorkbench::switch_family(VehicleFamily family) {
         params.airspeed_m_s = 92.0f;
         params.jet_throttle_pct = 85.0f;
         params.wing_tc_ratio = 0.09f;
+        params.intake_area_m2 = 0.0032f;
+        params.nozzle_area_ratio = 1.15f;
+        params.fuel_mass_kg = 0.85f;
         camera.distance_m = 2.25f;
     } else if (family == VehicleFamily::InsectFlapper) {
         params.project_name = "Insect Micro-Flapper MAV";
@@ -191,6 +194,74 @@ void AppWorkbench::switch_family(VehicleFamily family) {
         params.airspeed_m_s = 16.0f;
         params.alpha_deg = 5.5f;
         camera.distance_m = 1.75f;
+    } else if (family == VehicleFamily::CargoUAV) {
+        params.project_name = "Cargo Hex Slung-Load Carrier";
+        params.hardware_catalog_idx = 0; // MN3508 + 6S
+        params.rotor_count = 6;
+        params.arm_length_m = 0.48f;
+        params.prop_diameter_m = 0.38f;
+        params.prop_pitch_deg = 15.0f;
+        params.frame_mass_kg = 1.85f;
+        params.battery_mass_kg = 1.55f;
+        params.payload_mass_kg = 0.25f;
+        params.cargo_mass_kg = 1.80f;
+        params.cable_length_m = 1.20f;
+        params.payload_released = false;
+        params.motor_mass_kg = 0.103f;
+        params.battery_cells_s = 6;
+        params.battery_capacity_ah = 10.0f;
+        params.battery_r0_ohm = 0.020f;
+        params.rotor_rpm = 5400.0f;
+        params.airspeed_m_s = 12.0f;
+        params.screw_size_idx = 3; // M4 ISO 4762
+        params.wire_awg = 12;
+        camera.distance_m = 2.45f;
+    } else if (family == VehicleFamily::Tailsitter) {
+        params.project_name = "VTOL Tailsitter (dRehmFlight)";
+        params.hardware_catalog_idx = 1; // ECOII 2807 + 4S
+        params.frame_mass_kg = 0.92f;
+        params.battery_mass_kg = 0.48f;
+        params.payload_mass_kg = 0.16f;
+        params.motor_mass_kg = 0.068f;
+        params.battery_cells_s = 4;
+        params.battery_capacity_ah = 4.5f;
+        params.battery_r0_ohm = 0.018f;
+        params.wingspan_m = 1.05f;
+        params.root_chord_m = 0.28f;
+        params.tip_chord_m = 0.18f;
+        params.sweep_deg = 12.0f;
+        params.dihedral_deg = 2.0f;
+        params.transition_pitch_deg = 70.0f;
+        params.duct_area_ratio = 1.08f;
+        params.prop_diameter_m = 0.28f;
+        params.rotor_rpm = 7200.0f;
+        params.airspeed_m_s = 14.0f;
+        params.screw_size_idx = 2; // M3 ISO 4762
+        params.wire_awg = 14;
+        camera.distance_m = 1.85f;
+    } else if (family == VehicleFamily::FlyingWing) {
+        params.project_name = "Swept Reflex Flying Wing";
+        params.hardware_catalog_idx = 1; // ECOII 2807 + 4S
+        params.frame_mass_kg = 0.72f;
+        params.battery_mass_kg = 0.46f;
+        params.payload_mass_kg = 0.14f;
+        params.motor_mass_kg = 0.065f;
+        params.battery_cells_s = 4;
+        params.battery_capacity_ah = 4.5f;
+        params.battery_r0_ohm = 0.018f;
+        params.wingspan_m = 1.25f;
+        params.root_chord_m = 0.30f;
+        params.tip_chord_m = 0.14f;
+        params.sweep_deg = 26.0f;
+        params.dihedral_deg = 1.5f;
+        params.twist_tip_deg = -3.5f;
+        params.airfoil_code = "23012";
+        params.rotor_rpm = 7600.0f;
+        params.airspeed_m_s = 22.0f;
+        params.alpha_deg = 4.0f;
+        params.screw_size_idx = 2;
+        params.wire_awg = 14;
+        camera.distance_m = 1.85f;
     } else {
         params.project_name = "Part Designer Studio";
         camera.distance_m = 0.75f;
@@ -253,7 +324,22 @@ void AppWorkbench::sync_feature_tree() {
         feature_tree.push_back({"morph_body", "Morph Body & Wrist Servo", "Fuselage"});
         feature_tree.push_back({"morph_wing", "Shoulder-Wrist Feathers", "WingLoft"});
         feature_tree.push_back({"morph_tail", "Fan Tail Spread / Tilt", "WingLoft"});
+    } else if (params.family == VehicleFamily::CargoUAV) {
+        feature_tree.push_back({"cargo_hex", "Heavy Hex Frame & Gimbal Hook", "RotorArray"});
+        feature_tree.push_back({"cargo_sling", params.payload_released ? "Slung Parcel (Released)" : "Slung Parcel + Tether", "Solid"});
+    } else if (params.family == VehicleFamily::Tailsitter) {
+        feature_tree.push_back({"tail_wing", "Pitchable Transition Wing", "WingLoft"});
+        feature_tree.push_back({"tail_props", "Twin Propwash Nacelles", "RotorArray"});
+    } else if (params.family == VehicleFamily::FlyingWing) {
+        feature_tree.push_back({"fwing_body", "Reflex Swept Plank + Pod", "WingLoft"});
+        feature_tree.push_back({"fwing_elevons", "Coupled Elevons + Pusher", "RotorArray"});
     }
+    const char *m_names[] = {"M2", "M2.5", "M3", "M4", "M5", "M6"};
+    const int sidx = (params.screw_size_idx < 0) ? 0 : (params.screw_size_idx > 5 ? 5 : params.screw_size_idx);
+    feature_tree.push_back({"bom_std",
+                            std::string("ISO 4762 ") + m_names[sidx] + (params.titanium_screws ? " Ti" : " 12.9") +
+                                " / " + std::to_string(params.wire_awg) + "AWG",
+                            "Standards"});
 }
 
 void AppWorkbench::rebuild_geometry() {
@@ -271,9 +357,13 @@ void AppWorkbench::render_ui_and_scene(float dt_s, int fb_w, int fb_h) {
     if (ipc_ && ipc_->poll_completed_results(evidence) && viewport_) {
         viewport_->upload_trajectory_path(evidence.traj_pos_m);
     }
-    if (params.family == VehicleFamily::InsectFlapper && (params.animate_flapping || evidence.playing)) {
+    const bool live_spin = evidence.playing || params.animate_flapping || params.show_rc_hud;
+    if (live_spin) {
         params.flap_anim_phase_rad += dt_s * 11.5f; // Slow-motion visual wingbeat cycle
         if (params.flap_anim_phase_rad > 62.8318f) params.flap_anim_phase_rad = 0.0f;
+        const float spin_rate = 18.0f * (0.4f + 0.9f * (params.rotor_rpm / 6000.0f));
+        params.spin_phase_rad += dt_s * spin_rate;
+        if (params.spin_phase_rad > 62.8318f) params.spin_phase_rad -= 62.8318f;
         scene = build_cad_scene(params, selected_part_idx);
         if (viewport_) {
             viewport_->upload_scene(scene);
@@ -321,6 +411,9 @@ void AppWorkbench::render_ui_and_scene(float dt_s, int fb_w, int fb_h) {
     draw_left_feature_tree();
     draw_center_viewport(dt_s);
     draw_right_inspector();
+    if (params.show_rc_hud) {
+        draw_rc_hud();
+    }
     draw_modals();
 }
 

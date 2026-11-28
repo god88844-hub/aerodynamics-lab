@@ -34,6 +34,7 @@ from physics.aerodynamics.rotorcraft_vtol import run_helicopter_autorotation_mis
 from physics.aerodynamics.sixdof_fixed_wing import build_derivatives_from_wing, simulate_6dof_fixed_wing  # noqa: E402
 from physics.autonomy.sitl_and_swarms import run_multi_drone_swarm, run_sitl_closed_loop_mission  # noqa: E402
 from physics.dynamics.assembly_layout import build_multirotor_layout_and_bom  # noqa: E402
+from physics.dynamics.slung_load_and_tailsitter import evaluate_failure_atlas_cases, import_electrophysics_powerpack  # noqa: E402
 from physics.environment.adverse_weather import evaluate_icing_and_shedding, evaluate_rain_wet_effects  # noqa: E402
 from physics.propulsion.loader import ComponentLibrary  # noqa: E402
 from physics.scenarios.desktop_runner import run_authoritative_desktop_simulation  # noqa: E402
@@ -75,6 +76,8 @@ def main() -> int:
             "swap-assembly-part",
             "evidence-scorecard",
             "phase1-eval",
+            "failure-atlas",
+            "load-powerpack",
             "run",
         ),
     )
@@ -353,6 +356,13 @@ def main() -> int:
         elif args.command == "phase1-eval":
             payload = evaluate_all_phase1_datasets()
             write_result(args.output, payload)
+        elif args.command == "failure-atlas":
+            payload = evaluate_failure_atlas_cases()
+            write_result(args.output, payload)
+        elif args.command == "load-powerpack":
+            spec = json.loads(args.input.read_text(encoding="utf-8"))
+            bat = import_electrophysics_powerpack(spec)
+            write_result(args.output, bat.model_dump(mode="json"))
         elif args.command == "import-legacy":
             raw = json.loads(args.input.read_text(encoding="utf-8"))
             project = import_legacy_project(raw)

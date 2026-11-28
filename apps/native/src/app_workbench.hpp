@@ -50,6 +50,7 @@ public:
     bool show_verification_modal = false;
     bool show_part_export_modal = false;
     bool show_equations_modal = false;
+    bool show_failure_atlas_modal = false;
     std::string export_banner;
 
 private:
@@ -58,6 +59,7 @@ private:
     void draw_left_feature_tree();
     void draw_center_viewport(float dt_s);
     void draw_right_inspector();
+    void draw_rc_hud();
     void draw_modals();
     void sync_feature_tree();
 

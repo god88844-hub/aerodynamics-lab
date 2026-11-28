@@ -168,6 +168,9 @@ void AppWorkbench::draw_menu_bar() {
         if (ImGui::MenuItem("New Swept Jet Aircraft")) switch_family(VehicleFamily::Jet);
         if (ImGui::MenuItem("New Insect Micro-Flapper MAV")) switch_family(VehicleFamily::InsectFlapper);
         if (ImGui::MenuItem("New Morphing-Wing Flyer (PigeonBot)")) switch_family(VehicleFamily::MorphingWing);
+        if (ImGui::MenuItem("New Cargo Slung-Load Hex (Carrier)")) switch_family(VehicleFamily::CargoUAV);
+        if (ImGui::MenuItem("New VTOL Tailsitter (dRehmFlight)")) switch_family(VehicleFamily::Tailsitter);
+        if (ImGui::MenuItem("New Swept Flying Wing (Project-Air)")) switch_family(VehicleFamily::FlyingWing);
         if (ImGui::MenuItem("New Custom Part Sketch")) switch_family(VehicleFamily::CustomPart);
         ImGui::Separator();
         if (ImGui::MenuItem("Open Project (.json)...")) {
@@ -331,6 +334,7 @@ void AppWorkbench::draw_menu_bar() {
 
     if (ImGui::BeginMenu("Verification")) {
         if (ImGui::MenuItem("Open Verification & Benchmark Scorecard")) show_verification_modal = true;
+        if (ImGui::MenuItem("Open Failure Atlas (10 Curated Crash Cases)")) show_failure_atlas_modal = true;
         if (ImGui::MenuItem("Run Twin % Source Comparison")) {
             ipc_->launch_python_command("compare-source", ipc_->build_compare_payload_json(params, evidence));
         }
@@ -368,9 +372,21 @@ void AppWorkbench::draw_quick_toolstrip() {
     ImGui::SameLine();
     if (ImGui::Button("Morph Wing")) switch_family(VehicleFamily::MorphingWing);
     ImGui::SameLine();
+    if (ImGui::Button("Cargo")) switch_family(VehicleFamily::CargoUAV);
+    ImGui::SameLine();
+    if (ImGui::Button("Tailsitter")) switch_family(VehicleFamily::Tailsitter);
+    ImGui::SameLine();
+    if (ImGui::Button("FlyWing")) switch_family(VehicleFamily::FlyingWing);
+    ImGui::SameLine();
     if (ImGui::Button("Part Designer")) switch_family(VehicleFamily::CustomPart);
     ImGui::SameLine();
     ImGui::SeparatorEx(ImGuiSeparatorFlags_Vertical);
+    ImGui::SameLine();
+    if (ImGui::Button("Failure Atlas")) show_failure_atlas_modal = true;
+    ImGui::SameLine();
+    if (ImGui::Button(params.show_rc_hud ? "RC HUD: ON" : "RC Stick")) {
+        params.show_rc_hud = !params.show_rc_hud;
+    }
     ImGui::SameLine();
     if (ImGui::Button(viewport_layout == ViewportLayout::Single3D ? "4-View" : "Single 3D")) {
         viewport_layout = (viewport_layout == ViewportLayout::Single3D) ? ViewportLayout::Ortho4View : ViewportLayout::Single3D;
@@ -514,8 +530,19 @@ void AppWorkbench::draw_right_inspector() {
             changed |= ImGui::SliderFloat("Prop Diameter (m)", &params.prop_diameter_m, 0.15f, 0.65f, "%.3f");
             changed |= ImGui::SliderFloat("Blade Pitch (deg)", &params.prop_pitch_deg, 6.0f, 28.0f, "%.1f");
             changed |= ImGui::SliderInt("Prop Blades", &params.prop_blades, 2, 5);
+        } else if (params.family == VehicleFamily::CargoUAV) {
+            changed |= ImGui::SliderFloat("Arm Length (m)", &params.arm_length_m, 0.22f, 0.70f, "%.3f");
+            changed |= ImGui::SliderFloat("Cargo Mass (kg)", &params.cargo_mass_kg, 0.0f, 12.0f, "%.2f");
+            changed |= ImGui::SliderFloat("Cable Length (m)", &params.cable_length_m, 0.25f, 2.50f, "%.2f");
+            changed |= ImGui::Checkbox("Release Slung Parcel", &params.payload_released);
+        } else if (params.family == VehicleFamily::Tailsitter) {
+            changed |= ImGui::SliderFloat("Wingspan (m)", &params.wingspan_m, 0.55f, 2.40f, "%.2f");
+            changed |= ImGui::SliderFloat("Transition Pitch (deg)", &params.transition_pitch_deg, 0.0f, 90.0f, "%.0f");
+            changed |= ImGui::SliderFloat("Duct Area Ratio", &params.duct_area_ratio, 1.0f, 1.50f, "%.2f");
+            changed |= ImGui::SliderFloat("Prop Diameter (m)", &params.prop_diameter_m, 0.16f, 0.50f, "%.3f");
         } else if (params.family == VehicleFamily::FixedWing || params.family == VehicleFamily::VTOL ||
-                   params.family == VehicleFamily::Seaplane || params.family == VehicleFamily::Jet) {
+                   params.family == VehicleFamily::Seaplane || params.family == VehicleFamily::Jet ||
+                   params.family == VehicleFamily::FlyingWing) {
             changed |= ImGui::SliderFloat("Wingspan (m)", &params.wingspan_m, 0.5f, 3.8f, "%.2f");
             changed |= ImGui::SliderFloat("Root Chord (m)", &params.root_chord_m, 0.10f, 0.60f, "%.3f");
             changed |= ImGui::SliderFloat("Tip Chord (m)", &params.tip_chord_m, 0.05f, 0.45f, "%.3f");
@@ -533,6 +560,9 @@ void AppWorkbench::draw_right_inspector() {
             if (params.family == VehicleFamily::Jet) {
                 changed |= ImGui::SliderFloat("Jet Throt (%)", &params.jet_throttle_pct, 20.0f, 105.0f, "%.0f");
                 changed |= ImGui::SliderFloat("Wing t/c", &params.wing_tc_ratio, 0.04f, 0.16f, "%.3f");
+                changed |= ImGui::SliderFloat("Intake Area (m2)", &params.intake_area_m2, 0.0010f, 0.0100f, "%.4f");
+                changed |= ImGui::SliderFloat("Nozzle Ae/At", &params.nozzle_area_ratio, 0.75f, 2.00f, "%.2f");
+                changed |= ImGui::SliderFloat("Fuel Mass (kg)", &params.fuel_mass_kg, 0.10f, 4.00f, "%.2f");
             }
             const char *airfoils[] = {"2412", "0012", "4412", "23012", "6412"};
             for (int a = 0; a < 5; ++a) {
@@ -608,8 +638,14 @@ void AppWorkbench::draw_right_inspector() {
         changed |= ImGui::SliderFloat("Battery Mass (kg)", &params.battery_mass_kg, 0.01f, 4.5f, "%.2f");
         changed |= ImGui::SliderFloat("Payload Mass (kg)", &params.payload_mass_kg, 0.0f, 15.0f, "%.2f");
         changed |= ImGui::SliderFloat("Alpha (deg)", &params.alpha_deg, -4.0f, 16.0f, "%.1f");
-        const float max_spd = (params.family == VehicleFamily::Jet) ? 340.0f : 45.0f;
+        const float max_spd = (params.family == VehicleFamily::Jet) ? 540.0f : 45.0f;
         changed |= ImGui::SliderFloat("Airspeed (m/s)", &params.airspeed_m_s, 1.0f, max_spd, "%.1f");
+        ImGui::Separator();
+        ImGui::TextDisabled("Standards Fasteners & Harness BOM:");
+        const char *screw_sizes[] = {"M2 (ISO 4762)", "M2.5 (ISO 4762)", "M3 (ISO 4762)", "M4 (ISO 4762)", "M5 (ISO 4762)", "M6 (ISO 4762)"};
+        changed |= ImGui::Combo("Joint Screw", &params.screw_size_idx, screw_sizes, 6);
+        changed |= ImGui::Checkbox("Ti-6Al-4V Fasteners", &params.titanium_screws);
+        changed |= ImGui::SliderInt("Power Wire (AWG)", &params.wire_awg, 10, 22);
     }
 
     ImGui::Spacing();
@@ -618,8 +654,13 @@ void AppWorkbench::draw_right_inspector() {
         ImGui::Text("Throt: %.0f%% | Hover: %.0f min", evidence.hover_throttle_pct, evidence.est_endurance_min);
         ImGui::Text("Pack: %.1f V | %.1f A | %.0f C", evidence.loaded_bus_voltage_v, evidence.hover_or_cruise_current_a, evidence.motor_temp_c);
         ImGui::Text("Wind: %.1f m/s | Rho: %.3f | FoS: %.2fx", evidence.wind_speed_m_s, evidence.air_density_kg_m3, evidence.structural_fos);
+        ImGui::Text("Bolt FoS: %.1fx | Wire: %.2fV (max %.0fA)", evidence.bolt_shear_fos, evidence.wire_drop_v, evidence.wire_ampacity_a);
         if (params.family == VehicleFamily::Jet) {
-            ImGui::Text("M: %.2f | MDD: %.2f | CDw: %.3f", evidence.mach, evidence.m_dd, evidence.cd_wave);
+            ImGui::Text("M: %.2f | MDD: %.2f | eta_r: %.3f | mu: %.1f", evidence.mach, evidence.m_dd, evidence.inlet_recovery_eta, evidence.mach_cone_deg);
+        } else if (params.family == VehicleFamily::CargoUAV) {
+            ImGui::Text("Trail: %.1f deg | Pendulum: %.2f Hz | Clr: %.0fmm", evidence.trail_angle_deg, evidence.pendulum_hz, evidence.min_tip_clearance_m * 1000.0);
+        } else if (params.family == VehicleFamily::Tailsitter) {
+            ImGui::Text("Propwash Slip: %.1f m/s", evidence.propwash_slip_m_s);
         } else if (params.family == VehicleFamily::Seaplane) {
             ImGui::Text("Water Hump Drag: %.2f N", evidence.hump_resistance_n);
         } else if (params.family == VehicleFamily::InsectFlapper || params.family == VehicleFamily::MorphingWing) {
@@ -807,6 +848,135 @@ void AppWorkbench::draw_modals() {
         if (ImGui::Button("Close")) ImGui::CloseCurrentPopup();
         ImGui::EndPopup();
     }
+
+    if (show_failure_atlas_modal) {
+        ImGui::OpenPopup("Failure Atlas — 10 Curated Real Failure Scenarios");
+        show_failure_atlas_modal = false;
+    }
+    if (ImGui::BeginPopupModal("Failure Atlas — 10 Curated Real Failure Scenarios", nullptr, ImGuiWindowFlags_AlwaysAutoResize)) {
+        ImGui::Text("Click any failure scenario to load it directly into the live 3D physics workbench:");
+        ImGui::Separator();
+        if (ImGui::Button("1. Jet Choked Intake + EGT Melt")) {
+            switch_family(VehicleFamily::Jet);
+            params.intake_area_m2 = 0.0012f;
+            params.jet_throttle_pct = 104.0f;
+            params.motor_cooling_grade = 0;
+            params.oat_c = 42.0f;
+            rebuild_geometry();
+            ImGui::CloseCurrentPopup();
+        }
+        if (ImGui::Button("2. Jet Supersonic Wave Drag & Mach Cone (M~1.42)")) {
+            switch_family(VehicleFamily::Jet);
+            params.hardware_catalog_idx = 5;
+            params.airspeed_m_s = 485.0f;
+            params.jet_throttle_pct = 100.0f;
+            rebuild_geometry();
+            ImGui::CloseCurrentPopup();
+        }
+        if (ImGui::Button("3. Cargo Slung-Load Over-Blowback & Overload")) {
+            switch_family(VehicleFamily::CargoUAV);
+            params.cargo_mass_kg = 7.5f;
+            params.airspeed_m_s = 25.0f;
+            rebuild_geometry();
+            ImGui::CloseCurrentPopup();
+        }
+        if (ImGui::Button("4. Flying Wing Low-Sweep Pitch Tumble")) {
+            switch_family(VehicleFamily::FlyingWing);
+            params.sweep_deg = 6.0f;
+            rebuild_geometry();
+            ImGui::CloseCurrentPopup();
+        }
+        if (ImGui::Button("5. Tailsitter Transition Stall")) {
+            switch_family(VehicleFamily::Tailsitter);
+            params.rotor_rpm = 1900.0f;
+            params.airspeed_m_s = 2.0f;
+            rebuild_geometry();
+            ImGui::CloseCurrentPopup();
+        }
+        if (ImGui::Button("6. Multirotor Tip Clash + M2 Bolt Shear + 22AWG Burn")) {
+            switch_family(VehicleFamily::Multirotor);
+            params.arm_length_m = 0.14f;
+            params.prop_diameter_m = 0.50f;
+            params.screw_size_idx = 0;
+            params.wire_awg = 22;
+            rebuild_geometry();
+            ImGui::CloseCurrentPopup();
+        }
+        if (ImGui::Button("7. Seaplane Choppy-Water Hump Lock")) {
+            switch_family(VehicleFamily::Seaplane);
+            params.rotor_rpm = 1800.0f;
+            params.water_chop_m = 0.18f;
+            rebuild_geometry();
+            ImGui::CloseCurrentPopup();
+        }
+        if (ImGui::Button("Close")) ImGui::CloseCurrentPopup();
+        ImGui::EndPopup();
+    }
+}
+
+void AppWorkbench::draw_rc_hud() {
+    const ImGuiViewport *vp = ImGui::GetMainViewport();
+    ImGui::SetNextWindowPos(ImVec2(vp->WorkPos.x + vp->WorkSize.x * 0.24f, vp->WorkPos.y + vp->WorkSize.y - 252.0f), ImGuiCond_FirstUseEver);
+    ImGui::SetNextWindowSize(ImVec2(360.0f, 235.0f), ImGuiCond_FirstUseEver);
+    if (!ImGui::Begin("Virtual Dual-Stick & USB RC Transmitter", &params.show_rc_hud)) {
+        ImGui::End();
+        return;
+    }
+    const ImVec2 pad_sz(110.0f, 110.0f);
+    ImDrawList *dl = ImGui::GetWindowDrawList();
+    auto draw_gimbal = [&](const char *id, const char *lbl, float &ax_x, float &ax_y, bool y_unipolar) -> bool {
+        bool mod = false;
+        ImGui::BeginGroup();
+        ImGui::TextDisabled("%s", lbl);
+        const ImVec2 p0 = ImGui::GetCursorScreenPos();
+        const ImVec2 p1(p0.x + pad_sz.x, p0.y + pad_sz.y);
+        dl->AddRectFilled(p0, p1, IM_COL32(244, 247, 252, 255), 6.0f);
+        dl->AddRect(p0, p1, IM_COL32(175, 190, 210, 255), 6.0f);
+        const ImVec2 ctr(0.5f * (p0.x + p1.x), 0.5f * (p0.y + p1.y));
+        dl->AddLine(ImVec2(p0.x + 6, ctr.y), ImVec2(p1.x - 6, ctr.y), IM_COL32(215, 224, 236, 255));
+        dl->AddLine(ImVec2(ctr.x, p0.y + 6), ImVec2(ctr.x, p1.y - 6), IM_COL32(215, 224, 236, 255));
+        const float ny = y_unipolar ? (1.0f - 2.0f * std::clamp(ax_y, 0.0f, 1.0f)) : (-std::clamp(ax_y, -1.0f, 1.0f));
+        const ImVec2 knob(ctr.x + std::clamp(ax_x, -1.0f, 1.0f) * (pad_sz.x * 0.42f), ctr.y + ny * (pad_sz.y * 0.42f));
+        dl->AddCircleFilled(knob, 9.0f, IM_COL32(37, 99, 235, 255));
+        ImGui::InvisibleButton(id, pad_sz);
+        if (ImGui::IsItemActive() && ImGui::IsMouseDragging(ImGuiMouseButton_Left)) {
+            const ImVec2 mp = ImGui::GetIO().MousePos;
+            ax_x = std::clamp((mp.x - ctr.x) / (pad_sz.x * 0.42f), -1.0f, 1.0f);
+            const float dy = std::clamp((mp.y - ctr.y) / (pad_sz.y * 0.42f), -1.0f, 1.0f);
+            ax_y = y_unipolar ? std::clamp(0.5f * (1.0f - dy), 0.0f, 1.0f) : (-dy);
+            mod = true;
+        }
+        ImGui::EndGroup();
+        return mod;
+    };
+
+    bool rc_changed = draw_gimbal("##rc_left", "THR / YAW (L)", params.rc_yaw, params.rc_throttle, true);
+    ImGui::SameLine(0.0f, 22.0f);
+    rc_changed |= draw_gimbal("##rc_right", "PITCH / ROLL (R)", params.rc_roll, params.rc_pitch, false);
+    if (rc_changed) {
+        params.rotor_rpm = 1800.0f + params.rc_throttle * 11200.0f;
+        params.jet_throttle_pct = 20.0f + params.rc_throttle * 85.0f;
+        rebuild_geometry();
+    }
+    ImGui::Checkbox("USB HID Joystick", &params.use_usb_joystick);
+    ImGui::SameLine();
+    if (ImGui::SmallButton("Center Sticks")) {
+        params.rc_yaw = 0.0f; params.rc_pitch = 0.0f; params.rc_roll = 0.0f;
+        rebuild_geometry();
+    }
+    if (params.family == VehicleFamily::CargoUAV) {
+        ImGui::SameLine();
+        if (ImGui::SmallButton(params.payload_released ? "Re-Hook Cargo" : "Drop Cargo")) {
+            params.payload_released = !params.payload_released;
+            rebuild_geometry();
+        }
+    }
+    ImGui::Text("PWM us: THR %d | YAW %d | PIT %d | ROL %d",
+                1000 + static_cast<int>(params.rc_throttle * 1000.0f),
+                1500 + static_cast<int>(params.rc_yaw * 500.0f),
+                1500 + static_cast<int>(params.rc_pitch * 500.0f),
+                1500 + static_cast<int>(params.rc_roll * 500.0f));
+    ImGui::End();
 }
 
 } // namespace aerolab

@@ -18,6 +18,9 @@ enum class VehicleFamily {
     Jet = 7,
     InsectFlapper = 8,
     MorphingWing = 9,
+    CargoUAV = 10,
+    Tailsitter = 11,
+    FlyingWing = 12,
 };
 
 enum class ViewportLayout {
@@ -111,9 +114,33 @@ struct AircraftDesignParams {
     float float_deadrise_deg = 18.0f;
     float water_chop_m = 0.04f;
 
-    // Jets / Compressible High-Speed
+    // Jets / Compressible High-Speed & Coupled Cycle
     float jet_throttle_pct = 85.0f;
     float wing_tc_ratio = 0.09f;
+    float intake_area_m2 = 0.0032f;
+    float nozzle_area_ratio = 1.15f;
+    float fuel_mass_kg = 0.85f;
+
+    // Cargo Package Carrier & Creator Archetypes (Jays_rcgarage / dRehmFlight / Project-Air)
+    float cargo_mass_kg = 1.80f;
+    float cable_length_m = 1.20f;
+    bool payload_released = false;
+    float transition_pitch_deg = 70.0f;
+    float duct_area_ratio = 1.0f;
+
+    // Standards BOM: ISO 4762 Fasteners (0=M2, 1=M2.5, 2=M3, 3=M4, 4=M5, 5=M6) & AWG Wire
+    int screw_size_idx = 2;
+    bool titanium_screws = false;
+    int wire_awg = 12;
+
+    // Virtual Dual-Stick + USB HID RC Controller & Live Visual Motion
+    bool show_rc_hud = false;
+    bool use_usb_joystick = false;
+    float rc_throttle = 0.65f;
+    float rc_yaw = 0.0f;
+    float rc_pitch = 0.0f;
+    float rc_roll = 0.0f;
+    float spin_phase_rad = 0.0f;
 
     // Tiny Insect-Sized Flapping & Morphing MAV (Uncrewed)
     float flap_freq_hz = 40.0f;
@@ -214,6 +241,17 @@ struct LiveEvidenceSummary {
     double divergence_margin = 10.0;
     double yaw_damping_cn = 0.0;
     double roll_moment_nm = 0.0;
+    double wing_flex_tip_m = 0.0;
+    double inlet_recovery_eta = 0.985;
+    double mach_cone_deg = 90.0;
+    double trail_angle_deg = 0.0;
+    double pendulum_hz = 0.0;
+    double propwash_slip_m_s = 0.0;
+    double bolt_shear_fos = 4.5;
+    double wire_drop_v = 0.12;
+    double wire_ampacity_a = 65.0;
+    bool bolt_ok = true;
+    bool wire_ok = true;
     double predicted_readiness_pct = 92.5;
     double benchmark_match_pct = 94.2; // < 0 means N/A (custom unmeasured geometry)
     std::string benchmark_source_tag = "Pinned UIUC + SIT + QDrone Ref (DEVELOPMENT)";

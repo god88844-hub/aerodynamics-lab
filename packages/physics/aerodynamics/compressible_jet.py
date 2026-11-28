@@ -236,3 +236,152 @@ def evaluate_jet_benchmarks() -> dict[str, Any]:
             "policy_role": "DEVELOPMENT",
         },
     }
+
+
+def compute_mil_e_5008b_inlet_recovery(mach: float) -> float:
+    """Return MIL-E-5008B inlet total-pressure recovery factor eta_r(M)."""
+    m = max(0.0, float(mach))
+    if m <= 1.0:
+        return 0.985 - 0.015 * m * m
+    return max(0.45, 1.0 - 0.075 * ((m - 1.0) ** 1.35))
+
+
+def compute_isentropic_cd_nozzle(
+    pt_pa: float,
+    tt_k: float,
+    throat_area_m2: float,
+    exit_area_m2: float,
+    ambient_p_pa: float,
+    mach_flight: float = 0.0,
+    gamma: float = 1.4,
+    gas_r: float = 287.058,
+) -> dict[str, float | bool]:
+    """Compute choked/isentropic convergent-divergent nozzle mass flow & thrust factor."""
+    if pt_pa <= 0.0 or tt_k <= 0.0 or throat_area_m2 <= 0.0 or exit_area_m2 <= 0.0 or ambient_p_pa <= 0.0:
+        raise ValueError("Nozzle inputs must be strictly positive")
+    choked_crit_ratio = ((gamma + 1.0) / 2.0) ** (gamma / (gamma - 1.0))
+    npr = pt_pa / ambient_p_pa
+    choked = npr >= choked_crit_ratio
+    if choked:
+        mass_flow_coeff = math.sqrt(gamma / gas_r) * (2.0 / (gamma + 1.0)) ** ((gamma + 1.0) / (2.0 * (gamma - 1.0)))
+        mdot_kg_s = (pt_pa * throat_area_m2 / math.sqrt(tt_k)) * mass_flow_coeff
+    else:
+        pr = min(0.9999, ambient_p_pa / pt_pa)
+        term = max(0.0, pr ** (2.0 / gamma) - pr ** ((gamma + 1.0) / gamma))
+        mdot_kg_s = (pt_pa * throat_area_m2 / math.sqrt(tt_k)) * math.sqrt((2.0 * gamma) / (gas_r * (gamma - 1.0)) * term)
+    area_ratio = exit_area_m2 / throat_area_m2
+    ideal_ratio = 1.0 + 0.35 * max(0.0, mach_flight)
+    expansion_eff = max(0.55, 1.0 - 0.18 * ((area_ratio - ideal_ratio) ** 2))
+    return {
+        "npr": round(npr, 4),
+        "choked": choked,
+        "mdot_kg_s": round(mdot_kg_s, 5),
+        "area_ratio": round(area_ratio, 4),
+        "expansion_efficiency": round(expansion_eff, 4),
+    }
+
+
+def evaluate_coupled_jet_cycle(
+    mach: float = 0.30,
+    altitude_m: float = 0.0,
+    oat_c: float = 25.0,
+    wing_area_m2: float = 0.35,
+    sweep_deg: float = 26.0,
+    wing_tc_ratio: float = 0.09,
+    cl_incomp: float = 0.25,
+    intake_area_m2: float = 0.0032,
+    nozzle_area_ratio: float = 1.15,
+    throttle_frac: float = 0.85,
+    static_thrust_n: float = 44.15,
+    max_egt_c: float = 720.0,
+    max_mach: float = 1.65,
+    fuel_mass_kg: float = 0.85,
+    fuel_flow_max_kg_min: float = 0.150,
+    cooling_grade: int = 1,
+    mfg_tolerance_frac: float = 0.05,
+    is_turbine: bool = True,
+) -> dict[str, float | bool | str]:
+    """Evaluate coupled intake + Brayton/EDF nozzle + Korn wave drag jet state."""
+    if mach < 0.0 or wing_area_m2 <= 0.0 or intake_area_m2 <= 0.0 or static_thrust_n <= 0.0:
+        raise ValueError("Invalid coupled jet parameters")
+    alt = max(0.0, min(20000.0, float(altitude_m)))
+    t_k = max(216.65, 273.15 + oat_c - 0.0065 * alt)
+    p_atm = 101325.0 * ((1.0 - (0.0065 * alt) / 288.15) ** 5.25588)
+    rho = p_atm / (287.058 * t_k)
+    a_sound = math.sqrt(1.4 * 287.058 * t_k)
+    v0 = mach * a_sound
+    q = 0.5 * rho * v0 * v0
+    tol_factor = max(0.65, min(1.0, 1.0 - mfg_tolerance_frac))
+
+    eta_r = compute_mil_e_5008b_inlet_recovery(mach)
+    capture_ratio = max(0.35, min(3.0, intake_area_m2 / 0.0032))
+    spillage_cd = 0.004 * (capture_ratio - 1.25) if capture_ratio > 1.25 else 0.0
+    throat_choke_factor = min(1.0, capture_ratio / 0.65)
+
+    cos_sw = max(0.35, math.cos(abs(sweep_deg) * math.pi / 180.0))
+    mach_dd = (0.87 / cos_sw) - (max(0.04, min(0.18, wing_tc_ratio)) / (cos_sw * cos_sw)) - (
+        abs(cl_incomp) / (10.0 * (cos_sw ** 3))
+    )
+    m_cr = max(0.40, mach_dd - 0.108)
+    if mach <= 1.0:
+        cd_wave = min(0.18, 20.0 * ((mach - m_cr) ** 4)) if mach > m_cr else 0.0
+    else:
+        cd_wave = min(0.24, 0.085 / math.sqrt(max(0.15, mach * mach - 1.0 + 0.18)))
+    mach_cone_deg = math.degrees(math.asin(1.0 / mach)) if mach > 1.001 else 90.0
+
+    sigma = rho / 1.225
+    th = max(0.0, min(1.08, throttle_frac))
+    pt_pa = p_atm * (1.0 + 0.2 * mach * mach) ** 3.5 * eta_r * (1.0 + 2.2 * th)
+    tt_k = t_k + (620.0 * th if is_turbine else 45.0 * th)
+    throat_area = intake_area_m2 * 0.72
+    nozzle = compute_isentropic_cd_nozzle(
+        pt_pa=pt_pa,
+        tt_k=tt_k,
+        throat_area_m2=throat_area,
+        exit_area_m2=throat_area * max(0.7, min(2.2, nozzle_area_ratio)),
+        ambient_p_pa=p_atm,
+        mach_flight=mach,
+    )
+    exp_eff = float(nozzle["expansion_efficiency"])
+
+    if is_turbine:
+        ram_mult = 1.0 + 0.14 * min(mach * mach, 1.8)
+        thrust_n = static_thrust_n * (sigma ** 0.85) * eta_r * throat_choke_factor * ram_mult * exp_eff * th * tol_factor
+        mdot_fuel = max(0.01, fuel_flow_max_kg_min * (0.20 + 0.80 * th) / max(0.55, eta_r))
+        endurance_min = (fuel_mass_kg * tol_factor) / mdot_fuel
+        egt_c = 280.0 + 435.0 * (th ** 1.25) + 0.5 * oat_c + 65.0 * alt / 8000.0 + (
+            48.0 if cooling_grade == 0 else 0.0
+        ) + (65.0 if throat_choke_factor < 0.90 else 0.0)
+    else:
+        thrust_n = static_thrust_n * sigma * eta_r * throat_choke_factor * max(0.05, 1.0 - 0.52 * mach) * exp_eff * (
+            th ** 1.35
+        ) * tol_factor
+        endurance_min = 7.0 / max(0.15, th)
+        egt_c = oat_c + 58.0 * (th ** 1.6) + (18.0 if cooling_grade == 0 else 0.0)
+
+    cd_total = 0.020 + spillage_cd + cd_wave + (cl_incomp * cl_incomp) / (math.pi * 5.2 * 0.82)
+    total_drag_n = q * wing_area_m2 * cd_total
+    egt_ok = egt_c <= max_egt_c
+    mach_ok = mach <= max_mach
+    thrust_ok = thrust_n >= total_drag_n * 0.95
+    verdict = "NO_MODELED_LIMIT_BREACHED" if (egt_ok and mach_ok and thrust_ok) else "FAIL"
+    return {
+        "inlet_recovery_eta": round(eta_r, 4),
+        "spillage_cd": round(spillage_cd, 5),
+        "nozzle_thrust_n": round(thrust_n, 3),
+        "nozzle_npr": nozzle["npr"],
+        "nozzle_choked": nozzle["choked"],
+        "mdot_kg_s": nozzle["mdot_kg_s"],
+        "egt_c": round(egt_c, 2),
+        "mach_dd": round(mach_dd, 4),
+        "cd_wave": round(cd_wave, 5),
+        "mach_cone_half_angle_deg": round(mach_cone_deg, 2),
+        "fuel_endurance_min": round(endurance_min, 2),
+        "total_drag_n": round(total_drag_n, 3),
+        "egt_ok": egt_ok,
+        "mach_ok": mach_ok,
+        "thrust_ok": thrust_ok,
+        "verdict": verdict,
+        "policy_role": "UNVALIDATED_CUSTOM",
+    }
+
