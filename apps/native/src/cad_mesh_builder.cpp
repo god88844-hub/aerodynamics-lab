@@ -850,11 +850,15 @@ void evaluate_live_physics_and_curves(const AircraftDesignParams &params, const 
 
         const double th_frac = std::clamp(static_cast<double>(params.jet_throttle_pct) / 100.0, 0.0, 1.05);
         const double sigma = rho / 1.225;
-        double static_t_n = 45.0, max_temp = 750.0, max_m = 0.88;
+        double static_t_n = 24.0, max_temp = 95.0, max_m = 0.55;
         if (params.hardware_catalog_idx == 5) {
             static_t_n = 100.0; max_temp = 780.0; max_m = 0.95;
-        } else if (params.hardware_catalog_idx != 4) {
-            static_t_n = 24.0; max_temp = 95.0; max_m = 0.55; // EDF catalog
+        } else if (params.hardware_catalog_idx == 4) {
+            static_t_n = 45.0; max_temp = 750.0; max_m = 0.88;
+        } else if (params.hardware_catalog_idx == 3) {
+            static_t_n = 0.55; max_temp = 95.0; max_m = 0.20; // Undersized Micro Coreless 1S -> fails closed on Jet
+        } else if (params.hardware_catalog_idx != 2) {
+            static_t_n = 16.0; max_temp = 95.0; max_m = 0.40; // Prop motor catalog
         }
         const bool is_turbine = (params.hardware_catalog_idx == 4 || params.hardware_catalog_idx == 5);
         const double jet_thrust_n = is_turbine

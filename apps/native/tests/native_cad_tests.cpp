@@ -240,7 +240,63 @@ int main() {
     assert(wd_ev.air_density_kg_m3 < calm_ev.air_density_kg_m3);
     assert(wd_ev.motor_temp_c > calm_ev.motor_temp_c);
 
-    // 8. Live Python worker end-to-end check (compare-source, export-drawing, layout-bom, build-custom-part)
+    // 8. Exhaustive Run 6-DoF RK4, JSON roundtrip, Catalog Power, and Worker CLI matrix across all families
+    for (auto fam : {aerolab::VehicleFamily::Multirotor, aerolab::VehicleFamily::FixedWing,
+                     aerolab::VehicleFamily::Helicopter, aerolab::VehicleFamily::VTOL,
+                     aerolab::VehicleFamily::Seaplane, aerolab::VehicleFamily::Jet,
+                     aerolab::VehicleFamily::InsectFlapper, aerolab::VehicleFamily::MorphingWing}) {
+        aerolab::AircraftDesignParams fp;
+        fp.family = fam;
+        if (fam == aerolab::VehicleFamily::Helicopter) fp.rotor_rpm = 1450.0f;
+        else if (fam == aerolab::VehicleFamily::FixedWing) {
+            fp.hardware_catalog_idx = 1; fp.battery_cells_s = 4; fp.battery_capacity_ah = 4.5f;
+            fp.battery_r0_ohm = 0.018f; fp.battery_mass_kg = 0.55f; fp.rotor_rpm = 6200.0f;
+        } else if (fam == aerolab::VehicleFamily::Seaplane) {
+            fp.hardware_catalog_idx = 1; fp.battery_cells_s = 4; fp.battery_capacity_ah = 4.5f;
+            fp.battery_r0_ohm = 0.018f; fp.battery_mass_kg = 0.55f; fp.airspeed_m_s = 22.0f; fp.rotor_rpm = 7200.0f;
+        } else if (fam == aerolab::VehicleFamily::Jet) {
+            fp.hardware_catalog_idx = 4; fp.battery_cells_s = 2; fp.battery_capacity_ah = 2.2f;
+            fp.battery_r0_ohm = 0.020f; fp.battery_mass_kg = 0.90f; fp.wingspan_m = 1.35f;
+            fp.root_chord_m = 0.38f; fp.tip_chord_m = 0.14f; fp.sweep_deg = 26.0f; fp.alpha_deg = 2.2f; fp.airspeed_m_s = 92.0f;
+        } else if (fam == aerolab::VehicleFamily::InsectFlapper) {
+            fp.hardware_catalog_idx = 3; fp.frame_mass_kg = 0.014f; fp.battery_mass_kg = 0.010f;
+            fp.payload_mass_kg = 0.004f; fp.motor_mass_kg = 0.004f; fp.battery_cells_s = 1;
+            fp.battery_capacity_ah = 0.50f; fp.battery_r0_ohm = 0.065f; fp.wingspan_m = 0.16f;
+            fp.root_chord_m = 0.028f; fp.tip_chord_m = 0.016f; fp.flap_freq_hz = 40.0f; fp.airspeed_m_s = 2.2f;
+        } else if (fam == aerolab::VehicleFamily::MorphingWing) {
+            fp.hardware_catalog_idx = 1; fp.frame_mass_kg = 0.65f; fp.battery_mass_kg = 0.35f;
+            fp.payload_mass_kg = 0.12f; fp.motor_mass_kg = 0.055f; fp.battery_cells_s = 4;
+            fp.battery_capacity_ah = 4.5f; fp.battery_r0_ohm = 0.018f; fp.wingspan_m = 1.15f;
+            fp.root_chord_m = 0.22f; fp.tip_chord_m = 0.14f; fp.sweep_deg = 16.0f;
+            fp.morph_tuck_pct = 25.0f; fp.airspeed_m_s = 16.0f; fp.alpha_deg = 5.5f;
+        }
+        aerolab::AircraftDesignParams rt;
+        assert(aerolab::WorkerIPC::load_project_payload_json(ipc.build_project_payload_json(fp), rt));
+        assert(rt.family == fam);
+        aerolab::LiveEvidenceSummary fev;
+        aerolab::evaluate_live_physics_and_curves(rt, aerolab::build_cad_scene(rt), fev);
+        assert(fev.validation_status == "DEVELOPMENT");
+        ipc.run_cpp_rk4_multirotor(rt, fev);
+        assert(ipc.snapshot_status().last_ok && fev.has_trajectory && fev.max_altitude_m > 3.5);
+    }
+
+    // Verify undersized Micro Coreless 1S selected on Jet fails closed
+    aerolab::AircraftDesignParams bad_jet;
+    bad_jet.family = aerolab::VehicleFamily::Jet;
+    bad_jet.hardware_catalog_idx = 3;
+    bad_jet.battery_cells_s = 1;
+    bad_jet.airspeed_m_s = 92.0f;
+    aerolab::LiveEvidenceSummary bj_ev;
+    aerolab::evaluate_live_physics_and_curves(bad_jet, aerolab::build_cad_scene(bad_jet), bj_ev);
+    assert(bj_ev.validation_status == "FAIL");
+
+    // Live Python worker end-to-end check across ALL menu worker commands
+    for (const std::string &cmd : {"fixed-wing-sim", "layout-bom", "6dof-fixed-wing", "vtol-transition",
+                                   "autorotation-sim", "adverse-weather", "bounded-sweep", "phase1-eval"}) {
+        assert(ipc.launch_python_command(cmd, ipc.build_project_payload_json(nominal_quad)));
+        while (ipc.is_busy()) std::this_thread::sleep_for(std::chrono::milliseconds(15));
+        assert(ipc.snapshot_status().last_ok);
+    }
     assert(ipc.launch_python_command("compare-source", ipc.build_compare_payload_json(nominal_quad, nom_ev)));
     while (ipc.is_busy()) std::this_thread::sleep_for(std::chrono::milliseconds(20));
     assert(ipc.snapshot_status().last_ok);
@@ -250,10 +306,6 @@ int main() {
     while (ipc.is_busy()) std::this_thread::sleep_for(std::chrono::milliseconds(20));
     assert(ipc.snapshot_status().last_ok);
     assert(std::filesystem::exists(repo / ".local" / "tmp" / "native_exports" / "wing_drawing.svg"));
-
-    assert(ipc.launch_python_command("layout-bom", ipc.build_project_payload_json(nominal_quad)));
-    while (ipc.is_busy()) std::this_thread::sleep_for(std::chrono::milliseconds(20));
-    assert(ipc.snapshot_status().last_ok);
 
     assert(ipc.launch_python_command(
         "build-custom-part", ipc.build_part_payload_json(roundtrip_in, repo / ".local" / "tmp" / "native_exports")));
