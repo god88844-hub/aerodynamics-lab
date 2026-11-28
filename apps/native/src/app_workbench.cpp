@@ -63,6 +63,7 @@ void AppWorkbench::switch_family(VehicleFamily family) {
     push_undo_snapshot();
     params.family = family;
     selected_part_idx = -1;
+    cfd_fea_cache = EmbeddedCfdFeaCache{};
     if (family == VehicleFamily::Multirotor) {
         params.project_name = "Quad MN3508 Baseline";
         params.hardware_catalog_idx = 0;
@@ -324,6 +325,7 @@ void AppWorkbench::undo() {
     params = undo_stack_.back();
     undo_stack_.pop_back();
     rebuild_geometry();
+    if (params.active_part.freeform_mode) trigger_freeform_occt_build();
 }
 
 void AppWorkbench::redo() {
@@ -332,6 +334,7 @@ void AppWorkbench::redo() {
     params = redo_stack_.back();
     redo_stack_.pop_back();
     rebuild_geometry();
+    if (params.active_part.freeform_mode) trigger_freeform_occt_build();
 }
 
 void AppWorkbench::sync_feature_tree() {
@@ -393,20 +396,31 @@ void AppWorkbench::sync_feature_tree() {
 }
 
 void AppWorkbench::rebuild_geometry() {
-    scene = build_cad_scene(params, selected_part_idx, &brep_cache);
+    scene = build_cad_scene(params, selected_part_idx, &brep_cache, &cfd_fea_cache, shading_mode);
     if (viewport_) {
         viewport_->upload_scene(scene);
     }
-    evaluate_live_physics_and_curves(params, scene, evidence);
+    evaluate_live_physics_and_curves(params, scene, evidence, &cfd_fea_cache);
     sync_feature_tree();
 }
 
 void AppWorkbench::trigger_freeform_occt_build() {
     if (!ipc_) return;
+    cfd_fea_cache = EmbeddedCfdFeaCache{};
     init_default_freeform_sketch(params.active_part);
     const std::string payload = build_freeform_cad_payload_json(
         params.active_part, ipc_->tmp_dir() / "occt_mesh.json", repo_root_ / ".local" / "tmp" / "native_exports");
     ipc_->launch_python_command("freeform-cad", payload);
+}
+
+void AppWorkbench::trigger_embedded_cfd_fea_solve() {
+    if (!ipc_) return;
+    const std::string payload = build_embedded_cfd_fea_payload_json(
+        params, scene, evidence, ipc_->tmp_dir() / "cfd_fea_field.json",
+        repo_root_ / ".local" / "tmp" / "native_exports" / "embedded_3d_run");
+    if (ipc_->launch_python_command("embedded-cfd-fea", payload, "Running 3D panel CFD + C3D8 FEM...")) {
+        export_banner = "Running 3D Mesher + FVM/FEM Solver...";
+    }
 }
 
 void AppWorkbench::render_ui_and_scene(float dt_s, int fb_w, int fb_h) {
@@ -414,6 +428,13 @@ void AppWorkbench::render_ui_and_scene(float dt_s, int fb_w, int fb_h) {
     (void)fb_h;
     if (ipc_ && ipc_->consume_pending_occt_mesh(brep_cache)) {
         export_banner = brep_cache.status_summary;
+        rebuild_geometry();
+    }
+    if (ipc_ && ipc_->consume_pending_cfd_fea(cfd_fea_cache)) {
+        export_banner = cfd_fea_cache.status_summary;
+        if (shading_mode == ShadingMode::ShadedEdges || shading_mode == ShadingMode::ShadedOnly) {
+            shading_mode = ShadingMode::SurfaceCp;
+        }
         rebuild_geometry();
     }
     if (ipc_ && ipc_->poll_completed_results(evidence) && viewport_) {
@@ -437,7 +458,7 @@ void AppWorkbench::render_ui_and_scene(float dt_s, int fb_w, int fb_h) {
                 params.rc_pitch = std::cos(params.motion_study_time_s * 1.9f) * 0.6f;
             }
         }
-        scene = build_cad_scene(params, selected_part_idx, &brep_cache);
+        scene = build_cad_scene(params, selected_part_idx, &brep_cache, &cfd_fea_cache, shading_mode);
         if (viewport_) {
             viewport_->upload_scene(scene);
         }

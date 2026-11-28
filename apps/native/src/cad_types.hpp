@@ -315,6 +315,23 @@ struct FreeformBrepCache {
     std::string status_summary = "No OCCT B-rep build yet";
 };
 
+struct EmbeddedCfdFeaCache {
+    bool has_field = false;
+    int n_fluid_cells = 0;
+    int n_boundary_cut_cells = 0;
+    int n_solid_elems = 0;
+    double integrated_cl = 0.0;
+    double integrated_cd = 0.0;
+    double peak_suction_cp = 0.0;
+    double peak_vm_mpa = 0.0;
+    double max_disp_mm = 0.0;
+    double structural_fos = 5.0;
+    std::vector<float> panel_cp;
+    std::vector<float> panel_vm_mpa;
+    std::vector<std::vector<std::array<float, 3>>> streamlines_3d;
+    std::string status_summary = "Analytical proxy (click Run 3D CFD/FEA)";
+};
+
 struct GeneratedCADScene {
     std::vector<MeshVertex> vertices;
     std::vector<std::uint32_t> indices;
@@ -358,6 +375,11 @@ struct LiveEvidenceSummary {
     double thrust_to_weight = 2.0;
     double hover_throttle_pct = 44.0;
     double structural_fos = 3.2;
+    double fem_peak_vm_mpa = 0.0;
+    double fem_max_disp_mm = 0.0;
+    int cfd_fluid_cells = 0;
+    int fem_solid_elems = 0;
+    bool cfd_fea_solved = false;
     double air_density_kg_m3 = 1.225;
     double wind_speed_m_s = 0.0;
     double motor_temp_c = 38.0;

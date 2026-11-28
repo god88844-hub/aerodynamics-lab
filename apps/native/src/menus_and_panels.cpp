@@ -367,6 +367,10 @@ void AppWorkbench::draw_menu_bar() {
     if (ImGui::BeginMenu("Aero")) {
         if (ImGui::MenuItem("Enable Cp Pressure Surface View")) {
             shading_mode = ShadingMode::SurfaceCp;
+            rebuild_geometry();
+        }
+        if (ImGui::MenuItem("Run Embedded 3D CFD/FEA Mesher & Solver")) {
+            trigger_embedded_cfd_fea_solve();
         }
         if (ImGui::MenuItem("Run Lifting-Line / Fixed-Wing Solver (Python)")) {
             ipc_->launch_python_command("fixed-wing-sim", ipc_->build_project_payload_json(params));
@@ -375,7 +379,7 @@ void AppWorkbench::draw_menu_bar() {
             ipc_->launch_python_command("layout-bom", ipc_->build_project_payload_json(params));
         }
         if (ImGui::MenuItem("Export OpenFOAM + CalculiX CFD/FEA Deck")) {
-            ipc_->launch_python_command("cfd-fea-export", ipc_->build_project_payload_json(params));
+            trigger_embedded_cfd_fea_solve();
         }
         if (ImGui::MenuItem("Run Multiphysics Audit (Acoustics / VRS / Cav / RCS)")) {
             ipc_->launch_python_command("multiphysics-audit", ipc_->build_project_payload_json(params));
@@ -488,10 +492,11 @@ void AppWorkbench::draw_quick_toolstrip() {
     if (ImGui::Button(shade_lbl)) {
         shading_mode = (shading_mode == ShadingMode::SurfaceCp) ? ShadingMode::StressVonMises
                                                                  : (shading_mode == ShadingMode::StressVonMises ? ShadingMode::ShadedEdges : ShadingMode::SurfaceCp);
+        rebuild_geometry();
     }
     ImGui::SameLine();
-    if (ImGui::Button("Export CFD/FEA")) {
-        ipc_->launch_python_command("cfd-fea-export", ipc_->build_project_payload_json(params));
+    if (ImGui::Button("Run 3D CFD/FEA")) {
+        trigger_embedded_cfd_fea_solve();
     }
     ImGui::SameLine();
     if (ImGui::Button("Run 6-DoF")) {
@@ -574,7 +579,7 @@ void AppWorkbench::draw_center_viewport(float dt_s) {
     last_vp_h_ = std::max(64, static_cast<int>(avail.y - bar_h));
 
     viewport_->render(last_vp_w_, last_vp_h_, camera, viewport_layout, shading_mode, dark_canvas,
-                      show_wake, show_cog, evidence.center_of_mass_m, v_pos, v_quat);
+                      show_wake, show_cog, evidence.center_of_mass_m, v_pos, v_quat, cfd_fea_cache.has_field);
 
     const ImVec2 vp_pos = ImGui::GetCursorScreenPos();
     const ImVec2 vp_size(static_cast<float>(last_vp_w_), static_cast<float>(last_vp_h_));
@@ -833,6 +838,11 @@ void AppWorkbench::draw_right_inspector() {
         }
         if (params.family != VehicleFamily::RocketSpacecraft) {
             ImGui::Text("CL: %.2f | CD: %.3f | L/D: %.1f", evidence.cl, evidence.cd, evidence.lift_to_drag);
+        }
+        if (evidence.cfd_fea_solved) {
+            ImGui::Text("3D FVM/FEM: %d fluid, %d C3D8 | VM: %.1f MPa | %.2f mm",
+                        evidence.cfd_fluid_cells, evidence.fem_solid_elems,
+                        evidence.fem_peak_vm_mpa, evidence.fem_max_disp_mm);
         }
         draw_polar_plot(evidence);
     }
