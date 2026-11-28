@@ -244,6 +244,19 @@ void AppWorkbench::draw_menu_bar() {
             params.active_part.revolve_360 = false;
             switch_family(VehicleFamily::CustomPart);
         }
+        ImGui::Separator();
+        if (ImGui::MenuItem("New Custom Propeller Blade")) {
+            push_undo_snapshot();
+            params.active_part.sketch_kind = SketchShapeKind::CustomPropeller;
+            params.active_part.revolve_360 = false;
+            switch_family(VehicleFamily::CustomPart);
+        }
+        if (ImGui::MenuItem("New Custom Body Shell")) {
+            push_undo_snapshot();
+            params.active_part.sketch_kind = SketchShapeKind::CustomBodyShell;
+            params.active_part.revolve_360 = false;
+            switch_family(VehicleFamily::CustomPart);
+        }
         ImGui::EndMenu();
     }
 
@@ -498,9 +511,10 @@ void AppWorkbench::draw_right_inspector() {
             ImGui::Separator();
             changed |= draw_interactive_2d_sketch_canvas(params.active_part);
             ImGui::Text("Custom Part Sketch & Solid Feature:");
-            const char *kinds[] = {"Rounded Arm/Plate", "Ring Duct", "NACA Airfoil Rib", "Hex Mount"};
+            const char *kinds[] = {"Rounded Arm/Plate", "Ring Duct", "NACA Airfoil Rib",
+                                   "Hex Mount",         "Custom Propeller", "Custom Body Shell"};
             int k = static_cast<int>(params.active_part.sketch_kind);
-            if (ImGui::Combo("Sketch Profile", &k, kinds, 4)) {
+            if (ImGui::Combo("Sketch Profile", &k, kinds, 6)) {
                 params.active_part.sketch_kind = static_cast<SketchShapeKind>(k);
                 changed = true;
             }
@@ -510,6 +524,11 @@ void AppWorkbench::draw_right_inspector() {
             changed |= ImGui::SliderFloat("Cut Hole R (m)", &params.active_part.hole_radius_m, 0.0f, 0.06f, "%.3f");
             changed |= ImGui::Checkbox("360 deg Revolve", &params.active_part.revolve_360);
             changed |= ImGui::SliderInt("Circular Pattern", &params.active_part.circular_pattern_count, 1, 8);
+            if (params.family == VehicleFamily::CustomPart && ImGui::Button("Test Part in Multirotor Sim")) {
+                push_undo_snapshot();
+                params.attach_custom_part = true;
+                switch_family(VehicleFamily::Multirotor);
+            }
         }
 
         ImGui::Separator();
@@ -528,6 +547,12 @@ void AppWorkbench::draw_right_inspector() {
             params.rotor_rpm = (params.family == VehicleFamily::Helicopter) ? 1450.0f : 4800.0f;
             params.rain_mm_h = 0.0f;
             params.oat_c = 25.0f;
+            params.wind_x_m_s = 0.0f;
+            params.wind_y_m_s = 0.0f;
+            params.turbulence_pct = 10.0f;
+            params.mfg_tolerance_pct = 5.0f;
+            params.altitude_asl_m = 0.0f;
+            params.motor_cooling_grade = 1;
             changed = true;
         }
         ImGui::SameLine();
@@ -542,12 +567,34 @@ void AppWorkbench::draw_right_inspector() {
             params.rotor_rpm = 13500.0f;
             changed = true;
         }
-        ImGui::SameLine();
         if (ImGui::SmallButton("Weak Pack")) {
             push_undo_snapshot();
             params.battery_r0_ohm = 0.24f;
             changed = true;
         }
+        ImGui::SameLine();
+        if (ImGui::SmallButton("Storm Wind")) {
+            push_undo_snapshot();
+            params.wind_x_m_s = 14.0f;
+            params.wind_y_m_s = 6.0f;
+            params.turbulence_pct = 35.0f;
+            params.rain_mm_h = 25.0f;
+            changed = true;
+        }
+        ImGui::SameLine();
+        if (ImGui::SmallButton("Bad Tolerance")) {
+            push_undo_snapshot();
+            params.mfg_tolerance_pct = 20.0f;
+            params.motor_cooling_grade = 0;
+            changed = true;
+        }
+        changed |= ImGui::SliderFloat("Wind X (m/s)", &params.wind_x_m_s, -25.0f, 25.0f, "%.1f");
+        changed |= ImGui::SliderFloat("Wind Y (m/s)", &params.wind_y_m_s, -25.0f, 25.0f, "%.1f");
+        changed |= ImGui::SliderFloat("Gust/Turb (%)", &params.turbulence_pct, 0.0f, 50.0f, "%.0f");
+        changed |= ImGui::SliderFloat("Mfg Tol (%)", &params.mfg_tolerance_pct, 0.0f, 25.0f, "%.0f");
+        changed |= ImGui::SliderFloat("Alt ASL (m)", &params.altitude_asl_m, 0.0f, 4000.0f, "%.0f");
+        const char *cooling_grades[] = {"Poor", "Medium", "Good"};
+        changed |= ImGui::Combo("Motor Cooling", &params.motor_cooling_grade, cooling_grades, 3);
         changed |= ImGui::SliderFloat("Rotor RPM", &params.rotor_rpm, 800.0f, 16000.0f, "%.0f");
         changed |= ImGui::SliderInt("Cells (S)", &params.battery_cells_s, 3, 12);
         changed |= ImGui::SliderFloat("Cap (Ah)", &params.battery_capacity_ah, 1.5f, 30.0f, "%.1f");
@@ -564,8 +611,9 @@ void AppWorkbench::draw_right_inspector() {
     ImGui::Spacing();
     if (ImGui::CollapsingHeader("C++20 Physics & Electronics", ImGuiTreeNodeFlags_DefaultOpen)) {
         ImGui::Text("Mass: %.2f kg | T/W: %.2fx", evidence.total_mass_kg, evidence.thrust_to_weight);
-        ImGui::Text("Pack: %.1f V | %.1f A | %.0f min",
-                    evidence.loaded_bus_voltage_v, evidence.hover_or_cruise_current_a, evidence.est_endurance_min);
+        ImGui::Text("Throt: %.0f%% | Hover: %.0f min", evidence.hover_throttle_pct, evidence.est_endurance_min);
+        ImGui::Text("Pack: %.1f V | %.1f A", evidence.loaded_bus_voltage_v, evidence.hover_or_cruise_current_a);
+        ImGui::Text("Wind: %.1f m/s | Rho: %.3f", evidence.wind_speed_m_s, evidence.air_density_kg_m3);
         ImGui::Text("TipM: %.3f | %.0f C | FoS: %.2fx",
                     evidence.rotor_tip_mach, evidence.motor_temp_c, evidence.structural_fos);
         ImGui::Text("Clearance: %.0f mm (%s)", evidence.min_tip_clearance_m * 1000.0,
