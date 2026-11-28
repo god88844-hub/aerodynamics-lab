@@ -141,6 +141,7 @@ std::string WorkerIPC::build_project_payload_json(const AircraftDesignParams &pa
     else if (params.active_part.sketch_kind == SketchShapeKind::HexMount) kind = "hex_mount";
     else if (params.active_part.sketch_kind == SketchShapeKind::CustomPropeller) kind = "custom_propeller";
     else if (params.active_part.sketch_kind == SketchShapeKind::CustomBodyShell) kind = "custom_body_shell";
+    else if (params.active_part.sketch_kind == SketchShapeKind::FreeformBrep) kind = "freeform_brep";
 
     const double est_mass = params.frame_mass_kg + params.battery_mass_kg + params.payload_mass_kg +
                             params.motor_mass_kg * std::clamp(params.rotor_count, 1, 8);
@@ -229,7 +230,7 @@ std::string WorkerIPC::build_project_payload_json(const AircraftDesignParams &pa
         << "  \"part_hole_radius_m\": " << params.active_part.hole_radius_m << ",\n"
         << "  \"part_revolve_360\": " << (params.active_part.revolve_360 ? "true" : "false") << ",\n"
         << "  \"part_circular_pattern_count\": " << params.active_part.circular_pattern_count << ",\n"
-        << "  \"freeform_mode\": " << (params.active_part.freeform_mode ? "true" : "false") << ",\n"
+        << "  \"freeform_payload\": " << serialize_freeform_part_json(params.active_part) << ",\n"
         << "  \"motor_id\": \"tmotor_mn3508_kv380\",\n"
         << "  \"propeller_id\": \"tmotor_p15x5_cf\",\n"
         << "  \"esc_id\": \"generic_esc_20a\",\n"
@@ -261,6 +262,7 @@ std::string WorkerIPC::build_part_payload_json(const AircraftDesignParams &param
     else if (params.active_part.sketch_kind == SketchShapeKind::HexMount) kind = "hex_mount";
     else if (params.active_part.sketch_kind == SketchShapeKind::CustomPropeller) kind = "custom_propeller";
     else if (params.active_part.sketch_kind == SketchShapeKind::CustomBodyShell) kind = "custom_body_shell";
+    else if (params.active_part.sketch_kind == SketchShapeKind::FreeformBrep) kind = "freeform_brep";
 
     std::ostringstream oss;
     oss << "{\n"
@@ -442,6 +444,7 @@ bool WorkerIPC::load_project_payload_json(const std::string &json_text, Aircraft
         else if (sk == "hex_mount") params.active_part.sketch_kind = SketchShapeKind::HexMount;
         else if (sk == "custom_propeller") params.active_part.sketch_kind = SketchShapeKind::CustomPropeller;
         else if (sk == "custom_body_shell") params.active_part.sketch_kind = SketchShapeKind::CustomBodyShell;
+        else if (sk == "freeform_brep") params.active_part.sketch_kind = SketchShapeKind::FreeformBrep;
         else params.active_part.sketch_kind = SketchShapeKind::RoundedPlate;
     }
     read_f("part_width_m", params.active_part.width_m);
@@ -525,6 +528,8 @@ bool WorkerIPC::launch_python_command(const std::string &cmd, const std::string 
             status_.summary_line = "Worker finished: " + cmd + " -> " + out_file.filename().string();
             if (cmd == "freeform-cad") {
                 pending_occt_mesh_.store(true);
+            } else if (cmd == "embedded-cfd-fea") {
+                pending_cfd_fea_.store(true);
             }
             pending_result_.store(true);
         } else {
@@ -539,6 +544,11 @@ bool WorkerIPC::launch_python_command(const std::string &cmd, const std::string 
 bool WorkerIPC::consume_pending_occt_mesh(FreeformBrepCache &cache) {
     if (!pending_occt_mesh_.exchange(false)) return false;
     return load_occt_mesh_json(tmp_dir_ / "occt_mesh.json", cache);
+}
+
+bool WorkerIPC::consume_pending_cfd_fea(EmbeddedCfdFeaCache &cache) {
+    if (!pending_cfd_fea_.exchange(false)) return false;
+    return load_embedded_cfd_fea_json(tmp_dir_ / "cfd_fea_field.json", cache);
 }
 
 bool WorkerIPC::poll_completed_results(LiveEvidenceSummary &summary) {

@@ -729,19 +729,342 @@ std::string serialize_freeform_part_json(const CustomPartParams &part) {
     oss << "{\n"
         << "  \"freeform_mode\": " << (part.freeform_mode ? "true" : "false") << ",\n"
         << "  \"picked_face_id\": " << part.picked_face_id << ",\n"
-        << "  \"feature_count\": " << part.freeform_features.size() << "\n"
-        << "}";
+        << "  \"freeform_sketch\": {\n";
+    write_sketch_json(oss, part.freeform_sketch, part.active_workplane, 4);
+    oss << "  },\n"
+        << "  \"freeform_features\": [\n";
+    for (std::size_t fi = 0; fi < part.freeform_features.size(); ++fi) {
+        const auto &ft = part.freeform_features[fi];
+        oss << "    {\n"
+            << "      \"op\": \"" << op_kind_str(ft.op) << "\",\n"
+            << "      \"suppressed\": " << (ft.suppressed ? "true" : "false") << ",\n"
+            << "      \"symmetric\": " << (ft.symmetric ? "true" : "false") << ",\n"
+            << "      \"depth_m\": " << ft.depth_m << ",\n"
+            << "      \"angle_deg\": " << ft.angle_deg << ",\n"
+            << "      \"radius_m\": " << ft.radius_m << ",\n"
+            << "      \"loft_offset_m\": " << ft.loft_offset_m << ",\n"
+            << "      \"loft_scale\": " << ft.loft_scale << ",\n"
+            << "      \"sketch\": {\n";
+        write_sketch_json(oss, ft.sketch, ft.sketch.workplane, 8);
+        oss << "      }\n"
+            << "    }" << (fi + 1 < part.freeform_features.size() ? "," : "") << "\n";
+    }
+    oss << "  ]\n}";
     return oss.str();
 }
 
-bool deserialize_freeform_part_json(const std::string &json_text, CustomPartParams &part) {
-    if (json_text.find("\"freeform_mode\": true") != std::string::npos) {
-        part.freeform_mode = true;
-        part.sketch_kind = SketchShapeKind::FreeformBrep;
-        init_default_freeform_sketch(part);
-        return true;
+namespace {
+std::vector<std::string> split_json_objects_in_array(const std::string &arr_slice) {
+    std::vector<std::string> objs;
+    int depth = 0;
+    std::size_t start = std::string::npos;
+    for (std::size_t i = 0; i < arr_slice.size(); ++i) {
+        if (arr_slice[i] == '{') {
+            if (depth == 0) start = i;
+            ++depth;
+        } else if (arr_slice[i] == '}') {
+            --depth;
+            if (depth == 0 && start != std::string::npos) {
+                objs.push_back(arr_slice.substr(start, i - start + 1));
+                start = std::string::npos;
+            }
+        }
     }
-    return false;
+    return objs;
+}
+
+std::string find_array_slice(const std::string &obj, const std::string &key) {
+    const auto kp = obj.find("\"" + key + "\"");
+    if (kp == std::string::npos) return {};
+    const auto lb = obj.find('[', kp);
+    if (lb == std::string::npos) return {};
+    int depth = 0;
+    for (std::size_t i = lb; i < obj.size(); ++i) {
+        if (obj[i] == '[') ++depth;
+        else if (obj[i] == ']') {
+            --depth;
+            if (depth == 0) return obj.substr(lb, i - lb + 1);
+        }
+    }
+    return {};
+}
+
+std::string find_obj_slice(const std::string &obj, const std::string &key) {
+    const auto kp = obj.find("\"" + key + "\"");
+    if (kp == std::string::npos) return {};
+    const auto lb = obj.find('{', kp);
+    if (lb == std::string::npos) return {};
+    int depth = 0;
+    for (std::size_t i = lb; i < obj.size(); ++i) {
+        if (obj[i] == '{') ++depth;
+        else if (obj[i] == '}') {
+            --depth;
+            if (depth == 0) return obj.substr(lb, i - lb + 1);
+        }
+    }
+    return {};
+}
+
+std::string read_str_field(const std::string &obj, const char *key, const char *def_val = "") {
+    const std::string pat = std::string("\"") + key + "\"";
+    const auto kp = obj.find(pat);
+    if (kp == std::string::npos) return def_val;
+    const auto col = obj.find(':', kp + pat.size());
+    if (col == std::string::npos) return def_val;
+    const auto q1 = obj.find('"', col + 1);
+    if (q1 == std::string::npos) return def_val;
+    const auto q2 = obj.find('"', q1 + 1);
+    return (q2 != std::string::npos) ? obj.substr(q1 + 1, q2 - q1 - 1) : def_val;
+}
+
+double read_num_field(const std::string &obj, const char *key, double def_val) {
+    const std::string pat = std::string("\"") + key + "\"";
+    const auto kp = obj.find(pat);
+    if (kp == std::string::npos) return def_val;
+    const auto col = obj.find(':', kp + pat.size());
+    if (col == std::string::npos) return def_val;
+    return std::atof(obj.c_str() + col + 1);
+}
+
+bool read_bool_field(const std::string &obj, const char *key, bool def_val) {
+    const std::string pat = std::string("\"") + key + "\"";
+    const auto kp = obj.find(pat);
+    if (kp == std::string::npos) return def_val;
+    const auto col = obj.find(':', kp + pat.size());
+    if (col == std::string::npos) return def_val;
+    const auto sub = obj.substr(col + 1, 12);
+    if (sub.find("true") != std::string::npos) return true;
+    if (sub.find("false") != std::string::npos) return false;
+    return def_val;
+}
+
+void parse_sketch_block(const std::string &sk_obj, FreeformSketchState &sk) {
+    if (sk_obj.empty()) return;
+    const std::string wp_obj = find_obj_slice(sk_obj, "workplane");
+    if (!wp_obj.empty()) {
+        sk.workplane.preset = read_str_field(wp_obj, "preset", "XY");
+        sk.workplane.picked_face_id = static_cast<int>(read_num_field(wp_obj, "face_id", -1.0));
+        const auto om = parse_number_array_section(wp_obj, "origin_m");
+        const auto nm = parse_number_array_section(wp_obj, "normal");
+        const auto um = parse_number_array_section(wp_obj, "u_axis");
+        if (om.size() == 3) sk.workplane.origin_m = {static_cast<float>(om[0]), static_cast<float>(om[1]), static_cast<float>(om[2])};
+        if (nm.size() == 3) sk.workplane.normal = {static_cast<float>(nm[0]), static_cast<float>(nm[1]), static_cast<float>(nm[2])};
+        if (um.size() == 3) {
+            sk.workplane.u_axis = {static_cast<float>(um[0]), static_cast<float>(um[1]), static_cast<float>(um[2])};
+            sk.workplane.v_axis = v3_norm(v3_cross(sk.workplane.normal, sk.workplane.u_axis));
+        }
+    }
+    sk.entities.clear();
+    for (const auto &eo : split_json_objects_in_array(find_array_slice(sk_obj, "entities"))) {
+        FreeformSketchEntity e;
+        e.id = read_str_field(eo, "id", "e0");
+        e.construction = read_bool_field(eo, "construction", false);
+        const std::string kd = read_str_field(eo, "kind", "line");
+        if (kd == "circle") {
+            e.kind = FreeformEntityKind::Circle;
+            const auto c = parse_number_array_section(eo, "center");
+            if (c.size() >= 2) { e.x0 = static_cast<float>(c[0]); e.y0 = static_cast<float>(c[1]); }
+            e.radius = static_cast<float>(read_num_field(eo, "radius", 0.015));
+        } else if (kd == "arc") {
+            e.kind = FreeformEntityKind::Arc;
+            const auto c = parse_number_array_section(eo, "center");
+            if (c.size() >= 2) { e.x0 = static_cast<float>(c[0]); e.y0 = static_cast<float>(c[1]); }
+            e.radius = static_cast<float>(read_num_field(eo, "radius", 0.015));
+            e.start_deg = static_cast<float>(read_num_field(eo, "start_deg", 0.0));
+            e.end_deg = static_cast<float>(read_num_field(eo, "end_deg", 180.0));
+        } else if (kd == "spline") {
+            e.kind = FreeformEntityKind::Spline;
+            e.closed = read_bool_field(eo, "closed", true);
+            const auto pts = parse_number_array_section(eo, "points");
+            for (std::size_t k = 0; k + 1 < pts.size(); k += 2) {
+                e.spline_pts.push_back({static_cast<float>(pts[k]), static_cast<float>(pts[k + 1])});
+            }
+        } else {
+            e.kind = FreeformEntityKind::Line;
+            const auto p0 = parse_number_array_section(eo, "p0");
+            const auto p1 = parse_number_array_section(eo, "p1");
+            if (p0.size() >= 2) { e.x0 = static_cast<float>(p0[0]); e.y0 = static_cast<float>(p0[1]); }
+            if (p1.size() >= 2) { e.x1 = static_cast<float>(p1[0]); e.y1 = static_cast<float>(p1[1]); }
+        }
+        sk.entities.push_back(std::move(e));
+    }
+    sk.constraints.clear();
+    for (const auto &co : split_json_objects_in_array(find_array_slice(sk_obj, "constraints"))) {
+        FreeformSketchConstraint c;
+        const std::string ck = read_str_field(co, "kind", "length");
+        if (ck == "horizontal") c.kind = FreeformConstraintKind::Horizontal;
+        else if (ck == "vertical") c.kind = FreeformConstraintKind::Vertical;
+        else if (ck == "radius") c.kind = FreeformConstraintKind::Radius;
+        else if (ck == "fixed") c.kind = FreeformConstraintKind::Fixed;
+        else if (ck == "coincident") c.kind = FreeformConstraintKind::Coincident;
+        else if (ck == "perpendicular") c.kind = FreeformConstraintKind::Perpendicular;
+        else if (ck == "parallel") c.kind = FreeformConstraintKind::Parallel;
+        else if (ck == "tangent") c.kind = FreeformConstraintKind::Tangent;
+        else if (ck == "equal") c.kind = FreeformConstraintKind::Equal;
+        else if (ck == "distance") c.kind = FreeformConstraintKind::Distance;
+        else c.kind = FreeformConstraintKind::Length;
+        c.a = read_str_field(co, "a", "");
+        c.b = read_str_field(co, "b", "");
+        c.pt_a = static_cast<int>(read_num_field(co, "pt_a", 0.0));
+        c.pt_b = static_cast<int>(read_num_field(co, "pt_b", 0.0));
+        c.value = static_cast<float>(read_num_field(co, "value", 0.05));
+        const auto tx = parse_number_array_section(co, "target_xy");
+        if (tx.size() >= 2) { c.target_x = static_cast<float>(tx[0]); c.target_y = static_cast<float>(tx[1]); }
+        sk.constraints.push_back(std::move(c));
+    }
+    solve_sketch_constraints_cpp(sk);
+}
+} // namespace
+
+bool deserialize_freeform_part_json(const std::string &json_text, CustomPartParams &part) {
+    if (json_text.find("\"freeform_mode\": true") == std::string::npos) return false;
+    part.freeform_mode = true;
+    part.sketch_kind = SketchShapeKind::FreeformBrep;
+    part.picked_face_id = static_cast<int>(read_num_field(json_text, "picked_face_id", -1.0));
+    const std::string sk_obj = find_obj_slice(json_text, "freeform_sketch");
+    if (!sk_obj.empty()) {
+        parse_sketch_block(sk_obj, part.freeform_sketch);
+        part.active_workplane = part.freeform_sketch.workplane;
+    }
+    const std::string f_arr = find_array_slice(json_text, "freeform_features");
+    if (!f_arr.empty()) {
+        part.freeform_features.clear();
+        for (const auto &fo : split_json_objects_in_array(f_arr)) {
+            FreeformCadFeature ft;
+            const std::string op = read_str_field(fo, "op", "extrude_boss");
+            if (op == "extrude_cut") ft.op = FreeformOpKind::ExtrudeCut;
+            else if (op == "revolve") ft.op = FreeformOpKind::Revolve;
+            else if (op == "loft") ft.op = FreeformOpKind::Loft;
+            else if (op == "fillet") ft.op = FreeformOpKind::Fillet;
+            else if (op == "chamfer") ft.op = FreeformOpKind::Chamfer;
+            else if (op == "shell") ft.op = FreeformOpKind::Shell;
+            else ft.op = FreeformOpKind::ExtrudeBoss;
+            ft.suppressed = read_bool_field(fo, "suppressed", false);
+            ft.symmetric = read_bool_field(fo, "symmetric", false);
+            ft.depth_m = static_cast<float>(read_num_field(fo, "depth_m", 0.030));
+            ft.angle_deg = static_cast<float>(read_num_field(fo, "angle_deg", 360.0));
+            ft.radius_m = static_cast<float>(read_num_field(fo, "radius_m", 0.002));
+            ft.loft_offset_m = static_cast<float>(read_num_field(fo, "loft_offset_m", 0.060));
+            ft.loft_scale = static_cast<float>(read_num_field(fo, "loft_scale", 0.55));
+            const std::string fsk = find_obj_slice(fo, "sketch");
+            if (!fsk.empty()) parse_sketch_block(fsk, ft.sketch);
+            part.freeform_features.push_back(std::move(ft));
+        }
+    }
+    if (part.freeform_sketch.entities.empty() && part.freeform_features.empty()) {
+        init_default_freeform_sketch(part);
+    }
+    return true;
+}
+
+std::string build_embedded_cfd_fea_payload_json(const AircraftDesignParams &params, const GeneratedCADScene &scene,
+                                                const LiveEvidenceSummary &summary,
+                                                const std::filesystem::path &field_out_path,
+                                                const std::filesystem::path &export_dir) {
+    std::ostringstream oss;
+    oss << "{\n"
+        << "  \"wingspan_m\": " << params.wingspan_m << ",\n"
+        << "  \"root_chord_m\": " << params.root_chord_m << ",\n"
+        << "  \"tip_chord_m\": " << params.tip_chord_m << ",\n"
+        << "  \"sweep_deg\": " << params.sweep_deg << ",\n"
+        << "  \"airfoil_code\": \"" << params.airfoil_code << "\",\n"
+        << "  \"airspeed_m_s\": " << params.airspeed_m_s << ",\n"
+        << "  \"alpha_deg\": " << params.alpha_deg << ",\n"
+        << "  \"air_density_kg_m3\": " << summary.air_density_kg_m3 << ",\n"
+        << "  \"mach\": " << summary.mach << ",\n"
+        << "  \"total_mass_kg\": " << std::max(0.1, summary.total_mass_kg) << ",\n"
+        << "  \"youngs_modulus_pa\": " << (params.titanium_screws ? 110.0e9 : 42.0e9) << ",\n"
+        << "  \"yield_strength_mpa\": " << (params.family == VehicleFamily::CustomPart ? 275.0 : 240.0) << ",\n"
+        << "  \"mesh_resolution\": \"medium\",\n"
+        << "  \"field_out_path\": \"" << field_out_path.generic_string() << "\",\n"
+        << "  \"export_dir\": \"" << export_dir.generic_string() << "\"";
+
+    const std::size_t n_tris = scene.indices.size() / 3;
+    if (!scene.vertices.empty() && n_tris >= 4 && n_tris <= 12000) {
+        oss << ",\n  \"vertices\": [\n";
+        for (std::size_t i = 0; i < scene.vertices.size(); ++i) {
+            const auto &v = scene.vertices[i];
+            oss << "    [" << v.px << ", " << v.py << ", " << v.pz << "]"
+                << (i + 1 < scene.vertices.size() ? "," : "") << "\n";
+        }
+        oss << "  ],\n  \"triangles\": [\n";
+        for (std::size_t t = 0; t < n_tris; ++t) {
+            oss << "    [" << scene.indices[3 * t] << ", " << scene.indices[3 * t + 1] << ", "
+                << scene.indices[3 * t + 2] << "]" << (t + 1 < n_tris ? "," : "") << "\n";
+        }
+        oss << "  ]\n";
+    } else {
+        oss << "\n";
+    }
+    oss << "}";
+    return oss.str();
+}
+
+bool load_embedded_cfd_fea_json(const std::filesystem::path &field_json_path, EmbeddedCfdFeaCache &cache) {
+    std::ifstream ifs(field_json_path);
+    if (!ifs) return false;
+    std::string text((std::istreambuf_iterator<char>(ifs)), std::istreambuf_iterator<char>());
+    if (text.empty()) return false;
+
+    const auto cp_vals = parse_number_array_section(text, "panel_cp");
+    const auto vm_vals = parse_number_array_section(text, "panel_von_mises_mpa");
+    if (cp_vals.empty() || vm_vals.size() != cp_vals.size()) return false;
+
+    cache.n_fluid_cells = static_cast<int>(read_num_field(text, "n_fluid_cells", 0.0));
+    cache.n_boundary_cut_cells = static_cast<int>(read_num_field(text, "n_boundary_cut_cells", 0.0));
+    cache.n_solid_elems = static_cast<int>(read_num_field(text, "n_solid_elems", 0.0));
+    cache.integrated_cl = read_num_field(text, "integrated_cl", 0.0);
+    cache.integrated_cd = read_num_field(text, "integrated_cd", 0.0);
+    cache.peak_suction_cp = read_num_field(text, "peak_suction_cp", 0.0);
+    cache.peak_vm_mpa = read_num_field(text, "peak_von_mises_mpa", 0.0);
+    cache.max_disp_mm = read_num_field(text, "max_disp_mm", 0.0);
+    cache.structural_fos = read_num_field(text, "structural_fos", 5.0);
+
+    cache.panel_cp.resize(cp_vals.size());
+    cache.panel_vm_mpa.resize(vm_vals.size());
+    for (std::size_t i = 0; i < cp_vals.size(); ++i) {
+        cache.panel_cp[i] = static_cast<float>(cp_vals[i]);
+        cache.panel_vm_mpa[i] = static_cast<float>(vm_vals[i]);
+    }
+
+    cache.streamlines_3d.clear();
+    const std::string sl_arr = find_array_slice(text, "streamlines_3d");
+    if (!sl_arr.empty()) {
+        int depth = 0;
+        std::size_t line_start = std::string::npos;
+        std::size_t pt_start = std::string::npos;
+        std::vector<std::array<float, 3>> cur_line;
+        for (std::size_t i = 0; i < sl_arr.size(); ++i) {
+            if (sl_arr[i] == '[') {
+                ++depth;
+                if (depth == 2) {
+                    cur_line.clear();
+                    line_start = i;
+                } else if (depth == 3) {
+                    pt_start = i;
+                }
+            } else if (sl_arr[i] == ']') {
+                if (depth == 3 && pt_start != std::string::npos) {
+                    float px = 0.0f, py = 0.0f, pz = 0.0f;
+                    if (std::sscanf(sl_arr.c_str() + pt_start + 1, "%f , %f , %f", &px, &py, &pz) == 3) {
+                        cur_line.push_back({px, py, pz});
+                    }
+                    pt_start = std::string::npos;
+                } else if (depth == 2 && line_start != std::string::npos) {
+                    if (cur_line.size() >= 2) {
+                        cache.streamlines_3d.push_back(std::move(cur_line));
+                    }
+                    line_start = std::string::npos;
+                }
+                --depth;
+            }
+        }
+    }
+
+    cache.has_field = true;
+    cache.status_summary = "3D FVM/FEM Solved (" + std::to_string(cache.n_fluid_cells) + " fluid, " +
+                           std::to_string(cache.n_solid_elems) + " C3D8)";
+    return true;
 }
 
 void draw_freeform_sketcher_window(FreeformSketchUiState &ui, AircraftDesignParams &params,
@@ -1036,12 +1359,17 @@ void draw_freeform_sketcher_window(FreeformSketchUiState &ui, AircraftDesignPara
     add_c("V", FreeformConstraintKind::Vertical, false); ImGui::SameLine();
     add_c("Len", FreeformConstraintKind::Length, false); ImGui::SameLine();
     add_c("Rad", FreeformConstraintKind::Radius, false); ImGui::SameLine();
-    add_c("Fix", FreeformConstraintKind::Fixed, false);
+    add_c("Fix", FreeformConstraintKind::Fixed, false); ImGui::SameLine();
+    if (ImGui::SmallButton("Const") && ui.selected_entity_idx >= 0 && ui.selected_entity_idx < static_cast<int>(sk.entities.size())) {
+        on_push_undo();
+        sk.entities[ui.selected_entity_idx].construction = !sk.entities[ui.selected_entity_idx].construction;
+    }
     add_c("Coinc", FreeformConstraintKind::Coincident, true); ImGui::SameLine();
     add_c("Perp", FreeformConstraintKind::Perpendicular, true); ImGui::SameLine();
     add_c("Par", FreeformConstraintKind::Parallel, true); ImGui::SameLine();
     add_c("Tan", FreeformConstraintKind::Tangent, true); ImGui::SameLine();
-    add_c("Eq", FreeformConstraintKind::Equal, true);
+    add_c("Eq", FreeformConstraintKind::Equal, true); ImGui::SameLine();
+    add_c("Dist", FreeformConstraintKind::Distance, true);
 
     ImGui::Separator();
     // 5. True B-Rep 3D Operations (Extrude Boss / Cut / Revolve / Loft / Fillet / Chamfer / Shell)

@@ -38,6 +38,7 @@ from physics.aerodynamics.aeroacoustics_and_vrs import (  # noqa: E402
     evaluate_rotor_and_jet_aeroacoustics,
 )
 from physics.aerodynamics.rockets_and_cfd import evaluate_multistage_rocket, export_and_run_detailed_cfd_fea  # noqa: E402
+from physics.aerodynamics.embedded_3d_cfd_fea import run_embedded_3d_cfd_fea  # noqa: E402
 from physics.aerodynamics.rotorcraft_vtol import run_helicopter_autorotation_mission, run_vtol_transition_corridor  # noqa: E402
 from physics.aerodynamics.sixdof_fixed_wing import build_derivatives_from_wing, simulate_6dof_fixed_wing  # noqa: E402
 from physics.autonomy.sitl_and_swarms import run_multi_drone_swarm, run_sitl_closed_loop_mission  # noqa: E402
@@ -92,6 +93,7 @@ def main() -> int:
             "multiphysics-audit",
             "rocket-sim",
             "cfd-fea-export",
+            "embedded-cfd-fea",
             "phase3-4-eval",
             "run",
         ),
@@ -415,6 +417,10 @@ def main() -> int:
                 output_dir=export_dir,
             )
             write_result(args.output, payload)
+        elif args.command == "embedded-cfd-fea":
+            spec = json.loads(args.input.read_text(encoding="utf-8"))
+            exp_dir = Path(spec["export_dir"]) if spec.get("export_dir") else None
+            write_result(args.output, run_embedded_3d_cfd_fea(spec, export_dir=exp_dir))
         elif args.command == "phase3-4-eval":
             write_result(args.output, evaluate_all_phase3_and_phase4_benchmarks())
         elif args.command == "solve-sketch":

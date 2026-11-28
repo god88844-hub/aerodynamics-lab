@@ -30,7 +30,8 @@ public:
 
     void render(int width, int height, const CameraOrbitState &cam, ViewportLayout layout, ShadingMode shading,
                 bool dark_canvas, bool show_wake, bool show_cog, const std::array<double, 3> &cog_m,
-                const std::array<double, 3> &vehicle_pos_m, const std::array<double, 4> &vehicle_quat_wxyz);
+                const std::array<double, 3> &vehicle_pos_m, const std::array<double, 4> &vehicle_quat_wxyz,
+                bool has_solved_stress = false);
 
     std::uint64_t texture_id() const { return static_cast<std::uint64_t>(color_tex_); }
     bool read_fbo_rgba(int width, int height, std::vector<std::uint8_t> &out_rgba);
@@ -39,7 +40,7 @@ private:
     void ensure_fbo(int width, int height);
     void render_single_camera(const Mat4 &vp, const std::array<float, 3> &eye, const Mat4 &model,
                               ShadingMode shading, bool dark_canvas, bool show_wake, bool show_cog,
-                              const std::array<double, 3> &cog_m);
+                              const std::array<double, 3> &cog_m, bool has_solved_stress = false);
 
     gl33::Dispatch *gl_ = nullptr;
     gl33::GLuint fbo_ = 0;

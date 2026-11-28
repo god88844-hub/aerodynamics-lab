@@ -17,12 +17,15 @@ struct AirfoilSectionPoint {
 std::vector<AirfoilSectionPoint> sample_naca4_airfoil(const std::string &code, int n_per_surface = 22);
 
 GeneratedCADScene build_cad_scene(const AircraftDesignParams &params, int selected_part_idx = -1,
-                                  const FreeformBrepCache *brep = nullptr);
+                                  const FreeformBrepCache *brep = nullptr,
+                                  const EmbeddedCfdFeaCache *cfd_fea = nullptr,
+                                  ShadingMode shading = ShadingMode::ShadedEdges);
 
 GeneratedCADScene build_200part_benchmark_scene(int selected_part_idx = -1);
 
 void evaluate_live_physics_and_curves(const AircraftDesignParams &params, const GeneratedCADScene &scene,
-                                      LiveEvidenceSummary &summary);
+                                      LiveEvidenceSummary &summary,
+                                      const EmbeddedCfdFeaCache *cfd_fea = nullptr);
 
 bool write_png_rgba(const std::string &path, int width, int height, const std::vector<std::uint8_t> &rgba_bottom_up);
 

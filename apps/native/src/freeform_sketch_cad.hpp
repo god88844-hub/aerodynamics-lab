@@ -58,6 +58,13 @@ std::string build_freeform_cad_payload_json(const CustomPartParams &part, const 
 
 bool load_occt_mesh_json(const std::filesystem::path &mesh_json_path, FreeformBrepCache &cache);
 
+std::string build_embedded_cfd_fea_payload_json(const AircraftDesignParams &params, const GeneratedCADScene &scene,
+                                                const LiveEvidenceSummary &summary,
+                                                const std::filesystem::path &field_out_path,
+                                                const std::filesystem::path &export_dir);
+
+bool load_embedded_cfd_fea_json(const std::filesystem::path &field_json_path, EmbeddedCfdFeaCache &cache);
+
 std::string serialize_freeform_part_json(const CustomPartParams &part);
 bool deserialize_freeform_part_json(const std::string &json_text, CustomPartParams &part);
 

@@ -510,7 +510,8 @@ std::vector<AirfoilSectionPoint> sample_naca4_airfoil(const std::string &code, i
     return closed;
 }
 
-GeneratedCADScene build_cad_scene(const AircraftDesignParams &params, int selected_part_idx, const FreeformBrepCache *brep) {
+GeneratedCADScene build_cad_scene(const AircraftDesignParams &params, int selected_part_idx, const FreeformBrepCache *brep,
+                                  const EmbeddedCfdFeaCache *cfd_fea, ShadingMode shading) {
     if (params.family == VehicleFamily::Benchmark200) {
         return build_200part_benchmark_scene(selected_part_idx);
     }
@@ -1004,6 +1005,47 @@ GeneratedCADScene build_cad_scene(const AircraftDesignParams &params, int select
         }
     }
 
+    // Apply embedded 3D Panel-FVM CFD & Sparse C3D8 FEM contours onto surface vertices + streamlines
+    if (cfd_fea && cfd_fea->has_field) {
+        const std::size_t n_tris = out.indices.size() / 3;
+        if (cfd_fea->panel_cp.size() == n_tris && !out.vertices.empty()) {
+            std::vector<float> accum(out.vertices.size(), 0.0f);
+            std::vector<int> counts(out.vertices.size(), 0);
+            const float inv_peak_vm = (cfd_fea->peak_vm_mpa > 1e-4) ? static_cast<float>(1.0 / cfd_fea->peak_vm_mpa) : 0.0f;
+            for (std::size_t t = 0; t < n_tris; ++t) {
+                float scalar = cfd_fea->panel_cp[t];
+                if (shading == ShadingMode::StressVonMises && t < cfd_fea->panel_vm_mpa.size()) {
+                    const float norm_vm = std::clamp(cfd_fea->panel_vm_mpa[t] * inv_peak_vm, 0.0f, 1.0f);
+                    scalar = -1.35f + norm_vm * 2.15f;
+                }
+                for (int k = 0; k < 3; ++k) {
+                    const std::uint32_t vi = out.indices[3 * t + k];
+                    if (vi < out.vertices.size()) {
+                        accum[vi] += scalar;
+                        counts[vi] += 1;
+                    }
+                }
+            }
+            for (std::size_t vi = 0; vi < out.vertices.size(); ++vi) {
+                if (counts[vi] > 0) {
+                    out.vertices[vi].cp = accum[vi] / static_cast<float>(counts[vi]);
+                }
+            }
+        }
+        if (params.show_streamlines && !cfd_fea->streamlines_3d.empty()) {
+            for (const auto &line : cfd_fea->streamlines_3d) {
+                for (std::size_t i = 0; i + 1 < line.size(); ++i) {
+                    const float frac = static_cast<float>(i) / static_cast<float>(std::max<std::size_t>(1, line.size() - 1));
+                    const float r = 0.14f + 0.72f * frac;
+                    const float g = 0.62f + 0.25f * (1.0f - std::abs(frac - 0.5f));
+                    const float b = 0.98f - 0.55f * frac;
+                    out.wake_lines.push_back({line[i][0], line[i][1], line[i][2], r, g, b});
+                    out.wake_lines.push_back({line[i + 1][0], line[i + 1][1], line[i + 1][2], r, g, b});
+                }
+            }
+        }
+    }
+
     return out;
 }
 
@@ -1058,7 +1100,7 @@ GeneratedCADScene build_200part_benchmark_scene(int selected_part_idx) {
 }
 
 void evaluate_live_physics_and_curves(const AircraftDesignParams &params, const GeneratedCADScene &scene,
-                                      LiveEvidenceSummary &summary) {
+                                      LiveEvidenceSummary &summary, const EmbeddedCfdFeaCache *cfd_fea) {
     std::vector<lab::MassPoint> pts;
     pts.reserve(scene.assembly_parts.size());
     for (const auto &p : scene.assembly_parts) {
@@ -1736,6 +1778,24 @@ void evaluate_live_physics_and_curves(const AircraftDesignParams &params, const 
     const double allowable_moment_nm = (params.family == VehicleFamily::CargoUAV) ? 45.0 : 26.0;
     // Manufacturing tolerance derates structural yield safety factor
     summary.structural_fos = (allowable_moment_nm * tol_factor) / root_moment_nm;
+    if (cfd_fea && cfd_fea->has_field) {
+        summary.cfd_fea_solved = true;
+        summary.cfd_fluid_cells = cfd_fea->n_fluid_cells;
+        summary.fem_solid_elems = cfd_fea->n_solid_elems;
+        summary.fem_peak_vm_mpa = cfd_fea->peak_vm_mpa;
+        summary.fem_max_disp_mm = cfd_fea->max_disp_mm;
+        if (params.family == VehicleFamily::CustomPart) {
+            summary.structural_fos = cfd_fea->structural_fos;
+        } else {
+            summary.structural_fos = std::min(summary.structural_fos, cfd_fea->structural_fos);
+        }
+    } else {
+        summary.cfd_fea_solved = false;
+        summary.cfd_fluid_cells = 0;
+        summary.fem_solid_elems = 0;
+        summary.fem_peak_vm_mpa = 0.0;
+        summary.fem_max_disp_mm = 0.0;
+    }
 
     lab::FastenerHarnessParams fh;
     fh.screw_size_idx = params.screw_size_idx;

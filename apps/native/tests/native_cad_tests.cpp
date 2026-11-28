@@ -555,6 +555,66 @@ int main() {
         aerolab::evaluate_live_physics_and_curves(q_ff, aerolab::build_cad_scene(q_ff, -1, &brep_cache), q_ff_ev);
         assert(q_ff_ev.validation_status == "UNVALIDATED_CUSTOM");
         assert(q_ff_ev.total_mass_kg > nom_ev.total_mass_kg);
+
+        // Lossless Save/Load JSON roundtrip for Freeform Sketch + Features
+        ff_p.active_part.freeform_sketch.constraints.push_back(
+            {aerolab::FreeformConstraintKind::Distance, "r0", "r2", 0, 0, 0.044f, 0.0f, 0.0f});
+        const std::string saved_json = ipc.build_project_payload_json(ff_p);
+        aerolab::AircraftDesignParams loaded_p;
+        assert(aerolab::WorkerIPC::load_project_payload_json(saved_json, loaded_p));
+        assert(loaded_p.active_part.freeform_mode);
+        assert(loaded_p.active_part.sketch_kind == aerolab::SketchShapeKind::FreeformBrep);
+        assert(loaded_p.active_part.freeform_features.size() == 3);
+        assert(loaded_p.active_part.freeform_features[1].op == aerolab::FreeformOpKind::ExtrudeCut);
+        assert(!loaded_p.active_part.freeform_features[1].sketch.entities.empty());
+        assert(loaded_p.active_part.freeform_sketch.constraints.back().kind == aerolab::FreeformConstraintKind::Distance);
+    }
+
+    // 8c. Embedded 3D Surface/Volume Mesher & Panel FVM + Sparse C3D8 FEM Solver Loop
+    {
+        aerolab::AircraftDesignParams cfd_p;
+        cfd_p.family = aerolab::VehicleFamily::FixedWing;
+        cfd_p.airspeed_m_s = 28.0f;
+        cfd_p.alpha_deg = 6.0f;
+        const auto cfd_scene0 = aerolab::build_cad_scene(cfd_p);
+        aerolab::LiveEvidenceSummary cfd_ev0;
+        aerolab::evaluate_live_physics_and_curves(cfd_p, cfd_scene0, cfd_ev0);
+
+        const auto field_out = repo / ".local" / "tmp" / "native_exports" / "test_cfd_fea_field.json";
+        const std::string cfd_payload = aerolab::build_embedded_cfd_fea_payload_json(
+            cfd_p, cfd_scene0, cfd_ev0, field_out, repo / ".local" / "tmp" / "native_exports" / "test_cfd_fea_deck");
+        assert(ipc.launch_python_command("embedded-cfd-fea", cfd_payload));
+        while (ipc.is_busy()) std::this_thread::sleep_for(std::chrono::milliseconds(20));
+        assert(ipc.snapshot_status().last_ok);
+
+        aerolab::EmbeddedCfdFeaCache cfd_cache;
+        assert(aerolab::load_embedded_cfd_fea_json(field_out, cfd_cache));
+        assert(cfd_cache.has_field);
+        assert(cfd_cache.n_fluid_cells > 1000);
+        assert(cfd_cache.n_solid_elems > 10);
+        assert(cfd_cache.panel_cp.size() == cfd_scene0.indices.size() / 3);
+        assert(cfd_cache.panel_vm_mpa.size() == cfd_scene0.indices.size() / 3);
+        assert(cfd_cache.streamlines_3d.size() == 9);
+        assert(cfd_cache.peak_vm_mpa > 0.0);
+
+        const auto cp_scene = aerolab::build_cad_scene(cfd_p, -1, nullptr, &cfd_cache, aerolab::ShadingMode::SurfaceCp);
+        const auto vm_scene = aerolab::build_cad_scene(cfd_p, -1, nullptr, &cfd_cache, aerolab::ShadingMode::StressVonMises);
+        assert(cp_scene.wake_lines.size() > cfd_scene0.wake_lines.size());
+        bool any_field_diff = false;
+        for (std::size_t vi = 0; vi < cp_scene.vertices.size() && vi < vm_scene.vertices.size(); ++vi) {
+            if (std::abs(cp_scene.vertices[vi].cp - vm_scene.vertices[vi].cp) > 1e-4f) {
+                any_field_diff = true;
+                break;
+            }
+        }
+        assert(any_field_diff);
+
+        aerolab::LiveEvidenceSummary cfd_ev1;
+        aerolab::evaluate_live_physics_and_curves(cfd_p, vm_scene, cfd_ev1, &cfd_cache);
+        assert(cfd_ev1.cfd_fea_solved);
+        assert(cfd_ev1.cfd_fluid_cells == cfd_cache.n_fluid_cells);
+        assert(cfd_ev1.fem_solid_elems == cfd_cache.n_solid_elems);
+        assert(cfd_ev1.fem_peak_vm_mpa > 0.0);
     }
 
     // 9. PNG uncompressed stored-deflate encoder smoke check

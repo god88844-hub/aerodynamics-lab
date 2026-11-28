@@ -51,6 +51,7 @@ int main(int argc, char **argv) {
     bool stress_view = false;
     bool motion_study = false;
     bool freeform_demo = false;
+    bool cfd_fea_demo = false;
     float override_airspeed = -1.0f;
     float override_explode = -1.0f;
     std::string preset_name;
@@ -64,6 +65,7 @@ int main(int argc, char **argv) {
         else if (std::strcmp(argv[i], "--stress") == 0) stress_view = true;
         else if (std::strcmp(argv[i], "--motion") == 0) motion_study = true;
         else if (std::strcmp(argv[i], "--freeform-demo") == 0) freeform_demo = true;
+        else if (std::strcmp(argv[i], "--cfd-fea-demo") == 0) cfd_fea_demo = true;
         else if (std::strcmp(argv[i], "--explode") == 0 && i + 1 < argc) override_explode = static_cast<float>(std::atof(argv[++i]));
         else if (std::strcmp(argv[i], "--rc-hud") == 0) open_rc_hud = true;
         else if (std::strcmp(argv[i], "--airspeed") == 0 && i + 1 < argc) override_airspeed = static_cast<float>(std::atof(argv[++i]));
@@ -294,6 +296,16 @@ int main(int argc, char **argv) {
         app.shading_mode = aerolab::ShadingMode::StressVonMises;
     } else if (cp_view) {
         app.shading_mode = aerolab::ShadingMode::SurfaceCp;
+    }
+    if (cfd_fea_demo) {
+        app.trigger_embedded_cfd_fea_solve();
+        while (app.worker() && app.worker()->is_busy()) {
+            std::this_thread::sleep_for(std::chrono::milliseconds(15));
+        }
+        if (app.worker()) {
+            app.worker()->consume_pending_cfd_fea(app.cfd_fea_cache);
+        }
+        app.rebuild_geometry();
     }
 
     auto last_t = std::chrono::steady_clock::now();

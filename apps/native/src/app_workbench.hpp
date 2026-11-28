@@ -47,8 +47,10 @@ public:
     std::vector<FeatureNode> feature_tree;
     FreeformBrepCache brep_cache;
     FreeformSketchUiState freeform_ui;
+    EmbeddedCfdFeaCache cfd_fea_cache;
 
     void trigger_freeform_occt_build();
+    void trigger_embedded_cfd_fea_solve();
     WorkerIPC *worker() { return ipc_.get(); }
 
     // Modals (kept cleanly off the main toolbar)

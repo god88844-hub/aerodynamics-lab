@@ -60,6 +60,7 @@ in vec3 vColor;
 in float vCp;
 uniform vec3 uEyePos;
 uniform int uShowCp;
+uniform int uHasSolvedStress;
 out vec4 FragColor;
 
 vec3 cp_colormap(float cp) {
@@ -85,7 +86,9 @@ void main() {
     float spec = pow(max(dot(n, h), 0.0), 42.0) * 0.22;
     float r_root = length(vWorldPos.xy);
     float stress_scalar = 0.95 * exp(-r_root * 2.1) - 1.1;
-    vec3 base = (uShowCp == 1) ? cp_colormap(vCp) : ((uShowCp == 2) ? cp_colormap(stress_scalar) : vColor);
+    vec3 base = (uShowCp == 1 || (uShowCp == 2 && uHasSolvedStress == 1))
+                    ? cp_colormap(vCp)
+                    : ((uShowCp == 2) ? cp_colormap(stress_scalar) : vColor);
     vec3 lit = base * (0.34 + 0.18 * hemi + 0.56 * diff1 + diff2) + vec3(spec);
     FragColor = vec4(clamp(lit, 0.0, 1.0), 1.0);
 }
@@ -385,7 +388,7 @@ void ViewportGL::upload_grid_and_bounds(float extent_m, float step_m) {
 
 void ViewportGL::render_single_camera(const Mat4 &vp, const std::array<float, 3> &eye, const Mat4 &model,
                                       ShadingMode shading, bool dark_canvas, bool show_wake, bool show_cog,
-                                      const std::array<double, 3> &cog_m) {
+                                      const std::array<double, 3> &cog_m, bool has_solved_stress) {
     // 1. Gradient studio sky background
     gl_->Disable(gl33::GL_DEPTH_TEST_V);
     gl_->DepthMask(gl33::GL_FALSE_V);
@@ -419,6 +422,7 @@ void ViewportGL::render_single_camera(const Mat4 &vp, const std::array<float, 3>
         gl_->Uniform3fv(gl_->GetUniformLocation(prog_mesh_, "uEyePos"), 1, eye.data());
         const int mode_i = (shading == ShadingMode::SurfaceCp) ? 1 : (shading == ShadingMode::StressVonMises ? 2 : 0);
         gl_->Uniform1i(gl_->GetUniformLocation(prog_mesh_, "uShowCp"), mode_i);
+        gl_->Uniform1i(gl_->GetUniformLocation(prog_mesh_, "uHasSolvedStress"), has_solved_stress ? 1 : 0);
         gl_->BindVertexArray(vao_mesh_);
         gl_->DrawElements(gl33::GL_TRIANGLES_V, mesh_index_count_, gl33::GL_UNSIGNED_INT_V, nullptr);
         gl_->Disable(gl33::GL_POLYGON_OFFSET_FILL_V);
@@ -474,7 +478,8 @@ void ViewportGL::render_single_camera(const Mat4 &vp, const std::array<float, 3>
 
 void ViewportGL::render(int width, int height, const CameraOrbitState &cam, ViewportLayout layout, ShadingMode shading,
                         bool dark_canvas, bool show_wake, bool show_cog, const std::array<double, 3> &cog_m,
-                        const std::array<double, 3> &vehicle_pos_m, const std::array<double, 4> &vehicle_quat_wxyz) {
+                        const std::array<double, 3> &vehicle_pos_m, const std::array<double, 4> &vehicle_quat_wxyz,
+                        bool has_solved_stress) {
     if (!gl_ || width <= 0 || height <= 0) return;
     ensure_fbo(width, height);
     gl_->BindFramebuffer(gl33::GL_FRAMEBUFFER_V, fbo_);
@@ -497,7 +502,8 @@ void ViewportGL::render(int width, int height, const CameraOrbitState &cam, View
         const float aspect = static_cast<float>(fbo_w_) / static_cast<float>(fbo_h_);
         const Mat4 proj = mat4_perspective(42.0f * kPi / 180.0f, aspect, 0.04f, 80.0f);
         const Mat4 view = mat4_look_at(iso_eye, cam.target_m, {0.0f, 0.0f, 1.0f});
-        render_single_camera(mat4_mul(proj, view), iso_eye, model, shading, dark_canvas, show_wake, show_cog, cog_m);
+        render_single_camera(mat4_mul(proj, view), iso_eye, model, shading, dark_canvas, show_wake, show_cog, cog_m,
+                             has_solved_stress);
     } else {
         const int hw = std::max(1, fbo_w_ / 2);
         const int hh = std::max(1, fbo_h_ / 2);
@@ -510,28 +516,28 @@ void ViewportGL::render(int width, int height, const CameraOrbitState &cam, View
         gl_->Scissor(0, hh, hw - 1, hh);
         const std::array<float, 3> top_eye{cam.target_m[0], cam.target_m[1], cam.target_m[2] + 6.0f};
         render_single_camera(mat4_mul(ortho_p, mat4_look_at(top_eye, cam.target_m, {1.0f, 0.0f, 0.0f})),
-                             top_eye, model, shading, dark_canvas, show_wake, show_cog, cog_m);
+                             top_eye, model, shading, dark_canvas, show_wake, show_cog, cog_m, has_solved_stress);
 
         // Top-Right: SIDE Ortho (+Y looking towards aircraft)
         gl_->Viewport(hw + 1, hh, fbo_w_ - hw - 1, hh);
         gl_->Scissor(hw + 1, hh, fbo_w_ - hw - 1, hh);
         const std::array<float, 3> side_eye{cam.target_m[0], cam.target_m[1] + 6.0f, cam.target_m[2]};
         render_single_camera(mat4_mul(ortho_p, mat4_look_at(side_eye, cam.target_m, {0.0f, 0.0f, 1.0f})),
-                             side_eye, model, shading, dark_canvas, show_wake, show_cog, cog_m);
+                             side_eye, model, shading, dark_canvas, show_wake, show_cog, cog_m, has_solved_stress);
 
         // Bottom-Left: FRONT Ortho (+X looking aft)
         gl_->Viewport(0, 0, hw - 1, hh - 1);
         gl_->Scissor(0, 0, hw - 1, hh - 1);
         const std::array<float, 3> front_eye{cam.target_m[0] + 6.0f, cam.target_m[1], cam.target_m[2]};
         render_single_camera(mat4_mul(ortho_p, mat4_look_at(front_eye, cam.target_m, {0.0f, 0.0f, 1.0f})),
-                             front_eye, model, shading, dark_canvas, show_wake, show_cog, cog_m);
+                             front_eye, model, shading, dark_canvas, show_wake, show_cog, cog_m, has_solved_stress);
 
         // Bottom-Right: 3D ISO Perspective
         gl_->Viewport(hw + 1, 0, fbo_w_ - hw - 1, hh - 1);
         gl_->Scissor(hw + 1, 0, fbo_w_ - hw - 1, hh - 1);
         const Mat4 proj = mat4_perspective(42.0f * kPi / 180.0f, q_aspect, 0.04f, 80.0f);
         render_single_camera(mat4_mul(proj, mat4_look_at(iso_eye, cam.target_m, {0.0f, 0.0f, 1.0f})),
-                             iso_eye, model, shading, dark_canvas, show_wake, show_cog, cog_m);
+                             iso_eye, model, shading, dark_canvas, show_wake, show_cog, cog_m, has_solved_stress);
     }
 
     gl_->Disable(gl33::GL_SCISSOR_TEST_V);
