@@ -3,6 +3,7 @@
 #endif
 #include "cad_mesh_builder.hpp"
 #include "freeform_sketch_cad.hpp"
+#include "library_and_mates_ui.hpp"
 #include "worker_ipc.hpp"
 
 #include <cassert>
@@ -615,6 +616,55 @@ int main() {
         assert(cfd_ev1.cfd_fluid_cells == cfd_cache.n_fluid_cells);
         assert(cfd_ev1.fem_solid_elems == cfd_cache.n_solid_elems);
         assert(cfd_ev1.fem_peak_vm_mpa > 0.0);
+    }
+
+    // 8d. Expanded Standard Part & Propulsion Library + Multi-Body Mechanical Mates End-to-End Integration
+    {
+        assert(lab::standard_library_catalog().size() >= 75);
+        aerolab::AircraftDesignParams lm_p = nominal_quad;
+        lm_p.family = aerolab::VehicleFamily::VTOL;
+        aerolab::init_default_mates_for_params(lm_p);
+        assert(lm_p.mate_bodies.size() >= 5 && lm_p.mechanical_mates.size() >= 4);
+
+        const auto *brg = lab::find_standard_part_by_id("bearing_608zz");
+        const auto *mtr = lab::find_standard_part_by_id("motor_mn501s_kv300");
+        const auto *bat = lab::find_standard_part_by_id("bat_6s_16000_lipo");
+        assert(brg && mtr && bat);
+
+        std::string tmp_banner;
+        aerolab::apply_library_item_to_params(*bat, lm_p, tmp_banner);
+        assert(std::abs(lm_p.battery_capacity_ah - 16.0f) < 1e-4f);
+
+        const auto base_scene = aerolab::build_cad_scene(lm_p);
+        aerolab::insert_library_item_into_scene(*brg, lm_p, {0.10f, 0.25f, 0.04f}, "nacelle_l");
+        aerolab::insert_library_item_into_scene(*mtr, lm_p, {0.10f, -0.25f, 0.04f}, "nacelle_r");
+        lm_p.show_mate_gizmos = true;
+        lm_p.mechanical_mates[0].drive_value = 45.0; // Tilt 45 deg
+        const auto m_scene = aerolab::build_cad_scene(lm_p);
+        assert(m_scene.indices.size() > base_scene.indices.size());
+        assert(m_scene.wake_lines.size() > base_scene.wake_lines.size());
+        assert(m_scene.latest_mates_solution.valid && !m_scene.latest_mates_solution.any_limit_violated);
+
+        aerolab::LiveEvidenceSummary lm_ev;
+        aerolab::evaluate_live_physics_and_curves(lm_p, m_scene, lm_ev);
+        assert(lm_ev.library_parts_count == 2);
+        assert(lm_ev.library_parts_mass_kg > 0.15);
+        assert(lm_ev.mates_active_count >= 6);
+        assert(lm_ev.validation_status == "UNVALIDATED_CUSTOM");
+
+        // Verify limit violation detection when stop range [0..95] is exceeded
+        lm_p.mechanical_mates[0].drive_value = 135.0;
+        const auto bad_m_scene = aerolab::build_cad_scene(lm_p);
+        assert(bad_m_scene.latest_mates_solution.any_limit_violated);
+
+        // Lossless JSON Save/Load roundtrip of Inserted Library Parts & Mechanical Mates
+        const std::string saved_lm = ipc.build_project_payload_json(lm_p);
+        aerolab::AircraftDesignParams loaded_lm;
+        assert(aerolab::WorkerIPC::load_project_payload_json(saved_lm, loaded_lm));
+        assert(loaded_lm.inserted_parts.size() == 2);
+        assert(loaded_lm.inserted_parts[0].catalog_id == "bearing_608zz");
+        assert(loaded_lm.mechanical_mates.size() == lm_p.mechanical_mates.size());
+        assert(loaded_lm.show_mate_gizmos);
     }
 
     // 9. PNG uncompressed stored-deflate encoder smoke check

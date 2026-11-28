@@ -11,6 +11,7 @@ bool AppWorkbench::init(gl33::Dispatch *gl, const std::filesystem::path &repo_ro
     viewport_ = std::make_unique<ViewportGL>();
     if (!viewport_->init(gl_)) return false;
     ipc_ = std::make_unique<WorkerIPC>(repo_root_);
+    init_default_mates_for_params(params);
     apply_light_cad_theme();
     rebuild_geometry();
     return true;
@@ -310,6 +311,7 @@ void AppWorkbench::switch_family(VehicleFamily family) {
         params.project_name = "Part Designer Studio";
         camera.distance_m = 0.75f;
     }
+    init_default_mates_for_params(params);
     rebuild_geometry();
 }
 
@@ -440,8 +442,12 @@ void AppWorkbench::render_ui_and_scene(float dt_s, int fb_w, int fb_h) {
     if (ipc_ && ipc_->poll_completed_results(evidence) && viewport_) {
         viewport_->upload_trajectory_path(evidence.traj_pos_m);
     }
-    const bool live_spin = evidence.playing || params.animate_flapping || params.show_rc_hud || params.motion_study_active;
+    const bool live_spin = evidence.playing || params.animate_flapping || params.show_rc_hud ||
+                           params.motion_study_active || params.animate_mates;
     if (live_spin) {
+        if (params.animate_mates || params.motion_study_active) {
+            params.mate_anim_time_s += dt_s;
+        }
         params.flap_anim_phase_rad += dt_s * 11.5f; // Slow-motion visual wingbeat cycle
         if (params.flap_anim_phase_rad > 62.8318f) params.flap_anim_phase_rad = 0.0f;
         const float spin_rate = 18.0f * (0.4f + 0.9f * (params.rotor_rpm / 6000.0f));
@@ -513,6 +519,14 @@ void AppWorkbench::render_ui_and_scene(float dt_s, int fb_w, int fb_h) {
         [this]() { push_undo_snapshot(); },
         [this]() { rebuild_geometry(); },
         [this]() { trigger_freeform_occt_build(); });
+    draw_standard_library_window(
+        lib_mates_ui, params, evidence, export_banner,
+        [this]() { push_undo_snapshot(); },
+        [this]() { rebuild_geometry(); });
+    draw_mechanical_mates_window(
+        lib_mates_ui, params, scene,
+        [this]() { push_undo_snapshot(); },
+        [this]() { rebuild_geometry(); });
     draw_modals();
 }
 

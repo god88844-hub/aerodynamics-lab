@@ -54,6 +54,7 @@ target_compile_features(imgui_docking PUBLIC cxx_std_20)
 add_library(lab_native_engine STATIC
     src/cad_mesh_builder.cpp
     src/freeform_sketch_cad.cpp
+    src/library_and_mates_ui.cpp
     src/viewport_gl.cpp
     src/worker_ipc.cpp
     src/menus_and_panels.cpp

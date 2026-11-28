@@ -1005,6 +1005,67 @@ GeneratedCADScene build_cad_scene(const AircraftDesignParams &params, int select
         }
     }
 
+    // Solve Multi-Body Mechanical Mates & Kinematic SE(3) Transforms
+    if (!params.mate_bodies.empty()) {
+        out.latest_mates_solution = lab::solve_mechanical_mates(
+            params.mate_bodies, params.mechanical_mates,
+            params.animate_mates || params.motion_study_active, params.mate_anim_time_s, 1.0);
+        if (params.show_mate_gizmos) {
+            for (const auto &ms : out.latest_mates_solution.mate_states) {
+                const float r = ms.limit_violated ? 0.95f : 0.08f;
+                const float g = ms.limit_violated ? 0.20f : 0.82f;
+                const float b = ms.limit_violated ? 0.20f : 0.92f;
+                const Vec3 p0{static_cast<float>(ms.joint_world_pos_m[0]),
+                              static_cast<float>(ms.joint_world_pos_m[1]),
+                              static_cast<float>(ms.joint_world_pos_m[2])};
+                const Vec3 ax{static_cast<float>(ms.joint_world_axis[0]) * 0.14f,
+                              static_cast<float>(ms.joint_world_axis[1]) * 0.14f,
+                              static_cast<float>(ms.joint_world_axis[2]) * 0.14f};
+                out.wake_lines.push_back({p0.x - ax.x, p0.y - ax.y, p0.z - ax.z, r, g, b});
+                out.wake_lines.push_back({p0.x + ax.x, p0.y + ax.y, p0.z + ax.z, r, g, b});
+                // Small joint collar crosshair
+                const float c = 0.028f;
+                out.wake_lines.push_back({p0.x - c, p0.y, p0.z, 0.96f, 0.62f, 0.14f});
+                out.wake_lines.push_back({p0.x + c, p0.y, p0.z, 0.96f, 0.62f, 0.14f});
+                out.wake_lines.push_back({p0.x, p0.y - c, p0.z, 0.96f, 0.62f, 0.14f});
+                out.wake_lines.push_back({p0.x, p0.y + c, p0.z, 0.96f, 0.62f, 0.14f});
+            }
+        }
+    }
+
+    // Render all inserted Standard Library parts in their solved SE(3) body poses
+    for (const auto &ip : params.inserted_parts) {
+        Vec3 wpos{ip.pos_m[0], ip.pos_m[1], ip.pos_m[2]};
+        for (const auto &bp : out.latest_mates_solution.body_poses) {
+            if (bp.body_id == ip.instance_id && bp.visited) {
+                wpos = {static_cast<float>(bp.world_pos_m[0]), static_cast<float>(bp.world_pos_m[1]),
+                        static_cast<float>(bp.world_pos_m[2])};
+                break;
+            }
+        }
+        const float od = std::max(0.008f, ip.od_mm * 0.001f);
+        const float len = std::max(0.006f, ip.length_mm * 0.001f);
+        const float wid = std::max(0.008f, ip.width_mm * 0.001f);
+        const float hgt = std::max(0.006f, ip.height_mm * 0.001f);
+        if (ip.shape == lab::StandardPartShape::FastenerBolt) {
+            add_cylinder_z(out, wpos, od * 0.55f, len * 0.35f, 10, 0.35f, 0.38f, 0.44f);
+            add_cylinder_z(out, {wpos.x, wpos.y, wpos.z - len * 0.45f}, od * 0.32f, len * 0.70f, 10, 0.48f, 0.52f, 0.58f);
+        } else if (ip.shape == lab::StandardPartShape::BallBearing) {
+            add_hollow_duct(out, wpos, std::max(0.002f, ip.id_mm * 0.0005f), od * 0.50f, len, 18, 0.72f, 0.78f, 0.85f, {0, kPi * 0.5f, 0});
+        } else if (ip.shape == lab::StandardPartShape::Propeller) {
+            add_twisted_propeller(out, wpos, std::max(0.07f, od), ip.pitch_deg, std::max(2, ip.blades), 0.0f, false, 0.0f, spin);
+        } else if (ip.shape == lab::StandardPartShape::MotorCan || ip.shape == lab::StandardPartShape::Turbine) {
+            add_cylinder_z(out, wpos, od * 0.50f, len, 16, 0.16f, 0.46f, 0.82f);
+            add_cylinder_z(out, {wpos.x, wpos.y, wpos.z + len * 0.65f}, std::max(0.002f, ip.id_mm * 0.0005f), len * 0.45f, 10, 0.82f, 0.85f, 0.90f);
+        } else if (ip.shape == lab::StandardPartShape::StructuralTube) {
+            add_cylinder_z(out, wpos, std::max(0.006f, od * 0.50f), std::min(0.45f, len), 14, 0.22f, 0.26f, 0.32f, 0.0f, {0.0f, kPi * 0.5f, 0.0f});
+        } else {
+            add_oriented_box(out, wpos, {std::min(0.28f, len), std::min(0.20f, wid), std::min(0.14f, hgt)}, 0.0f,
+                             0.20f, 0.64f, 0.48f);
+        }
+        out.assembly_parts.push_back({ip.name, ip.category, ip.mass_kg, {wpos.x, wpos.y, wpos.z}, true});
+    }
+
     // Apply embedded 3D Panel-FVM CFD & Sparse C3D8 FEM contours onto surface vertices + streamlines
     if (cfd_fea && cfd_fea->has_field) {
         const std::size_t n_tris = out.indices.size() / 3;
@@ -1797,6 +1858,22 @@ void evaluate_live_physics_and_curves(const AircraftDesignParams &params, const 
         summary.fem_max_disp_mm = 0.0;
     }
 
+    summary.library_parts_count = static_cast<int>(params.inserted_parts.size());
+    summary.library_parts_mass_kg = 0.0;
+    for (const auto &ip : params.inserted_parts) summary.library_parts_mass_kg += ip.mass_kg;
+
+    const auto &msol = scene.latest_mates_solution;
+    summary.mates_active_count = msol.active_mates;
+    summary.mates_free_dof = msol.total_free_dof;
+    summary.mates_min_clearance_mm = msol.min_clearance_mm;
+    summary.mates_limit_violated = msol.any_limit_violated;
+    summary.mates_interference = msol.any_interference;
+    summary.mates_summary = msol.summary;
+    summary.mates_min_fos = 50.0;
+    for (const auto &ms : msol.mate_states) {
+        summary.mates_min_fos = std::min(summary.mates_min_fos, ms.joint_fos);
+    }
+
     lab::FastenerHarnessParams fh;
     fh.screw_size_idx = params.screw_size_idx;
     fh.titanium_grade5 = params.titanium_screws;
@@ -1892,11 +1969,11 @@ void evaluate_live_physics_and_curves(const AircraftDesignParams &params, const 
         const double cog_mag = std::sqrt(summary.center_of_mass_m[0] * summary.center_of_mass_m[0] +
                                          summary.center_of_mass_m[1] * summary.center_of_mass_m[1]);
         summary.predicted_readiness_pct = std::clamp(aero_margin - cog_mag * 25.0 - rain * 0.15 - peak_wind * 0.7 - params.mfg_tolerance_pct * 0.4, 10.0, 97.5);
-        if (params.attach_custom_part || params.family == VehicleFamily::CustomPart) {
+        if (params.attach_custom_part || params.family == VehicleFamily::CustomPart || !params.inserted_parts.empty()) {
             summary.benchmark_match_pct = -1.0;
             summary.benchmark_source_tag = "Brand-New Custom Design (Physics+Elec Only)";
             summary.validation_status = "UNVALIDATED_CUSTOM";
-            summary.status_detail = "Physics+Electronics+Wind+MfgTol checked; real physical bench test N/A yet";
+            summary.status_detail = "Physics+Electronics+Wind+MfgTol+Mates checked; real physical bench test N/A yet";
         } else {
             if (params.family == VehicleFamily::Multirotor) {
                 summary.benchmark_match_pct = 94.2;

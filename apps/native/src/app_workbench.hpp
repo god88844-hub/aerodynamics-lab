@@ -3,6 +3,7 @@
 #include "cad_mesh_builder.hpp"
 #include "cad_types.hpp"
 #include "freeform_sketch_cad.hpp"
+#include "library_and_mates_ui.hpp"
 #include "viewport_gl.hpp"
 #include "worker_ipc.hpp"
 
@@ -48,6 +49,7 @@ public:
     FreeformBrepCache brep_cache;
     FreeformSketchUiState freeform_ui;
     EmbeddedCfdFeaCache cfd_fea_cache;
+    LibraryAndMatesUiState lib_mates_ui;
 
     void trigger_freeform_occt_build();
     void trigger_embedded_cfd_fea_solve();

@@ -3,6 +3,8 @@
 #include "lab/bioinspired.hpp"
 #include "lab/whole_aircraft.hpp"
 #include "lab/multiphysics_and_rockets.hpp"
+#include "lab/standard_library.hpp"
+#include "lab/mechanical_mates.hpp"
 
 #include <array>
 #include <cmath>
@@ -239,5 +241,51 @@ int main() {
         return 26;
     }
     std::cout << "Multiphysics, Saturn V 3-Stage, Airliner CRM & Afterburner/X-15 checks passed\n";
+
+    // Large Standard Part & Propulsion Library + Full Multi-Body Mechanical Mates checks
+    const auto &cat = lab::standard_library_catalog();
+    const auto &cats = lab::standard_library_categories();
+    if (cat.size() < 75 || cats.size() < 8 || !lab::find_standard_part_by_id("bearing_608zz") ||
+        !lab::find_standard_part_by_id("turbine_jetcat_p220rxi") ||
+        lab::search_standard_library("Motors", "MN3508").empty()) {
+        std::cerr << "Standard Part & Propulsion Library check failed\n";
+        return 27;
+    }
+
+    std::vector<lab::RigidBodyNode> mb_bodies = {
+        {"ground", "Chassis", 1.2, {0.10, 0.10, 0.04}, true, true},
+        {"arm_l", "Left Tilt Arm", 0.35, {0.04, 0.04, 0.04}, false, true},
+        {"arm_r", "Right Tilt Arm", 0.35, {0.04, 0.04, 0.04}, false, true},
+        {"slider", "Rack Slider", 0.15, {0.03, 0.03, 0.02}, false, true},
+        {"cam", "Ball Gimbal", 0.20, {0.03, 0.03, 0.03}, false, true},
+    };
+    std::vector<lab::MechanicalMateSpec> mb_mates = {
+        {"hinge_l", lab::MateKind::Revolute, "ground", "arm_l", {0.0, 0.40, 0.0}, {0.0, 0.0, 0.0}, {0.0, 1.0, 0.0}, 30.0, 0.0, 0.0, 90.0, true, 1.0, 0.02, "", 3350.0, false},
+        {"gear_r", lab::MateKind::Gear, "ground", "arm_r", {0.0, -0.40, 0.0}, {0.0, 0.0, 0.0}, {0.0, 1.0, 0.0}, 0.0, 0.0, -180.0, 180.0, true, -1.0, 0.02, "hinge_l", 3350.0, false},
+        {"rack_z", lab::MateKind::RackPinion, "ground", "slider", {-0.25, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 1.0}, 0.0, 0.0, -0.5, 0.5, true, 1.0, 0.05, "hinge_l", 475.0, false},
+        {"ball_c", lab::MateKind::Spherical, "slider", "cam", {0.0, 0.0, -0.10}, {0.0, 0.0, 0.0}, {0.0, 0.0, 1.0}, 12.0, -8.0, -45.0, 45.0, true, 1.0, 0.02, "", 475.0, false},
+    };
+    const auto mb_sol = lab::solve_mechanical_mates(mb_bodies, mb_mates, false, 0.0, 1.0);
+    if (!mb_sol.valid || mb_sol.active_mates != 4 || mb_sol.any_limit_violated || mb_sol.any_interference ||
+        std::abs(mb_sol.body_poses[3].world_pos_m[2] - (0.05 * 3.141592653589793 / 6.0)) > 1e-4) {
+        std::cerr << "Multi-Body Mechanical Mates FK/Gear/Rack check failed\n";
+        return 28;
+    }
+
+    // Closed-loop 4-bar / pushrod solver convergence check
+    std::vector<lab::RigidBodyNode> loop_bodies = {
+        {"base", "Base", 1.0, {0.04, 0.04, 0.04}, true, false},
+        {"link1", "Crank", 0.2, {0.10, 0.02, 0.02}, false, false},
+    };
+    std::vector<lab::MechanicalMateSpec> loop_mates = {
+        {"crank_j", lab::MateKind::Revolute, "base", "link1", {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 1.0, 0.0}, 5.0, 0.0, -180.0, 180.0, true, 1.0, 0.02, "", 1000.0, false},
+    };
+    lab::ClosedLoopTarget cl_target{"link1", {0.20, 0.0, 0.0}, {0.0, 0.0, -0.20}, "crank_j", true};
+    const auto cl_sol = lab::solve_mechanical_mates(loop_bodies, loop_mates, false, 0.0, 1.0, &cl_target);
+    if (!cl_sol.valid || cl_sol.max_loop_error_mm > 1.0) {
+        std::cerr << "Closed-loop kinematics convergence check failed: err=" << cl_sol.max_loop_error_mm << "\n";
+        return 29;
+    }
+    std::cout << "Standard Library & Multi-Body Mechanical Mates C++20 kernel checks passed\n";
     return 0;
 }

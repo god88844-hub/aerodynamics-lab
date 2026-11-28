@@ -28,6 +28,8 @@ from desktop_worker.twin_comparison import compare_frozen_run_and_source, export
 from geometry.fixed_wing_cad import ParametricWingSpec, compute_wing_geometry_properties, export_2d_engineering_drawing_svg_dxf  # noqa: E402
 from geometry.part_designer import CustomPartRecipe, build_custom_part, swap_assembly_part  # noqa: E402
 from geometry.freeform_cad import build_freeform_cad_model, solve_freeform_sketch  # noqa: E402
+from geometry.mechanical_mates import solve_mechanical_mates  # noqa: E402
+from geometry.standard_library import build_standard_bom_summary, list_standard_library  # noqa: E402
 from optimization.bounded_sweep import run_bounded_sweep  # noqa: E402
 from physics.validation.virtual_evidence_scorecard import compute_virtual_evidence_scorecard  # noqa: E402
 from physics.aerodynamics.fixed_wing import run_fixed_wing_mission  # noqa: E402
@@ -86,6 +88,8 @@ def main() -> int:
             "swap-assembly-part",
             "solve-sketch",
             "freeform-cad",
+            "standard-library",
+            "solve-mates",
             "evidence-scorecard",
             "phase1-eval",
             "failure-atlas",
@@ -430,6 +434,17 @@ def main() -> int:
             spec = json.loads(args.input.read_text(encoding="utf-8"))
             exp_dir = Path(spec["export_dir"]) if spec.get("export_dir") else None
             write_result(args.output, build_freeform_cad_model(spec, export_dir=exp_dir))
+        elif args.command == "standard-library":
+            spec = json.loads(args.input.read_text(encoding="utf-8"))
+            cat = spec.get("category")
+            q = spec.get("query")
+            res = {"items": list_standard_library(cat, q)}
+            if spec.get("bom_part_ids"):
+                res["bom"] = build_standard_bom_summary(list(spec["bom_part_ids"]))
+            write_result(args.output, res)
+        elif args.command == "solve-mates":
+            spec = json.loads(args.input.read_text(encoding="utf-8"))
+            write_result(args.output, solve_mechanical_mates(spec))
         elif args.command == "import-legacy":
             raw = json.loads(args.input.read_text(encoding="utf-8"))
             project = import_legacy_project(raw)

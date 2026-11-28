@@ -281,10 +281,14 @@ void AppWorkbench::draw_menu_bar() {
             shading_mode = ShadingMode::ShadedOnly;
         if (ImGui::MenuItem("Wireframe", nullptr, shading_mode == ShadingMode::Wireframe))
             shading_mode = ShadingMode::Wireframe;
-        if (ImGui::MenuItem("Aerodynamic Cp Contour", nullptr, shading_mode == ShadingMode::SurfaceCp))
+        if (ImGui::MenuItem("Aerodynamic Cp Contour", nullptr, shading_mode == ShadingMode::SurfaceCp)) {
             shading_mode = ShadingMode::SurfaceCp;
-        if (ImGui::MenuItem("Structural Von Mises Stress Heatmap", nullptr, shading_mode == ShadingMode::StressVonMises))
+            rebuild_geometry();
+        }
+        if (ImGui::MenuItem("Structural Von Mises Stress Heatmap", nullptr, shading_mode == ShadingMode::StressVonMises)) {
             shading_mode = ShadingMode::StressVonMises;
+            rebuild_geometry();
+        }
         ImGui::Separator();
         ImGui::MenuItem("Show Vortex & 3D CFD Streamlines", nullptr, &params.show_streamlines);
         ImGui::MenuItem("Show Vortex Wake Lines", nullptr, &show_wake);
@@ -346,6 +350,13 @@ void AppWorkbench::draw_menu_bar() {
     }
 
     if (ImGui::BeginMenu("Model")) {
+        if (ImGui::MenuItem("Standard Part & Propulsion Library (81 Items)", nullptr, lib_mates_ui.open_library_window)) {
+            lib_mates_ui.open_library_window = !lib_mates_ui.open_library_window;
+        }
+        if (ImGui::MenuItem("Multi-Body Mechanical Mates & Kinematics", nullptr, lib_mates_ui.open_mates_window)) {
+            lib_mates_ui.open_mates_window = !lib_mates_ui.open_mates_window;
+        }
+        ImGui::Separator();
         if (ImGui::MenuItem("Attach / Swap Custom Part on Current Aircraft", nullptr, params.attach_custom_part)) {
             push_undo_snapshot();
             params.attach_custom_part = !params.attach_custom_part;
@@ -502,6 +513,14 @@ void AppWorkbench::draw_quick_toolstrip() {
     if (ImGui::Button("Run 6-DoF")) {
         ipc_->run_cpp_rk4_multirotor(params, evidence);
         if (viewport_) viewport_->upload_trajectory_path(evidence.traj_pos_m);
+    }
+    ImGui::SameLine();
+    if (ImGui::Button(lib_mates_ui.open_library_window ? "Library: ON" : "Library (81)")) {
+        lib_mates_ui.open_library_window = !lib_mates_ui.open_library_window;
+    }
+    ImGui::SameLine();
+    if (ImGui::Button(lib_mates_ui.open_mates_window ? "Mates: ON" : "Mates")) {
+        lib_mates_ui.open_mates_window = !lib_mates_ui.open_mates_window;
     }
     ImGui::SameLine();
     if (ImGui::Button("Reset")) {
@@ -843,6 +862,11 @@ void AppWorkbench::draw_right_inspector() {
             ImGui::Text("3D FVM/FEM: %d fluid, %d C3D8 | VM: %.1f MPa | %.2f mm",
                         evidence.cfd_fluid_cells, evidence.fem_solid_elems,
                         evidence.fem_peak_vm_mpa, evidence.fem_max_disp_mm);
+        }
+        if (evidence.mates_active_count > 0 || evidence.library_parts_count > 0) {
+            ImGui::Text("Library: %d parts (%.3f kg) | %s",
+                        evidence.library_parts_count, evidence.library_parts_mass_kg,
+                        evidence.mates_summary.c_str());
         }
         draw_polar_plot(evidence);
     }
