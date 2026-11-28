@@ -35,7 +35,9 @@ PACKAGE_TREE_ITEMS = (
     "data/airfoils",
     "data/components",
     "data/designs",
+    "data/failure_examples",
     "data/research/frozen_protocols.json",
+    "data/research/electrophysics_powerpack_contract.json",
     "LICENSE",
 )
 

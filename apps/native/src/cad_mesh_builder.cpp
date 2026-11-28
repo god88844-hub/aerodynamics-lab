@@ -956,12 +956,24 @@ void evaluate_live_physics_and_curves(const AircraftDesignParams &params, const 
     const double alpha0_rad = -2.0 * m_camber;
     const double alpha_rad = static_cast<double>(params.alpha_deg) * (kPi / 180.0);
 
-    // Rain wet penalty matching adverse_weather.py
+    // Rain wet penalty matching adverse_weather.py + custom body/wing part aerodynamic impact
     const double rain = std::max(0.0, static_cast<double>(params.rain_mm_h));
     const double wet_cd_penalty = 0.0018 * std::sqrt(rain);
     const double wet_cl_scale = 1.0 - std::min(0.28, 0.03 * std::sqrt(rain));
-    summary.cl = cl_alpha * (alpha_rad - alpha0_rad) * wet_cl_scale;
-    summary.cd = 0.024 + wet_cd_penalty + (summary.cl * summary.cl) / (kPi * ar * e_oswald);
+    double custom_cd_delta = 0.0;
+    double custom_cl_scale = 1.0;
+    if (params.attach_custom_part || params.family == VehicleFamily::CustomPart) {
+        if (params.active_part.sketch_kind == SketchShapeKind::CustomBodyShell ||
+            params.active_part.sketch_kind == SketchShapeKind::RoundedPlate ||
+            params.active_part.sketch_kind == SketchShapeKind::HexMount) {
+            custom_cd_delta = 0.014 * std::clamp(static_cast<double>(params.active_part.width_m) / 0.08, 0.25, 3.0);
+        } else if (params.active_part.sketch_kind == SketchShapeKind::AirfoilSection) {
+            custom_cl_scale = 1.06;
+            custom_cd_delta = 0.004;
+        }
+    }
+    summary.cl = cl_alpha * (alpha_rad - alpha0_rad) * wet_cl_scale * custom_cl_scale;
+    summary.cd = 0.024 + wet_cd_penalty + custom_cd_delta + (summary.cl * summary.cl) / (kPi * ar * e_oswald);
     const double s_ref = std::max(0.05, scene.reference_area_m2);
     summary.lift_n = q * s_ref * summary.cl;
     summary.drag_n = q * s_ref * summary.cd;
@@ -1255,11 +1267,15 @@ void evaluate_live_physics_and_curves(const AircraftDesignParams &params, const 
                                         : (params.family == VehicleFamily::VTOL
                                                ? (4.0 * kPi * r_rot * r_rot)
                                                : (params.family == VehicleFamily::Tailsitter ? (2.0 * kPi * r_rot * r_rot) : (kPi * r_rot * r_rot))));
-    const double pitch_scale = std::clamp(static_cast<double>(params.prop_pitch_deg) / 16.0, 0.5, 1.8);
+    const double pitch_scale = std::clamp(static_cast<double>(params.prop_pitch_deg) / 16.0, 0.5, 1.8) *
+                               ((params.attach_custom_part && params.active_part.sketch_kind == SketchShapeKind::CustomPropeller)
+                                    ? std::clamp(0.85 + 0.08 * std::max(2, params.active_part.circular_pattern_count), 0.9, 1.35)
+                                    : 1.0);
     // Helicopter lower-solidity single rotor operates near C_T ~ 0.0028 vs high-solidity drone props
     const double ct_coeff = (params.family == VehicleFamily::Helicopter) ? 0.0028 : 0.016;
+    const double duct_gain = (params.attach_custom_part && params.active_part.sketch_kind == SketchShapeKind::RingDuct) ? 1.12 : 1.0;
     // Max available thrust reduced by manufacturing tolerance / unbalance loss
-    const double max_rotor_thrust_n = ct_coeff * rho * disk_area * v_tip * v_tip * pitch_scale * tol_factor;
+    const double max_rotor_thrust_n = ct_coeff * rho * disk_area * v_tip * v_tip * pitch_scale * duct_gain * tol_factor;
     // Wind + turbulence tilt drag increases required thrust vector magnitude sqrt(W^2 + F_wind_gust^2)
     const double f_wind_gust_n = 0.5 * rho * (0.28 + 0.08 * s_ref) * peak_wind * peak_wind;
     const double req_hover_thrust_n = std::hypot(weight_n, f_wind_gust_n);

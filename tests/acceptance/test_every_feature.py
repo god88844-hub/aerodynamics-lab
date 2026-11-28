@@ -53,6 +53,22 @@ def test_all_python_worker_cli_commands_succeed(tmp_path: Path) -> None:
         ("adverse-weather", base_proj),
         ("bounded-sweep", {}),
         ("phase1-eval", {}),
+        ("failure-atlas", {}),
+        (
+            "load-powerpack",
+            {
+                "component_id": "ep_check_4s",
+                "cells_series": 4,
+                "capacity_ah": 5.0,
+                "internal_resistance_ohm": 0.014,
+                "mass_kg": 0.48,
+                "max_continuous_current_a": 95.0,
+                "cutoff_cell_voltage_v": 3.25,
+                "max_temperature_c": 65.0,
+                "ocv_curve": [{"soc_pct": 0.0, "cell_voltage_v": 3.25}, {"soc_pct": 100.0, "cell_voltage_v": 4.20}],
+                "validation_origin": "electrophysics_lab_v1",
+            },
+        ),
         (
             "export-drawing",
             {
@@ -103,6 +119,9 @@ def test_native_exe_renders_every_preset_cleanly(tmp_path: Path) -> None:
         ("jet", []),
         ("insect", ["--cp-view"]),
         ("morphing", ["--four-view"]),
+        ("cargo", ["--rc-hud"]),
+        ("tailsitter", []),
+        ("flying-wing", []),
         ("part", []),
     ]
     for preset, flags in presets:
