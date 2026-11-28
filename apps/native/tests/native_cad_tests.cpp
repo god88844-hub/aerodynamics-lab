@@ -76,6 +76,30 @@ int main() {
     assert(os_ev.rotor_tip_mach > 0.70);
     assert(os_ev.validation_status == "FAIL");
 
+    // 7. Brand-new CustomPropeller + CustomBodyShell build & manual wind + mfg tolerance derate readiness
+    for (auto sk : {aerolab::SketchShapeKind::CustomPropeller, aerolab::SketchShapeKind::CustomBodyShell}) {
+        aerolab::AircraftDesignParams cust;
+        cust.family = aerolab::VehicleFamily::CustomPart;
+        cust.active_part.sketch_kind = sk;
+        const auto cs = aerolab::build_cad_scene(cust);
+        assert(!cs.vertices.empty() && cs.custom_part_mass_kg > 0.0);
+    }
+    aerolab::AircraftDesignParams calm_quad;
+    calm_quad.family = aerolab::VehicleFamily::Multirotor;
+    aerolab::LiveEvidenceSummary calm_ev;
+    aerolab::evaluate_live_physics_and_curves(calm_quad, aerolab::build_cad_scene(calm_quad), calm_ev);
+
+    aerolab::AircraftDesignParams windy_defective = calm_quad;
+    windy_defective.wind_x_m_s = 14.0f;
+    windy_defective.turbulence_pct = 35.0f;
+    windy_defective.mfg_tolerance_pct = 20.0f;
+    const auto wd_scene = aerolab::build_cad_scene(windy_defective);
+    assert(!wd_scene.wake_lines.empty()); // 3D wind arrow rendered
+    aerolab::LiveEvidenceSummary wd_ev;
+    aerolab::evaluate_live_physics_and_curves(windy_defective, wd_scene, wd_ev);
+    assert(wd_ev.structural_fos < calm_ev.structural_fos);
+    assert(wd_ev.hover_throttle_pct > calm_ev.hover_throttle_pct);
+
     // 5. PNG uncompressed stored-deflate encoder smoke check
     const auto tmp_png = std::filesystem::temp_directory_path() / "aerolab_native_test.png";
     std::vector<std::uint8_t> rgba(4 * 4 * 4, 200);

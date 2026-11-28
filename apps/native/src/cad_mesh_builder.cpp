@@ -293,7 +293,15 @@ void build_custom_sketch_solid(GeneratedCADScene &out, const CustomPartParams &p
     const float t = std::max(0.003f, part.thickness_m);
     double unit_vol = 0.0;
 
-    if (part.revolve_360) {
+    if (part.sketch_kind == SketchShapeKind::CustomPropeller) {
+        const float prop_d = std::max(0.12f, l * 1.4f);
+        const int blades = std::clamp(n_pat < 2 ? 2 : n_pat, 2, 6);
+        add_twisted_propeller(out, offset_m, prop_d, 18.0f, blades, 0.0f, true);
+        unit_vol = static_cast<double>(blades) * (0.45 * prop_d * 0.5) * w * t;
+    } else if (part.sketch_kind == SketchShapeKind::CustomBodyShell) {
+        add_fuselage_loft(out, offset_m, std::max(0.20f, l * 2.2f), std::max(0.025f, w * 1.1f), 0.24f, 0.54f, 0.86f);
+        unit_vol = 0.42 * kPi * (w * 1.1) * (w * 1.1) * (l * 2.2);
+    } else if (part.revolve_360) {
         const float r_outer = std::max(0.02f, w * 0.5f + l * 0.25f);
         const float r_inner = std::clamp(part.hole_radius_m, 0.002f, r_outer * 0.8f);
         add_cylinder_z(out, offset_m, r_outer, t, 28, 0.72f, 0.78f, 0.86f, 0.1f);
@@ -498,6 +506,25 @@ GeneratedCADScene build_cad_scene(const AircraftDesignParams &params, int select
                                       out.custom_part_mass_kg, {0.0, 0.0, -0.08}, true});
     }
 
+    // 3D Wind velocity vector indicator when manual wind is active
+    const float wind_spd = std::hypot(params.wind_x_m_s, params.wind_y_m_s);
+    if (wind_spd > 0.2f) {
+        const float wx = params.wind_x_m_s / wind_spd;
+        const float wy = params.wind_y_m_s / wind_spd;
+        const float len = std::clamp(wind_spd * 0.045f, 0.35f, 1.35f);
+        const Vec3 start{-wx * (0.7f + len), -wy * (0.7f + len), 0.22f};
+        const Vec3 tip{-wx * 0.7f, -wy * 0.7f, 0.22f};
+        out.wake_lines.push_back({start.x, start.y, start.z, 0.92f, 0.42f, 0.12f});
+        out.wake_lines.push_back({tip.x, tip.y, tip.z, 0.98f, 0.58f, 0.16f});
+        const Vec3 perp{-wy * 0.08f, wx * 0.08f, 0.0f};
+        const Vec3 barb1{tip.x - wx * 0.12f + perp.x, tip.y - wy * 0.12f + perp.y, tip.z};
+        const Vec3 barb2{tip.x - wx * 0.12f - perp.x, tip.y - wy * 0.12f - perp.y, tip.z};
+        out.wake_lines.push_back({tip.x, tip.y, tip.z, 0.98f, 0.58f, 0.16f});
+        out.wake_lines.push_back({barb1.x, barb1.y, barb1.z, 0.98f, 0.58f, 0.16f});
+        out.wake_lines.push_back({tip.x, tip.y, tip.z, 0.98f, 0.58f, 0.16f});
+        out.wake_lines.push_back({barb2.x, barb2.y, barb2.z, 0.98f, 0.58f, 0.16f});
+    }
+
     return out;
 }
 
@@ -583,13 +610,19 @@ void evaluate_live_physics_and_curves(const AircraftDesignParams &params, const 
         summary.min_tip_clearance_m = 0.05;
     }
 
-    // Subsonic lifting-line + actuator momentum + electronics & structural stress predictions
-    const double t_kelvin = std::max(220.0, 273.15 + static_cast<double>(params.oat_c));
-    const double p_atm = 101325.0;
+    // Subsonic lifting-line + ISA altitude + manual wind/turbulence + mfg tolerance derating
+    const double alt_m = std::clamp(static_cast<double>(params.altitude_asl_m), 0.0, 6000.0);
+    const double t_kelvin = std::max(216.65, 273.15 + static_cast<double>(params.oat_c) - 0.0065 * alt_m);
+    const double p_atm = 101325.0 * std::pow(1.0 - (0.0065 * alt_m) / 288.15, 5.25588);
     const double rho = p_atm / (287.058 * t_kelvin);
+    summary.air_density_kg_m3 = rho;
     constexpr double mu = 1.789e-5;
     const double a_sound = std::sqrt(1.4 * 287.058 * t_kelvin);
-    const double v = std::max(1.0, static_cast<double>(params.airspeed_m_s));
+    const double wind_mag = std::hypot(static_cast<double>(params.wind_x_m_s), static_cast<double>(params.wind_y_m_s));
+    summary.wind_speed_m_s = wind_mag;
+    const double gust_frac = std::clamp(static_cast<double>(params.turbulence_pct) / 100.0, 0.0, 0.6);
+    const double peak_wind = wind_mag * (1.0 + gust_frac);
+    const double v = std::max(1.0, static_cast<double>(params.airspeed_m_s) + peak_wind * 0.35);
     const double q = 0.5 * rho * v * v;
     const double mac = 0.5 * (params.root_chord_m + params.tip_chord_m);
     summary.mach = v / a_sound;
@@ -627,11 +660,16 @@ void evaluate_live_physics_and_curves(const AircraftDesignParams &params, const 
         summary.curve_cd.push_back(static_cast<float>(cd_a));
     }
 
-    // Electronics, rotor tip Mach, thrust-to-weight, and structural stress margin
+    // Electronics, rotor tip Mach, manual wind drag thrust cost, and manufacturing tolerance derating
+    const double mfg_tol = std::clamp(static_cast<double>(params.mfg_tolerance_pct) / 100.0, 0.0, 0.35);
+    const double tol_factor = 1.0 - mfg_tol;
     const double weight_n = std::max(0.5, summary.total_mass_kg * 9.80665);
+    const double effective_prop_d = (params.attach_custom_part && params.active_part.sketch_kind == SketchShapeKind::CustomPropeller)
+                                        ? std::max(0.12, static_cast<double>(params.active_part.length_m) * 1.4)
+                                        : static_cast<double>(params.prop_diameter_m);
     const double r_rot = (params.family == VehicleFamily::Helicopter)
                              ? (static_cast<double>(params.main_rotor_diameter_m) * 0.5)
-                             : (static_cast<double>(params.prop_diameter_m) * 0.5);
+                             : (effective_prop_d * 0.5);
     const double omega = std::max(50.0, static_cast<double>(params.rotor_rpm) * (2.0 * kPi / 60.0));
     const double v_tip = omega * r_rot;
     summary.rotor_tip_mach = v_tip / a_sound;
@@ -641,23 +679,26 @@ void evaluate_live_physics_and_curves(const AircraftDesignParams &params, const 
                                  : (params.family == VehicleFamily::VTOL
                                         ? (4.0 * kPi * r_rot * r_rot)
                                         : (kPi * r_rot * r_rot));
-    // Blade element thrust scaling at nominal pitch (2*rho*A*(v_tip)^2 * CT_eff)
     const double pitch_scale = std::clamp(static_cast<double>(params.prop_pitch_deg) / 16.0, 0.5, 1.8);
-    const double max_rotor_thrust_n = 0.016 * rho * disk_area * v_tip * v_tip * pitch_scale;
+    // Max available thrust reduced by manufacturing tolerance / unbalance loss
+    const double max_rotor_thrust_n = 0.016 * rho * disk_area * v_tip * v_tip * pitch_scale * tol_factor;
+    // Wind + turbulence tilt drag increases required thrust vector magnitude sqrt(W^2 + F_wind_gust^2)
+    const double f_wind_gust_n = 0.5 * rho * (0.28 + 0.08 * s_ref) * peak_wind * peak_wind;
+    const double req_hover_thrust_n = std::hypot(weight_n, f_wind_gust_n);
     summary.thrust_to_weight = (params.family == VehicleFamily::FixedWing)
-                                   ? std::max(summary.lift_n, max_rotor_thrust_n * 0.35) / weight_n
-                                   : (max_rotor_thrust_n / weight_n);
+                                   ? std::max(summary.lift_n * tol_factor, max_rotor_thrust_n * 0.35) / weight_n
+                                   : (max_rotor_thrust_n / req_hover_thrust_n);
+    summary.hover_throttle_pct = std::clamp(100.0 / std::max(0.15, summary.thrust_to_weight * 1.45), 5.0, 140.0);
 
-    // Induced hover power or wing cruise power (P = T * sqrt(T / (2*rho*A)) / eta + drag power)
-    const double eta_prop = 0.72;
+    const double eta_prop = 0.72 * std::max(0.70, tol_factor);
     const double power_req_w = (params.family == VehicleFamily::FixedWing)
                                    ? ((summary.drag_n * v) / 0.68 + 25.0)
-                                   : ((weight_n * std::sqrt(weight_n / std::max(1e-4, 2.0 * rho * disk_area))) / eta_prop + 35.0);
+                                   : ((req_hover_thrust_n * std::sqrt(req_hover_thrust_n / std::max(1e-4, 2.0 * rho * disk_area))) / eta_prop + 35.0);
     const int cells = std::clamp(params.battery_cells_s, 3, 14);
     const double v_nom = static_cast<double>(cells) * 3.85;
     summary.cutoff_voltage_v = static_cast<double>(cells) * 3.20;
-    const double r0 = std::max(0.002, static_cast<double>(params.battery_r0_ohm));
-    // Solve P = (Voc - I*r0)*I for pack current I
+    // Manufacturing cell/wire scatter raises effective internal resistance
+    const double r0 = std::max(0.002, static_cast<double>(params.battery_r0_ohm) * (1.0 + 1.5 * mfg_tol));
     const double disc = v_nom * v_nom - 4.0 * r0 * power_req_w;
     if (disc >= 0.0) {
         summary.hover_or_cruise_current_a = (v_nom - std::sqrt(disc)) / (2.0 * r0);
@@ -666,18 +707,19 @@ void evaluate_live_physics_and_curves(const AircraftDesignParams &params, const 
         summary.hover_or_cruise_current_a = v_nom / (2.0 * r0);
         summary.loaded_bus_voltage_v = summary.cutoff_voltage_v - 1.5;
     }
-    const double cap_ah = std::max(0.5, static_cast<double>(params.battery_capacity_ah));
+    const double cap_ah = std::max(0.5, static_cast<double>(params.battery_capacity_ah)) * tol_factor;
     summary.est_endurance_min = (cap_ah / std::max(0.5, summary.hover_or_cruise_current_a)) * 60.0 * 0.85;
-    summary.motor_temp_c = static_cast<double>(params.oat_c) + (summary.hover_or_cruise_current_a * summary.hover_or_cruise_current_a * r0 + 0.10 * power_req_w) * 0.35;
+    const double cool_scale = (params.motor_cooling_grade == 0) ? 0.55 : (params.motor_cooling_grade == 2 ? 0.22 : 0.35);
+    summary.motor_temp_c = static_cast<double>(params.oat_c) + (summary.hover_or_cruise_current_a * summary.hover_or_cruise_current_a * r0 + 0.10 * power_req_w) * cool_scale;
 
-    // Cantilever structural arm/wing root bending FoS (6mm CFRP spar proxy)
     const double lever_m = (params.family == VehicleFamily::FixedWing || params.family == VehicleFamily::VTOL)
                                ? (static_cast<double>(params.wingspan_m) * 0.25)
                                : (params.family == VehicleFamily::Helicopter ? static_cast<double>(params.tail_boom_length_m) * 0.5 : static_cast<double>(params.arm_length_m));
-    const double load_per_limb = (params.family == VehicleFamily::Multirotor) ? (weight_n / std::max(3, params.rotor_count)) : (weight_n * 0.5);
+    const double load_per_limb = (params.family == VehicleFamily::Multirotor) ? (req_hover_thrust_n / std::max(3, params.rotor_count)) : (req_hover_thrust_n * 0.5);
     const double root_moment_nm = std::max(0.2, load_per_limb * lever_m * 1.5);
-    constexpr double allowable_moment_nm = 26.0; // CFRP tube screening yield moment
-    summary.structural_fos = allowable_moment_nm / root_moment_nm;
+    constexpr double allowable_moment_nm = 26.0;
+    // Manufacturing tolerance derates structural yield safety factor
+    summary.structural_fos = (allowable_moment_nm * tol_factor) / root_moment_nm;
 
     const bool battery_overload_fail = (summary.loaded_bus_voltage_v < summary.cutoff_voltage_v) || (summary.motor_temp_c > 95.0);
     const bool tip_mach_fail = (params.family != VehicleFamily::CustomPart && params.family != VehicleFamily::FixedWing && summary.rotor_tip_mach > 0.70);
@@ -729,28 +771,28 @@ void evaluate_live_physics_and_curves(const AircraftDesignParams &params, const 
                                        : std::clamp(68.0 + (summary.lift_n / weight_n) * 14.0 + summary.lift_to_drag * 0.65, 45.0, 96.5);
         const double cog_mag = std::sqrt(summary.center_of_mass_m[0] * summary.center_of_mass_m[0] +
                                          summary.center_of_mass_m[1] * summary.center_of_mass_m[1]);
-        summary.predicted_readiness_pct = std::clamp(aero_margin - cog_mag * 25.0 - rain * 0.15, 12.0, 97.5);
+        summary.predicted_readiness_pct = std::clamp(aero_margin - cog_mag * 25.0 - rain * 0.15 - peak_wind * 0.7 - params.mfg_tolerance_pct * 0.4, 10.0, 97.5);
         if (params.attach_custom_part || params.family == VehicleFamily::CustomPart) {
             summary.benchmark_match_pct = -1.0;
-            summary.benchmark_source_tag = "Custom redesigned CAD (physical test pending)";
+            summary.benchmark_source_tag = "Brand-New Custom Design (Physics+Elec Only)";
             summary.validation_status = "UNVALIDATED_CUSTOM";
-            summary.status_detail = "C++ mass/CoG + Thevenin/stress checked; custom geometry unmeasured";
+            summary.status_detail = "Physics+Electronics+Wind+MfgTol checked; real physical bench test N/A yet";
         } else {
             if (params.family == VehicleFamily::Multirotor) {
                 summary.benchmark_match_pct = 94.2;
-                summary.benchmark_source_tag = "UIUC + SIT + QDrone + M100 (DEVELOPMENT)";
+                summary.benchmark_source_tag = "Preloaded Asset: UIUC+SIT+QDrone+M100 (DEVELOPMENT)";
             } else if (params.family == VehicleFamily::FixedWing) {
                 summary.benchmark_match_pct = 91.8;
-                summary.benchmark_source_tag = "Airfoil360 Re=100K Tunnel + Prandtl (DEVELOPMENT)";
+                summary.benchmark_source_tag = "Preloaded Asset: Airfoil360 Tunnel+Prandtl (DEVELOPMENT)";
             } else if (params.family == VehicleFamily::Helicopter) {
                 summary.benchmark_match_pct = 86.4;
-                summary.benchmark_source_tag = "NASA TM-81232 Caradonna-Tung BEMT (DEVELOPMENT)";
+                summary.benchmark_source_tag = "Preloaded Asset: NASA Caradonna-Tung BEMT (DEVELOPMENT)";
             } else {
                 summary.benchmark_match_pct = 90.5;
-                summary.benchmark_source_tag = "PX4 VTOL 2572d282 + Quadplane (DEVELOPMENT)";
+                summary.benchmark_source_tag = "Preloaded Asset: PX4 VTOL 2572d282+Quadplane (DEVELOPMENT)";
             }
             summary.validation_status = "DEVELOPMENT";
-            summary.status_detail = "C++20 physics + electronics + public benchmark envelope active";
+            summary.status_detail = "Preloaded asset + Wind/Gust + Mfg Tolerance physics active";
         }
     }
 }

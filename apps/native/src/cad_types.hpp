@@ -33,6 +33,8 @@ enum class SketchShapeKind {
     RingDuct = 1,
     AirfoilSection = 2,
     HexMount = 3,
+    CustomPropeller = 4,
+    CustomBodyShell = 5,
 };
 
 struct CustomPartParams {
@@ -90,8 +92,12 @@ struct AircraftDesignParams {
     float airspeed_m_s = 18.0f;
     float rain_mm_h = 0.0f;
     float oat_c = 25.0f;
+    float altitude_asl_m = 0.0f;
     float wind_x_m_s = 0.0f;
     float wind_y_m_s = 0.0f;
+    float turbulence_pct = 10.0f;     // Gust / chaotic wind margin [0..50 %]
+    float mfg_tolerance_pct = 5.0f;   // Manufacturing tolerance / defect margin [0..25 %]
+    int motor_cooling_grade = 1;      // 0=Poor, 1=Medium, 2=Good (eCalc style)
 
     // Editable Part Studio feature
     CustomPartParams active_part{};
@@ -165,7 +171,10 @@ struct LiveEvidenceSummary {
     double est_endurance_min = 24.0;
     double rotor_tip_mach = 0.28;
     double thrust_to_weight = 2.0;
+    double hover_throttle_pct = 44.0;
     double structural_fos = 3.2;
+    double air_density_kg_m3 = 1.225;
+    double wind_speed_m_s = 0.0;
     double motor_temp_c = 38.0;
     double predicted_readiness_pct = 92.5;
     double benchmark_match_pct = 94.2; // < 0 means N/A (custom unmeasured geometry)
