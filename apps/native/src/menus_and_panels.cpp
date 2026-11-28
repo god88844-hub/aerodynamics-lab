@@ -168,7 +168,19 @@ void AppWorkbench::draw_menu_bar() {
         ImGui::Separator();
         if (ImGui::MenuItem("Open Project (.json)...")) {
             const auto path = native_open_file_dialog("Aerodynamics Lab Project", "json");
-            if (!path.empty()) export_banner = "Opened: " + path;
+            if (!path.empty()) {
+                std::ifstream ifs(path);
+                std::string text((std::istreambuf_iterator<char>(ifs)), std::istreambuf_iterator<char>());
+                if (!text.empty()) {
+                    push_undo_snapshot();
+                    if (WorkerIPC::load_project_payload_json(text, params)) {
+                        rebuild_geometry();
+                        export_banner = "Opened: " + path;
+                    } else {
+                        export_banner = "Open failed (unsupported JSON): " + path;
+                    }
+                }
+            }
         }
         if (ImGui::MenuItem("Save Project Copy...")) {
             const auto path = native_save_file_dialog("project.json", "JSON Project", "json");
@@ -185,7 +197,8 @@ void AppWorkbench::draw_menu_bar() {
             show_part_export_modal = true;
         }
         if (ImGui::MenuItem("Export 2D Wing Drawing (SVG / DXF)")) {
-            ipc_->launch_python_command("export-drawing", ipc_->build_project_payload_json(params));
+            ipc_->launch_python_command("export-drawing",
+                                        ipc_->build_drawing_payload_json(params, repo_root_ / ".local" / "tmp" / "native_exports"));
         }
         ImGui::Separator();
         if (ImGui::MenuItem("Exit")) {
@@ -315,7 +328,7 @@ void AppWorkbench::draw_menu_bar() {
     if (ImGui::BeginMenu("Verification")) {
         if (ImGui::MenuItem("Open Verification & Benchmark Scorecard")) show_verification_modal = true;
         if (ImGui::MenuItem("Run Twin % Source Comparison")) {
-            ipc_->launch_python_command("compare-source", ipc_->build_project_payload_json(params));
+            ipc_->launch_python_command("compare-source", ipc_->build_compare_payload_json(params, evidence));
         }
         if (ImGui::MenuItem("Run Bounded Parameter Sweep")) {
             ipc_->launch_python_command("bounded-sweep", ipc_->build_project_payload_json(params));
@@ -400,7 +413,13 @@ void AppWorkbench::draw_left_feature_tree() {
     ImGui::Spacing();
     if (ImGui::CollapsingHeader("Worker Status", ImGuiTreeNodeFlags_DefaultOpen)) {
         const auto st = ipc_->snapshot_status();
+        ImGui::TextColored(st.last_ok ? ImVec4(0.10f, 0.42f, 0.25f, 1.0f) : ImVec4(0.80f, 0.16f, 0.16f, 1.0f),
+                           "%s", st.last_ok ? "Worker Ready / OK" : "Worker Warning / Error");
         ImGui::TextWrapped("%s", st.summary_line.c_str());
+        if (!export_banner.empty()) {
+            ImGui::Separator();
+            ImGui::TextWrapped("%s", export_banner.c_str());
+        }
     }
     ImGui::End();
 }
@@ -494,7 +513,7 @@ void AppWorkbench::draw_right_inspector() {
                 changed |= ImGui::SliderFloat("Rotor Tilt (deg)", &params.vtol_tilt_deg, 0.0f, 90.0f, "%.0f");
             }
             const char *airfoils[] = {"2412", "0012", "4412", "23012", "6412"};
-            for (int a = 0; a < 4; ++a) {
+            for (int a = 0; a < 5; ++a) {
                 if (a > 0) ImGui::SameLine();
                 if (ImGui::SmallButton(airfoils[a])) {
                     params.airfoil_code = airfoils[a];
@@ -667,7 +686,7 @@ void AppWorkbench::draw_modals() {
         ImGui::BulletText("Pinned Campaigns: SIT battery, UIUC propeller, QDrone, Fixed-Wing, Rotorcraft -> DEVELOPMENT.");
         ImGui::BulletText("Physical validation remains explicit until real matched test logs pass held-out criteria.");
         if (ImGui::Button("Run Twin % Source Comparison")) {
-            ipc_->launch_python_command("compare-source", ipc_->build_project_payload_json(params));
+            ipc_->launch_python_command("compare-source", ipc_->build_compare_payload_json(params, evidence));
         }
         ImGui::SameLine();
         if (ImGui::Button("Run Bounded Parameter Sweep")) {

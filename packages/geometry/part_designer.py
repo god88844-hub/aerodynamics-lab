@@ -11,7 +11,7 @@ from typing import Any
 
 import ezdxf
 
-SUPPORTED_SKETCH_KINDS = ("rounded_plate", "ring_duct", "airfoil_section", "hex_mount")
+SUPPORTED_SKETCH_KINDS = ("rounded_plate", "ring_duct", "airfoil_section", "hex_mount", "custom_propeller", "custom_body_shell")
 
 
 @dataclass(frozen=True)
@@ -60,6 +60,12 @@ def _analytic_unit_volume_m3(recipe: CustomPartRecipe) -> float:
         r_out = max(0.03, recipe.width_m)
         r_in = max(0.005, min(r_out - recipe.thickness_m, 0.9 * r_out))
         return math.pi * (r_out * r_out - r_in * r_in) * (0.5 * recipe.length_m)
+    if recipe.sketch_kind == "custom_propeller":
+        prop_d = max(0.12, 1.4 * recipe.length_m)
+        blades = max(2, min(6, recipe.circular_pattern_count if recipe.circular_pattern_count >= 2 else 2))
+        return blades * (0.45 * 0.5 * prop_d) * recipe.width_m * recipe.thickness_m
+    if recipe.sketch_kind == "custom_body_shell":
+        return 0.42 * math.pi * (1.1 * recipe.width_m) ** 2 * (2.2 * recipe.length_m)
     if recipe.sketch_kind == "airfoil_section":
         t_ratio = max(0.04, int(recipe.airfoil_code[2:]) / 100.0) if len(recipe.airfoil_code) == 4 and recipe.airfoil_code.isdigit() else 0.12
         return 0.685 * recipe.length_m * (recipe.length_m * t_ratio) * recipe.thickness_m

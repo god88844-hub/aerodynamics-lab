@@ -62,28 +62,32 @@ def test_swap_assembly_part_updates_total_mass_and_cog() -> None:
 def test_cli_build_custom_part_roundtrip(tmp_path: Path) -> None:
     in_path = tmp_path / "part_in.json"
     out_path = tmp_path / "part_out.json"
-    in_path.write_text(
-        json.dumps(
-            {
-                "part_name": "Tail Rib",
-                "sketch_kind": "airfoil_section",
-                "length_m": 0.22,
-                "width_m": 0.04,
-                "thickness_m": 0.012,
-                "density_kg_m3": 450.0,
-                "density_source": "aircraft_spruce_spec",
-                "export_dir": str(tmp_path / "cad_out"),
-            }
-        ),
-        encoding="utf-8",
-    )
-    proc = subprocess.run(
-        [sys.executable, str(ROOT / "scripts/lab_project.py"), "build-custom-part", str(in_path), str(out_path)],
-        capture_output=True,
-        text=True,
-        check=True,
-    )
-    assert proc.returncode == 0
-    payload = json.loads(out_path.read_text(encoding="utf-8"))
-    assert payload["part_name"] == "Tail Rib"
-    assert Path(payload["exports"]["dxf"]).is_file()
+    for sk in ("airfoil_section", "custom_propeller", "custom_body_shell"):
+        in_path.write_text(
+            json.dumps(
+                {
+                    "part_name": f"Custom {sk}",
+                    "sketch_kind": sk,
+                    "length_m": 0.22,
+                    "width_m": 0.04,
+                    "thickness_m": 0.012,
+                    "circular_pattern_count": 3,
+                    "density_kg_m3": 450.0,
+                    "density_source": "aircraft_spruce_spec",
+                    "export_dir": str(tmp_path / "cad_out"),
+                }
+            ),
+            encoding="utf-8",
+        )
+        proc = subprocess.run(
+            [sys.executable, str(ROOT / "scripts/lab_project.py"), "build-custom-part", str(in_path), str(out_path)],
+            capture_output=True,
+            text=True,
+            check=True,
+        )
+        assert proc.returncode == 0
+        payload = json.loads(out_path.read_text(encoding="utf-8"))
+        assert payload["sketch_kind"] == sk
+        assert payload["mass_kg"] > 0.0
+        assert Path(payload["exports"]["dxf"]).is_file()
+        assert Path(payload["exports"]["stl"]).is_file()
