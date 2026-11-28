@@ -8014,6 +8014,15 @@
       "parameter_rule": "Unsourced/typical/generic parameters and assumed uncertainty bands are UNVERIFIED_ESTIMATE, even where a legacy source estimated flag is false; inspect parameter-level notes."
     },
     {
+      "artifact": "data/components/standards/silicone_wire_awg.json",
+      "id": "materials",
+      "source_metadata": null,
+      "policy_role": "CALIBRATION_OR_SCREENING_NOT_INDEPENDENT_VALIDATION",
+      "physical_acceptance": "UNVALIDATED",
+      "license": "DATA_SPECIFIC_RIGHTS_UNRESOLVED_NOT_INHERITED_FROM_PROJECT",
+      "parameter_rule": "Unsourced/typical/generic parameters and assumed uncertainty bands are UNVERIFIED_ESTIMATE, even where a legacy source estimated flag is false; inspect parameter-level notes."
+    },
+    {
       "artifact": "data/components/turbines/micro_turbines_and_edfs.json",
       "id": "materials",
       "source_metadata": null,
@@ -8035,15 +8044,6 @@
         "status": "UNVERIFIED_ESTIMATE",
         "notes": "DC resistance at 20 C follows ASTM B258 copper cross-section; installed ampacity (60 A) and jacket mass/m depend on airflow/bundling and are UNVERIFIED_ESTIMATE until measured on the exact harness."
       },
-      "policy_role": "CALIBRATION_OR_SCREENING_NOT_INDEPENDENT_VALIDATION",
-      "physical_acceptance": "UNVALIDATED",
-      "license": "DATA_SPECIFIC_RIGHTS_UNRESOLVED_NOT_INHERITED_FROM_PROJECT",
-      "parameter_rule": "Unsourced/typical/generic parameters and assumed uncertainty bands are UNVERIFIED_ESTIMATE, even where a legacy source estimated flag is false; inspect parameter-level notes."
-    },
-    {
-      "artifact": "data/components/wiring/silicone_wire_awg.json",
-      "id": "materials",
-      "source_metadata": null,
       "policy_role": "CALIBRATION_OR_SCREENING_NOT_INDEPENDENT_VALIDATION",
       "physical_acceptance": "UNVALIDATED",
       "license": "DATA_SPECIFIC_RIGHTS_UNRESOLVED_NOT_INHERITED_FROM_PROJECT",
@@ -8364,6 +8364,12 @@
       "hash_semantics": "LF_NORMALIZED_REPOSITORY_TEXT"
     },
     {
+      "path": "data/components/standards/silicone_wire_awg.json",
+      "bytes_hashed": 847,
+      "sha256": "9ee6b4858a9976530fd57530d8b1e127e43860f05d990f47a87b60de954fc396",
+      "hash_semantics": "LF_NORMALIZED_REPOSITORY_TEXT"
+    },
+    {
       "path": "data/components/turbines/micro_turbines_and_edfs.json",
       "bytes_hashed": 1254,
       "sha256": "c759a0c689ce2e2a9dcd35bd56abfea4b6dd4fdb9b3fc2b82a26a04218444f69",
@@ -8373,12 +8379,6 @@
       "path": "data/components/wiring/silicone_awg12_bus.json",
       "bytes_hashed": 2979,
       "sha256": "29ae86adf8abcf25b112d2d4cda9e8c766fe8af6c2871e4561fb497ddaa5db54",
-      "hash_semantics": "LF_NORMALIZED_REPOSITORY_TEXT"
-    },
-    {
-      "path": "data/components/wiring/silicone_wire_awg.json",
-      "bytes_hashed": 847,
-      "sha256": "9ee6b4858a9976530fd57530d8b1e127e43860f05d990f47a87b60de954fc396",
       "hash_semantics": "LF_NORMALIZED_REPOSITORY_TEXT"
     },
     {
