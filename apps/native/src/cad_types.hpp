@@ -77,13 +77,19 @@ struct AircraftDesignParams {
     float main_rotor_diameter_m = 1.48f;
     float tail_boom_length_m = 0.88f;
 
-    // Propulsion / Mass / Aero test state
+    // Propulsion / Electronics / Stress / Weather state
     float battery_mass_kg = 1.55f;
     float payload_mass_kg = 0.35f;
     float frame_mass_kg = 1.20f;
     float motor_mass_kg = 0.103f;
+    float battery_capacity_ah = 10.0f;
+    float battery_r0_ohm = 0.025f;
+    int battery_cells_s = 6;
+    float rotor_rpm = 4800.0f;
     float alpha_deg = 5.5f;
     float airspeed_m_s = 18.0f;
+    float rain_mm_h = 0.0f;
+    float oat_c = 25.0f;
     float wind_x_m_s = 0.0f;
     float wind_y_m_s = 0.0f;
 
@@ -145,7 +151,7 @@ struct LiveEvidenceSummary {
     bool clearance_ok = true;
     double min_tip_clearance_m = 0.0;
 
-    // Aero & Flight KPIs
+    // Aero, Electronics & Stress KPIs
     double lift_n = 0.0;
     double drag_n = 0.0;
     double cl = 0.0;
@@ -153,6 +159,14 @@ struct LiveEvidenceSummary {
     double lift_to_drag = 0.0;
     double reynolds = 0.0;
     double mach = 0.0;
+    double hover_or_cruise_current_a = 18.0;
+    double loaded_bus_voltage_v = 24.7;
+    double cutoff_voltage_v = 19.2;
+    double est_endurance_min = 24.0;
+    double rotor_tip_mach = 0.28;
+    double thrust_to_weight = 2.0;
+    double structural_fos = 3.2;
+    double motor_temp_c = 38.0;
     double predicted_readiness_pct = 92.5;
     double benchmark_match_pct = 94.2; // < 0 means N/A (custom unmeasured geometry)
     std::string benchmark_source_tag = "Pinned UIUC + SIT + QDrone Ref (DEVELOPMENT)";

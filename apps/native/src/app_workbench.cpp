@@ -65,15 +65,19 @@ void AppWorkbench::switch_family(VehicleFamily family) {
     selected_part_idx = -1;
     if (family == VehicleFamily::Multirotor) {
         params.project_name = "Quad MN3508 Baseline";
+        params.rotor_rpm = 4800.0f;
         camera.distance_m = 1.65f;
     } else if (family == VehicleFamily::FixedWing) {
         params.project_name = "Fixed-Wing Trainer";
+        params.rotor_rpm = 6200.0f;
         camera.distance_m = 2.40f;
     } else if (family == VehicleFamily::Helicopter) {
         params.project_name = "Helicopter Rotorcraft";
+        params.rotor_rpm = 1450.0f;
         camera.distance_m = 2.25f;
     } else if (family == VehicleFamily::VTOL) {
         params.project_name = "VTOL Tiltrotor";
+        params.rotor_rpm = 4200.0f;
         camera.distance_m = 2.45f;
     } else {
         params.project_name = "Part Designer Studio";
