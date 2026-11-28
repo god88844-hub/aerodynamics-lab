@@ -16,6 +16,49 @@ namespace {
 constexpr float kPi = std::numbers::pi_v<float>;
 
 void draw_polar_plot(const LiveEvidenceSummary &ev) {
+    if (ev.rocket_traj_t_s.size() >= 2) {
+        ImGui::TextUnformatted("Rocket Ascent (Alt km [Blue] & q kPa [Orange])");
+        const ImVec2 avail = ImGui::GetContentRegionAvail();
+        const ImVec2 size(std::max(140.0f, avail.x), 118.0f);
+        const ImVec2 p0 = ImGui::GetCursorScreenPos();
+        const ImVec2 p1(p0.x + size.x, p0.y + size.y);
+        ImDrawList *dl = ImGui::GetWindowDrawList();
+
+        dl->AddRectFilled(p0, p1, IM_COL32(250, 252, 255, 255), 4.0f);
+        dl->AddRect(p0, p1, IM_COL32(204, 213, 224, 255), 4.0f);
+
+        const float pad_l = 32.0f, pad_r = 10.0f, pad_t = 10.0f, pad_b = 18.0f;
+        const float gx0 = p0.x + pad_l, gx1 = p1.x - pad_r;
+        const float gy0 = p0.y + pad_t, gy1 = p1.y - pad_b;
+        const float t_max = std::max(10.0f, ev.rocket_traj_t_s.back());
+        float alt_max = 100.0f, q_max = 35.0f;
+        for (float a : ev.rocket_traj_alt_km) alt_max = std::max(alt_max, a);
+        for (float qk : ev.rocket_traj_q_kpa) q_max = std::max(q_max, qk);
+
+        for (std::size_t i = 0; i + 1 < ev.rocket_traj_t_s.size(); ++i) {
+            const float u0 = ev.rocket_traj_t_s[i] / t_max;
+            const float u1 = ev.rocket_traj_t_s[i + 1] / t_max;
+            const float va0 = std::clamp(ev.rocket_traj_alt_km[i] / alt_max, 0.0f, 1.0f);
+            const float va1 = std::clamp(ev.rocket_traj_alt_km[i + 1] / alt_max, 0.0f, 1.0f);
+            dl->AddLine(ImVec2(gx0 + u0 * (gx1 - gx0), gy1 - va0 * (gy1 - gy0)),
+                        ImVec2(gx0 + u1 * (gx1 - gx0), gy1 - va1 * (gy1 - gy0)),
+                        IM_COL32(37, 99, 235, 255), 2.2f);
+            const float vq0 = std::clamp(ev.rocket_traj_q_kpa[i] / q_max, 0.0f, 1.0f);
+            const float vq1 = std::clamp(ev.rocket_traj_q_kpa[i + 1] / q_max, 0.0f, 1.0f);
+            dl->AddLine(ImVec2(gx0 + u0 * (gx1 - gx0), gy1 - vq0 * (gy1 - gy0)),
+                        ImVec2(gx0 + u1 * (gx1 - gx0), gy1 - vq1 * (gy1 - gy0)),
+                        IM_COL32(234, 88, 12, 255), 2.0f);
+        }
+        char top_lbl[32], q_lbl[32];
+        std::snprintf(top_lbl, sizeof(top_lbl), "%.0fkm", alt_max);
+        std::snprintf(q_lbl, sizeof(q_lbl), "MaxQ %.0fkPa", q_max);
+        dl->AddText(ImVec2(p0.x + 3.0f, gy0), IM_COL32(37, 99, 235, 255), top_lbl);
+        dl->AddText(ImVec2(gx1 - 76.0f, gy0), IM_COL32(234, 88, 12, 255), q_lbl);
+        dl->AddText(ImVec2(gx0, p1.y - 16.0f), IM_COL32(95, 108, 125, 255), "0s");
+        dl->AddText(ImVec2(gx1 - 36.0f, p1.y - 16.0f), IM_COL32(95, 108, 125, 255), "420s");
+        ImGui::Dummy(size);
+        return;
+    }
     if (ev.curve_alpha_deg.size() < 2) return;
     ImGui::TextUnformatted("Lift Coefficient (CL vs Alpha)");
     const ImVec2 avail = ImGui::GetContentRegionAvail();
@@ -172,6 +215,7 @@ void AppWorkbench::draw_menu_bar() {
         if (ImGui::MenuItem("New VTOL Tailsitter (dRehmFlight)")) switch_family(VehicleFamily::Tailsitter);
         if (ImGui::MenuItem("New Swept Flying Wing (Project-Air)")) switch_family(VehicleFamily::FlyingWing);
         if (ImGui::MenuItem("New 2-Stage Rocket / Hypersonic (Phase 4)")) switch_family(VehicleFamily::RocketSpacecraft);
+        if (ImGui::MenuItem("New Transonic Airliner (NASA CRM)")) switch_family(VehicleFamily::Airliner);
         if (ImGui::MenuItem("New Custom Part Sketch")) switch_family(VehicleFamily::CustomPart);
         ImGui::Separator();
         if (ImGui::MenuItem("Open Project (.json)...")) {
@@ -390,6 +434,8 @@ void AppWorkbench::draw_quick_toolstrip() {
     ImGui::SameLine();
     if (ImGui::Button("Rocket")) switch_family(VehicleFamily::RocketSpacecraft);
     ImGui::SameLine();
+    if (ImGui::Button("Airliner")) switch_family(VehicleFamily::Airliner);
+    ImGui::SameLine();
     if (ImGui::Button("Part Designer")) switch_family(VehicleFamily::CustomPart);
 
     // Row 2: CAD Assembly, Motion, Multiphysics & Solver Tools
@@ -568,7 +614,7 @@ void AppWorkbench::draw_right_inspector() {
             changed |= ImGui::SliderFloat("Prop Diameter (m)", &params.prop_diameter_m, 0.16f, 0.50f, "%.3f");
         } else if (params.family == VehicleFamily::FixedWing || params.family == VehicleFamily::VTOL ||
                    params.family == VehicleFamily::Seaplane || params.family == VehicleFamily::Jet ||
-                   params.family == VehicleFamily::FlyingWing) {
+                   params.family == VehicleFamily::FlyingWing || params.family == VehicleFamily::Airliner) {
             changed |= ImGui::SliderFloat("Wingspan (m)", &params.wingspan_m, 0.5f, 3.8f, "%.2f");
             changed |= ImGui::SliderFloat("Root Chord (m)", &params.root_chord_m, 0.10f, 0.60f, "%.3f");
             changed |= ImGui::SliderFloat("Tip Chord (m)", &params.tip_chord_m, 0.05f, 0.45f, "%.3f");
@@ -585,10 +631,15 @@ void AppWorkbench::draw_right_inspector() {
             }
             if (params.family == VehicleFamily::Jet) {
                 changed |= ImGui::SliderFloat("Jet Throt (%)", &params.jet_throttle_pct, 20.0f, 105.0f, "%.0f");
+                changed |= ImGui::Checkbox("Afterburner (1.55x Wet)", &params.jet_afterburner);
+                changed |= ImGui::Checkbox("Ramjet / Scramjet M2-6", &params.jet_ramjet);
                 changed |= ImGui::SliderFloat("Wing t/c", &params.wing_tc_ratio, 0.04f, 0.16f, "%.3f");
                 changed |= ImGui::SliderFloat("Intake Area (m2)", &params.intake_area_m2, 0.0010f, 0.0100f, "%.4f");
                 changed |= ImGui::SliderFloat("Nozzle Ae/At", &params.nozzle_area_ratio, 0.75f, 2.00f, "%.2f");
                 changed |= ImGui::SliderFloat("Fuel Mass (kg)", &params.fuel_mass_kg, 0.10f, 4.00f, "%.2f");
+            } else if (params.family == VehicleFamily::Airliner) {
+                changed |= ImGui::SliderFloat("Cruise Throt (%)", &params.jet_throttle_pct, 20.0f, 105.0f, "%.0f");
+                changed |= ImGui::SliderFloat("Wing t/c", &params.wing_tc_ratio, 0.07f, 0.14f, "%.3f");
             }
             const char *airfoils[] = {"2412", "0012", "4412", "23012", "6412"};
             for (int a = 0; a < 5; ++a) {
@@ -640,48 +691,55 @@ void AppWorkbench::draw_right_inspector() {
             }
         }
 
-        ImGui::Separator();
-        ImGui::TextDisabled("Preloaded Hardware (Select Only):");
-        const char *hw_items[] = {"MN3508 + 6S 10Ah", "ECOII 2807 + 4S", "70mm 12B EDF 6S",
-                                  "Micro Coreless 1S", "KingTech K-45G4 45N", "JetCat P100-RX 100N"};
-        if (ImGui::Combo("Catalog Power", &params.hardware_catalog_idx, hw_items, 6)) {
-            push_undo_snapshot();
-            if (params.hardware_catalog_idx == 0) {
-                params.battery_cells_s = 6; params.battery_capacity_ah = 10.0f; params.battery_r0_ohm = 0.025f; params.battery_mass_kg = 1.55f;
-            } else if (params.hardware_catalog_idx == 1) {
-                params.battery_cells_s = 4; params.battery_capacity_ah = 4.5f; params.battery_r0_ohm = 0.018f; params.battery_mass_kg = 0.55f;
-            } else if (params.hardware_catalog_idx == 2) {
-                params.battery_cells_s = 6; params.battery_capacity_ah = 5.0f; params.battery_r0_ohm = 0.015f; params.battery_mass_kg = 0.78f;
-            } else if (params.hardware_catalog_idx == 3) {
-                params.battery_cells_s = 1; params.battery_capacity_ah = 0.5f; params.battery_r0_ohm = 0.065f; params.battery_mass_kg = 0.012f;
-            } else if (params.hardware_catalog_idx == 4) {
-                params.battery_cells_s = 2; params.battery_capacity_ah = 2.2f; params.battery_r0_ohm = 0.020f; params.battery_mass_kg = 0.90f;
-            } else {
-                params.battery_cells_s = 3; params.battery_capacity_ah = 3.0f; params.battery_r0_ohm = 0.020f; params.battery_mass_kg = 1.45f;
+        if (params.family != VehicleFamily::RocketSpacecraft) {
+            ImGui::Separator();
+            ImGui::TextDisabled("Preloaded Hardware (Select Only):");
+            const char *hw_items[] = {"MN3508 + 6S 10Ah", "ECOII 2807 + 4S", "70mm 12B EDF 6S",
+                                      "Micro Coreless 1S", "KingTech K-45G4 45N", "JetCat P100-RX 100N"};
+            if (ImGui::Combo("Catalog Power", &params.hardware_catalog_idx, hw_items, 6)) {
+                push_undo_snapshot();
+                if (params.hardware_catalog_idx == 0) {
+                    params.battery_cells_s = 6; params.battery_capacity_ah = 10.0f; params.battery_r0_ohm = 0.025f; params.battery_mass_kg = 1.55f;
+                } else if (params.hardware_catalog_idx == 1) {
+                    params.battery_cells_s = 4; params.battery_capacity_ah = 4.5f; params.battery_r0_ohm = 0.018f; params.battery_mass_kg = 0.55f;
+                } else if (params.hardware_catalog_idx == 2) {
+                    params.battery_cells_s = 6; params.battery_capacity_ah = 5.0f; params.battery_r0_ohm = 0.015f; params.battery_mass_kg = 0.78f;
+                } else if (params.hardware_catalog_idx == 3) {
+                    params.battery_cells_s = 1; params.battery_capacity_ah = 0.5f; params.battery_r0_ohm = 0.065f; params.battery_mass_kg = 0.012f;
+                } else if (params.hardware_catalog_idx == 4) {
+                    params.battery_cells_s = 2; params.battery_capacity_ah = 2.2f; params.battery_r0_ohm = 0.020f; params.battery_mass_kg = 0.90f;
+                } else {
+                    params.battery_cells_s = 3; params.battery_capacity_ah = 3.0f; params.battery_r0_ohm = 0.020f; params.battery_mass_kg = 1.45f;
+                }
+                changed = true;
             }
-            changed = true;
+            changed |= ImGui::SliderFloat("Battery Mass (kg)", &params.battery_mass_kg, 0.01f, 4.5f, "%.2f");
+            changed |= ImGui::SliderFloat("Payload Mass (kg)", &params.payload_mass_kg, 0.0f, 15.0f, "%.2f");
+            changed |= ImGui::SliderFloat("Alpha (deg)", &params.alpha_deg, -4.0f, 16.0f, "%.1f");
+            const float max_spd = (params.family == VehicleFamily::Jet)
+                                      ? (params.jet_ramjet ? 2200.0f : 560.0f)
+                                      : (params.family == VehicleFamily::Airliner ? 340.0f : 45.0f);
+            changed |= ImGui::SliderFloat("Airspeed (m/s)", &params.airspeed_m_s, 1.0f, max_spd, "%.1f");
+            ImGui::Separator();
+            ImGui::TextDisabled("Standards Fasteners & Harness BOM:");
+            const char *screw_sizes[] = {"M2 (ISO 4762)", "M2.5 (ISO 4762)", "M3 (ISO 4762)", "M4 (ISO 4762)", "M5 (ISO 4762)", "M6 (ISO 4762)"};
+            changed |= ImGui::Combo("Joint Screw", &params.screw_size_idx, screw_sizes, 6);
+            changed |= ImGui::Checkbox("Ti-6Al-4V Fasteners", &params.titanium_screws);
+            changed |= ImGui::SliderInt("Power Wire (AWG)", &params.wire_awg, 10, 22);
+            changed |= ImGui::SliderFloat("Exploded View", &params.explode_factor, 0.0f, 1.5f, "%.2f");
+            changed |= ImGui::SliderFloat("RF Range (km)", &params.rf_distance_km, 0.2f, 25.0f, "%.1f");
+            changed |= ImGui::Checkbox("Stealth RCS Shaping", &params.stealth_shaping);
         }
-        changed |= ImGui::SliderFloat("Battery Mass (kg)", &params.battery_mass_kg, 0.01f, 4.5f, "%.2f");
-        changed |= ImGui::SliderFloat("Payload Mass (kg)", &params.payload_mass_kg, 0.0f, 15.0f, "%.2f");
-        changed |= ImGui::SliderFloat("Alpha (deg)", &params.alpha_deg, -4.0f, 16.0f, "%.1f");
-        const float max_spd = (params.family == VehicleFamily::Jet) ? 540.0f : 45.0f;
-        changed |= ImGui::SliderFloat("Airspeed (m/s)", &params.airspeed_m_s, 1.0f, max_spd, "%.1f");
-        ImGui::Separator();
-        ImGui::TextDisabled("Standards Fasteners & Harness BOM:");
-        const char *screw_sizes[] = {"M2 (ISO 4762)", "M2.5 (ISO 4762)", "M3 (ISO 4762)", "M4 (ISO 4762)", "M5 (ISO 4762)", "M6 (ISO 4762)"};
-        changed |= ImGui::Combo("Joint Screw", &params.screw_size_idx, screw_sizes, 6);
-        changed |= ImGui::Checkbox("Ti-6Al-4V Fasteners", &params.titanium_screws);
-        changed |= ImGui::SliderInt("Power Wire (AWG)", &params.wire_awg, 10, 22);
-        changed |= ImGui::SliderFloat("Exploded View", &params.explode_factor, 0.0f, 1.5f, "%.2f");
-        changed |= ImGui::SliderFloat("RF Range (km)", &params.rf_distance_km, 0.2f, 25.0f, "%.1f");
-        changed |= ImGui::Checkbox("Stealth RCS Shaping", &params.stealth_shaping);
         if (params.family == VehicleFamily::Helicopter) {
             changed |= ImGui::SliderFloat("Descent Rate (m/s)", &params.heli_descent_m_s, -10.0f, 5.0f, "%.1f");
         } else if (params.family == VehicleFamily::RocketSpacecraft) {
+            changed |= ImGui::Checkbox("Saturn V 3-Stage AS-506", &params.rocket_saturn_v_preset);
+            changed |= ImGui::SliderFloat("Payload Mass (kg)", &params.payload_mass_kg, 50.0f, 50000.0f, "%.0f");
             changed |= ImGui::SliderFloat("Stage 1 Prop (kg)", &params.rocket_stage1_prop_kg, 2000.0f, 35000.0f, "%.0f");
             changed |= ImGui::SliderFloat("Thrust (kN)", &params.rocket_thrust_kn, 150.0f, 750.0f, "%.0f");
             changed |= ImGui::SliderFloat("Nose Heatshield R (m)", &params.rocket_nose_radius_m, 0.15f, 1.60f, "%.2f");
             changed |= ImGui::SliderFloat("Re-entry (km/s)", &params.reentry_speed_km_s, 2.0f, 11.2f, "%.2f");
+            changed |= ImGui::SliderFloat("Exploded View", &params.explode_factor, 0.0f, 1.5f, "%.2f");
         }
     }
 
@@ -701,7 +759,9 @@ void AppWorkbench::draw_right_inspector() {
         if (params.family == VehicleFamily::Helicopter) {
             ImGui::Text("mu: %.2f | Gyro: %.1f Nm | VRS: %s", evidence.heli_mu, evidence.heli_gyro_nm, evidence.heli_vrs ? "FAIL" : "OK");
         } else if (params.family == VehicleFamily::Jet) {
-            ImGui::Text("M: %.2f | MDD: %.2f | eta_r: %.3f | mu: %.1f", evidence.mach, evidence.m_dd, evidence.inlet_recovery_eta, evidence.mach_cone_deg);
+            ImGui::Text("M: %.2f | MDD: %.2f | eta_r: %.3f | T_aw: %.0fC", evidence.mach, evidence.m_dd, evidence.inlet_recovery_eta, evidence.skin_temp_c);
+        } else if (params.family == VehicleFamily::Airliner) {
+            ImGui::Text("M: %.2f | Cabin dP: %.1fkPa | Hoop FoS: %.2fx", evidence.mach, evidence.cabin_delta_p_kpa, evidence.hoop_fos);
         } else if (params.family == VehicleFamily::CargoUAV) {
             ImGui::Text("Trail: %.1f deg | Pendulum: %.2f Hz | Clr: %.0fmm", evidence.trail_angle_deg, evidence.pendulum_hz, evidence.min_tip_clearance_m * 1000.0);
         } else if (params.family == VehicleFamily::Tailsitter) {
@@ -715,11 +775,13 @@ void AppWorkbench::draw_right_inspector() {
             if (params.family == VehicleFamily::MorphingWing) {
                 ImGui::Text("Roll: %.2f Nm | Yaw Cn: %.3f", evidence.roll_moment_nm, evidence.yaw_damping_cn);
             }
-        } else {
+        } else if (params.family != VehicleFamily::RocketSpacecraft) {
             ImGui::Text("Clearance: %.0f mm (%s)", evidence.min_tip_clearance_m * 1000.0,
                         evidence.clearance_ok ? "OK" : "FAIL");
         }
-        ImGui::Text("CL: %.2f | CD: %.3f | L/D: %.1f", evidence.cl, evidence.cd, evidence.lift_to_drag);
+        if (params.family != VehicleFamily::RocketSpacecraft) {
+            ImGui::Text("CL: %.2f | CD: %.3f | L/D: %.1f", evidence.cl, evidence.cd, evidence.lift_to_drag);
+        }
         draw_polar_plot(evidence);
     }
 
@@ -816,7 +878,11 @@ void AppWorkbench::draw_right_inspector() {
         changed |= ImGui::SliderFloat("Wind Y (m/s)", &params.wind_y_m_s, -25.0f, 25.0f, "%.1f");
         changed |= ImGui::SliderFloat("Gust/Turb (%)", &params.turbulence_pct, 0.0f, 50.0f, "%.0f");
         changed |= ImGui::SliderFloat("Mfg Tol (%)", &params.mfg_tolerance_pct, 0.0f, 25.0f, "%.0f");
-        changed |= ImGui::SliderFloat("Alt ASL (m)", &params.altitude_asl_m, 0.0f, 4000.0f, "%.0f");
+        const float max_alt = (params.family == VehicleFamily::Jet || params.family == VehicleFamily::Airliner ||
+                               params.family == VehicleFamily::RocketSpacecraft)
+                                  ? 35000.0f
+                                  : 4000.0f;
+        changed |= ImGui::SliderFloat("Alt ASL (m)", &params.altitude_asl_m, 0.0f, max_alt, "%.0f");
         const char *cooling_grades[] = {"Poor", "Medium", "Good"};
         changed |= ImGui::Combo("Motor Cooling", &params.motor_cooling_grade, cooling_grades, 3);
         changed |= ImGui::SliderFloat("Rotor RPM", &params.rotor_rpm, 800.0f, 16000.0f, "%.0f");
@@ -951,6 +1017,33 @@ void AppWorkbench::draw_modals() {
             switch_family(VehicleFamily::Seaplane);
             params.rotor_rpm = 1800.0f;
             params.water_chop_m = 0.18f;
+            rebuild_geometry();
+            ImGui::CloseCurrentPopup();
+        }
+        if (ImGui::Button("8. Helicopter Vortex Ring State (VRS Descent)")) {
+            switch_family(VehicleFamily::Helicopter);
+            params.rotor_rpm = 1450.0f;
+            params.airspeed_m_s = 1.2f;
+            params.heli_descent_m_s = -2.1f;
+            rebuild_geometry();
+            ImGui::CloseCurrentPopup();
+        }
+        if (ImGui::Button("9. X-15A-2 Mach 6.7 Skin Thermal Burn (>1100C)")) {
+            switch_family(VehicleFamily::Jet);
+            params.hardware_catalog_idx = 5;
+            params.jet_afterburner = true;
+            params.jet_ramjet = true;
+            params.altitude_asl_m = 31120.0f;
+            params.airspeed_m_s = 2020.0f;
+            params.jet_throttle_pct = 100.0f;
+            rebuild_geometry();
+            ImGui::CloseCurrentPopup();
+        }
+        if (ImGui::Button("10. Rocket Launch Pad Underweight / Wind-Shear Abort")) {
+            switch_family(VehicleFamily::RocketSpacecraft);
+            params.rocket_thrust_kn = 180.0f;
+            params.wind_x_m_s = 22.0f;
+            params.turbulence_pct = 45.0f;
             rebuild_geometry();
             ImGui::CloseCurrentPopup();
         }

@@ -1,5 +1,7 @@
 #pragma once
 
+#include <vector>
+
 namespace lab {
 
 struct AeroacousticsParams {
@@ -105,6 +107,9 @@ struct RocketSpaceflightParams {
     double dry_mass_stage2_kg = 480.0;
     double prop_mass_stage2_kg = 4200.0;
     double isp_stage2_s = 348.0;
+    double dry_mass_stage3_kg = 0.0;
+    double prop_mass_stage3_kg = 0.0;
+    double isp_stage3_s = 421.0;
     double payload_mass_kg = 250.0;
     double liftoff_thrust_n = 340000.0;
     double diameter_m = 1.65;
@@ -114,6 +119,15 @@ struct RocketSpaceflightParams {
     double reentry_altitude_m = 68000.0;
     double tps_max_temp_c = 1850.0;
     double stage_separation_t_s = 125.0;
+    double wind_speed_m_s = 0.0;
+    double turbulence_frac = 0.10;
+};
+
+struct RocketAscentSample {
+    double time_s = 0.0;
+    double altitude_km = 0.0;
+    double velocity_m_s = 0.0;
+    double q_kpa = 0.0;
 };
 
 struct RocketSpaceflightResult {
@@ -122,6 +136,7 @@ struct RocketSpaceflightResult {
     double liftoff_tw = 0.0;
     double delta_v_stage1_m_s = 0.0;
     double delta_v_stage2_m_s = 0.0;
+    double delta_v_stage3_m_s = 0.0;
     double total_delta_v_m_s = 0.0;
     double net_delta_v_m_s = 0.0;
     double orbital_vel_req_m_s = 0.0;
@@ -140,5 +155,6 @@ HelicopterHighSpeedResult evaluate_helicopter_highspeed(const HelicopterHighSpee
 HydroCavitationResult evaluate_hydro_cavitation(const HydroCavitationParams &p);
 RfStealthResult evaluate_rf_and_rcs(const RfStealthParams &p);
 RocketSpaceflightResult evaluate_rocket_and_hypersonics(const RocketSpaceflightParams &p);
+std::vector<RocketAscentSample> compute_rocket_ascent_trajectory(const RocketSpaceflightParams &p);
 
 } // namespace lab

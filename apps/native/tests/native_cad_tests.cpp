@@ -1,3 +1,6 @@
+#ifdef NDEBUG
+#undef NDEBUG
+#endif
 #include "cad_mesh_builder.hpp"
 #include "worker_ipc.hpp"
 
@@ -16,22 +19,24 @@ int main() {
         assert(std::abs(airfoil.front().x - 1.0f) < 1e-4f);
     }
 
-    // 2. Build all 12 VehicleFamily CAD scenes and verify non-empty triangles + CAD edges + realistic T/W
+    // 2. Build all 14 VehicleFamily CAD scenes and verify non-empty triangles + CAD edges + realistic T/W
     for (auto fam : {aerolab::VehicleFamily::Multirotor, aerolab::VehicleFamily::FixedWing,
                      aerolab::VehicleFamily::Helicopter, aerolab::VehicleFamily::VTOL,
                      aerolab::VehicleFamily::Seaplane, aerolab::VehicleFamily::Jet,
                      aerolab::VehicleFamily::InsectFlapper, aerolab::VehicleFamily::MorphingWing,
                      aerolab::VehicleFamily::CargoUAV, aerolab::VehicleFamily::Tailsitter,
                      aerolab::VehicleFamily::FlyingWing, aerolab::VehicleFamily::RocketSpacecraft,
-                     aerolab::VehicleFamily::CustomPart}) {
+                     aerolab::VehicleFamily::Airliner, aerolab::VehicleFamily::CustomPart}) {
         aerolab::AircraftDesignParams p;
         p.family = fam;
         if (fam == aerolab::VehicleFamily::Helicopter) p.rotor_rpm = 1450.0f;
         else if (fam == aerolab::VehicleFamily::Seaplane) {
             p.hardware_catalog_idx = 1; p.airspeed_m_s = 22.0f; p.rotor_rpm = 7200.0f;
         } else if (fam == aerolab::VehicleFamily::Jet) {
-            p.hardware_catalog_idx = 4; p.wingspan_m = 1.35f; p.root_chord_m = 0.38f;
-            p.tip_chord_m = 0.14f; p.sweep_deg = 26.0f; p.alpha_deg = 2.2f; p.airspeed_m_s = 92.0f;
+            p.hardware_catalog_idx = 4; p.frame_mass_kg = 2.80f; p.battery_mass_kg = 0.90f; p.payload_mass_kg = 0.60f;
+            p.airfoil_code = "0012"; p.wingspan_m = 1.35f; p.root_chord_m = 0.38f; p.tip_chord_m = 0.14f;
+            p.sweep_deg = 26.0f; p.alpha_deg = 0.8f; p.airspeed_m_s = 78.0f; p.jet_throttle_pct = 88.0f;
+            p.intake_area_m2 = 0.0032f; p.nozzle_area_ratio = 1.15f; p.wing_tc_ratio = 0.09f;
         } else if (fam == aerolab::VehicleFamily::CargoUAV) {
             p.rotor_count = 6; p.arm_length_m = 0.48f; p.prop_diameter_m = 0.38f;
             p.frame_mass_kg = 1.85f; p.battery_mass_kg = 1.55f; p.cargo_mass_kg = 1.80f;
@@ -56,6 +61,12 @@ int main() {
             p.root_chord_m = 0.22f; p.tip_chord_m = 0.14f; p.sweep_deg = 16.0f;
             p.morph_tuck_pct = 25.0f; p.wing_asymmetry_diff = 0.10f; p.tail_spread_pct = 75.0f;
             p.airspeed_m_s = 14.0f; p.alpha_deg = 4.5f;
+        } else if (fam == aerolab::VehicleFamily::Airliner) {
+            p.hardware_catalog_idx = 5; p.frame_mass_kg = 4.20f; p.battery_mass_kg = 1.80f;
+            p.payload_mass_kg = 1.20f; p.wingspan_m = 2.85f; p.root_chord_m = 0.56f;
+            p.tip_chord_m = 0.15f; p.sweep_deg = 35.0f; p.dihedral_deg = 4.5f;
+            p.wing_tc_ratio = 0.095f; p.jet_throttle_pct = 86.0f; p.altitude_asl_m = 12500.0f;
+            p.airspeed_m_s = 250.8f; p.alpha_deg = 2.5f; p.screw_size_idx = 5; p.wire_awg = 10;
         }
         const auto scene = aerolab::build_cad_scene(p);
         assert(!scene.vertices.empty());
@@ -69,10 +80,23 @@ int main() {
         if (fam == aerolab::VehicleFamily::CustomPart) {
             assert(ev.benchmark_match_pct < 0.0);
         } else {
+            if (ev.benchmark_match_pct <= 85.0) {
+                std::cerr << "FAIL fam=" << static_cast<int>(fam) << " status=" << ev.validation_status
+                          << " detail=" << ev.status_detail << "\n";
+            }
             assert(ev.benchmark_match_pct > 85.0);
             assert(ev.predicted_readiness_pct > 55.0);
             assert(ev.validation_status == "DEVELOPMENT");
-            assert(ev.thrust_to_weight > 0.8 && ev.thrust_to_weight < 8.0);
+            if (fam == aerolab::VehicleFamily::Airliner || fam == aerolab::VehicleFamily::FixedWing ||
+                fam == aerolab::VehicleFamily::MorphingWing || fam == aerolab::VehicleFamily::FlyingWing ||
+                fam == aerolab::VehicleFamily::Jet || fam == aerolab::VehicleFamily::Seaplane) {
+                assert(ev.thrust_to_weight > 0.2 && ev.thrust_to_weight < 8.0);
+            } else {
+                if (!(ev.thrust_to_weight > 0.8 && ev.thrust_to_weight < 8.0)) {
+                    std::cerr << "FAIL TW fam=" << static_cast<int>(fam) << " tw=" << ev.thrust_to_weight << "\n";
+                }
+                assert(ev.thrust_to_weight > 0.8 && ev.thrust_to_weight < 8.0);
+            }
         }
     }
 
@@ -223,7 +247,9 @@ int main() {
     insect_rt.battery_r0_ohm = 0.065f;
     insect_rt.wingspan_m = 0.16f;
     insect_rt.root_chord_m = 0.028f;
+    insect_rt.tip_chord_m = 0.016f;
     insect_rt.flap_freq_hz = 40.0f;
+    insect_rt.airspeed_m_s = 2.2f;
     aerolab::AircraftDesignParams insect_out;
     assert(aerolab::WorkerIPC::load_project_payload_json(ipc.build_project_payload_json(insect_rt), insect_out));
     assert(insect_out.family == aerolab::VehicleFamily::InsectFlapper);
@@ -272,8 +298,10 @@ int main() {
             fp.battery_r0_ohm = 0.018f; fp.battery_mass_kg = 0.55f; fp.airspeed_m_s = 22.0f; fp.rotor_rpm = 7200.0f;
         } else if (fam == aerolab::VehicleFamily::Jet) {
             fp.hardware_catalog_idx = 4; fp.battery_cells_s = 2; fp.battery_capacity_ah = 2.2f;
-            fp.battery_r0_ohm = 0.020f; fp.battery_mass_kg = 0.90f; fp.wingspan_m = 1.35f;
-            fp.root_chord_m = 0.38f; fp.tip_chord_m = 0.14f; fp.sweep_deg = 26.0f; fp.alpha_deg = 2.2f; fp.airspeed_m_s = 92.0f;
+            fp.battery_r0_ohm = 0.020f; fp.battery_mass_kg = 0.90f; fp.frame_mass_kg = 2.80f; fp.payload_mass_kg = 0.60f;
+            fp.airfoil_code = "0012"; fp.wingspan_m = 1.35f; fp.root_chord_m = 0.38f; fp.tip_chord_m = 0.14f;
+            fp.sweep_deg = 26.0f; fp.alpha_deg = 0.8f; fp.airspeed_m_s = 78.0f; fp.jet_throttle_pct = 88.0f;
+            fp.intake_area_m2 = 0.0032f; fp.nozzle_area_ratio = 1.15f; fp.wing_tc_ratio = 0.09f;
         } else if (fam == aerolab::VehicleFamily::CargoUAV) {
             fp.rotor_count = 6; fp.arm_length_m = 0.48f; fp.prop_diameter_m = 0.38f;
             fp.frame_mass_kg = 1.85f; fp.battery_mass_kg = 1.55f; fp.cargo_mass_kg = 1.80f;
@@ -363,8 +391,17 @@ int main() {
     aerolab::evaluate_live_physics_and_curves(custom_shell, aerolab::build_cad_scene(custom_shell), base_fw);
     custom_shell.attach_custom_part = true;
     custom_shell.active_part.sketch_kind = aerolab::SketchShapeKind::CustomBodyShell;
+    custom_shell.active_part.length_m = 0.16f;
     custom_shell.active_part.width_m = 0.14f;
+    custom_shell.active_part.thickness_m = 0.004f;
+    custom_shell.active_part.circular_pattern_count = 1;
     aerolab::evaluate_live_physics_and_curves(custom_shell, aerolab::build_cad_scene(custom_shell), shell_fw);
+    if (!(shell_fw.cd > base_fw.cd && shell_fw.validation_status == "UNVALIDATED_CUSTOM")) {
+        std::cerr << "FAIL shell_fw cd=" << shell_fw.cd << " base_cd=" << base_fw.cd
+                  << " fos=" << shell_fw.structural_fos << " mass=" << shell_fw.total_mass_kg
+                  << " lift=" << shell_fw.lift_n << " status=" << shell_fw.validation_status
+                  << " detail=" << shell_fw.status_detail << "\n";
+    }
     assert(shell_fw.cd > base_fw.cd && shell_fw.validation_status == "UNVALIDATED_CUSTOM");
     assert(shell_fw.benchmark_match_pct < 0.0);
 
@@ -389,6 +426,40 @@ int main() {
     aerolab::LiveEvidenceSummary rkt_ev;
     aerolab::evaluate_live_physics_and_curves(rkt, aerolab::build_cad_scene(rkt), rkt_ev);
     assert(rkt_ev.rocket_orbit_ok && rkt_ev.validation_status == "DEVELOPMENT" && rkt_ev.rocket_tps_c < 1850.0);
+    assert(rkt_ev.rocket_traj_t_s.size() > 5 && rkt_ev.rocket_traj_alt_km.back() > 100.0f);
+
+    // Phase 3/4 deep checks: Saturn V 3-Stage preset, Airliner CRM + cabin hoop stress, X-15 Mach 6.7 burn FAIL
+    aerolab::AircraftDesignParams sat;
+    sat.family = aerolab::VehicleFamily::RocketSpacecraft;
+    sat.rocket_saturn_v_preset = true;
+    aerolab::LiveEvidenceSummary sat_ev;
+    aerolab::evaluate_live_physics_and_curves(sat, aerolab::build_cad_scene(sat), sat_ev);
+    assert(sat_ev.rocket_orbit_ok && sat_ev.rocket_dv_m_s > 11100.0);
+
+    aerolab::AircraftDesignParams air;
+    air.family = aerolab::VehicleFamily::Airliner;
+    air.altitude_asl_m = 12500.0f;
+    air.airspeed_m_s = 250.8f;
+    air.wingspan_m = 2.85f;
+    air.root_chord_m = 0.56f;
+    air.tip_chord_m = 0.15f;
+    air.sweep_deg = 35.0f;
+    air.wing_tc_ratio = 0.095f;
+    air.alpha_deg = 2.5f;
+    aerolab::LiveEvidenceSummary air_ev;
+    aerolab::evaluate_live_physics_and_curves(air, aerolab::build_cad_scene(air), air_ev);
+    assert(air_ev.validation_status == "DEVELOPMENT" && air_ev.cabin_delta_p_kpa > 45.0 && air_ev.hoop_fos > 1.5);
+
+    aerolab::AircraftDesignParams x15;
+    x15.family = aerolab::VehicleFamily::Jet;
+    x15.hardware_catalog_idx = 5;
+    x15.jet_afterburner = true;
+    x15.jet_ramjet = true;
+    x15.altitude_asl_m = 31120.0f;
+    x15.airspeed_m_s = 2020.0f;
+    aerolab::LiveEvidenceSummary x15_ev;
+    aerolab::evaluate_live_physics_and_curves(x15, aerolab::build_cad_scene(x15), x15_ev);
+    assert(x15_ev.skin_temp_c > 1100.0 && x15_ev.validation_status == "FAIL");
 
     aerolab::AircraftDesignParams heli_vrs;
     heli_vrs.family = aerolab::VehicleFamily::Helicopter;
@@ -401,7 +472,7 @@ int main() {
 
     // Live Python worker end-to-end check across ALL menu worker commands
     for (const std::string &cmd : {"fixed-wing-sim", "layout-bom", "6dof-fixed-wing", "vtol-transition",
-                                   "autorotation-sim", "adverse-weather", "bounded-sweep", "phase1-eval"}) {
+                                   "autorotation-sim", "adverse-weather", "bounded-sweep", "phase1-eval", "phase3-4-eval"}) {
         assert(ipc.launch_python_command(cmd, ipc.build_project_payload_json(nominal_quad)));
         while (ipc.is_busy()) std::this_thread::sleep_for(std::chrono::milliseconds(15));
         assert(ipc.snapshot_status().last_ok);

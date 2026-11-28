@@ -143,9 +143,10 @@ void AppWorkbench::switch_family(VehicleFamily family) {
         params.tip_chord_m = 0.14f;
         params.sweep_deg = 26.0f;
         params.dihedral_deg = 2.0f;
-        params.alpha_deg = 2.2f;
-        params.airspeed_m_s = 92.0f;
-        params.jet_throttle_pct = 85.0f;
+        params.airfoil_code = "0012";
+        params.alpha_deg = 0.8f;
+        params.airspeed_m_s = 78.0f;
+        params.jet_throttle_pct = 88.0f;
         params.wing_tc_ratio = 0.09f;
         params.intake_area_m2 = 0.0032f;
         params.nozzle_area_ratio = 1.15f;
@@ -273,11 +274,37 @@ void AppWorkbench::switch_family(VehicleFamily family) {
         params.rocket_nose_radius_m = 0.85f;
         params.reentry_speed_km_s = 7.65f;
         params.reentry_alt_km = 68.0f;
+        params.rocket_saturn_v_preset = false;
         params.fuselage_length_m = 2.40f;
         params.fuselage_radius_m = 0.14f;
         params.screw_size_idx = 5;
         params.wire_awg = 10;
         camera.distance_m = 3.20f;
+    } else if (family == VehicleFamily::Airliner) {
+        params.project_name = "NASA CRM Transonic Airliner";
+        params.hardware_catalog_idx = 5;
+        params.frame_mass_kg = 4.20f;
+        params.battery_mass_kg = 1.80f;
+        params.payload_mass_kg = 1.20f;
+        params.wingspan_m = 2.85f;
+        params.root_chord_m = 0.56f;
+        params.tip_chord_m = 0.15f;
+        params.sweep_deg = 35.0f;
+        params.dihedral_deg = 4.5f;
+        params.twist_tip_deg = -3.0f;
+        params.fuselage_length_m = 2.75f;
+        params.fuselage_radius_m = 0.21f;
+        params.wing_tc_ratio = 0.095f;
+        params.jet_throttle_pct = 86.0f;
+        params.jet_afterburner = false;
+        params.jet_ramjet = false;
+        params.altitude_asl_m = 12500.0f;
+        params.airspeed_m_s = 250.8f;
+        params.alpha_deg = 2.5f;
+        params.airfoil_code = "2412";
+        params.screw_size_idx = 5;
+        params.wire_awg = 10;
+        camera.distance_m = 3.25f;
     } else {
         params.project_name = "Part Designer Studio";
         camera.distance_m = 0.75f;
@@ -352,6 +379,10 @@ void AppWorkbench::sync_feature_tree() {
     } else if (params.family == VehicleFamily::RocketSpacecraft) {
         feature_tree.push_back({"rkt_s1", "Stage 1 Booster + Grid/Stabilizer Fins", "Fuselage"});
         feature_tree.push_back({"rkt_s2", "Stage 2 Upper + Payload Heatshield", "Fuselage"});
+    } else if (params.family == VehicleFamily::Airliner) {
+        feature_tree.push_back({"air_fuse", "Pressurized Tube + Cockpit Loft", "Fuselage"});
+        feature_tree.push_back({"air_wing", "NASA CRM Supercritical Swept Wing", "WingLoft"});
+        feature_tree.push_back({"air_tfan", "Twin Underwing High-Bypass Turbofans", "RotorArray"});
     }
     const char *m_names[] = {"M2", "M2.5", "M3", "M4", "M5", "M6"};
     const int sidx = (params.screw_size_idx < 0) ? 0 : (params.screw_size_idx > 5 ? 5 : params.screw_size_idx);

@@ -22,6 +22,7 @@ enum class VehicleFamily {
     Tailsitter = 11,
     FlyingWing = 12,
     RocketSpacecraft = 13,
+    Airliner = 14,
 };
 
 enum class ViewportLayout {
@@ -161,6 +162,9 @@ struct AircraftDesignParams {
     float rocket_nose_radius_m = 0.85f;
     float reentry_speed_km_s = 7.65f;
     float reentry_alt_km = 68.0f;
+    bool jet_afterburner = false;
+    bool jet_ramjet = false;
+    bool rocket_saturn_v_preset = false;
 
     // Tiny Insect-Sized Flapping & Morphing MAV (Uncrewed)
     float flap_freq_hz = 40.0f;
@@ -285,6 +289,9 @@ struct LiveEvidenceSummary {
     double rocket_tps_c = 0.0;
     double rocket_kn = 0.0;
     bool rocket_orbit_ok = false;
+    double skin_temp_c = 25.0;
+    double cabin_delta_p_kpa = 0.0;
+    double hoop_fos = 5.0;
     double predicted_readiness_pct = 92.5;
     double benchmark_match_pct = 94.2; // < 0 means N/A (custom unmeasured geometry)
     std::string benchmark_source_tag = "Pinned UIUC + SIT + QDrone Ref (DEVELOPMENT)";
@@ -302,10 +309,13 @@ struct LiveEvidenceSummary {
     std::vector<std::array<double, 3>> traj_pos_m;
     std::vector<std::array<double, 4>> traj_quat_wxyz;
 
-    // Curve samples for polar chart
+    // Curve samples for polar & rocket ascent charts
     std::vector<float> curve_alpha_deg;
     std::vector<float> curve_cl;
     std::vector<float> curve_cd;
+    std::vector<float> rocket_traj_t_s;
+    std::vector<float> rocket_traj_alt_km;
+    std::vector<float> rocket_traj_q_kpa;
 };
 
 } // namespace aerolab

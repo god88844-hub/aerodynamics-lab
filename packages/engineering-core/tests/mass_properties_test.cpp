@@ -209,6 +209,35 @@ int main() {
         std::cerr << "Phase 4 rocket / Sutton-Graves hypersonics check failed\n";
         return 23;
     }
-    std::cout << "Multiphysics (Aeroacoustics/VRS/Cavitation/RF-RCS) & Phase 4 Rocket C++20 checks passed\n";
+
+    // Saturn V 3-stage delta-V + wind-shear Max-Q abort + Airliner CRM cabin stress + Afterburner/X-15 skin thermal
+    lab::RocketSpaceflightParams saturn;
+    saturn.dry_mass_stage1_kg = 131000.0; saturn.prop_mass_stage1_kg = 2148000.0; saturn.isp_stage1_s = 285.0;
+    saturn.dry_mass_stage2_kg = 36500.0;  saturn.prop_mass_stage2_kg = 443000.0;  saturn.isp_stage2_s = 421.0;
+    saturn.dry_mass_stage3_kg = 13500.0;  saturn.prop_mass_stage3_kg = 109000.0;  saturn.isp_stage3_s = 421.0;
+    saturn.payload_mass_kg = 46000.0;     saturn.liftoff_thrust_n = 34500000.0;
+    const auto sat_res = lab::evaluate_rocket_and_hypersonics(saturn);
+    const auto sat_traj = lab::compute_rocket_ascent_trajectory(saturn);
+    if (!sat_res.valid || sat_res.net_delta_v_m_s < 10500.0 || sat_traj.size() < 10) {
+        std::cerr << "Saturn V 3-stage Tsiolkovsky check failed\n";
+        return 24;
+    }
+
+    const auto air_ok = lab::evaluate_airliner_pressurization({});
+    if (!air_ok.valid || !air_ok.press_ok || !air_ok.crm_ld_ok || air_ok.cabin_delta_p_kpa < 40.0) {
+        std::cerr << "Airliner pressurization / NASA CRM L/D check failed\n";
+        return 25;
+    }
+
+    lab::CoupledJetParams ab_dry, ab_wet, x15_hot;
+    ab_dry.mach = 1.4;
+    ab_wet.mach = 1.4; ab_wet.afterburner_on = true;
+    x15_hot.mach = 6.7; x15_hot.ramjet_mode = true; x15_hot.altitude_m = 20000.0; x15_hot.oat_c = -56.5;
+    if (lab::evaluate_coupled_jet_cycle(ab_wet).nozzle_thrust_n <= lab::evaluate_coupled_jet_cycle(ab_dry).nozzle_thrust_n * 1.45 ||
+        lab::evaluate_coupled_jet_cycle(x15_hot).skin_ok) {
+        std::cerr << "Afterburner boost or Mach 6.7 aerodynamic skin heating check failed\n";
+        return 26;
+    }
+    std::cout << "Multiphysics, Saturn V 3-Stage, Airliner CRM & Afterburner/X-15 checks passed\n";
     return 0;
 }
