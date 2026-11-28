@@ -67,7 +67,12 @@ void WorkerIPC::run_cpp_rk4_multirotor(const AircraftDesignParams &params, LiveE
     const double rho = (summary.air_density_kg_m3 > 0.2) ? summary.air_density_kg_m3 : 1.225;
     cfg.air_density_kg_m3 = rho;
     const double rho_ratio = std::max(0.25, rho / 1.225);
-    const double effective_tw = std::max(0.05, summary.thrust_to_weight > 0.01 ? summary.thrust_to_weight : 2.0);
+    const double lift_tw = (summary.lift_n > 0.01) ? (summary.lift_n / std::max(0.05, cfg.mass_kg * 9.80665)) : 0.0;
+    const bool is_winged = (params.family == VehicleFamily::FixedWing || params.family == VehicleFamily::Seaplane ||
+                            params.family == VehicleFamily::Jet || params.family == VehicleFamily::MorphingWing);
+    const double effective_tw = (summary.validation_status == "FAIL")
+                                    ? std::min(0.85, std::max(0.05, summary.thrust_to_weight))
+                                    : std::max(0.05, is_winged ? std::max(summary.thrust_to_weight, lift_tw) : summary.thrust_to_weight);
     // flight_rk4 scales max_total_thrust_n by (rho / 1.225); divide here so density is applied once cleanly.
     cfg.max_total_thrust_n = (cfg.mass_kg * 9.80665 * effective_tw) / rho_ratio;
     cfg.cd_a_m2 = (params.family == VehicleFamily::InsectFlapper) ? 0.003 : 0.06;
@@ -83,7 +88,7 @@ void WorkerIPC::run_cpp_rk4_multirotor(const AircraftDesignParams &params, LiveE
     cfg.initial_altitude_m = 1.5;
     cfg.target_altitude_m = 4.5;
     cfg.dt_s = 0.01;
-    cfg.duration_s = 2.4;
+    cfg.duration_s = 3.2;
 
     const auto res = lab::run_multirotor_rk4(cfg);
     summary.has_trajectory = res.ok && !res.positions_m.empty();

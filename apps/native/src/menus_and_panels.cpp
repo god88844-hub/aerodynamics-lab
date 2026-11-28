@@ -691,8 +691,18 @@ void AppWorkbench::draw_right_inspector() {
         ImGui::SameLine();
         if (ImGui::SmallButton("Overspeed")) {
             push_undo_snapshot();
-            if (params.family == VehicleFamily::InsectFlapper) params.flap_freq_hz = 160.0f;
-            else params.rotor_rpm = 13500.0f;
+            if (params.family == VehicleFamily::InsectFlapper) {
+                params.flap_freq_hz = 160.0f;
+            } else if (params.family == VehicleFamily::Jet) {
+                params.airspeed_m_s = 325.0f;
+                params.jet_throttle_pct = 105.0f;
+            } else if (params.family == VehicleFamily::FixedWing || params.family == VehicleFamily::Seaplane ||
+                       params.family == VehicleFamily::MorphingWing) {
+                params.airspeed_m_s = 68.0f;
+                params.rotor_rpm = 13500.0f;
+            } else {
+                params.rotor_rpm = 13500.0f;
+            }
             changed = true;
         }
         if (ImGui::SmallButton("Weak Pack")) {

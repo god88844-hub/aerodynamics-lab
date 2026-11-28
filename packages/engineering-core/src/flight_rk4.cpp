@@ -120,8 +120,8 @@ MultirotorSimStepResult run_multirotor_rk4(const MultirotorSimConfig &cfg) {
 
     const double rho_scale = cfg.air_density_kg_m3 / 1.225;
     const double max_thrust_scaled = cfg.max_total_thrust_n * rho_scale;
-    const double kp_z = 3.5 * cfg.mass_kg;
-    const double kd_z = 4.0 * cfg.mass_kg;
+    const double kp_z = 0.85 * cfg.mass_kg;
+    const double kd_z = 1.80 * cfg.mass_kg;
     double t = 0.0;
 
     for (int idx = 0; idx < steps; ++idx) {
