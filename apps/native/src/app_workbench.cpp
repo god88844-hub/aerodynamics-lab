@@ -80,8 +80,11 @@ void AppWorkbench::switch_family(VehicleFamily family) {
         params.project_name = "Fixed-Wing Trainer";
         params.hardware_catalog_idx = 1;
         params.frame_mass_kg = 1.20f;
-        params.battery_mass_kg = 0.85f;
+        params.battery_mass_kg = 0.55f;
         params.payload_mass_kg = 0.35f;
+        params.battery_cells_s = 4;
+        params.battery_capacity_ah = 4.5f;
+        params.battery_r0_ohm = 0.018f;
         params.wingspan_m = 1.65f;
         params.sweep_deg = 12.0f;
         params.airspeed_m_s = 18.0f;
@@ -110,8 +113,11 @@ void AppWorkbench::switch_family(VehicleFamily family) {
         params.project_name = "Twin-Float Seaplane";
         params.hardware_catalog_idx = 1;
         params.frame_mass_kg = 1.45f;
-        params.battery_mass_kg = 0.95f;
+        params.battery_mass_kg = 0.55f;
         params.payload_mass_kg = 0.35f;
+        params.battery_cells_s = 4;
+        params.battery_capacity_ah = 4.5f;
+        params.battery_r0_ohm = 0.018f;
         params.wingspan_m = 1.75f;
         params.root_chord_m = 0.28f;
         params.tip_chord_m = 0.18f;
@@ -129,6 +135,9 @@ void AppWorkbench::switch_family(VehicleFamily family) {
         params.frame_mass_kg = 2.80f;
         params.battery_mass_kg = 0.90f; // Jet-A1 + ECU pack
         params.payload_mass_kg = 0.60f;
+        params.battery_cells_s = 2;
+        params.battery_capacity_ah = 2.2f;
+        params.battery_r0_ohm = 0.020f;
         params.wingspan_m = 1.35f;
         params.root_chord_m = 0.38f;
         params.tip_chord_m = 0.14f;
@@ -142,7 +151,7 @@ void AppWorkbench::switch_family(VehicleFamily family) {
     } else if (family == VehicleFamily::InsectFlapper) {
         params.project_name = "Insect Micro-Flapper MAV";
         params.hardware_catalog_idx = 3; // Coreless 7x20mm + 1S
-        params.frame_mass_kg = 0.016f;
+        params.frame_mass_kg = 0.014f;
         params.battery_mass_kg = 0.010f;
         params.payload_mass_kg = 0.004f;
         params.motor_mass_kg = 0.004f;
@@ -152,11 +161,36 @@ void AppWorkbench::switch_family(VehicleFamily family) {
         params.wingspan_m = 0.16f;
         params.root_chord_m = 0.028f;
         params.tip_chord_m = 0.016f;
-        params.flap_freq_hz = 38.0f;
+        params.flap_freq_hz = 40.0f;
         params.stroke_amp_deg = 78.0f;
+        params.morph_tuck_pct = 0.0f;
         params.airspeed_m_s = 2.2f;
         params.alpha_deg = 8.0f;
+        params.animate_flapping = false;
         camera.distance_m = 0.55f;
+    } else if (family == VehicleFamily::MorphingWing) {
+        params.project_name = "Morphing-Wing Glider (PigeonBot)";
+        params.hardware_catalog_idx = 1; // ECOII 2807 + 4S
+        params.frame_mass_kg = 0.65f;
+        params.battery_mass_kg = 0.35f;
+        params.payload_mass_kg = 0.12f;
+        params.motor_mass_kg = 0.055f;
+        params.battery_cells_s = 4;
+        params.battery_capacity_ah = 4.5f;
+        params.battery_r0_ohm = 0.018f;
+        params.wingspan_m = 1.15f;
+        params.root_chord_m = 0.22f;
+        params.tip_chord_m = 0.14f;
+        params.sweep_deg = 16.0f;
+        params.dihedral_deg = 4.0f;
+        params.morph_tuck_pct = 25.0f;
+        params.wing_asymmetry_diff = 0.10f;
+        params.tail_spread_pct = 75.0f;
+        params.tail_tilt_deg = 8.0f;
+        params.rotor_rpm = 6500.0f;
+        params.airspeed_m_s = 16.0f;
+        params.alpha_deg = 5.5f;
+        camera.distance_m = 1.75f;
     } else {
         params.project_name = "Part Designer Studio";
         camera.distance_m = 0.75f;
@@ -207,14 +241,18 @@ void AppWorkbench::sync_feature_tree() {
         feature_tree.push_back({"heli_fuse", "Pod & Tail Boom", "Fuselage"});
         feature_tree.push_back({"main_rotor", "Main + Tail Rotors", "RotorArray"});
     } else if (params.family == VehicleFamily::Seaplane) {
-        feature_tree.push_back({"sea_fuse", "Hull Pod + Twin Stepped Floats", "Fuselage"});
+        feature_tree.push_back({"sea_fuse", "Hull Pod & Twin Floats", "Fuselage"});
         feature_tree.push_back({"sea_wing", "High Wing + Empennage", "WingLoft"});
     } else if (params.family == VehicleFamily::Jet) {
-        feature_tree.push_back({"jet_fuse", "Area-Ruled Fuselage + Intake/Nozzle", "Fuselage"});
+        feature_tree.push_back({"jet_fuse", "Area-Ruled Fuse + Nozzle", "Fuselage"});
         feature_tree.push_back({"jet_wing", "Swept Transonic Wing", "WingLoft"});
     } else if (params.family == VehicleFamily::InsectFlapper) {
-        feature_tree.push_back({"bio_thorax", "Micro Thorax & Actuator Frame", "Fuselage"});
-        feature_tree.push_back({"bio_wings", "Compliant Flapping Membrane Wings", "WingLoft"});
+        feature_tree.push_back({"bio_thorax", "Micro Thorax & Frame", "Fuselage"});
+        feature_tree.push_back({"bio_wings", "Flapping Membrane Wing", "WingLoft"});
+    } else if (params.family == VehicleFamily::MorphingWing) {
+        feature_tree.push_back({"morph_body", "Morph Body & Wrist Servo", "Fuselage"});
+        feature_tree.push_back({"morph_wing", "Shoulder-Wrist Feathers", "WingLoft"});
+        feature_tree.push_back({"morph_tail", "Fan Tail Spread / Tilt", "WingLoft"});
     }
 }
 
@@ -232,6 +270,14 @@ void AppWorkbench::render_ui_and_scene(float dt_s, int fb_w, int fb_h) {
     (void)fb_h;
     if (ipc_ && ipc_->poll_completed_results(evidence) && viewport_) {
         viewport_->upload_trajectory_path(evidence.traj_pos_m);
+    }
+    if (params.family == VehicleFamily::InsectFlapper && (params.animate_flapping || evidence.playing)) {
+        params.flap_anim_phase_rad += dt_s * 11.5f; // Slow-motion visual wingbeat cycle
+        if (params.flap_anim_phase_rad > 62.8318f) params.flap_anim_phase_rad = 0.0f;
+        scene = build_cad_scene(params, selected_part_idx);
+        if (viewport_) {
+            viewport_->upload_scene(scene);
+        }
     }
     const ImGuiViewport *vp = ImGui::GetMainViewport();
     ImGui::SetNextWindowPos(vp->WorkPos);

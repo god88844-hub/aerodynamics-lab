@@ -38,6 +38,7 @@ from physics.environment.adverse_weather import evaluate_icing_and_shedding, eva
 from physics.propulsion.loader import ComponentLibrary  # noqa: E402
 from physics.scenarios.desktop_runner import run_authoritative_desktop_simulation  # noqa: E402
 from physics.scenarios.mission_authoring import author_mission, run_authored_mission  # noqa: E402
+from physics.validation.phase1_dataset_eval import evaluate_all_phase1_datasets  # noqa: E402
 from physics.validation.protocol_registry import load_frozen_protocol_catalog, register_validation_protocol  # noqa: E402
 
 
@@ -73,6 +74,7 @@ def main() -> int:
             "build-custom-part",
             "swap-assembly-part",
             "evidence-scorecard",
+            "phase1-eval",
             "run",
         ),
     )
@@ -347,6 +349,9 @@ def main() -> int:
                 has_custom_modified_part=bool(spec.get("has_custom_modified_part", False)),
                 benchmark_twin_percent=spec.get("benchmark_twin_percent"),
             )
+            write_result(args.output, payload)
+        elif args.command == "phase1-eval":
+            payload = evaluate_all_phase1_datasets()
             write_result(args.output, payload)
         elif args.command == "import-legacy":
             raw = json.loads(args.input.read_text(encoding="utf-8"))

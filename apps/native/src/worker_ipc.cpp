@@ -60,18 +60,26 @@ WorkerJobStatus WorkerIPC::snapshot_status() const {
 
 void WorkerIPC::run_cpp_rk4_multirotor(const AircraftDesignParams &params, LiveEvidenceSummary &summary) {
     lab::MultirotorSimConfig cfg;
-    cfg.mass_kg = std::max(0.2, summary.total_mass_kg > 0.1 ? summary.total_mass_kg : 2.5);
-    cfg.n_rotors = std::clamp(params.rotor_count, 3, 8);
+    cfg.mass_kg = std::max(0.015, summary.total_mass_kg > 0.01 ? summary.total_mass_kg : 2.5);
+    cfg.n_rotors = (params.family == VehicleFamily::InsectFlapper || params.family == VehicleFamily::MorphingWing)
+                       ? 2
+                       : std::clamp(params.rotor_count, 3, 8);
     const double rho = (summary.air_density_kg_m3 > 0.2) ? summary.air_density_kg_m3 : 1.225;
     cfg.air_density_kg_m3 = rho;
     const double rho_ratio = std::max(0.25, rho / 1.225);
     const double effective_tw = std::max(0.05, summary.thrust_to_weight > 0.01 ? summary.thrust_to_weight : 2.0);
     // flight_rk4 scales max_total_thrust_n by (rho / 1.225); divide here so density is applied once cleanly.
     cfg.max_total_thrust_n = (cfg.mass_kg * 9.80665 * effective_tw) / rho_ratio;
-    cfg.cd_a_m2 = 0.06;
+    cfg.cd_a_m2 = (params.family == VehicleFamily::InsectFlapper) ? 0.003 : 0.06;
     const double gust_gain = 1.0 + 0.5 * std::clamp(static_cast<double>(params.turbulence_pct) / 100.0, 0.0, 0.6);
     cfg.wind_world_m_s = {params.wind_x_m_s * gust_gain, params.wind_y_m_s * gust_gain, 0.0};
-    cfg.min_bus_voltage_v = (summary.cutoff_voltage_v > 5.0) ? summary.cutoff_voltage_v : 19.2;
+    const int cells = std::clamp(params.battery_cells_s, 1, 14);
+    cfg.nominal_bus_voltage_v = (params.family == VehicleFamily::Jet && (params.hardware_catalog_idx == 4 || params.hardware_catalog_idx == 5))
+                                    ? 7.4
+                                    : (static_cast<double>(cells) * 3.85);
+    cfg.min_bus_voltage_v = (summary.cutoff_voltage_v > 1.0) ? summary.cutoff_voltage_v : (static_cast<double>(cells) * 3.20);
+    cfg.pack_r0_ohm = std::max(0.005, static_cast<double>(params.battery_r0_ohm));
+    cfg.current_per_n_a = std::clamp(summary.hover_or_cruise_current_a / std::max(0.05, cfg.mass_kg * 9.80665), 0.15, 12.0);
     cfg.initial_altitude_m = 1.5;
     cfg.target_altitude_m = 4.5;
     cfg.dt_s = 0.01;
@@ -108,6 +116,10 @@ std::string WorkerIPC::build_project_payload_json(const AircraftDesignParams &pa
     if (params.family == VehicleFamily::FixedWing) fam = "fixed_wing";
     else if (params.family == VehicleFamily::Helicopter) fam = "helicopter";
     else if (params.family == VehicleFamily::VTOL) fam = "vtol";
+    else if (params.family == VehicleFamily::Seaplane) fam = "seaplane";
+    else if (params.family == VehicleFamily::Jet) fam = "jet";
+    else if (params.family == VehicleFamily::InsectFlapper) fam = "insect_flapper";
+    else if (params.family == VehicleFamily::MorphingWing) fam = "morphing_wing";
     else if (params.family == VehicleFamily::CustomPart) fam = "custom_part";
 
     const char *kind = "rounded_plate";
@@ -156,6 +168,18 @@ std::string WorkerIPC::build_project_payload_json(const AircraftDesignParams &pa
         << "  \"motor_cooling_grade\": " << params.motor_cooling_grade << ",\n"
         << "  \"rain_mm_h\": " << params.rain_mm_h << ",\n"
         << "  \"oat_c\": " << params.oat_c << ",\n"
+        << "  \"hardware_catalog_idx\": " << params.hardware_catalog_idx << ",\n"
+        << "  \"float_beam_m\": " << params.float_beam_m << ",\n"
+        << "  \"float_deadrise_deg\": " << params.float_deadrise_deg << ",\n"
+        << "  \"water_chop_m\": " << params.water_chop_m << ",\n"
+        << "  \"jet_throttle_pct\": " << params.jet_throttle_pct << ",\n"
+        << "  \"wing_tc_ratio\": " << params.wing_tc_ratio << ",\n"
+        << "  \"flap_freq_hz\": " << params.flap_freq_hz << ",\n"
+        << "  \"stroke_amp_deg\": " << params.stroke_amp_deg << ",\n"
+        << "  \"morph_tuck_pct\": " << params.morph_tuck_pct << ",\n"
+        << "  \"wing_asymmetry_diff\": " << params.wing_asymmetry_diff << ",\n"
+        << "  \"tail_spread_pct\": " << params.tail_spread_pct << ",\n"
+        << "  \"tail_tilt_deg\": " << params.tail_tilt_deg << ",\n"
         << "  \"attach_custom_part\": " << (params.attach_custom_part ? "true" : "false") << ",\n"
         << "  \"part_name\": \"" << params.active_part.part_name << "\",\n"
         << "  \"sketch_kind\": \"" << kind << "\",\n"
@@ -282,6 +306,10 @@ bool WorkerIPC::load_project_payload_json(const std::string &json_text, Aircraft
     else if (fam == "fixed_wing") params.family = VehicleFamily::FixedWing;
     else if (fam == "helicopter") params.family = VehicleFamily::Helicopter;
     else if (fam == "vtol") params.family = VehicleFamily::VTOL;
+    else if (fam == "seaplane") params.family = VehicleFamily::Seaplane;
+    else if (fam == "jet") params.family = VehicleFamily::Jet;
+    else if (fam == "insect_flapper") params.family = VehicleFamily::InsectFlapper;
+    else if (fam == "morphing_wing") params.family = VehicleFamily::MorphingWing;
     else if (fam == "custom_part") params.family = VehicleFamily::CustomPart;
 
     if (const auto n = find_val("name"); !n.empty()) params.project_name = n;
@@ -316,6 +344,18 @@ bool WorkerIPC::load_project_payload_json(const std::string &json_text, Aircraft
     read_i("motor_cooling_grade", params.motor_cooling_grade);
     read_f("rain_mm_h", params.rain_mm_h);
     read_f("oat_c", params.oat_c);
+    read_i("hardware_catalog_idx", params.hardware_catalog_idx);
+    read_f("float_beam_m", params.float_beam_m);
+    read_f("float_deadrise_deg", params.float_deadrise_deg);
+    read_f("water_chop_m", params.water_chop_m);
+    read_f("jet_throttle_pct", params.jet_throttle_pct);
+    read_f("wing_tc_ratio", params.wing_tc_ratio);
+    read_f("flap_freq_hz", params.flap_freq_hz);
+    read_f("stroke_amp_deg", params.stroke_amp_deg);
+    read_f("morph_tuck_pct", params.morph_tuck_pct);
+    read_f("wing_asymmetry_diff", params.wing_asymmetry_diff);
+    read_f("tail_spread_pct", params.tail_spread_pct);
+    read_f("tail_tilt_deg", params.tail_tilt_deg);
     if (const auto ac = find_val("attach_custom_part"); !ac.empty()) params.attach_custom_part = (ac == "true");
     if (const auto pn = find_val("part_name"); !pn.empty()) params.active_part.part_name = pn;
     if (const auto sk = find_val("sketch_kind"); !sk.empty()) {

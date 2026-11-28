@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.20)
 project(aerodynamics_lab_engineering LANGUAGES CXX)
 
-add_library(lab_core STATIC src/mass_properties.cpp src/flight_rk4.cpp)
+add_library(lab_core STATIC src/mass_properties.cpp src/flight_rk4.cpp src/bioinspired.cpp)
 target_include_directories(lab_core PUBLIC include)
 target_compile_features(lab_core PUBLIC cxx_std_20)
 set_target_properties(lab_core PROPERTIES POSITION_INDEPENDENT_CODE ON)

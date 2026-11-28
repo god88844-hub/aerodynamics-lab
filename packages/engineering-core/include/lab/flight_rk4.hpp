@@ -19,6 +19,9 @@ struct MultirotorSimConfig {
     double dt_s = 0.004;
     double duration_s = 0.4;
     double min_bus_voltage_v = 19.2;
+    double nominal_bus_voltage_v = 25.2;
+    double pack_r0_ohm = 0.05;
+    double current_per_n_a = 1.4;
 };
 
 struct MultirotorSimStepResult {

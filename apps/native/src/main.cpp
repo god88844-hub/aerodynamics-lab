@@ -52,8 +52,8 @@ int main(int argc, char **argv) {
         else if (std::strcmp(argv[i], "--benchmark-200") == 0) benchmark_200 = true;
         else if (std::strcmp(argv[i], "--frames") == 0 && i + 1 < argc) benchmark_frames = std::max(30, std::atoi(argv[++i]));
         else if (std::strcmp(argv[i], "--output") == 0 && i + 1 < argc) benchmark_out = argv[++i];
-        else if (std::strcmp(argv[i], "--4view") == 0) four_view = true;
-        else if (std::strcmp(argv[i], "--cp") == 0) cp_view = true;
+        else if (std::strcmp(argv[i], "--4view") == 0 || std::strcmp(argv[i], "--four-view") == 0) four_view = true;
+        else if (std::strcmp(argv[i], "--cp") == 0 || std::strcmp(argv[i], "--cp-view") == 0) cp_view = true;
         else if (std::strcmp(argv[i], "--preset") == 0 && i + 1 < argc) preset_name = argv[++i];
         else if (std::strcmp(argv[i], "--screenshot") == 0 && i + 1 < argc) screenshot_path = argv[++i];
     }
@@ -211,6 +211,7 @@ int main(int argc, char **argv) {
     else if (preset_name == "seaplane") app.switch_family(aerolab::VehicleFamily::Seaplane);
     else if (preset_name == "jet") app.switch_family(aerolab::VehicleFamily::Jet);
     else if (preset_name == "insect") app.switch_family(aerolab::VehicleFamily::InsectFlapper);
+    else if (preset_name == "morphing") app.switch_family(aerolab::VehicleFamily::MorphingWing);
     else if (preset_name == "part") app.switch_family(aerolab::VehicleFamily::CustomPart);
     if (four_view) {
         app.viewport_layout = aerolab::ViewportLayout::Ortho4View;

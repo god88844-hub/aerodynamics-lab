@@ -1,5 +1,6 @@
 #include "lab/mass_properties.hpp"
 #include "lab/flight_rk4.hpp"
+#include "lab/bioinspired.hpp"
 
 #include <array>
 #include <cmath>
@@ -79,5 +80,52 @@ int main() {
         return 9;
     }
     std::cout << "C++20 6-DoF RK4 multirotor kernel checks passed\n";
+
+    // Phase 1 C++20 bio-inspired strip BEMT convergence, morphing, flex aeroelastic, Savitsky, and 1S RK4 checks
+    lab::FlappingParams fp16;
+    fp16.n_strips = 16;
+    const auto fres16 = lab::evaluate_flapping_strip_bemt(fp16);
+    lab::FlappingParams fp64 = fp16;
+    fp64.n_strips = 64;
+    const auto fres64 = lab::evaluate_flapping_strip_bemt(fp64);
+    if (!fres16.valid || !fres64.valid || fres16.hover_tw < 1.05 ||
+        std::abs(fres16.mean_lift_n - fres64.mean_lift_n) / std::max(1e-6, fres64.mean_lift_n) > 0.02) {
+        std::cerr << "Flapping strip BEMT hover or strip convergence check failed\n";
+        return 10;
+    }
+    const auto mp = lab::evaluate_morphing_stability({});
+    if (!mp.valid || mp.effective_span_m >= 1.15 || mp.yaw_damping_coeff <= 0.04) {
+        std::cerr << "Morphing stability evaluation failed\n";
+        return 11;
+    }
+    lab::FlexBeamParams flex_ok;
+    const auto f_ok = lab::evaluate_compliant_flex_aeroelastic(flex_ok);
+    lab::FlexBeamParams flex_fail = flex_ok;
+    flex_fail.applied_cycles = 500000;
+    const auto f_fail = lab::evaluate_compliant_flex_aeroelastic(flex_fail);
+    if (!f_ok.structural_ok || f_fail.structural_ok) {
+        std::cerr << "Compliant flex beam fatigue gate failed\n";
+        return 12;
+    }
+    const auto sea = lab::evaluate_savitsky_seaplane({});
+    if (!sea.valid || !sea.planing_or_buoyant_ok || sea.hydro_lift_n <= 0.0) {
+        std::cerr << "Savitsky seaplane check failed\n";
+        return 13;
+    }
+    lab::MultirotorSimConfig mav_1s;
+    mav_1s.mass_kg = 0.032;
+    mav_1s.n_rotors = 2;
+    mav_1s.max_total_thrust_n = 0.50;
+    mav_1s.nominal_bus_voltage_v = 3.85;
+    mav_1s.min_bus_voltage_v = 3.20;
+    mav_1s.pack_r0_ohm = 0.065;
+    mav_1s.current_per_n_a = 8.0;
+    mav_1s.duration_s = 0.4;
+    const auto mav_res = lab::run_multirotor_rk4(mav_1s);
+    if (!mav_res.ok || mav_res.aborted) {
+        std::cerr << "1S micro-flapper 6-DoF RK4 trajectory aborted unexpectedly\n";
+        return 14;
+    }
+    std::cout << "Phase 1 C++20 flapping, morphing, flex aeroelastic, Savitsky, and 1S RK4 checks passed\n";
     return 0;
 }

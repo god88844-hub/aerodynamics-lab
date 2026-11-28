@@ -166,7 +166,8 @@ void AppWorkbench::draw_menu_bar() {
         if (ImGui::MenuItem("New VTOL Tiltrotor")) switch_family(VehicleFamily::VTOL);
         if (ImGui::MenuItem("New Twin-Float Seaplane")) switch_family(VehicleFamily::Seaplane);
         if (ImGui::MenuItem("New Swept Jet Aircraft")) switch_family(VehicleFamily::Jet);
-        if (ImGui::MenuItem("New Tiny Insect / Morphing MAV")) switch_family(VehicleFamily::InsectFlapper);
+        if (ImGui::MenuItem("New Insect Micro-Flapper MAV")) switch_family(VehicleFamily::InsectFlapper);
+        if (ImGui::MenuItem("New Morphing-Wing Flyer (PigeonBot)")) switch_family(VehicleFamily::MorphingWing);
         if (ImGui::MenuItem("New Custom Part Sketch")) switch_family(VehicleFamily::CustomPart);
         ImGui::Separator();
         if (ImGui::MenuItem("Open Project (.json)...")) {
@@ -349,8 +350,8 @@ void AppWorkbench::draw_menu_bar() {
 }
 
 void AppWorkbench::draw_quick_toolstrip() {
-    ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(8.0f, 5.0f));
-    ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(5.0f, 4.0f));
+    ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(6.0f, 4.0f));
+    ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(4.0f, 4.0f));
     if (ImGui::Button("Multirotor")) switch_family(VehicleFamily::Multirotor);
     ImGui::SameLine();
     if (ImGui::Button("Fixed-Wing")) switch_family(VehicleFamily::FixedWing);
@@ -364,6 +365,8 @@ void AppWorkbench::draw_quick_toolstrip() {
     if (ImGui::Button("Jet")) switch_family(VehicleFamily::Jet);
     ImGui::SameLine();
     if (ImGui::Button("Insect MAV")) switch_family(VehicleFamily::InsectFlapper);
+    ImGui::SameLine();
+    if (ImGui::Button("Morph Wing")) switch_family(VehicleFamily::MorphingWing);
     ImGui::SameLine();
     if (ImGui::Button("Part Designer")) switch_family(VehicleFamily::CustomPart);
     ImGui::SameLine();
@@ -382,7 +385,7 @@ void AppWorkbench::draw_quick_toolstrip() {
         if (viewport_) viewport_->upload_trajectory_path(evidence.traj_pos_m);
     }
     ImGui::SameLine();
-    if (ImGui::Button("Reset View")) {
+    if (ImGui::Button("Reset")) {
         camera = CameraOrbitState{};
     }
     ImGui::PopStyleVar(2);
@@ -544,6 +547,13 @@ void AppWorkbench::draw_right_inspector() {
             changed |= ImGui::SliderFloat("Flap Freq (Hz)", &params.flap_freq_hz, 8.0f, 160.0f, "%.0f");
             changed |= ImGui::SliderFloat("Stroke Amp (deg)", &params.stroke_amp_deg, 25.0f, 90.0f, "%.0f");
             changed |= ImGui::SliderFloat("Morph Tuck (%)", &params.morph_tuck_pct, 0.0f, 80.0f, "%.0f");
+            changed |= ImGui::Checkbox("Animate Wingbeat", &params.animate_flapping);
+        } else if (params.family == VehicleFamily::MorphingWing) {
+            changed |= ImGui::SliderFloat("Wingspan (m)", &params.wingspan_m, 0.60f, 2.40f, "%.2f");
+            changed |= ImGui::SliderFloat("Morph Tuck (%)", &params.morph_tuck_pct, 0.0f, 80.0f, "%.0f");
+            changed |= ImGui::SliderFloat("Wing Asym Roll", &params.wing_asymmetry_diff, -0.45f, 0.45f, "%.2f");
+            changed |= ImGui::SliderFloat("Tail Spread (%)", &params.tail_spread_pct, 0.0f, 100.0f, "%.0f");
+            changed |= ImGui::SliderFloat("Tail Tilt (deg)", &params.tail_tilt_deg, -25.0f, 25.0f, "%.1f");
         } else if (params.family == VehicleFamily::Helicopter) {
             changed |= ImGui::SliderFloat("Main Rotor Dia (m)", &params.main_rotor_diameter_m, 0.8f, 2.8f, "%.2f");
             changed |= ImGui::SliderFloat("Tail Boom (m)", &params.tail_boom_length_m, 0.45f, 1.5f, "%.2f");
@@ -603,89 +613,22 @@ void AppWorkbench::draw_right_inspector() {
     }
 
     ImGui::Spacing();
-    if (ImGui::CollapsingHeader("What-If Stress & Overload", ImGuiTreeNodeFlags_DefaultOpen)) {
-        if (ImGui::SmallButton("Nominal")) {
-            push_undo_snapshot();
-            params.payload_mass_kg = 0.35f;
-            params.battery_r0_ohm = 0.025f;
-            params.rotor_rpm = (params.family == VehicleFamily::Helicopter) ? 1450.0f : 4800.0f;
-            params.rain_mm_h = 0.0f;
-            params.oat_c = 25.0f;
-            params.wind_x_m_s = 0.0f;
-            params.wind_y_m_s = 0.0f;
-            params.turbulence_pct = 10.0f;
-            params.mfg_tolerance_pct = 5.0f;
-            params.altitude_asl_m = 0.0f;
-            params.motor_cooling_grade = 1;
-            changed = true;
-        }
-        ImGui::SameLine();
-        if (ImGui::SmallButton("Overload")) {
-            push_undo_snapshot();
-            params.payload_mass_kg = 9.5f;
-            changed = true;
-        }
-        ImGui::SameLine();
-        if (ImGui::SmallButton("Overspeed")) {
-            push_undo_snapshot();
-            params.rotor_rpm = 13500.0f;
-            changed = true;
-        }
-        if (ImGui::SmallButton("Weak Pack")) {
-            push_undo_snapshot();
-            params.battery_r0_ohm = 0.24f;
-            changed = true;
-        }
-        ImGui::SameLine();
-        if (ImGui::SmallButton("Storm Wind")) {
-            push_undo_snapshot();
-            params.wind_x_m_s = 14.0f;
-            params.wind_y_m_s = 6.0f;
-            params.turbulence_pct = 35.0f;
-            params.rain_mm_h = 25.0f;
-            changed = true;
-        }
-        ImGui::SameLine();
-        if (ImGui::SmallButton("Bad Tolerance")) {
-            push_undo_snapshot();
-            params.mfg_tolerance_pct = 20.0f;
-            params.motor_cooling_grade = 0;
-            changed = true;
-        }
-        changed |= ImGui::SliderFloat("Wind X (m/s)", &params.wind_x_m_s, -25.0f, 25.0f, "%.1f");
-        changed |= ImGui::SliderFloat("Wind Y (m/s)", &params.wind_y_m_s, -25.0f, 25.0f, "%.1f");
-        changed |= ImGui::SliderFloat("Gust/Turb (%)", &params.turbulence_pct, 0.0f, 50.0f, "%.0f");
-        changed |= ImGui::SliderFloat("Mfg Tol (%)", &params.mfg_tolerance_pct, 0.0f, 25.0f, "%.0f");
-        changed |= ImGui::SliderFloat("Alt ASL (m)", &params.altitude_asl_m, 0.0f, 4000.0f, "%.0f");
-        const char *cooling_grades[] = {"Poor", "Medium", "Good"};
-        changed |= ImGui::Combo("Motor Cooling", &params.motor_cooling_grade, cooling_grades, 3);
-        changed |= ImGui::SliderFloat("Rotor RPM", &params.rotor_rpm, 800.0f, 16000.0f, "%.0f");
-        changed |= ImGui::SliderInt("Cells (S)", &params.battery_cells_s, 3, 12);
-        changed |= ImGui::SliderFloat("Cap (Ah)", &params.battery_capacity_ah, 1.5f, 30.0f, "%.1f");
-        changed |= ImGui::SliderFloat("R0 (Ohm)", &params.battery_r0_ohm, 0.008f, 0.300f, "%.3f");
-        changed |= ImGui::SliderFloat("Rain mm/h", &params.rain_mm_h, 0.0f, 80.0f, "%.0f");
-        changed |= ImGui::SliderFloat("Temp (C)", &params.oat_c, -20.0f, 45.0f, "%.0f");
-    }
-    ImGui::PopItemWidth();
-
-    if (changed) {
-        rebuild_geometry();
-    }
-
-    ImGui::Spacing();
     if (ImGui::CollapsingHeader("C++20 Physics & Electronics", ImGuiTreeNodeFlags_DefaultOpen)) {
-        ImGui::Text("Mass: %.2f kg | T/W: %.2fx", evidence.total_mass_kg, evidence.thrust_to_weight);
+        ImGui::Text("Mass: %.3f kg | T/W: %.2fx", evidence.total_mass_kg, evidence.thrust_to_weight);
         ImGui::Text("Throt: %.0f%% | Hover: %.0f min", evidence.hover_throttle_pct, evidence.est_endurance_min);
-        ImGui::Text("Pack: %.1f V | %.1f A", evidence.loaded_bus_voltage_v, evidence.hover_or_cruise_current_a);
-        ImGui::Text("Wind: %.1f m/s | Rho: %.3f", evidence.wind_speed_m_s, evidence.air_density_kg_m3);
-        ImGui::Text("TipM: %.3f | %.0f C | FoS: %.2fx",
-                    evidence.rotor_tip_mach, evidence.motor_temp_c, evidence.structural_fos);
+        ImGui::Text("Pack: %.1f V | %.1f A | %.0f C", evidence.loaded_bus_voltage_v, evidence.hover_or_cruise_current_a, evidence.motor_temp_c);
+        ImGui::Text("Wind: %.1f m/s | Rho: %.3f | FoS: %.2fx", evidence.wind_speed_m_s, evidence.air_density_kg_m3, evidence.structural_fos);
         if (params.family == VehicleFamily::Jet) {
-            ImGui::Text("Mach: %.2f | M_DD: %.2f | CDw: %.3f", evidence.mach, evidence.m_dd, evidence.cd_wave);
+            ImGui::Text("M: %.2f | MDD: %.2f | CDw: %.3f", evidence.mach, evidence.m_dd, evidence.cd_wave);
         } else if (params.family == VehicleFamily::Seaplane) {
             ImGui::Text("Water Hump Drag: %.2f N", evidence.hump_resistance_n);
-        } else if (params.family == VehicleFamily::InsectFlapper) {
-            ImGui::Text("Strouhal St: %.2f | Lift: %.3f N", evidence.strouhal, evidence.lift_n);
+        } else if (params.family == VehicleFamily::InsectFlapper || params.family == VehicleFamily::MorphingWing) {
+            ImGui::Text("C(k): %.2f | Phi: %.2f | St: %.2f", evidence.theodorsen_ck, evidence.wagner_phi, evidence.strouhal);
+            ImGui::Text("Tip: %.1fmm | f1: %.0fHz | qD: %.0fx",
+                        evidence.flex_tip_deflection_mm, evidence.first_bending_mode_hz, evidence.divergence_margin);
+            if (params.family == VehicleFamily::MorphingWing) {
+                ImGui::Text("Roll: %.2f Nm | Yaw Cn: %.3f", evidence.roll_moment_nm, evidence.yaw_damping_cn);
+            }
         } else {
             ImGui::Text("Clearance: %.0f mm (%s)", evidence.min_tip_clearance_m * 1000.0,
                         evidence.clearance_ok ? "OK" : "FAIL");
@@ -722,6 +665,75 @@ void AppWorkbench::draw_right_inspector() {
             ImGui::TextColored(ImVec4(0.75f, 0.45f, 0.08f, 1.0f), "Benchmark Match: N/A (%s)", evidence.benchmark_source_tag.c_str());
         }
         ImGui::TextWrapped("%s", evidence.status_detail.c_str());
+    }
+
+    ImGui::Spacing();
+    if (ImGui::CollapsingHeader("What-If Stress & Overload")) {
+        if (ImGui::SmallButton("Nominal")) {
+            push_undo_snapshot();
+            switch_family(params.family);
+            params.rain_mm_h = 0.0f;
+            params.oat_c = 25.0f;
+            params.wind_x_m_s = 0.0f;
+            params.wind_y_m_s = 0.0f;
+            params.turbulence_pct = 10.0f;
+            params.mfg_tolerance_pct = 5.0f;
+            params.altitude_asl_m = 0.0f;
+            params.motor_cooling_grade = 1;
+            changed = true;
+        }
+        ImGui::SameLine();
+        if (ImGui::SmallButton("Overload")) {
+            push_undo_snapshot();
+            params.payload_mass_kg = (params.family == VehicleFamily::InsectFlapper) ? 0.06f : 9.5f;
+            changed = true;
+        }
+        ImGui::SameLine();
+        if (ImGui::SmallButton("Overspeed")) {
+            push_undo_snapshot();
+            if (params.family == VehicleFamily::InsectFlapper) params.flap_freq_hz = 160.0f;
+            else params.rotor_rpm = 13500.0f;
+            changed = true;
+        }
+        if (ImGui::SmallButton("Weak Pack")) {
+            push_undo_snapshot();
+            params.battery_r0_ohm = 0.24f;
+            changed = true;
+        }
+        ImGui::SameLine();
+        if (ImGui::SmallButton("Storm Wind")) {
+            push_undo_snapshot();
+            params.wind_x_m_s = 14.0f;
+            params.wind_y_m_s = 6.0f;
+            params.turbulence_pct = 35.0f;
+            params.rain_mm_h = 25.0f;
+            changed = true;
+        }
+        ImGui::SameLine();
+        if (ImGui::SmallButton("Bad Tolerance")) {
+            push_undo_snapshot();
+            params.mfg_tolerance_pct = 20.0f;
+            params.motor_cooling_grade = 0;
+            changed = true;
+        }
+        changed |= ImGui::SliderFloat("Wind X (m/s)", &params.wind_x_m_s, -25.0f, 25.0f, "%.1f");
+        changed |= ImGui::SliderFloat("Wind Y (m/s)", &params.wind_y_m_s, -25.0f, 25.0f, "%.1f");
+        changed |= ImGui::SliderFloat("Gust/Turb (%)", &params.turbulence_pct, 0.0f, 50.0f, "%.0f");
+        changed |= ImGui::SliderFloat("Mfg Tol (%)", &params.mfg_tolerance_pct, 0.0f, 25.0f, "%.0f");
+        changed |= ImGui::SliderFloat("Alt ASL (m)", &params.altitude_asl_m, 0.0f, 4000.0f, "%.0f");
+        const char *cooling_grades[] = {"Poor", "Medium", "Good"};
+        changed |= ImGui::Combo("Motor Cooling", &params.motor_cooling_grade, cooling_grades, 3);
+        changed |= ImGui::SliderFloat("Rotor RPM", &params.rotor_rpm, 800.0f, 16000.0f, "%.0f");
+        changed |= ImGui::SliderInt("Cells (S)", &params.battery_cells_s, 1, 12);
+        changed |= ImGui::SliderFloat("Cap (Ah)", &params.battery_capacity_ah, 0.2f, 30.0f, "%.2f");
+        changed |= ImGui::SliderFloat("R0 (Ohm)", &params.battery_r0_ohm, 0.008f, 0.300f, "%.3f");
+        changed |= ImGui::SliderFloat("Rain mm/h", &params.rain_mm_h, 0.0f, 80.0f, "%.0f");
+        changed |= ImGui::SliderFloat("Temp (C)", &params.oat_c, -20.0f, 45.0f, "%.0f");
+    }
+    ImGui::PopItemWidth();
+
+    if (changed) {
+        rebuild_geometry();
     }
 
     ImGui::End();
@@ -770,6 +782,7 @@ void AppWorkbench::draw_modals() {
         ImGui::Text("2. Aero: Prandtl lifting-line (M <= 0.30) & annular BEMT + Prandtl tip-loss (M_tip <= 0.70).");
         ImGui::Text("3. Electronics: 2-RC Thevenin bus sag V_load = V_oc - I*R0 - V1 - V2, thermal cutoff > 95 C.");
         ImGui::Text("4. Structures & Clearance: Euler-Bernoulli root moment FoS >= 1.25x, rotor spacing >= 20 mm.");
+        ImGui::Text("5. Phase 1 Unsteady & Hydro: Theodorsen C(k), Wagner Phi(tau), Polhamus LEV, Savitsky 1964.");
         if (ImGui::Button("Close")) ImGui::CloseCurrentPopup();
         ImGui::EndPopup();
     }
