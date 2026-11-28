@@ -61,15 +61,17 @@ WorkerJobStatus WorkerIPC::snapshot_status() const {
 void WorkerIPC::run_cpp_rk4_multirotor(const AircraftDesignParams &params, LiveEvidenceSummary &summary) {
     lab::MultirotorSimConfig cfg;
     cfg.mass_kg = std::max(0.015, summary.total_mass_kg > 0.01 ? summary.total_mass_kg : 2.5);
-    cfg.n_rotors = (params.family == VehicleFamily::InsectFlapper || params.family == VehicleFamily::MorphingWing)
-                       ? 2
-                       : std::clamp(params.rotor_count, 3, 8);
+    const int active_rotors = (params.family == VehicleFamily::InsectFlapper || params.family == VehicleFamily::MorphingWing)
+                                  ? 2
+                                  : (params.family == VehicleFamily::CargoUAV ? 6 : std::clamp(params.rotor_count, 3, 8));
+    cfg.n_rotors = active_rotors;
     const double rho = (summary.air_density_kg_m3 > 0.2) ? summary.air_density_kg_m3 : 1.225;
     cfg.air_density_kg_m3 = rho;
     const double rho_ratio = std::max(0.25, rho / 1.225);
     const double lift_tw = (summary.lift_n > 0.01) ? (summary.lift_n / std::max(0.05, cfg.mass_kg * 9.80665)) : 0.0;
     const bool is_winged = (params.family == VehicleFamily::FixedWing || params.family == VehicleFamily::Seaplane ||
-                            params.family == VehicleFamily::Jet || params.family == VehicleFamily::MorphingWing);
+                            params.family == VehicleFamily::Jet || params.family == VehicleFamily::MorphingWing ||
+                            params.family == VehicleFamily::Tailsitter || params.family == VehicleFamily::FlyingWing);
     const double effective_tw = (summary.validation_status == "FAIL")
                                     ? std::min(0.85, std::max(0.05, summary.thrust_to_weight))
                                     : std::max(0.05, is_winged ? std::max(summary.thrust_to_weight, lift_tw) : summary.thrust_to_weight);
@@ -125,6 +127,9 @@ std::string WorkerIPC::build_project_payload_json(const AircraftDesignParams &pa
     else if (params.family == VehicleFamily::Jet) fam = "jet";
     else if (params.family == VehicleFamily::InsectFlapper) fam = "insect_flapper";
     else if (params.family == VehicleFamily::MorphingWing) fam = "morphing_wing";
+    else if (params.family == VehicleFamily::CargoUAV) fam = "cargo_uav";
+    else if (params.family == VehicleFamily::Tailsitter) fam = "tailsitter";
+    else if (params.family == VehicleFamily::FlyingWing) fam = "flying_wing";
     else if (params.family == VehicleFamily::CustomPart) fam = "custom_part";
 
     const char *kind = "rounded_plate";
@@ -179,6 +184,17 @@ std::string WorkerIPC::build_project_payload_json(const AircraftDesignParams &pa
         << "  \"water_chop_m\": " << params.water_chop_m << ",\n"
         << "  \"jet_throttle_pct\": " << params.jet_throttle_pct << ",\n"
         << "  \"wing_tc_ratio\": " << params.wing_tc_ratio << ",\n"
+        << "  \"intake_area_m2\": " << params.intake_area_m2 << ",\n"
+        << "  \"nozzle_area_ratio\": " << params.nozzle_area_ratio << ",\n"
+        << "  \"fuel_mass_kg\": " << params.fuel_mass_kg << ",\n"
+        << "  \"cargo_mass_kg\": " << params.cargo_mass_kg << ",\n"
+        << "  \"cable_length_m\": " << params.cable_length_m << ",\n"
+        << "  \"payload_released\": " << (params.payload_released ? "true" : "false") << ",\n"
+        << "  \"transition_pitch_deg\": " << params.transition_pitch_deg << ",\n"
+        << "  \"duct_area_ratio\": " << params.duct_area_ratio << ",\n"
+        << "  \"screw_size_idx\": " << params.screw_size_idx << ",\n"
+        << "  \"titanium_screws\": " << (params.titanium_screws ? "true" : "false") << ",\n"
+        << "  \"wire_awg\": " << params.wire_awg << ",\n"
         << "  \"flap_freq_hz\": " << params.flap_freq_hz << ",\n"
         << "  \"stroke_amp_deg\": " << params.stroke_amp_deg << ",\n"
         << "  \"morph_tuck_pct\": " << params.morph_tuck_pct << ",\n"
@@ -315,6 +331,9 @@ bool WorkerIPC::load_project_payload_json(const std::string &json_text, Aircraft
     else if (fam == "jet") params.family = VehicleFamily::Jet;
     else if (fam == "insect_flapper") params.family = VehicleFamily::InsectFlapper;
     else if (fam == "morphing_wing") params.family = VehicleFamily::MorphingWing;
+    else if (fam == "cargo_uav") params.family = VehicleFamily::CargoUAV;
+    else if (fam == "tailsitter") params.family = VehicleFamily::Tailsitter;
+    else if (fam == "flying_wing") params.family = VehicleFamily::FlyingWing;
     else if (fam == "custom_part") params.family = VehicleFamily::CustomPart;
 
     if (const auto n = find_val("name"); !n.empty()) params.project_name = n;
@@ -355,6 +374,17 @@ bool WorkerIPC::load_project_payload_json(const std::string &json_text, Aircraft
     read_f("water_chop_m", params.water_chop_m);
     read_f("jet_throttle_pct", params.jet_throttle_pct);
     read_f("wing_tc_ratio", params.wing_tc_ratio);
+    read_f("intake_area_m2", params.intake_area_m2);
+    read_f("nozzle_area_ratio", params.nozzle_area_ratio);
+    read_f("fuel_mass_kg", params.fuel_mass_kg);
+    read_f("cargo_mass_kg", params.cargo_mass_kg);
+    read_f("cable_length_m", params.cable_length_m);
+    if (const auto pr = find_val("payload_released"); !pr.empty()) params.payload_released = (pr == "true");
+    read_f("transition_pitch_deg", params.transition_pitch_deg);
+    read_f("duct_area_ratio", params.duct_area_ratio);
+    read_i("screw_size_idx", params.screw_size_idx);
+    if (const auto ts = find_val("titanium_screws"); !ts.empty()) params.titanium_screws = (ts == "true");
+    read_i("wire_awg", params.wire_awg);
     read_f("flap_freq_hz", params.flap_freq_hz);
     read_f("stroke_amp_deg", params.stroke_amp_deg);
     read_f("morph_tuck_pct", params.morph_tuck_pct);

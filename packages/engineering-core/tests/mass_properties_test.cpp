@@ -1,6 +1,7 @@
 #include "lab/mass_properties.hpp"
 #include "lab/flight_rk4.hpp"
 #include "lab/bioinspired.hpp"
+#include "lab/whole_aircraft.hpp"
 
 #include <array>
 #include <cmath>
@@ -127,5 +128,41 @@ int main() {
         return 14;
     }
     std::cout << "Phase 1 C++20 flapping, morphing, flex aeroelastic, Savitsky, and 1S RK4 checks passed\n";
+
+    // Phase 3 & Creator Whole-Aircraft C++20 checks: coupled jet cycle, cargo slung load, tailsitter, flying wing, fasteners/AWG
+    lab::CoupledJetParams jet_p;
+    jet_p.mach = 1.25;
+    const auto jet_r = lab::evaluate_coupled_jet_cycle(jet_p);
+    if (!jet_r.valid || jet_r.inlet_recovery_eta >= 1.0 || jet_r.mach_cone_half_angle_deg >= 60.0) {
+        std::cerr << "Coupled supersonic jet cycle failed MIL-E-5008B or Mach cone check\n";
+        return 15;
+    }
+    const auto cargo_ok = lab::evaluate_cargo_slung_load({});
+    lab::CargoSlungLoadParams cargo_heavy;
+    cargo_heavy.cargo_mass_kg = 8.0;
+    const auto cargo_fail = lab::evaluate_cargo_slung_load(cargo_heavy);
+    if (!cargo_ok.valid || !cargo_ok.stable_ok || cargo_fail.stable_ok) {
+        std::cerr << "Cargo slung-load pendulum check failed\n";
+        return 16;
+    }
+    const auto ts_ok = lab::evaluate_creator_archetypes({});
+    lab::CreatorArchetypeParams fw_unstable;
+    fw_unstable.mode = 1;
+    fw_unstable.sweep_deg = 2.0;
+    const auto fw_fail = lab::evaluate_creator_archetypes(fw_unstable);
+    if (!ts_ok.authority_ok || fw_fail.authority_ok) {
+        std::cerr << "Creator tailsitter/flying-wing check failed\n";
+        return 17;
+    }
+    const auto fh_ok = lab::evaluate_fastener_and_harness_safety({});
+    lab::FastenerHarnessParams fh_thin_wire;
+    fh_thin_wire.wire_awg = 22;
+    fh_thin_wire.continuous_current_a = 40.0;
+    const auto fh_bad = lab::evaluate_fastener_and_harness_safety(fh_thin_wire);
+    if (!fh_ok.bolt_ok || !fh_ok.wire_ok || fh_bad.wire_ok) {
+        std::cerr << "ISO fastener or AWG harness safety check failed\n";
+        return 18;
+    }
+    std::cout << "Phase 3 & Creator whole-aircraft C++20 kernel checks passed\n";
     return 0;
 }

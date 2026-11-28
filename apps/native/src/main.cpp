@@ -46,6 +46,8 @@ int main(int argc, char **argv) {
     std::string screenshot_path;
     bool four_view = false;
     bool cp_view = false;
+    bool open_rc_hud = false;
+    float override_airspeed = -1.0f;
     std::string preset_name;
     for (int i = 1; i < argc; ++i) {
         if (std::strcmp(argv[i], "--smoke-test") == 0) smoke_test = true;
@@ -54,6 +56,8 @@ int main(int argc, char **argv) {
         else if (std::strcmp(argv[i], "--output") == 0 && i + 1 < argc) benchmark_out = argv[++i];
         else if (std::strcmp(argv[i], "--4view") == 0 || std::strcmp(argv[i], "--four-view") == 0) four_view = true;
         else if (std::strcmp(argv[i], "--cp") == 0 || std::strcmp(argv[i], "--cp-view") == 0) cp_view = true;
+        else if (std::strcmp(argv[i], "--rc-hud") == 0) open_rc_hud = true;
+        else if (std::strcmp(argv[i], "--airspeed") == 0 && i + 1 < argc) override_airspeed = static_cast<float>(std::atof(argv[++i]));
         else if (std::strcmp(argv[i], "--preset") == 0 && i + 1 < argc) preset_name = argv[++i];
         else if (std::strcmp(argv[i], "--screenshot") == 0 && i + 1 < argc) screenshot_path = argv[++i];
     }
@@ -212,7 +216,21 @@ int main(int argc, char **argv) {
     else if (preset_name == "jet") app.switch_family(aerolab::VehicleFamily::Jet);
     else if (preset_name == "insect") app.switch_family(aerolab::VehicleFamily::InsectFlapper);
     else if (preset_name == "morphing") app.switch_family(aerolab::VehicleFamily::MorphingWing);
+    else if (preset_name == "cargo") app.switch_family(aerolab::VehicleFamily::CargoUAV);
+    else if (preset_name == "tailsitter") app.switch_family(aerolab::VehicleFamily::Tailsitter);
+    else if (preset_name == "flying-wing") app.switch_family(aerolab::VehicleFamily::FlyingWing);
     else if (preset_name == "part") app.switch_family(aerolab::VehicleFamily::CustomPart);
+    if (override_airspeed > 0.5f) {
+        app.params.airspeed_m_s = override_airspeed;
+        if (app.params.family == aerolab::VehicleFamily::Jet && override_airspeed > 330.0f) {
+            app.params.hardware_catalog_idx = 5;
+            app.params.jet_throttle_pct = 100.0f;
+        }
+        app.rebuild_geometry();
+    }
+    if (open_rc_hud) {
+        app.params.show_rc_hud = true;
+    }
     if (four_view) {
         app.viewport_layout = aerolab::ViewportLayout::Ortho4View;
     }
@@ -226,6 +244,16 @@ int main(int argc, char **argv) {
 
     while (!glfwWindowShouldClose(window)) {
         glfwPollEvents();
+        if (app.params.use_usb_joystick && glfwJoystickPresent(GLFW_JOYSTICK_1)) {
+            int count = 0;
+            const float *axes = glfwGetJoystickAxes(GLFW_JOYSTICK_1, &count);
+            if (axes && count >= 4) {
+                app.params.rc_roll = std::clamp(axes[0], -1.0f, 1.0f);
+                app.params.rc_pitch = std::clamp(axes[1], -1.0f, 1.0f);
+                app.params.rc_throttle = std::clamp(0.5f * (-axes[2] + 1.0f), 0.0f, 1.0f);
+                app.params.rc_yaw = std::clamp(axes[3], -1.0f, 1.0f);
+            }
+        }
         const auto now = std::chrono::steady_clock::now();
         const float dt = std::chrono::duration<float>(now - last_t).count();
         last_t = now;
