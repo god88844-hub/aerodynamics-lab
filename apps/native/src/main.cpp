@@ -13,6 +13,7 @@
 #include <filesystem>
 #include <fstream>
 #include <numeric>
+#include <thread>
 #include <string>
 #include <thread>
 #include <vector>
@@ -49,6 +50,7 @@ int main(int argc, char **argv) {
     bool open_rc_hud = false;
     bool stress_view = false;
     bool motion_study = false;
+    bool freeform_demo = false;
     float override_airspeed = -1.0f;
     float override_explode = -1.0f;
     std::string preset_name;
@@ -61,6 +63,7 @@ int main(int argc, char **argv) {
         else if (std::strcmp(argv[i], "--cp") == 0 || std::strcmp(argv[i], "--cp-view") == 0) cp_view = true;
         else if (std::strcmp(argv[i], "--stress") == 0) stress_view = true;
         else if (std::strcmp(argv[i], "--motion") == 0) motion_study = true;
+        else if (std::strcmp(argv[i], "--freeform-demo") == 0) freeform_demo = true;
         else if (std::strcmp(argv[i], "--explode") == 0 && i + 1 < argc) override_explode = static_cast<float>(std::atof(argv[++i]));
         else if (std::strcmp(argv[i], "--rc-hud") == 0) open_rc_hud = true;
         else if (std::strcmp(argv[i], "--airspeed") == 0 && i + 1 < argc) override_airspeed = static_cast<float>(std::atof(argv[++i]));
@@ -253,6 +256,39 @@ int main(int argc, char **argv) {
     }
     if (four_view) {
         app.viewport_layout = aerolab::ViewportLayout::Ortho4View;
+    }
+    if (freeform_demo) {
+        app.switch_family(aerolab::VehicleFamily::CustomPart);
+        app.freeform_ui.open_window = true;
+        aerolab::init_default_freeform_sketch(app.params.active_part);
+        // Add shell + pocket cut on picked top face + edge fillet cleanly
+        aerolab::FreeformCadFeature f_shell;
+        f_shell.op = aerolab::FreeformOpKind::Shell;
+        f_shell.radius_m = 0.004f;
+        app.params.active_part.freeform_features.push_back(f_shell);
+
+        aerolab::FreeformCadFeature f_cut;
+        f_cut.op = aerolab::FreeformOpKind::ExtrudeCut;
+        f_cut.depth_m = 0.025f;
+        f_cut.sketch.workplane.preset = "FACE";
+        f_cut.sketch.workplane.picked_face_id = 0;
+        f_cut.sketch.entities = {{"cut0", aerolab::FreeformEntityKind::Circle, false, true, 0.0f, 0.0f, 0.0f, 0.0f, 0.014f}};
+        app.params.active_part.freeform_features.push_back(f_cut);
+
+        aerolab::FreeformCadFeature f_fillet;
+        f_fillet.op = aerolab::FreeformOpKind::Fillet;
+        f_fillet.radius_m = 0.0018f;
+        f_fillet.target_indices = {0, 1};
+        app.params.active_part.freeform_features.push_back(f_fillet);
+
+        app.trigger_freeform_occt_build();
+        while (app.worker() && app.worker()->is_busy()) {
+            std::this_thread::sleep_for(std::chrono::milliseconds(15));
+        }
+        if (app.worker()) app.worker()->consume_pending_occt_mesh(app.brep_cache);
+        app.params.active_part.picked_face_id = 0;
+        app.camera.distance_m = 0.34f;
+        app.rebuild_geometry();
     }
     if (stress_view) {
         app.shading_mode = aerolab::ShadingMode::StressVonMises;

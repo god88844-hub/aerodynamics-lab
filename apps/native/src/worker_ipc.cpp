@@ -1,5 +1,6 @@
 #include "worker_ipc.hpp"
 
+#include "freeform_sketch_cad.hpp"
 #include "lab/flight_rk4.hpp"
 
 #include <chrono>
@@ -228,6 +229,7 @@ std::string WorkerIPC::build_project_payload_json(const AircraftDesignParams &pa
         << "  \"part_hole_radius_m\": " << params.active_part.hole_radius_m << ",\n"
         << "  \"part_revolve_360\": " << (params.active_part.revolve_360 ? "true" : "false") << ",\n"
         << "  \"part_circular_pattern_count\": " << params.active_part.circular_pattern_count << ",\n"
+        << "  \"freeform_mode\": " << (params.active_part.freeform_mode ? "true" : "false") << ",\n"
         << "  \"motor_id\": \"tmotor_mn3508_kv380\",\n"
         << "  \"propeller_id\": \"tmotor_p15x5_cf\",\n"
         << "  \"esc_id\": \"generic_esc_20a\",\n"
@@ -424,6 +426,7 @@ bool WorkerIPC::load_project_payload_json(const std::string &json_text, Aircraft
     if (const auto ja = find_val("jet_afterburner"); !ja.empty()) params.jet_afterburner = (ja == "true");
     if (const auto jr = find_val("jet_ramjet"); !jr.empty()) params.jet_ramjet = (jr == "true");
     if (const auto rsv = find_val("rocket_saturn_v_preset"); !rsv.empty()) params.rocket_saturn_v_preset = (rsv == "true");
+    deserialize_freeform_part_json(json_text, params.active_part);
     read_f("reentry_alt_km", params.reentry_alt_km);
     read_f("flap_freq_hz", params.flap_freq_hz);
     read_f("stroke_amp_deg", params.stroke_amp_deg);
@@ -477,7 +480,19 @@ bool WorkerIPC::launch_python_command(const std::string &cmd, const std::string 
             ofs << input_json;
         }
         const char *py_env = std::getenv("LAB_PYTHON");
-        const std::string py = (py_env && *py_env) ? std::string(py_env) : "python";
+        std::string py = (py_env && *py_env) ? std::string(py_env) : std::string{};
+        if (py.empty()) {
+#ifdef _WIN32
+            const auto venv_py = repo_root_ / ".local" / "cad-venv" / "Scripts" / "python.exe";
+#else
+            const auto venv_py = repo_root_ / ".local" / "cad-venv" / "bin" / "python";
+#endif
+            if (std::filesystem::exists(venv_py, ec)) {
+                py = venv_py.string();
+            } else {
+                py = "python";
+            }
+        }
         const std::string script = (repo_root_ / "scripts" / "lab_project.py").string();
         std::ostringstream shell;
         shell << "\"" << py << "\" \"" << script << "\" " << cmd << " \"" << in_file.string() << "\" \""
@@ -508,6 +523,9 @@ bool WorkerIPC::launch_python_command(const std::string &cmd, const std::string 
         status_.last_ok = (rc == 0);
         if (rc == 0) {
             status_.summary_line = "Worker finished: " + cmd + " -> " + out_file.filename().string();
+            if (cmd == "freeform-cad") {
+                pending_occt_mesh_.store(true);
+            }
             pending_result_.store(true);
         } else {
             status_.summary_line = "Worker exited (" + std::to_string(rc) + ") on " + cmd;
@@ -516,6 +534,11 @@ bool WorkerIPC::launch_python_command(const std::string &cmd, const std::string 
         busy_.store(false);
     });
     return true;
+}
+
+bool WorkerIPC::consume_pending_occt_mesh(FreeformBrepCache &cache) {
+    if (!pending_occt_mesh_.exchange(false)) return false;
+    return load_occt_mesh_json(tmp_dir_ / "occt_mesh.json", cache);
 }
 
 bool WorkerIPC::poll_completed_results(LiveEvidenceSummary &summary) {

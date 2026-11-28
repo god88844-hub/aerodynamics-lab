@@ -27,6 +27,7 @@ from desktop_worker.project_workflow import (  # noqa: E402
 from desktop_worker.twin_comparison import compare_frozen_run_and_source, export_labeled_comparison  # noqa: E402
 from geometry.fixed_wing_cad import ParametricWingSpec, compute_wing_geometry_properties, export_2d_engineering_drawing_svg_dxf  # noqa: E402
 from geometry.part_designer import CustomPartRecipe, build_custom_part, swap_assembly_part  # noqa: E402
+from geometry.freeform_cad import build_freeform_cad_model, solve_freeform_sketch  # noqa: E402
 from optimization.bounded_sweep import run_bounded_sweep  # noqa: E402
 from physics.validation.virtual_evidence_scorecard import compute_virtual_evidence_scorecard  # noqa: E402
 from physics.aerodynamics.fixed_wing import run_fixed_wing_mission  # noqa: E402
@@ -82,6 +83,8 @@ def main() -> int:
             "sitl-mission",
             "build-custom-part",
             "swap-assembly-part",
+            "solve-sketch",
+            "freeform-cad",
             "evidence-scorecard",
             "phase1-eval",
             "failure-atlas",
@@ -414,6 +417,13 @@ def main() -> int:
             write_result(args.output, payload)
         elif args.command == "phase3-4-eval":
             write_result(args.output, evaluate_all_phase3_and_phase4_benchmarks())
+        elif args.command == "solve-sketch":
+            spec = json.loads(args.input.read_text(encoding="utf-8"))
+            write_result(args.output, solve_freeform_sketch(spec))
+        elif args.command == "freeform-cad":
+            spec = json.loads(args.input.read_text(encoding="utf-8"))
+            exp_dir = Path(spec["export_dir"]) if spec.get("export_dir") else None
+            write_result(args.output, build_freeform_cad_model(spec, export_dir=exp_dir))
         elif args.command == "import-legacy":
             raw = json.loads(args.input.read_text(encoding="utf-8"))
             project = import_legacy_project(raw)

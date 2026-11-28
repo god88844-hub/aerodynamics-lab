@@ -294,6 +294,23 @@ void AppWorkbench::draw_menu_bar() {
     }
 
     if (ImGui::BeginMenu("Sketch")) {
+        if (ImGui::MenuItem("Open Freeform Constraint Sketcher & OCCT Studio", nullptr, freeform_ui.open_window)) {
+            freeform_ui.open_window = !freeform_ui.open_window;
+            init_default_freeform_sketch(params.active_part);
+        }
+        if (ImGui::MenuItem("Pick 3D Face as Sketch Plane", "Ctrl+Click", freeform_ui.pick_face_mode)) {
+            freeform_ui.pick_face_mode = !freeform_ui.pick_face_mode;
+        }
+        if (ImGui::MenuItem("New Freeform OCCT Solid Part")) {
+            push_undo_snapshot();
+            params.active_part.freeform_mode = true;
+            params.active_part.sketch_kind = SketchShapeKind::FreeformBrep;
+            init_default_freeform_sketch(params.active_part);
+            freeform_ui.open_window = true;
+            switch_family(VehicleFamily::CustomPart);
+            trigger_freeform_occt_build();
+        }
+        ImGui::Separator();
         if (ImGui::MenuItem("New Rounded Plate / Arm Sketch")) {
             push_undo_snapshot();
             params.active_part.sketch_kind = SketchShapeKind::RoundedPlate;
@@ -439,6 +456,15 @@ void AppWorkbench::draw_quick_toolstrip() {
     if (ImGui::Button("Part Designer")) switch_family(VehicleFamily::CustomPart);
 
     // Row 2: CAD Assembly, Motion, Multiphysics & Solver Tools
+    if (ImGui::Button(freeform_ui.open_window ? "Sketcher: ON" : "Sketch 2D/OCCT")) {
+        freeform_ui.open_window = !freeform_ui.open_window;
+        init_default_freeform_sketch(params.active_part);
+    }
+    ImGui::SameLine();
+    if (ImGui::Button(freeform_ui.pick_face_mode ? "Pick Face: ON" : "Pick Face")) {
+        freeform_ui.pick_face_mode = !freeform_ui.pick_face_mode;
+    }
+    ImGui::SameLine();
     if (ImGui::Button(params.explode_factor > 0.1f ? "Assemble" : "Explode")) {
         params.explode_factor = (params.explode_factor > 0.1f) ? 0.0f : 1.0f;
         rebuild_geometry();
@@ -556,6 +582,21 @@ void AppWorkbench::draw_center_viewport(float dt_s) {
 
     if (ImGui::IsItemHovered()) {
         const ImGuiIO &io = ImGui::GetIO();
+        if ((freeform_ui.pick_face_mode || io.KeyCtrl) && ImGui::IsMouseClicked(ImGuiMouseButton_Left)) {
+            const auto hit = pick_face_under_cursor(
+                scene, brep_cache, camera, viewport_layout, last_vp_w_, last_vp_h_,
+                io.MousePos.x - vp_pos.x, io.MousePos.y - vp_pos.y);
+            if (hit.hit) {
+                push_undo_snapshot();
+                params.active_part.picked_face_id = hit.face_id;
+                params.active_part.active_workplane = hit.workplane;
+                params.active_part.freeform_sketch.workplane = hit.workplane;
+                freeform_ui.open_window = true;
+                freeform_ui.pick_face_mode = false;
+                export_banner = "Picked 3D Face #" + std::to_string(hit.face_id) + " as active sketch plane";
+                rebuild_geometry();
+            }
+        }
         if (ImGui::IsMouseDragging(ImGuiMouseButton_Right) || ImGui::IsMouseDragging(ImGuiMouseButton_Left)) {
             if (!io.KeyShift) {
                 camera.yaw_deg -= io.MouseDelta.x * 0.45f;
@@ -672,11 +713,22 @@ void AppWorkbench::draw_right_inspector() {
             changed |= draw_interactive_2d_sketch_canvas(params.active_part);
             ImGui::Text("Custom Part Sketch & Solid Feature:");
             const char *kinds[] = {"Rounded Arm/Plate", "Ring Duct", "NACA Airfoil Rib",
-                                   "Hex Mount",         "Custom Propeller", "Custom Body Shell"};
+                                   "Hex Mount",         "Custom Propeller", "Custom Body Shell", "Freeform OCCT B-Rep"};
             int k = static_cast<int>(params.active_part.sketch_kind);
-            if (ImGui::Combo("Sketch Profile", &k, kinds, 6)) {
+            if (ImGui::Combo("Sketch Profile", &k, kinds, 7)) {
                 params.active_part.sketch_kind = static_cast<SketchShapeKind>(k);
+                params.active_part.freeform_mode = (params.active_part.sketch_kind == SketchShapeKind::FreeformBrep);
+                if (params.active_part.freeform_mode) init_default_freeform_sketch(params.active_part);
                 changed = true;
+            }
+            if (ImGui::Button("Open Freeform Constraint Sketcher")) {
+                freeform_ui.open_window = true;
+                init_default_freeform_sketch(params.active_part);
+            }
+            if (ImGui::Button("Build OCCT Solid (STEP/STL/B-Rep)")) {
+                params.active_part.freeform_mode = true;
+                params.active_part.sketch_kind = SketchShapeKind::FreeformBrep;
+                trigger_freeform_occt_build();
             }
             changed |= ImGui::SliderFloat("Part Length (m)", &params.active_part.length_m, 0.04f, 0.60f, "%.3f");
             changed |= ImGui::SliderFloat("Part Width (m)", &params.active_part.width_m, 0.015f, 0.25f, "%.3f");

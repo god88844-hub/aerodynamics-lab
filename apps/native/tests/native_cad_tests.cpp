@@ -2,6 +2,7 @@
 #undef NDEBUG
 #endif
 #include "cad_mesh_builder.hpp"
+#include "freeform_sketch_cad.hpp"
 #include "worker_ipc.hpp"
 
 #include <cassert>
@@ -491,6 +492,70 @@ int main() {
         "build-custom-part", ipc.build_part_payload_json(roundtrip_in, repo / ".local" / "tmp" / "native_exports")));
     while (ipc.is_busy()) std::this_thread::sleep_for(std::chrono::milliseconds(20));
     assert(ipc.snapshot_status().last_ok);
+
+    // 8b. Freeform 2D C++ Constraint Solver, 3D Face Picker, and Live Open CASCADE B-Rep Feature Stack
+    {
+        aerolab::AircraftDesignParams ff_p;
+        ff_p.family = aerolab::VehicleFamily::CustomPart;
+        aerolab::init_default_freeform_sketch(ff_p.active_part);
+        assert(ff_p.active_part.freeform_sketch.converged);
+        assert(ff_p.active_part.freeform_sketch.dof == 0);
+
+        aerolab::FreeformCadFeature f_cut;
+        f_cut.op = aerolab::FreeformOpKind::ExtrudeCut;
+        f_cut.depth_m = 0.025f;
+        f_cut.sketch.workplane.preset = "FACE";
+        f_cut.sketch.workplane.picked_face_id = 0;
+        f_cut.sketch.entities = {{"cut0", aerolab::FreeformEntityKind::Circle, false, true, 0.0f, 0.0f, 0.0f, 0.0f, 0.012f}};
+        ff_p.active_part.freeform_features.push_back(f_cut);
+
+        aerolab::FreeformCadFeature f_fillet;
+        f_fillet.op = aerolab::FreeformOpKind::Fillet;
+        f_fillet.radius_m = 0.0015f;
+        f_fillet.target_indices = {0, 1};
+        ff_p.active_part.freeform_features.push_back(f_fillet);
+
+        const auto preview_scene = aerolab::build_cad_scene(ff_p);
+        assert(!preview_scene.indices.empty());
+
+        aerolab::CameraOrbitState ff_cam;
+        ff_cam.distance_m = 0.45f;
+        ff_cam.target_m = {0.0f, 0.0f, 0.02f};
+        const auto pick_res = aerolab::pick_face_under_cursor(
+            preview_scene, aerolab::FreeformBrepCache{}, ff_cam, aerolab::ViewportLayout::Single3D, 960, 640, 480.0f, 320.0f);
+        assert(pick_res.hit);
+
+        const auto mesh_out = repo / ".local" / "tmp" / "native_exports" / "test_occt_mesh.json";
+        const std::string ff_payload = aerolab::build_freeform_cad_payload_json(
+            ff_p.active_part, mesh_out, repo / ".local" / "tmp" / "native_exports");
+        assert(ipc.launch_python_command("freeform-cad", ff_payload));
+        while (ipc.is_busy()) std::this_thread::sleep_for(std::chrono::milliseconds(20));
+        assert(ipc.snapshot_status().last_ok);
+
+        aerolab::FreeformBrepCache brep_cache;
+        assert(aerolab::load_occt_mesh_json(mesh_out, brep_cache));
+        assert(brep_cache.has_occt_mesh && brep_cache.occt_exact_brep);
+        assert(brep_cache.faces.size() > 6 && brep_cache.volume_m3 > 1e-6);
+
+        ff_p.active_part.picked_face_id = 0;
+        const auto occt_scene = aerolab::build_cad_scene(ff_p, -1, &brep_cache);
+        assert(occt_scene.indices.size() == brep_cache.indices.size());
+        assert(occt_scene.custom_part_mass_kg > 0.01);
+
+        // Pick an exact OCCT B-rep face on the rendered solid
+        const auto occt_pick = aerolab::pick_face_under_cursor(
+            occt_scene, brep_cache, ff_cam, aerolab::ViewportLayout::Single3D, 960, 640, 480.0f, 320.0f);
+        assert(occt_pick.hit && occt_pick.face_id >= 0);
+
+        // Attach the OCCT freeform solid onto Multirotor & confirm physics coupling
+        aerolab::AircraftDesignParams q_ff = nominal_quad;
+        q_ff.attach_custom_part = true;
+        q_ff.active_part = ff_p.active_part;
+        aerolab::LiveEvidenceSummary q_ff_ev;
+        aerolab::evaluate_live_physics_and_curves(q_ff, aerolab::build_cad_scene(q_ff, -1, &brep_cache), q_ff_ev);
+        assert(q_ff_ev.validation_status == "UNVALIDATED_CUSTOM");
+        assert(q_ff_ev.total_mass_kg > nom_ev.total_mass_kg);
+    }
 
     // 9. PNG uncompressed stored-deflate encoder smoke check
     const auto tmp_png = std::filesystem::temp_directory_path() / "aerolab_native_test.png";

@@ -45,6 +45,84 @@ enum class SketchShapeKind {
     HexMount = 3,
     CustomPropeller = 4,
     CustomBodyShell = 5,
+    FreeformBrep = 6,
+};
+
+enum class FreeformEntityKind { Line = 0, Circle = 1, Arc = 2, Spline = 3 };
+enum class FreeformConstraintKind {
+    Horizontal = 0,
+    Vertical = 1,
+    Length = 2,
+    Radius = 3,
+    Fixed = 4,
+    Coincident = 5,
+    Perpendicular = 6,
+    Parallel = 7,
+    Tangent = 8,
+    Equal = 9,
+    Distance = 10,
+};
+enum class FreeformOpKind {
+    ExtrudeBoss = 0,
+    ExtrudeCut = 1,
+    Revolve = 2,
+    Loft = 3,
+    Fillet = 4,
+    Chamfer = 5,
+    Shell = 6,
+};
+
+struct FreeformSketchEntity {
+    std::string id;
+    FreeformEntityKind kind = FreeformEntityKind::Line;
+    bool construction = false;
+    bool closed = true;
+    float x0 = 0.0f, y0 = 0.0f;
+    float x1 = 0.06f, y1 = 0.0f;
+    float radius = 0.015f;
+    float start_deg = 0.0f, end_deg = 180.0f;
+    std::vector<std::array<float, 2>> spline_pts;
+};
+
+struct FreeformSketchConstraint {
+    FreeformConstraintKind kind = FreeformConstraintKind::Length;
+    std::string a;
+    std::string b;
+    int pt_a = 0;
+    int pt_b = 0;
+    float value = 0.05f;
+    float target_x = 0.0f, target_y = 0.0f;
+};
+
+struct WorkplaneSpec {
+    std::string preset = "XY";
+    int picked_face_id = -1;
+    std::array<float, 3> origin_m{0.0f, 0.0f, 0.0f};
+    std::array<float, 3> normal{0.0f, 0.0f, 1.0f};
+    std::array<float, 3> u_axis{1.0f, 0.0f, 0.0f};
+    std::array<float, 3> v_axis{0.0f, 1.0f, 0.0f};
+};
+
+struct FreeformSketchState {
+    std::vector<FreeformSketchEntity> entities;
+    std::vector<FreeformSketchConstraint> constraints;
+    WorkplaneSpec workplane{};
+    int dof = 0;
+    bool converged = true;
+    double max_residual = 0.0;
+};
+
+struct FreeformCadFeature {
+    FreeformOpKind op = FreeformOpKind::ExtrudeBoss;
+    bool suppressed = false;
+    bool symmetric = false;
+    float depth_m = 0.030f;
+    float angle_deg = 360.0f;
+    float radius_m = 0.002f;
+    float loft_offset_m = 0.060f;
+    float loft_scale = 0.55f;
+    std::vector<int> target_indices;
+    FreeformSketchState sketch{};
 };
 
 struct CustomPartParams {
@@ -58,6 +136,11 @@ struct CustomPartParams {
     int circular_pattern_count = 1;
     std::string material_name = "Carbon Fiber CFRP";
     float density_kg_m3 = 1580.0f;
+    bool freeform_mode = false;
+    int picked_face_id = -1;
+    WorkplaneSpec active_workplane{};
+    FreeformSketchState freeform_sketch{};
+    std::vector<FreeformCadFeature> freeform_features{};
 };
 
 struct AircraftDesignParams {
@@ -208,9 +291,34 @@ struct EdgeVertex {
     float r, g, b;
 };
 
+struct BrepFaceMeta {
+    int face_id = 0;
+    std::string kind = "plane";
+    double area_m2 = 0.0;
+    std::array<float, 3> center_m{0.0f, 0.0f, 0.0f};
+    std::array<float, 3> normal{0.0f, 0.0f, 1.0f};
+    std::array<float, 3> u_axis{1.0f, 0.0f, 0.0f};
+    std::array<float, 3> v_axis{0.0f, 1.0f, 0.0f};
+};
+
+struct FreeformBrepCache {
+    bool has_occt_mesh = false;
+    bool occt_exact_brep = false;
+    std::vector<MeshVertex> vertices;
+    std::vector<std::uint32_t> indices;
+    std::vector<int> tri_face_ids;
+    std::vector<EdgeVertex> edges;
+    std::vector<BrepFaceMeta> faces;
+    double volume_m3 = 0.0;
+    double mass_kg = 0.0;
+    std::array<double, 3> cog_m{0.0, 0.0, 0.0};
+    std::string status_summary = "No OCCT B-rep build yet";
+};
+
 struct GeneratedCADScene {
     std::vector<MeshVertex> vertices;
     std::vector<std::uint32_t> indices;
+    std::vector<int> tri_face_ids;
     std::vector<EdgeVertex> cad_edges;
     std::vector<EdgeVertex> wake_lines;
     std::vector<EdgeVertex> path_lines;
