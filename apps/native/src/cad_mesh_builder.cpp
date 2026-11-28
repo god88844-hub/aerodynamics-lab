@@ -338,7 +338,65 @@ void add_fuselage_loft(GeneratedCADScene &out, Vec3 center, float length_m, floa
     }
 }
 
-void build_custom_sketch_solid(GeneratedCADScene &out, const CustomPartParams &part, Vec3 offset_m) {
+void build_custom_sketch_solid(GeneratedCADScene &out, const CustomPartParams &part, Vec3 offset_m,
+                               const FreeformBrepCache *brep = nullptr) {
+    if ((part.freeform_mode || part.sketch_kind == SketchShapeKind::FreeformBrep) && brep && brep->has_occt_mesh) {
+        const std::uint32_t base = static_cast<std::uint32_t>(out.vertices.size());
+        for (const auto &v : brep->vertices) {
+            MeshVertex mv = v;
+            mv.px += offset_m.x; mv.py += offset_m.y; mv.pz += offset_m.z;
+            out.vertices.push_back(mv);
+        }
+        const std::size_t n_tris = brep->indices.size() / 3;
+        for (std::size_t ti = 0; ti < n_tris; ++ti) {
+            const std::uint32_t i0 = base + brep->indices[3 * ti + 0];
+            const std::uint32_t i1 = base + brep->indices[3 * ti + 1];
+            const std::uint32_t i2 = base + brep->indices[3 * ti + 2];
+            out.indices.push_back(i0);
+            out.indices.push_back(i1);
+            out.indices.push_back(i2);
+            const int fid = (ti < brep->tri_face_ids.size()) ? brep->tri_face_ids[ti] : -1;
+            out.tri_face_ids.push_back(fid);
+            if (part.picked_face_id >= 0 && fid == part.picked_face_id) {
+                for (std::uint32_t vi : {i0, i1, i2}) {
+                    out.vertices[vi].r = 0.96f; out.vertices[vi].g = 0.72f; out.vertices[vi].b = 0.14f;
+                }
+            }
+        }
+        for (const auto &ev : brep->edges) {
+            out.cad_edges.push_back({ev.px + offset_m.x, ev.py + offset_m.y, ev.pz + offset_m.z, ev.r, ev.g, ev.b});
+        }
+        out.custom_part_volume_m3 = brep->volume_m3;
+        out.custom_part_mass_kg = (brep->mass_kg > 1e-7) ? brep->mass_kg : (brep->volume_m3 * part.density_kg_m3);
+        return;
+    }
+    if ((part.freeform_mode || part.sketch_kind == SketchShapeKind::FreeformBrep) && !part.freeform_sketch.entities.empty()) {
+        // Immediate local wireframe + preview prism until OCCT worker mesh returns
+        float min_x = 1e9f, max_x = -1e9f, min_y = 1e9f, max_y = -1e9f;
+        for (const auto &e : part.freeform_sketch.entities) {
+            if (e.construction) continue;
+            if (e.kind == FreeformEntityKind::Line) {
+                min_x = std::min({min_x, e.x0, e.x1}); max_x = std::max({max_x, e.x0, e.x1});
+                min_y = std::min({min_y, e.y0, e.y1}); max_y = std::max({max_y, e.y0, e.y1});
+            } else if (e.kind == FreeformEntityKind::Circle || e.kind == FreeformEntityKind::Arc) {
+                min_x = std::min(min_x, e.x0 - e.radius); max_x = std::max(max_x, e.x0 + e.radius);
+                min_y = std::min(min_y, e.y0 - e.radius); max_y = std::max(max_y, e.y0 + e.radius);
+            } else {
+                for (const auto &pt : e.spline_pts) {
+                    min_x = std::min(min_x, pt[0]); max_x = std::max(max_x, pt[0]);
+                    min_y = std::min(min_y, pt[1]); max_y = std::max(max_y, pt[1]);
+                }
+            }
+        }
+        if (max_x > min_x && max_y > min_y) {
+            const float depth = (!part.freeform_features.empty() ? std::max(0.004f, part.freeform_features[0].depth_m) : 0.030f);
+            const Vec3 ctr{offset_m.x + 0.5f * (min_x + max_x), offset_m.y + 0.5f * (min_y + max_y), offset_m.z};
+            add_oriented_box(out, ctr, {max_x - min_x, max_y - min_y, depth}, 0.0f, 0.28f, 0.56f, 0.88f, -0.2f);
+            out.custom_part_volume_m3 = static_cast<double>(max_x - min_x) * (max_y - min_y) * depth;
+            out.custom_part_mass_kg = out.custom_part_volume_m3 * static_cast<double>(part.density_kg_m3);
+            return;
+        }
+    }
     const int n_pat = std::max(1, part.circular_pattern_count);
     const float w = std::max(0.01f, part.width_m);
     const float l = std::max(0.02f, part.length_m);
@@ -452,7 +510,7 @@ std::vector<AirfoilSectionPoint> sample_naca4_airfoil(const std::string &code, i
     return closed;
 }
 
-GeneratedCADScene build_cad_scene(const AircraftDesignParams &params, int selected_part_idx) {
+GeneratedCADScene build_cad_scene(const AircraftDesignParams &params, int selected_part_idx, const FreeformBrepCache *brep) {
     if (params.family == VehicleFamily::Benchmark200) {
         return build_200part_benchmark_scene(selected_part_idx);
     }
@@ -460,9 +518,9 @@ GeneratedCADScene build_cad_scene(const AircraftDesignParams &params, int select
     const auto is_sel = [&](int idx) { return idx == selected_part_idx; };
 
     if (params.family == VehicleFamily::CustomPart) {
-        build_custom_sketch_solid(out, params.active_part, {0.0f, 0.0f, 0.05f});
+        build_custom_sketch_solid(out, params.active_part, {0.0f, 0.0f, 0.02f}, brep);
         out.assembly_parts.push_back({params.active_part.part_name, params.active_part.material_name,
-                                      out.custom_part_mass_kg, {0.0, 0.0, 0.05}, true});
+                                      out.custom_part_mass_kg, {0.0, 0.0, 0.02}, true});
         out.reference_area_m2 = static_cast<double>(params.active_part.width_m * params.active_part.length_m);
         out.aspect_ratio = static_cast<double>(params.active_part.length_m / std::max(0.01f, params.active_part.width_m));
         return out;
@@ -907,7 +965,7 @@ GeneratedCADScene build_cad_scene(const AircraftDesignParams &params, int select
             out.assembly_parts.push_back({params.active_part.part_name + " (Redesigned Props)", params.active_part.material_name,
                                           out.custom_part_mass_kg, {0.0, 0.0, 0.015}, true});
         } else {
-            build_custom_sketch_solid(out, params.active_part, {0.0f, 0.0f, -0.08f});
+            build_custom_sketch_solid(out, params.active_part, {0.0f, 0.0f, -0.08f}, brep);
             out.assembly_parts.push_back({params.active_part.part_name + " (Redesigned)", params.active_part.material_name,
                                           out.custom_part_mass_kg, {0.0, 0.0, -0.08}, true});
         }
@@ -1082,7 +1140,8 @@ void evaluate_live_physics_and_curves(const AircraftDesignParams &params, const 
     if (params.attach_custom_part || params.family == VehicleFamily::CustomPart) {
         if (params.active_part.sketch_kind == SketchShapeKind::CustomBodyShell ||
             params.active_part.sketch_kind == SketchShapeKind::RoundedPlate ||
-            params.active_part.sketch_kind == SketchShapeKind::HexMount) {
+            params.active_part.sketch_kind == SketchShapeKind::HexMount ||
+            params.active_part.sketch_kind == SketchShapeKind::FreeformBrep) {
             custom_cd_delta = 0.014 * std::clamp(static_cast<double>(params.active_part.width_m) / 0.08, 0.25, 3.0);
         } else if (params.active_part.sketch_kind == SketchShapeKind::AirfoilSection) {
             custom_cl_scale = 1.06;

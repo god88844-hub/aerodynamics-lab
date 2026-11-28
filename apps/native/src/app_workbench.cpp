@@ -393,7 +393,7 @@ void AppWorkbench::sync_feature_tree() {
 }
 
 void AppWorkbench::rebuild_geometry() {
-    scene = build_cad_scene(params, selected_part_idx);
+    scene = build_cad_scene(params, selected_part_idx, &brep_cache);
     if (viewport_) {
         viewport_->upload_scene(scene);
     }
@@ -401,9 +401,21 @@ void AppWorkbench::rebuild_geometry() {
     sync_feature_tree();
 }
 
+void AppWorkbench::trigger_freeform_occt_build() {
+    if (!ipc_) return;
+    init_default_freeform_sketch(params.active_part);
+    const std::string payload = build_freeform_cad_payload_json(
+        params.active_part, ipc_->tmp_dir() / "occt_mesh.json", repo_root_ / ".local" / "tmp" / "native_exports");
+    ipc_->launch_python_command("freeform-cad", payload);
+}
+
 void AppWorkbench::render_ui_and_scene(float dt_s, int fb_w, int fb_h) {
     (void)fb_w;
     (void)fb_h;
+    if (ipc_ && ipc_->consume_pending_occt_mesh(brep_cache)) {
+        export_banner = brep_cache.status_summary;
+        rebuild_geometry();
+    }
     if (ipc_ && ipc_->poll_completed_results(evidence) && viewport_) {
         viewport_->upload_trajectory_path(evidence.traj_pos_m);
     }
@@ -425,7 +437,7 @@ void AppWorkbench::render_ui_and_scene(float dt_s, int fb_w, int fb_h) {
                 params.rc_pitch = std::cos(params.motion_study_time_s * 1.9f) * 0.6f;
             }
         }
-        scene = build_cad_scene(params, selected_part_idx);
+        scene = build_cad_scene(params, selected_part_idx, &brep_cache);
         if (viewport_) {
             viewport_->upload_scene(scene);
         }
@@ -475,6 +487,11 @@ void AppWorkbench::render_ui_and_scene(float dt_s, int fb_w, int fb_h) {
     if (params.show_rc_hud) {
         draw_rc_hud();
     }
+    draw_freeform_sketcher_window(
+        freeform_ui, params, brep_cache,
+        [this]() { push_undo_snapshot(); },
+        [this]() { rebuild_geometry(); },
+        [this]() { trigger_freeform_occt_build(); });
     draw_modals();
 }
 

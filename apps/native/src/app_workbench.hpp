@@ -2,6 +2,7 @@
 
 #include "cad_mesh_builder.hpp"
 #include "cad_types.hpp"
+#include "freeform_sketch_cad.hpp"
 #include "viewport_gl.hpp"
 #include "worker_ipc.hpp"
 
@@ -44,6 +45,11 @@ public:
     GeneratedCADScene scene;
     LiveEvidenceSummary evidence;
     std::vector<FeatureNode> feature_tree;
+    FreeformBrepCache brep_cache;
+    FreeformSketchUiState freeform_ui;
+
+    void trigger_freeform_occt_build();
+    WorkerIPC *worker() { return ipc_.get(); }
 
     // Modals (kept cleanly off the main toolbar)
     bool show_about_modal = false;

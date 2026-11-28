@@ -32,6 +32,8 @@ public:
 
     // Poll async Python solver output into trajectory/metrics when finished
     bool poll_completed_results(LiveEvidenceSummary &summary);
+    bool consume_pending_occt_mesh(FreeformBrepCache &cache);
+    const std::filesystem::path &tmp_dir() const { return tmp_dir_; }
 
     // Background subprocess invocation of scripts/lab_project.py
     bool launch_python_command(const std::string &cmd, const std::string &input_json, const std::string &note = "");
@@ -49,6 +51,7 @@ private:
     std::filesystem::path tmp_dir_;
     std::atomic<bool> busy_{false};
     std::atomic<bool> pending_result_{false};
+    std::atomic<bool> pending_occt_mesh_{false};
     mutable std::mutex mu_;
     WorkerJobStatus status_;
     std::thread worker_thread_;
