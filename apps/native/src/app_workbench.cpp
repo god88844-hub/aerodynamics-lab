@@ -262,6 +262,22 @@ void AppWorkbench::switch_family(VehicleFamily family) {
         params.screw_size_idx = 2;
         params.wire_awg = 14;
         camera.distance_m = 1.85f;
+    } else if (family == VehicleFamily::RocketSpacecraft) {
+        params.project_name = "2-Stage Orbital & Hypersonic Vehicle";
+        params.frame_mass_kg = 2680.0f;
+        params.payload_mass_kg = 250.0f;
+        params.rocket_stage1_prop_kg = 18500.0f;
+        params.rocket_stage2_prop_kg = 4200.0f;
+        params.rocket_isp1_s = 295.0f;
+        params.rocket_thrust_kn = 340.0f;
+        params.rocket_nose_radius_m = 0.85f;
+        params.reentry_speed_km_s = 7.65f;
+        params.reentry_alt_km = 68.0f;
+        params.fuselage_length_m = 2.40f;
+        params.fuselage_radius_m = 0.14f;
+        params.screw_size_idx = 5;
+        params.wire_awg = 10;
+        camera.distance_m = 3.20f;
     } else {
         params.project_name = "Part Designer Studio";
         camera.distance_m = 0.75f;
@@ -333,6 +349,9 @@ void AppWorkbench::sync_feature_tree() {
     } else if (params.family == VehicleFamily::FlyingWing) {
         feature_tree.push_back({"fwing_body", "Reflex Swept Plank + Pod", "WingLoft"});
         feature_tree.push_back({"fwing_elevons", "Coupled Elevons + Pusher", "RotorArray"});
+    } else if (params.family == VehicleFamily::RocketSpacecraft) {
+        feature_tree.push_back({"rkt_s1", "Stage 1 Booster + Grid/Stabilizer Fins", "Fuselage"});
+        feature_tree.push_back({"rkt_s2", "Stage 2 Upper + Payload Heatshield", "Fuselage"});
     }
     const char *m_names[] = {"M2", "M2.5", "M3", "M4", "M5", "M6"};
     const int sidx = (params.screw_size_idx < 0) ? 0 : (params.screw_size_idx > 5 ? 5 : params.screw_size_idx);
@@ -357,13 +376,24 @@ void AppWorkbench::render_ui_and_scene(float dt_s, int fb_w, int fb_h) {
     if (ipc_ && ipc_->poll_completed_results(evidence) && viewport_) {
         viewport_->upload_trajectory_path(evidence.traj_pos_m);
     }
-    const bool live_spin = evidence.playing || params.animate_flapping || params.show_rc_hud;
+    const bool live_spin = evidence.playing || params.animate_flapping || params.show_rc_hud || params.motion_study_active;
     if (live_spin) {
         params.flap_anim_phase_rad += dt_s * 11.5f; // Slow-motion visual wingbeat cycle
         if (params.flap_anim_phase_rad > 62.8318f) params.flap_anim_phase_rad = 0.0f;
         const float spin_rate = 18.0f * (0.4f + 0.9f * (params.rotor_rpm / 6000.0f));
         params.spin_phase_rad += dt_s * spin_rate;
         if (params.spin_phase_rad > 62.8318f) params.spin_phase_rad -= 62.8318f;
+        if (params.motion_study_active) {
+            params.motion_study_time_s += dt_s;
+            const float s_wave = 0.5f - 0.5f * std::cos(params.motion_study_time_s * 1.8f);
+            if (params.family == VehicleFamily::VTOL) params.vtol_tilt_deg = 90.0f * s_wave;
+            else if (params.family == VehicleFamily::Tailsitter) params.transition_pitch_deg = 85.0f * s_wave;
+            else if (params.family == VehicleFamily::MorphingWing) params.morph_tuck_pct = 65.0f * s_wave;
+            else {
+                params.rc_roll = std::sin(params.motion_study_time_s * 2.6f);
+                params.rc_pitch = std::cos(params.motion_study_time_s * 1.9f) * 0.6f;
+            }
+        }
         scene = build_cad_scene(params, selected_part_idx);
         if (viewport_) {
             viewport_->upload_scene(scene);

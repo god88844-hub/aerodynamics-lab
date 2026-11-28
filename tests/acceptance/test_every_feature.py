@@ -54,6 +54,9 @@ def test_all_python_worker_cli_commands_succeed(tmp_path: Path) -> None:
         ("bounded-sweep", {}),
         ("phase1-eval", {}),
         ("failure-atlas", {}),
+        ("multiphysics-audit", base_proj),
+        ("rocket-sim", {"payload_mass_kg": 250.0}),
+        ("cfd-fea-export", base_proj),
         (
             "load-powerpack",
             {
@@ -122,6 +125,9 @@ def test_native_exe_renders_every_preset_cleanly(tmp_path: Path) -> None:
         ("cargo", ["--rc-hud"]),
         ("tailsitter", []),
         ("flying-wing", []),
+        ("rocket", ["--explode", "0.6"]),
+        ("fixed-wing", ["--stress"]),
+        ("multirotor", ["--explode", "1.0"]),
         ("part", []),
     ]
     for preset, flags in presets:

@@ -21,6 +21,7 @@ enum class VehicleFamily {
     CargoUAV = 10,
     Tailsitter = 11,
     FlyingWing = 12,
+    RocketSpacecraft = 13,
 };
 
 enum class ViewportLayout {
@@ -33,6 +34,7 @@ enum class ShadingMode {
     ShadedOnly = 1,
     Wireframe = 2,
     SurfaceCp = 3,
+    StressVonMises = 4,
 };
 
 enum class SketchShapeKind {
@@ -133,7 +135,7 @@ struct AircraftDesignParams {
     bool titanium_screws = false;
     int wire_awg = 12;
 
-    // Virtual Dual-Stick + USB HID RC Controller & Live Visual Motion
+    // Virtual Dual-Stick + USB HID RC Controller & Live Visual Motion / CAD Kinematics
     bool show_rc_hud = false;
     bool use_usb_joystick = false;
     float rc_throttle = 0.65f;
@@ -141,6 +143,24 @@ struct AircraftDesignParams {
     float rc_pitch = 0.0f;
     float rc_roll = 0.0f;
     float spin_phase_rad = 0.0f;
+    float explode_factor = 0.0f;
+    bool motion_study_active = false;
+    float motion_study_time_s = 0.0f;
+    bool show_streamlines = true;
+
+    // Multiphysics: RF Telemetry, Stealth RCS & Helicopter VRS Descent
+    float rf_distance_km = 2.5f;
+    bool stealth_shaping = false;
+    float heli_descent_m_s = 0.0f;
+
+    // Phase 4: Multi-Stage Rockets, Orbital & Hypersonic Re-entry
+    float rocket_stage1_prop_kg = 18500.0f;
+    float rocket_stage2_prop_kg = 4200.0f;
+    float rocket_isp1_s = 295.0f;
+    float rocket_thrust_kn = 340.0f;
+    float rocket_nose_radius_m = 0.85f;
+    float reentry_speed_km_s = 7.65f;
+    float reentry_alt_km = 68.0f;
 
     // Tiny Insect-Sized Flapping & Morphing MAV (Uncrewed)
     float flap_freq_hz = 40.0f;
@@ -252,6 +272,19 @@ struct LiveEvidenceSummary {
     double wire_ampacity_a = 65.0;
     bool bolt_ok = true;
     bool wire_ok = true;
+    double spl_dba = 68.0;
+    double bpf_hz = 160.0;
+    double sonic_boom_psf = 0.0;
+    double heli_mu = 0.0;
+    double heli_gyro_nm = 0.0;
+    bool heli_vrs = false;
+    double cavitation_sigma = 2.0;
+    double rf_margin_db = 22.0;
+    double rcs_dbsm = -12.0;
+    double rocket_dv_m_s = 0.0;
+    double rocket_tps_c = 0.0;
+    double rocket_kn = 0.0;
+    bool rocket_orbit_ok = false;
     double predicted_readiness_pct = 92.5;
     double benchmark_match_pct = 94.2; // < 0 means N/A (custom unmeasured geometry)
     std::string benchmark_source_tag = "Pinned UIUC + SIT + QDrone Ref (DEVELOPMENT)";

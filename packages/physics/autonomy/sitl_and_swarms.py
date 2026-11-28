@@ -337,3 +337,30 @@ def evaluate_geofence_and_override(
         "radial_distance_m": round(radial, 4),
         "physical_validation_status": "UNVALIDATED",
     }
+
+
+def evaluate_gps_multipath_and_distortion(
+    *,
+    urban_obstruction_ratio: float = 0.35,
+    camera_radial_norm: float = 0.65,
+    k1_distortion: float = -0.18,
+    seed: int = 19,
+) -> dict[str, Any]:
+    """Synthetic GPS urban-canyon multipath bias & pinhole optical lens radial distortion."""
+    if not 0.0 <= urban_obstruction_ratio <= 1.0 or camera_radial_norm < 0.0:
+        raise ValueError("urban_obstruction_ratio must be in [0, 1] and camera_radial_norm >= 0")
+    rng = np.random.default_rng(np.random.PCG64(int(seed)))
+    hdop = 1.1 + 4.5 * (urban_obstruction_ratio ** 1.4)
+    multipath_sigma_m = 0.45 + 6.5 * (urban_obstruction_ratio ** 2.0)
+    bias = [round(float(v), 4) for v in rng.normal(0.0, multipath_sigma_m, size=3)]
+    r2 = camera_radial_norm * camera_radial_norm
+    radial_scale = 1.0 + k1_distortion * r2
+    return {
+        "schema_version": "1.0",
+        "hdop": round(hdop, 3),
+        "multipath_sigma_m": round(multipath_sigma_m, 3),
+        "gps_error_offset_m": bias,
+        "optical_radial_scale": round(radial_scale, 4),
+        "channel_provenance": "SYNTHETIC",
+        "verdict": "FAIL" if multipath_sigma_m > 4.5 else "NO_MODELED_LIMIT_BREACHED",
+    }

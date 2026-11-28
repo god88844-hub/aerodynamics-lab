@@ -101,3 +101,27 @@ def evaluate_icing_and_shedding(
         "verdict": verdict,
         "physical_validation_status": "UNVALIDATED",
     }
+
+
+def evaluate_microburst_wind_shear(
+    *,
+    radial_dist_m: float,
+    altitude_m: float,
+    peak_outflow_m_s: float = 18.0,
+    core_radius_m: float = 120.0,
+) -> dict[str, Any]:
+    """Axisymmetric Oseguera-Bowles microburst downflow & radial outflow wind-shear field."""
+    if radial_dist_m < 0.0 or altitude_m < 0.0 or core_radius_m <= 5.0:
+        raise ValueError("Invalid microburst geometry")
+    r_n = radial_dist_m / core_radius_m
+    z_n = max(0.02, altitude_m / 60.0)
+    u_rad = peak_outflow_m_s * r_n * math.exp(0.5 * (1.0 - r_n * r_n)) * math.exp(-0.25 * z_n)
+    w_down = -0.85 * peak_outflow_m_s * math.exp(-r_n * r_n) * min(1.0, altitude_m / 40.0)
+    severe = math.hypot(u_rad, w_down) > 12.0
+    return {
+        "schema_version": "1.0",
+        "radial_outflow_m_s": round(u_rad, 3),
+        "vertical_downdraft_m_s": round(w_down, 3),
+        "severe_shear_alert": severe,
+        "verdict": "FAIL" if severe else "NO_MODELED_LIMIT_BREACHED",
+    }

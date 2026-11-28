@@ -83,7 +83,9 @@ void main() {
     float hemi = 0.5 + 0.5 * n.z;
     vec3 h = normalize(l1 + v);
     float spec = pow(max(dot(n, h), 0.0), 42.0) * 0.22;
-    vec3 base = (uShowCp == 1) ? cp_colormap(vCp) : vColor;
+    float r_root = length(vWorldPos.xy);
+    float stress_scalar = 0.95 * exp(-r_root * 2.1) - 1.1;
+    vec3 base = (uShowCp == 1) ? cp_colormap(vCp) : ((uShowCp == 2) ? cp_colormap(stress_scalar) : vColor);
     vec3 lit = base * (0.34 + 0.18 * hemi + 0.56 * diff1 + diff2) + vec3(spec);
     FragColor = vec4(clamp(lit, 0.0, 1.0), 1.0);
 }
@@ -415,7 +417,8 @@ void ViewportGL::render_single_camera(const Mat4 &vp, const std::array<float, 3>
         gl_->UniformMatrix4fv(gl_->GetUniformLocation(prog_mesh_, "uModel"), 1, gl33::GL_FALSE_V, model.m);
         gl_->UniformMatrix4fv(gl_->GetUniformLocation(prog_mesh_, "uVP"), 1, gl33::GL_FALSE_V, vp.m);
         gl_->Uniform3fv(gl_->GetUniformLocation(prog_mesh_, "uEyePos"), 1, eye.data());
-        gl_->Uniform1i(gl_->GetUniformLocation(prog_mesh_, "uShowCp"), shading == ShadingMode::SurfaceCp ? 1 : 0);
+        const int mode_i = (shading == ShadingMode::SurfaceCp) ? 1 : (shading == ShadingMode::StressVonMises ? 2 : 0);
+        gl_->Uniform1i(gl_->GetUniformLocation(prog_mesh_, "uShowCp"), mode_i);
         gl_->BindVertexArray(vao_mesh_);
         gl_->DrawElements(gl33::GL_TRIANGLES_V, mesh_index_count_, gl33::GL_UNSIGNED_INT_V, nullptr);
         gl_->Disable(gl33::GL_POLYGON_OFFSET_FILL_V);
