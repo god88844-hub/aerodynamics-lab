@@ -47,7 +47,10 @@ int main(int argc, char **argv) {
     bool four_view = false;
     bool cp_view = false;
     bool open_rc_hud = false;
+    bool stress_view = false;
+    bool motion_study = false;
     float override_airspeed = -1.0f;
+    float override_explode = -1.0f;
     std::string preset_name;
     for (int i = 1; i < argc; ++i) {
         if (std::strcmp(argv[i], "--smoke-test") == 0) smoke_test = true;
@@ -56,6 +59,9 @@ int main(int argc, char **argv) {
         else if (std::strcmp(argv[i], "--output") == 0 && i + 1 < argc) benchmark_out = argv[++i];
         else if (std::strcmp(argv[i], "--4view") == 0 || std::strcmp(argv[i], "--four-view") == 0) four_view = true;
         else if (std::strcmp(argv[i], "--cp") == 0 || std::strcmp(argv[i], "--cp-view") == 0) cp_view = true;
+        else if (std::strcmp(argv[i], "--stress") == 0) stress_view = true;
+        else if (std::strcmp(argv[i], "--motion") == 0) motion_study = true;
+        else if (std::strcmp(argv[i], "--explode") == 0 && i + 1 < argc) override_explode = static_cast<float>(std::atof(argv[++i]));
         else if (std::strcmp(argv[i], "--rc-hud") == 0) open_rc_hud = true;
         else if (std::strcmp(argv[i], "--airspeed") == 0 && i + 1 < argc) override_airspeed = static_cast<float>(std::atof(argv[++i]));
         else if (std::strcmp(argv[i], "--preset") == 0 && i + 1 < argc) preset_name = argv[++i];
@@ -219,6 +225,7 @@ int main(int argc, char **argv) {
     else if (preset_name == "cargo") app.switch_family(aerolab::VehicleFamily::CargoUAV);
     else if (preset_name == "tailsitter") app.switch_family(aerolab::VehicleFamily::Tailsitter);
     else if (preset_name == "flying-wing") app.switch_family(aerolab::VehicleFamily::FlyingWing);
+    else if (preset_name == "rocket") app.switch_family(aerolab::VehicleFamily::RocketSpacecraft);
     else if (preset_name == "part") app.switch_family(aerolab::VehicleFamily::CustomPart);
     if (override_airspeed > 0.5f) {
         app.params.airspeed_m_s = override_airspeed;
@@ -228,13 +235,22 @@ int main(int argc, char **argv) {
         }
         app.rebuild_geometry();
     }
+    if (override_explode >= 0.0f) {
+        app.params.explode_factor = override_explode;
+        app.rebuild_geometry();
+    }
+    if (motion_study) {
+        app.params.motion_study_active = true;
+    }
     if (open_rc_hud) {
         app.params.show_rc_hud = true;
     }
     if (four_view) {
         app.viewport_layout = aerolab::ViewportLayout::Ortho4View;
     }
-    if (cp_view) {
+    if (stress_view) {
+        app.shading_mode = aerolab::ShadingMode::StressVonMises;
+    } else if (cp_view) {
         app.shading_mode = aerolab::ShadingMode::SurfaceCp;
     }
 

@@ -171,6 +171,7 @@ void AppWorkbench::draw_menu_bar() {
         if (ImGui::MenuItem("New Cargo Slung-Load Hex (Carrier)")) switch_family(VehicleFamily::CargoUAV);
         if (ImGui::MenuItem("New VTOL Tailsitter (dRehmFlight)")) switch_family(VehicleFamily::Tailsitter);
         if (ImGui::MenuItem("New Swept Flying Wing (Project-Air)")) switch_family(VehicleFamily::FlyingWing);
+        if (ImGui::MenuItem("New 2-Stage Rocket / Hypersonic (Phase 4)")) switch_family(VehicleFamily::RocketSpacecraft);
         if (ImGui::MenuItem("New Custom Part Sketch")) switch_family(VehicleFamily::CustomPart);
         ImGui::Separator();
         if (ImGui::MenuItem("Open Project (.json)...")) {
@@ -238,7 +239,10 @@ void AppWorkbench::draw_menu_bar() {
             shading_mode = ShadingMode::Wireframe;
         if (ImGui::MenuItem("Aerodynamic Cp Contour", nullptr, shading_mode == ShadingMode::SurfaceCp))
             shading_mode = ShadingMode::SurfaceCp;
+        if (ImGui::MenuItem("Structural Von Mises Stress Heatmap", nullptr, shading_mode == ShadingMode::StressVonMises))
+            shading_mode = ShadingMode::StressVonMises;
         ImGui::Separator();
+        ImGui::MenuItem("Show Vortex & 3D CFD Streamlines", nullptr, &params.show_streamlines);
         ImGui::MenuItem("Show Vortex Wake Lines", nullptr, &show_wake);
         ImGui::MenuItem("Show CoG Datum", nullptr, &show_cog);
         ImGui::MenuItem("Dark Viewport Canvas", nullptr, &dark_canvas);
@@ -309,6 +313,12 @@ void AppWorkbench::draw_menu_bar() {
         if (ImGui::MenuItem("Evaluate Assembly Layout & BOM")) {
             ipc_->launch_python_command("layout-bom", ipc_->build_project_payload_json(params));
         }
+        if (ImGui::MenuItem("Export OpenFOAM + CalculiX CFD/FEA Deck")) {
+            ipc_->launch_python_command("cfd-fea-export", ipc_->build_project_payload_json(params));
+        }
+        if (ImGui::MenuItem("Run Multiphysics Audit (Acoustics / VRS / Cav / RCS)")) {
+            ipc_->launch_python_command("multiphysics-audit", ipc_->build_project_payload_json(params));
+        }
         ImGui::EndMenu();
     }
 
@@ -378,9 +388,19 @@ void AppWorkbench::draw_quick_toolstrip() {
     ImGui::SameLine();
     if (ImGui::Button("FlyWing")) switch_family(VehicleFamily::FlyingWing);
     ImGui::SameLine();
-    if (ImGui::Button("Part Designer")) switch_family(VehicleFamily::CustomPart);
+    if (ImGui::Button("Rocket")) switch_family(VehicleFamily::RocketSpacecraft);
     ImGui::SameLine();
-    ImGui::SeparatorEx(ImGuiSeparatorFlags_Vertical);
+    if (ImGui::Button("Part Designer")) switch_family(VehicleFamily::CustomPart);
+
+    // Row 2: CAD Assembly, Motion, Multiphysics & Solver Tools
+    if (ImGui::Button(params.explode_factor > 0.1f ? "Assemble" : "Explode")) {
+        params.explode_factor = (params.explode_factor > 0.1f) ? 0.0f : 1.0f;
+        rebuild_geometry();
+    }
+    ImGui::SameLine();
+    if (ImGui::Button(params.motion_study_active ? "Motion: ON" : "Motion")) {
+        params.motion_study_active = !params.motion_study_active;
+    }
     ImGui::SameLine();
     if (ImGui::Button("Failure Atlas")) show_failure_atlas_modal = true;
     ImGui::SameLine();
@@ -392,8 +412,14 @@ void AppWorkbench::draw_quick_toolstrip() {
         viewport_layout = (viewport_layout == ViewportLayout::Single3D) ? ViewportLayout::Ortho4View : ViewportLayout::Single3D;
     }
     ImGui::SameLine();
-    if (ImGui::Button(shading_mode == ShadingMode::SurfaceCp ? "CAD Edges" : "Cp Map")) {
-        shading_mode = (shading_mode == ShadingMode::SurfaceCp) ? ShadingMode::ShadedEdges : ShadingMode::SurfaceCp;
+    const char *shade_lbl = (shading_mode == ShadingMode::SurfaceCp) ? "Stress FEA" : (shading_mode == ShadingMode::StressVonMises ? "CAD Edges" : "Cp Map");
+    if (ImGui::Button(shade_lbl)) {
+        shading_mode = (shading_mode == ShadingMode::SurfaceCp) ? ShadingMode::StressVonMises
+                                                                 : (shading_mode == ShadingMode::StressVonMises ? ShadingMode::ShadedEdges : ShadingMode::SurfaceCp);
+    }
+    ImGui::SameLine();
+    if (ImGui::Button("Export CFD/FEA")) {
+        ipc_->launch_python_command("cfd-fea-export", ipc_->build_project_payload_json(params));
     }
     ImGui::SameLine();
     if (ImGui::Button("Run 6-DoF")) {
@@ -646,6 +672,17 @@ void AppWorkbench::draw_right_inspector() {
         changed |= ImGui::Combo("Joint Screw", &params.screw_size_idx, screw_sizes, 6);
         changed |= ImGui::Checkbox("Ti-6Al-4V Fasteners", &params.titanium_screws);
         changed |= ImGui::SliderInt("Power Wire (AWG)", &params.wire_awg, 10, 22);
+        changed |= ImGui::SliderFloat("Exploded View", &params.explode_factor, 0.0f, 1.5f, "%.2f");
+        changed |= ImGui::SliderFloat("RF Range (km)", &params.rf_distance_km, 0.2f, 25.0f, "%.1f");
+        changed |= ImGui::Checkbox("Stealth RCS Shaping", &params.stealth_shaping);
+        if (params.family == VehicleFamily::Helicopter) {
+            changed |= ImGui::SliderFloat("Descent Rate (m/s)", &params.heli_descent_m_s, -10.0f, 5.0f, "%.1f");
+        } else if (params.family == VehicleFamily::RocketSpacecraft) {
+            changed |= ImGui::SliderFloat("Stage 1 Prop (kg)", &params.rocket_stage1_prop_kg, 2000.0f, 35000.0f, "%.0f");
+            changed |= ImGui::SliderFloat("Thrust (kN)", &params.rocket_thrust_kn, 150.0f, 750.0f, "%.0f");
+            changed |= ImGui::SliderFloat("Nose Heatshield R (m)", &params.rocket_nose_radius_m, 0.15f, 1.60f, "%.2f");
+            changed |= ImGui::SliderFloat("Re-entry (km/s)", &params.reentry_speed_km_s, 2.0f, 11.2f, "%.2f");
+        }
     }
 
     ImGui::Spacing();
@@ -654,8 +691,16 @@ void AppWorkbench::draw_right_inspector() {
         ImGui::Text("Throt: %.0f%% | Hover: %.0f min", evidence.hover_throttle_pct, evidence.est_endurance_min);
         ImGui::Text("Pack: %.1f V | %.1f A | %.0f C", evidence.loaded_bus_voltage_v, evidence.hover_or_cruise_current_a, evidence.motor_temp_c);
         ImGui::Text("Wind: %.1f m/s | Rho: %.3f | FoS: %.2fx", evidence.wind_speed_m_s, evidence.air_density_kg_m3, evidence.structural_fos);
-        ImGui::Text("Bolt FoS: %.1fx | Wire: %.2fV (max %.0fA)", evidence.bolt_shear_fos, evidence.wire_drop_v, evidence.wire_ampacity_a);
-        if (params.family == VehicleFamily::Jet) {
+        ImGui::Text("Bolt: %.1fx | Wire: %.2fV [<=%.0fA]", evidence.bolt_shear_fos, evidence.wire_drop_v, evidence.wire_ampacity_a);
+        if (params.family == VehicleFamily::RocketSpacecraft) {
+            ImGui::Text("Delta-V: %.0f m/s | Orbit: %s", evidence.rocket_dv_m_s, evidence.rocket_orbit_ok ? "LEO OK" : "Suborbital");
+            ImGui::Text("TPS: %.0f C | Kn: %.4f", evidence.rocket_tps_c, evidence.rocket_kn);
+        } else {
+            ImGui::Text("SPL: %.1f dBA | RF: %.1f dB | RCS: %.1f dBsm", evidence.spl_dba, evidence.rf_margin_db, evidence.rcs_dbsm);
+        }
+        if (params.family == VehicleFamily::Helicopter) {
+            ImGui::Text("mu: %.2f | Gyro: %.1f Nm | VRS: %s", evidence.heli_mu, evidence.heli_gyro_nm, evidence.heli_vrs ? "FAIL" : "OK");
+        } else if (params.family == VehicleFamily::Jet) {
             ImGui::Text("M: %.2f | MDD: %.2f | eta_r: %.3f | mu: %.1f", evidence.mach, evidence.m_dd, evidence.inlet_recovery_eta, evidence.mach_cone_deg);
         } else if (params.family == VehicleFamily::CargoUAV) {
             ImGui::Text("Trail: %.1f deg | Pendulum: %.2f Hz | Clr: %.0fmm", evidence.trail_angle_deg, evidence.pendulum_hz, evidence.min_tip_clearance_m * 1000.0);

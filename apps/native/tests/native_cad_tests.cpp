@@ -22,7 +22,8 @@ int main() {
                      aerolab::VehicleFamily::Seaplane, aerolab::VehicleFamily::Jet,
                      aerolab::VehicleFamily::InsectFlapper, aerolab::VehicleFamily::MorphingWing,
                      aerolab::VehicleFamily::CargoUAV, aerolab::VehicleFamily::Tailsitter,
-                     aerolab::VehicleFamily::FlyingWing, aerolab::VehicleFamily::CustomPart}) {
+                     aerolab::VehicleFamily::FlyingWing, aerolab::VehicleFamily::RocketSpacecraft,
+                     aerolab::VehicleFamily::CustomPart}) {
         aerolab::AircraftDesignParams p;
         p.family = fam;
         if (fam == aerolab::VehicleFamily::Helicopter) p.rotor_rpm = 1450.0f;
@@ -375,6 +376,28 @@ int main() {
     duct_quad.active_part.sketch_kind = aerolab::SketchShapeKind::RingDuct;
     aerolab::evaluate_live_physics_and_curves(duct_quad, aerolab::build_cad_scene(duct_quad), duct_q);
     assert(duct_q.thrust_to_weight != plain_q.thrust_to_weight && duct_q.validation_status == "UNVALIDATED_CUSTOM");
+
+    // Verify Exploded View geometry displacement + Rocket/Hypersonic preset + Helicopter VRS fail
+    aerolab::AircraftDesignParams exp_q = duct_quad;
+    exp_q.attach_custom_part = false;
+    exp_q.explode_factor = 1.0f;
+    const auto exp_scene = aerolab::build_cad_scene(exp_q);
+    assert(exp_scene.wake_lines.size() > 10); // Explosion guides + streamlines
+
+    aerolab::AircraftDesignParams rkt;
+    rkt.family = aerolab::VehicleFamily::RocketSpacecraft;
+    aerolab::LiveEvidenceSummary rkt_ev;
+    aerolab::evaluate_live_physics_and_curves(rkt, aerolab::build_cad_scene(rkt), rkt_ev);
+    assert(rkt_ev.rocket_orbit_ok && rkt_ev.validation_status == "DEVELOPMENT" && rkt_ev.rocket_tps_c < 1850.0);
+
+    aerolab::AircraftDesignParams heli_vrs;
+    heli_vrs.family = aerolab::VehicleFamily::Helicopter;
+    heli_vrs.rotor_rpm = 1450.0f;
+    heli_vrs.airspeed_m_s = 1.2f;
+    heli_vrs.heli_descent_m_s = -2.1f;
+    aerolab::LiveEvidenceSummary hv_ev;
+    aerolab::evaluate_live_physics_and_curves(heli_vrs, aerolab::build_cad_scene(heli_vrs), hv_ev);
+    assert(hv_ev.heli_vrs && hv_ev.validation_status == "FAIL");
 
     // Live Python worker end-to-end check across ALL menu worker commands
     for (const std::string &cmd : {"fixed-wing-sim", "layout-bom", "6dof-fixed-wing", "vtol-transition",

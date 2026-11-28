@@ -2,6 +2,7 @@
 #include "lab/flight_rk4.hpp"
 #include "lab/bioinspired.hpp"
 #include "lab/whole_aircraft.hpp"
+#include "lab/multiphysics_and_rockets.hpp"
 
 #include <array>
 #include <cmath>
@@ -164,5 +165,50 @@ int main() {
         return 18;
     }
     std::cout << "Phase 3 & Creator whole-aircraft C++20 kernel checks passed\n";
+
+    // Multiphysics gaps + Phase 4 Rockets & Hypersonics C++20 kernel checks
+    lab::AeroacousticsParams ac_jet;
+    ac_jet.is_jet = true;
+    ac_jet.jet_mach = 1.38;
+    const auto ac_r = lab::evaluate_aeroacoustics(ac_jet);
+    if (!ac_r.valid || ac_r.sonic_boom_pa <= 0.0 || ac_r.total_spl_dba < 70.0) {
+        std::cerr << "Aeroacoustics / sonic boom check failed\n";
+        return 19;
+    }
+
+    lab::HelicopterHighSpeedParams h_vrs;
+    h_vrs.horizontal_speed_m_s = 1.2;
+    h_vrs.vertical_speed_m_s = -2.1; // v_z / v_h ~ -0.77 inside VRS band [-1.25, -0.35]
+    const auto h_vrs_r = lab::evaluate_helicopter_highspeed(h_vrs);
+    if (!h_vrs_r.valid || !h_vrs_r.vrs_entered || h_vrs_r.gyro_precession_torque_nm <= 0.0) {
+        std::cerr << "Helicopter VRS / gyroscopic precession check failed\n";
+        return 20;
+    }
+
+    lab::HydroCavitationParams cav_fast;
+    cav_fast.prop_rpm = 16000.0;
+    const auto cav_r = lab::evaluate_hydro_cavitation(cav_fast);
+    if (!cav_r.valid || !cav_r.cavitating) {
+        std::cerr << "Hydro cavitation check failed\n";
+        return 21;
+    }
+
+    lab::RfStealthParams rf_plain, rf_stealth;
+    rf_stealth.stealth_shaping = true;
+    rf_stealth.sweep_deg = 42.0;
+    const auto rf_p = lab::evaluate_rf_and_rcs(rf_plain);
+    const auto rf_s = lab::evaluate_rf_and_rcs(rf_stealth);
+    if (!rf_p.valid || !rf_p.link_ok || rf_s.rcs_dbsm >= rf_p.rcs_dbsm) {
+        std::cerr << "RF telemetry & RCS stealth check failed\n";
+        return 22;
+    }
+
+    const auto rocket_ok = lab::evaluate_rocket_and_hypersonics({});
+    if (!rocket_ok.valid || !rocket_ok.orbit_capable || !rocket_ok.flight_ok ||
+        rocket_ok.reentry_heat_flux_w_m2 <= 1e5 || rocket_ok.knudsen_number <= 0.0) {
+        std::cerr << "Phase 4 rocket / Sutton-Graves hypersonics check failed\n";
+        return 23;
+    }
+    std::cout << "Multiphysics (Aeroacoustics/VRS/Cavitation/RF-RCS) & Phase 4 Rocket C++20 checks passed\n";
     return 0;
 }

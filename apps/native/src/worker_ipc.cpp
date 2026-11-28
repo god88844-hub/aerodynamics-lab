@@ -130,6 +130,7 @@ std::string WorkerIPC::build_project_payload_json(const AircraftDesignParams &pa
     else if (params.family == VehicleFamily::CargoUAV) fam = "cargo_uav";
     else if (params.family == VehicleFamily::Tailsitter) fam = "tailsitter";
     else if (params.family == VehicleFamily::FlyingWing) fam = "flying_wing";
+    else if (params.family == VehicleFamily::RocketSpacecraft) fam = "rocket_spacecraft";
     else if (params.family == VehicleFamily::CustomPart) fam = "custom_part";
 
     const char *kind = "rounded_plate";
@@ -195,6 +196,17 @@ std::string WorkerIPC::build_project_payload_json(const AircraftDesignParams &pa
         << "  \"screw_size_idx\": " << params.screw_size_idx << ",\n"
         << "  \"titanium_screws\": " << (params.titanium_screws ? "true" : "false") << ",\n"
         << "  \"wire_awg\": " << params.wire_awg << ",\n"
+        << "  \"explode_factor\": " << params.explode_factor << ",\n"
+        << "  \"stealth_shaping\": " << (params.stealth_shaping ? "true" : "false") << ",\n"
+        << "  \"rf_distance_km\": " << params.rf_distance_km << ",\n"
+        << "  \"heli_descent_m_s\": " << params.heli_descent_m_s << ",\n"
+        << "  \"rocket_stage1_prop_kg\": " << params.rocket_stage1_prop_kg << ",\n"
+        << "  \"rocket_stage2_prop_kg\": " << params.rocket_stage2_prop_kg << ",\n"
+        << "  \"rocket_isp1_s\": " << params.rocket_isp1_s << ",\n"
+        << "  \"rocket_thrust_kn\": " << params.rocket_thrust_kn << ",\n"
+        << "  \"rocket_nose_radius_m\": " << params.rocket_nose_radius_m << ",\n"
+        << "  \"reentry_speed_km_s\": " << params.reentry_speed_km_s << ",\n"
+        << "  \"reentry_alt_km\": " << params.reentry_alt_km << ",\n"
         << "  \"flap_freq_hz\": " << params.flap_freq_hz << ",\n"
         << "  \"stroke_amp_deg\": " << params.stroke_amp_deg << ",\n"
         << "  \"morph_tuck_pct\": " << params.morph_tuck_pct << ",\n"
@@ -334,6 +346,7 @@ bool WorkerIPC::load_project_payload_json(const std::string &json_text, Aircraft
     else if (fam == "cargo_uav") params.family = VehicleFamily::CargoUAV;
     else if (fam == "tailsitter") params.family = VehicleFamily::Tailsitter;
     else if (fam == "flying_wing") params.family = VehicleFamily::FlyingWing;
+    else if (fam == "rocket_spacecraft") params.family = VehicleFamily::RocketSpacecraft;
     else if (fam == "custom_part") params.family = VehicleFamily::CustomPart;
 
     if (const auto n = find_val("name"); !n.empty()) params.project_name = n;
@@ -385,6 +398,17 @@ bool WorkerIPC::load_project_payload_json(const std::string &json_text, Aircraft
     read_i("screw_size_idx", params.screw_size_idx);
     if (const auto ts = find_val("titanium_screws"); !ts.empty()) params.titanium_screws = (ts == "true");
     read_i("wire_awg", params.wire_awg);
+    read_f("explode_factor", params.explode_factor);
+    if (const auto ss = find_val("stealth_shaping"); !ss.empty()) params.stealth_shaping = (ss == "true");
+    read_f("rf_distance_km", params.rf_distance_km);
+    read_f("heli_descent_m_s", params.heli_descent_m_s);
+    read_f("rocket_stage1_prop_kg", params.rocket_stage1_prop_kg);
+    read_f("rocket_stage2_prop_kg", params.rocket_stage2_prop_kg);
+    read_f("rocket_isp1_s", params.rocket_isp1_s);
+    read_f("rocket_thrust_kn", params.rocket_thrust_kn);
+    read_f("rocket_nose_radius_m", params.rocket_nose_radius_m);
+    read_f("reentry_speed_km_s", params.reentry_speed_km_s);
+    read_f("reentry_alt_km", params.reentry_alt_km);
     read_f("flap_freq_hz", params.flap_freq_hz);
     read_f("stroke_amp_deg", params.stroke_amp_deg);
     read_f("morph_tuck_pct", params.morph_tuck_pct);

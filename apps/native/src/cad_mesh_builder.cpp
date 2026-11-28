@@ -4,6 +4,7 @@
 #include "lab/flight_rk4.hpp"
 #include "lab/mass_properties.hpp"
 #include "lab/whole_aircraft.hpp"
+#include "lab/multiphysics_and_rockets.hpp"
 
 #include <algorithm>
 #include <cmath>
@@ -54,6 +55,17 @@ Vec3 rotate_x(Vec3 v, float rad) {
 void push_edge(GeneratedCADScene &out, Vec3 a, Vec3 b, float r = 0.12f, float g = 0.16f, float bl = 0.22f) {
     out.cad_edges.push_back({a.x, a.y, a.z, r, g, bl});
     out.cad_edges.push_back({b.x, b.y, b.z, r, g, bl});
+}
+
+void add_explode_guide(GeneratedCADScene &out, Vec3 a, Vec3 b) {
+    for (int s = 0; s < 5; ++s) {
+        const float t0 = static_cast<float>(s) / 5.0f;
+        const float t1 = t0 + 0.12f;
+        const Vec3 p0{a.x + (b.x - a.x) * t0, a.y + (b.y - a.y) * t0, a.z + (b.z - a.z) * t0};
+        const Vec3 p1{a.x + (b.x - a.x) * t1, a.y + (b.y - a.y) * t1, a.z + (b.z - a.z) * t1};
+        out.wake_lines.push_back({p0.x, p0.y, p0.z, 0.92f, 0.55f, 0.16f});
+        out.wake_lines.push_back({p1.x, p1.y, p1.z, 0.92f, 0.55f, 0.16f});
+    }
 }
 
 void push_quad(GeneratedCADScene &out, Vec3 a, Vec3 b, Vec3 c, Vec3 d,
@@ -452,6 +464,7 @@ GeneratedCADScene build_cad_scene(const AircraftDesignParams &params, int select
     }
 
     const float spin = params.spin_phase_rad;
+    const float explode = std::clamp(params.explode_factor, 0.0f, 1.5f);
     const float wing_flex_m = std::clamp(0.008f * (params.airspeed_m_s / 25.0f) * (params.wingspan_m / 1.5f) *
                                              (1.0f + 0.04f * std::abs(params.alpha_deg)),
                                          0.0f, 0.065f);
@@ -462,10 +475,16 @@ GeneratedCADScene build_cad_scene(const AircraftDesignParams &params, int select
         const float hh = params.hub_height_m;
         add_oriented_box(out, {0.0f, 0.0f, 0.0f}, {fw, fw * 1.15f, hh * 0.45f}, 0.0f,
                          is_sel(0) ? 0.25f : 0.72f, is_sel(0) ? 0.55f : 0.76f, is_sel(0) ? 0.90f : 0.82f);
-        add_oriented_box(out, {0.0f, 0.0f, -hh * 0.65f}, {fw * 0.82f, fw * 0.50f, hh * 0.75f}, 0.0f,
+        const float z_bat = -hh * 0.65f - 0.18f * explode;
+        const float z_dome = hh * 0.52f + 0.18f * explode;
+        add_oriented_box(out, {0.0f, 0.0f, z_bat}, {fw * 0.82f, fw * 0.50f, hh * 0.75f}, 0.0f,
                          0.28f, 0.34f, 0.44f); // LiPo pack underneath
-        add_oriented_box(out, {0.0f, 0.0f, hh * 0.52f}, {fw * 0.42f, fw * 0.42f, hh * 0.42f}, 0.0f,
+        add_oriented_box(out, {0.0f, 0.0f, z_dome}, {fw * 0.42f, fw * 0.42f, hh * 0.42f}, 0.0f,
                          0.22f, 0.56f, 0.85f); // Avionics dome
+        if (explode > 0.02f) {
+            add_explode_guide(out, {0.0f, 0.0f, -hh * 0.65f}, {0.0f, 0.0f, z_bat});
+            add_explode_guide(out, {0.0f, 0.0f, hh * 0.52f}, {0.0f, 0.0f, z_dome});
+        }
 
         out.assembly_parts.push_back({"center_frame_plate", "Carbon CFRP", params.frame_mass_kg * 0.45, {0.0, 0.0, 0.0}});
         out.assembly_parts.push_back({"flight_battery_6s", "LiPo 6S", params.battery_mass_kg, {0.0, 0.0, -hh * 0.65}});
@@ -484,31 +503,41 @@ GeneratedCADScene build_cad_scene(const AircraftDesignParams &params, int select
         for (int i = 0; i < nr; ++i) {
             const float angle = (kPi / static_cast<float>(nr)) + 2.0f * kPi * static_cast<float>(i) / static_cast<float>(nr);
             const Vec3 tip{params.arm_length_m * std::cos(angle), params.arm_length_m * std::sin(angle), 0.015f};
-            add_oriented_box(out, {tip.x * 0.5f, tip.y * 0.5f, 0.0f}, {params.arm_length_m, 0.028f, 0.018f}, angle,
-                             0.78f, 0.82f, 0.86f);
-            add_cylinder_z(out, tip, 0.024f, 0.026f, 16, 0.30f, 0.35f, 0.42f);
-            add_twisted_propeller(out, {tip.x, tip.y, tip.z + 0.022f}, active_prop_d,
+            const Vec3 arm_c{tip.x * (0.5f + 0.14f * explode), tip.y * (0.5f + 0.14f * explode), 0.0f};
+            const Vec3 m_pod{tip.x * (1.0f + 0.25f * explode), tip.y * (1.0f + 0.25f * explode), tip.z + 0.10f * explode};
+            const Vec3 prop_c{m_pod.x, m_pod.y, m_pod.z + 0.022f + 0.12f * explode};
+            add_oriented_box(out, arm_c, {params.arm_length_m, 0.028f, 0.018f}, angle, 0.78f, 0.82f, 0.86f);
+            add_cylinder_z(out, m_pod, 0.024f, 0.026f, 16, 0.30f, 0.35f, 0.42f);
+            add_twisted_propeller(out, prop_c, active_prop_d,
                                   params.prop_pitch_deg, active_blades, 0.0f,
                                   is_sel(3 + i) || (params.attach_custom_part && params.active_part.sketch_kind == SketchShapeKind::CustomPropeller),
                                   0.0f, (i % 2 == 0 ? spin : -spin));
+            if (explode > 0.02f) {
+                add_explode_guide(out, tip, prop_c);
+            }
             out.assembly_parts.push_back({"motor_rotor_" + std::to_string(i + 1), "BLDC + Carbon Prop",
                                           params.motor_mass_kg + arm_mass_each, {tip.x, tip.y, tip.z}});
         }
         out.reference_area_m2 = nr * kPi * std::pow(active_prop_d * 0.5, 2.0);
     } else if (params.family == VehicleFamily::FixedWing) {
         add_fuselage_loft(out, {0.0f, 0.0f, 0.0f}, params.fuselage_length_m, params.fuselage_radius_m, 0.84f, 0.87f, 0.90f);
-        add_lofted_wing(out, {params.root_chord_m * 0.42f, 0.0f, params.fuselage_radius_m * 0.45f},
+        add_lofted_wing(out, {params.root_chord_m * 0.42f, 0.0f, params.fuselage_radius_m * 0.45f + 0.20f * explode},
                         params.wingspan_m, params.root_chord_m, params.tip_chord_m,
                         params.sweep_deg, params.dihedral_deg, params.twist_tip_deg,
                         params.airfoil_code, 0.24f, 0.55f, 0.88f, true, wing_flex_m, elevon_deg);
         // Horizontal tailplane + vertical fin
-        add_lofted_wing(out, {-params.fuselage_length_m * 0.42f, 0.0f, params.fuselage_radius_m * 0.2f},
+        add_lofted_wing(out, {-params.fuselage_length_m * 0.42f - 0.24f * explode, 0.0f, params.fuselage_radius_m * 0.2f},
                         params.wingspan_m * 0.36f, params.root_chord_m * 0.55f, params.tip_chord_m * 0.55f,
                         8.0f, 0.0f, 0.0f, "0012", 0.72f, 0.77f, 0.83f, false, 0.0f, params.rc_pitch * 15.0f);
-        add_oriented_box(out, {-params.fuselage_length_m * 0.44f, 0.0f, params.fuselage_radius_m * 1.45f},
+        add_oriented_box(out, {-params.fuselage_length_m * 0.44f - 0.24f * explode, 0.0f, params.fuselage_radius_m * 1.45f + 0.14f * explode},
                          {params.root_chord_m * 0.65f, 0.016f, params.wingspan_m * 0.16f}, 0.0f, 0.72f, 0.77f, 0.83f);
-        add_twisted_propeller(out, {params.fuselage_length_m * 0.51f, 0.0f, 0.0f},
+        add_twisted_propeller(out, {params.fuselage_length_m * 0.51f + 0.22f * explode, 0.0f, 0.0f},
                               params.prop_diameter_m * 0.9f, params.prop_pitch_deg, params.prop_blades, kPi * 0.5f, false, 0.0f, spin);
+        if (explode > 0.02f) {
+            add_explode_guide(out, {params.fuselage_length_m * 0.51f, 0.0f, 0.0f}, {params.fuselage_length_m * 0.51f + 0.22f * explode, 0.0f, 0.0f});
+            add_explode_guide(out, {0.0f, 0.0f, 0.04f}, {0.0f, 0.0f, 0.04f + 0.20f * explode});
+            add_explode_guide(out, {-params.fuselage_length_m * 0.42f, 0.0f, 0.0f}, {-params.fuselage_length_m * 0.42f - 0.24f * explode, 0.0f, 0.0f});
+        }
         const double area = 0.5 * (params.root_chord_m + params.tip_chord_m) * params.wingspan_m;
         out.reference_area_m2 = area;
         out.aspect_ratio = (params.wingspan_m * params.wingspan_m) / std::max(0.01, area);
@@ -772,7 +801,7 @@ GeneratedCADScene build_cad_scene(const AircraftDesignParams &params, int select
         out.assembly_parts.push_back({"pusher_propulsion", "Catalog Motor + Esc", params.motor_mass_kg, {-0.20, 0.0, 0.0}});
         out.assembly_parts.push_back({"battery_pack", "4S Flight Pack", params.battery_mass_kg, {0.10, 0.0, 0.0}});
         out.assembly_parts.push_back({"fpv_avionics", "FC + GPS + Servo", params.payload_mass_kg, {0.02, 0.0, 0.02}});
-    } else { // VTOL Tiltrotor
+    } else if (params.family == VehicleFamily::VTOL) { // VTOL Tiltrotor
         add_fuselage_loft(out, {0.0f, 0.0f, 0.0f}, params.fuselage_length_m, params.fuselage_radius_m, 0.84f, 0.87f, 0.90f);
         add_lofted_wing(out, {params.root_chord_m * 0.35f, 0.0f, 0.02f},
                         params.wingspan_m, params.root_chord_m, params.tip_chord_m,
@@ -792,6 +821,35 @@ GeneratedCADScene build_cad_scene(const AircraftDesignParams &params, int select
         out.assembly_parts.push_back({"tilt_propulsion_pods", "4x Vectored BLDC", params.motor_mass_kg * 4.0, {0.08, 0.0, 0.06}});
         out.assembly_parts.push_back({"battery_6s", "LiPo Pack", params.battery_mass_kg, {0.05, 0.0, -0.02}});
         out.assembly_parts.push_back({"avionics_bay", "Autopilot", params.payload_mass_kg, {0.20, 0.0, 0.0}});
+    } else if (params.family == VehicleFamily::RocketSpacecraft) {
+        const float stage_sep = explode * 0.42f + (params.motion_study_active ? std::max(0.0f, 0.35f * std::sin(params.motion_study_time_s)) : 0.0f);
+        // Stage 1 Booster cylinder + 4 aft aero/grid fins + engine nozzle
+        add_cylinder_z(out, {-0.45f - stage_sep, 0.0f, 0.0f}, 0.135f, 1.15f, 20, 0.88f, 0.90f, 0.94f, 0.0f, {0.0f, kPi * 0.5f, 0.0f});
+        for (float fa : {0.0f, kPi * 0.5f, kPi, 1.5f * kPi}) {
+            const float fy = 0.16f * std::cos(fa), fz = 0.16f * std::sin(fa);
+            add_oriented_box(out, {-0.92f - stage_sep, fy, fz}, {0.24f, 0.018f, 0.12f}, 0.0f, 0.25f, 0.28f, 0.34f);
+        }
+        add_cylinder_z(out, {-1.08f - stage_sep, 0.0f, 0.0f}, 0.105f, 0.16f, 18, 0.22f, 0.24f, 0.28f, 0.2f, {0.0f, kPi * 0.5f, 0.0f});
+        // Interstage + Stage 2 + Payload Fairing / Re-entry Heatshield Capsule
+        add_cylinder_z(out, {0.36f, 0.0f, 0.0f}, 0.125f, 0.52f, 20, 0.22f, 0.28f, 0.36f, -0.1f, {0.0f, kPi * 0.5f, 0.0f});
+        add_fuselage_loft(out, {0.82f + stage_sep * 0.9f, 0.0f, 0.0f}, 0.56f, 0.132f, 0.18f, 0.52f, 0.86f);
+        if (stage_sep > 0.02f) {
+            add_explode_guide(out, {-0.45f - stage_sep, 0.0f, 0.0f}, {0.82f + stage_sep * 0.9f, 0.0f, 0.0f});
+        }
+        // Exhaust flame & hypersonic bow shock arc
+        for (int d = 0; d < 4; ++d) {
+            const float x0 = -1.16f - stage_sep - static_cast<float>(d) * 0.18f;
+            const float r_d = 0.075f * (1.0f - 0.12f * static_cast<float>(d));
+            out.wake_lines.push_back({x0, 0.0f, 0.0f, 0.99f, 0.65f, 0.14f});
+            out.wake_lines.push_back({x0 - 0.09f, r_d, 0.0f, 0.99f, 0.88f, 0.30f});
+            out.wake_lines.push_back({x0 - 0.09f, r_d, 0.0f, 0.99f, 0.88f, 0.30f});
+            out.wake_lines.push_back({x0 - 0.18f, 0.0f, 0.0f, 0.99f, 0.55f, 0.14f});
+        }
+        out.reference_area_m2 = kPi * 0.135 * 0.135;
+        out.aspect_ratio = 8.5;
+        out.assembly_parts.push_back({"stage1_booster", "Al-Li Propellant Tank", 2200.0 + params.rocket_stage1_prop_kg, {-0.45, 0.0, 0.0}});
+        out.assembly_parts.push_back({"stage2_upper", "Vac Merlin / Cryo Stage", 480.0 + params.rocket_stage2_prop_kg, {0.36, 0.0, 0.0}});
+        out.assembly_parts.push_back({"reentry_payload", "TPS Heatshield + Sat", params.payload_mass_kg, {0.82, 0.0, 0.0}});
     }
 
     if (params.attach_custom_part && params.family != VehicleFamily::CustomPart) {
@@ -831,6 +889,20 @@ GeneratedCADScene build_cad_scene(const AircraftDesignParams &params, int select
         out.wake_lines.push_back({barb1.x, barb1.y, barb1.z, 0.98f, 0.58f, 0.16f});
         out.wake_lines.push_back({tip.x, tip.y, tip.z, 0.98f, 0.58f, 0.16f});
         out.wake_lines.push_back({barb2.x, barb2.y, barb2.z, 0.98f, 0.58f, 0.16f});
+    }
+
+    // 3D CFD / Potential-flow streamlines across wings & body when enabled
+    if (params.show_streamlines && params.family != VehicleFamily::CustomPart) {
+        const float span_half = std::max(0.28f, params.wingspan_m * 0.42f);
+        const float deflection_z = -0.045f * std::sin(params.alpha_deg * kPi / 180.0f) * 3.0f;
+        for (int s_i = -2; s_i <= 2; ++s_i) {
+            const float sy = static_cast<float>(s_i) * (span_half * 0.42f);
+            const float z0 = 0.08f + (s_i == 0 ? 0.08f : 0.0f);
+            out.wake_lines.push_back({0.85f, sy, z0, 0.25f, 0.68f, 0.96f});
+            out.wake_lines.push_back({0.10f, sy, z0 + 0.02f, 0.20f, 0.76f, 0.98f});
+            out.wake_lines.push_back({0.10f, sy, z0 + 0.02f, 0.20f, 0.76f, 0.98f});
+            out.wake_lines.push_back({-0.95f, sy, z0 + deflection_z, 0.48f, 0.86f, 0.99f});
+        }
     }
 
     return out;
@@ -1016,6 +1088,47 @@ void evaluate_live_physics_and_curves(const AircraftDesignParams &params, const 
     summary.divergence_margin = 10.0;
     summary.yaw_damping_cn = 0.0;
     summary.roll_moment_nm = 0.0;
+
+    if (params.family == VehicleFamily::RocketSpacecraft) {
+        lab::RocketSpaceflightParams rp;
+        rp.prop_mass_stage1_kg = std::max(500.0, static_cast<double>(params.rocket_stage1_prop_kg));
+        rp.prop_mass_stage2_kg = std::max(200.0, static_cast<double>(params.rocket_stage2_prop_kg));
+        rp.isp_stage1_s = std::max(120.0, static_cast<double>(params.rocket_isp1_s));
+        rp.payload_mass_kg = std::max(10.0, static_cast<double>(params.payload_mass_kg));
+        rp.liftoff_thrust_n = std::max(10000.0, static_cast<double>(params.rocket_thrust_kn) * 1000.0);
+        rp.nose_radius_m = std::max(0.05, static_cast<double>(params.rocket_nose_radius_m));
+        rp.reentry_speed_m_s = std::max(500.0, static_cast<double>(params.reentry_speed_km_s) * 1000.0);
+        rp.reentry_altitude_m = std::max(25000.0, static_cast<double>(params.reentry_alt_km) * 1000.0);
+        const auto rr = lab::evaluate_rocket_and_hypersonics(rp);
+
+        summary.total_mass_kg = rr.total_mass_kg;
+        summary.thrust_to_weight = rr.liftoff_tw;
+        summary.rocket_dv_m_s = rr.net_delta_v_m_s;
+        summary.rocket_tps_c = rr.tps_wall_temp_c;
+        summary.rocket_kn = rr.knudsen_number;
+        summary.rocket_orbit_ok = rr.orbit_capable;
+        summary.motor_temp_c = rr.tps_wall_temp_c;
+        summary.structural_fos = std::max(0.5, 65000.0 / std::max(100.0, rr.max_q_pa));
+        summary.est_endurance_min = rr.delta_v_stage1_m_s / 1500.0;
+        summary.mach = rp.reentry_speed_m_s / 300.0;
+        if (!rr.flight_ok) {
+            summary.validation_status = "FAIL";
+            summary.predicted_readiness_pct = 0.0;
+            summary.benchmark_match_pct = -1.0;
+            summary.benchmark_source_tag = !rr.liftoff_ok ? "Liftoff Thrust-to-Weight < 1.15"
+                                                          : (!rr.tps_ok ? "Sutton-Graves TPS Wall Temp > 1850 C" : "Ascent Max-Q Structural Limit");
+            summary.status_detail = "FAIL: " + summary.benchmark_source_tag;
+        } else {
+            summary.validation_status = params.attach_custom_part ? "UNVALIDATED_CUSTOM" : "DEVELOPMENT";
+            summary.benchmark_match_pct = params.attach_custom_part ? -1.0 : 88.6;
+            summary.benchmark_source_tag = "Phase 4: Tsiolkovsky Staging + Sutton-Graves TPS (DEVELOPMENT)";
+            summary.predicted_readiness_pct = rr.orbit_capable ? 92.4 : 74.0;
+            summary.status_detail = rr.orbit_capable
+                                        ? "LEO orbit-capable staging & TPS within radiative limit"
+                                        : "Suborbital delta-v (< LEO target); TPS safe";
+        }
+        return;
+    }
 
     if (params.family == VehicleFamily::Jet) {
         const double th_frac = std::clamp(static_cast<double>(params.jet_throttle_pct) / 100.0, 0.0, 1.05);
@@ -1337,6 +1450,55 @@ void evaluate_live_physics_and_curves(const AircraftDesignParams &params, const 
                                        ? std::max(summary.lift_n * tol_factor, max_rotor_thrust_n * 0.35) / weight_n
                                        : (max_rotor_thrust_n / req_hover_thrust_n);
     }
+
+    // Wire Aeroacoustics, RF Link/Stealth RCS, Helicopter VRS/Precession & Hydro Cavitation
+    {
+        lab::AeroacousticsParams ap;
+        ap.rotor_count = (params.family == VehicleFamily::CargoUAV) ? 6 : std::clamp(params.rotor_count, 1, 8);
+        ap.blade_count = std::max(2, params.prop_blades);
+        ap.rotor_rpm = params.rotor_rpm;
+        ap.rotor_diameter_m = effective_prop_d;
+        ap.total_thrust_n = max_rotor_thrust_n;
+        ap.rho_kg_m3 = rho;
+        ap.a_sound_m_s = a_sound;
+        const auto acr = lab::evaluate_aeroacoustics(ap);
+        summary.bpf_hz = acr.bpf_hz;
+        summary.spl_dba = acr.total_spl_dba;
+        summary.sonic_boom_psf = acr.sonic_boom_psf;
+
+        lab::RfStealthParams rfp;
+        rfp.distance_km = std::max(0.1, static_cast<double>(params.rf_distance_km));
+        rfp.rain_mm_h = rain;
+        rfp.sweep_deg = params.sweep_deg;
+        rfp.stealth_shaping = params.stealth_shaping;
+        const auto rfr = lab::evaluate_rf_and_rcs(rfp);
+        summary.rf_margin_db = rfr.link_margin_db;
+        summary.rcs_dbsm = rfr.rcs_dbsm;
+    }
+    if (params.family == VehicleFamily::Helicopter) {
+        lab::HelicopterHighSpeedParams hp;
+        hp.mass_kg = summary.total_mass_kg;
+        hp.rotor_diameter_m = std::max(0.3, static_cast<double>(params.main_rotor_diameter_m));
+        hp.rotor_rpm = params.rotor_rpm;
+        hp.horizontal_speed_m_s = v;
+        hp.vertical_speed_m_s = static_cast<double>(params.heli_descent_m_s);
+        hp.rho_kg_m3 = rho;
+        hp.a_sound_m_s = a_sound;
+        const auto hhr = lab::evaluate_helicopter_highspeed(hp);
+        summary.heli_mu = hhr.advance_ratio_mu;
+        summary.heli_gyro_nm = hhr.gyro_precession_torque_nm;
+        summary.heli_vrs = hhr.vrs_entered || !hhr.envelope_ok;
+    } else {
+        summary.heli_vrs = false;
+    }
+    if (params.family == VehicleFamily::Seaplane) {
+        lab::HydroCavitationParams hcp;
+        hcp.prop_diameter_m = std::max(0.05, static_cast<double>(params.prop_diameter_m) * 0.45);
+        hcp.prop_rpm = params.rotor_rpm;
+        hcp.water_temp_c = std::clamp(static_cast<double>(params.oat_c), 2.0, 40.0);
+        const auto hcr = lab::evaluate_hydro_cavitation(hcp);
+        summary.cavitation_sigma = hcr.cavitation_number;
+    }
     summary.wing_flex_tip_m = std::clamp(0.008 * (summary.lift_n / std::max(1.0, weight_n)), 0.0, 0.06);
     summary.hover_throttle_pct = std::clamp(100.0 / std::max(0.15, summary.thrust_to_weight * 1.45), 5.0, 140.0);
 
@@ -1399,11 +1561,14 @@ void evaluate_live_physics_and_curves(const AircraftDesignParams &params, const 
         summary.benchmark_source_tag = "Tip-clearance envelope breached";
         summary.validation_status = "FAIL";
         summary.status_detail = "FAIL: Rotor tip clearance < 20 mm physical minimum";
-    } else if (!cargo_ok || !creator_ok || !fhr.bolt_ok || !fhr.wire_ok) {
+    } else if (!cargo_ok || !creator_ok || !fhr.bolt_ok || !fhr.wire_ok || summary.heli_vrs) {
         summary.predicted_readiness_pct = 0.0;
         summary.benchmark_match_pct = -1.0;
         summary.validation_status = "FAIL";
-        if (!fhr.bolt_ok || !fhr.wire_ok) {
+        if (summary.heli_vrs) {
+            summary.benchmark_source_tag = "Helicopter Vortex Ring State / Advancing Tip / Stall Limit";
+            summary.status_detail = "FAIL: Helicopter VRS / retreating blade stall / M_adv > 0.90 envelope breached";
+        } else if (!fhr.bolt_ok || !fhr.wire_ok) {
             summary.benchmark_source_tag = "ISO 4762 Fastener Shear / AWG Harness Ampacity Limit";
             summary.status_detail = !fhr.bolt_ok ? "FAIL: Joint bolt shear FoS < 2.0 (increase M3..M6 or Ti)"
                                                  : "FAIL: AWG wire ampacity/sag limit exceeded";

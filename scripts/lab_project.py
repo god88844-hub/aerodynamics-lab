@@ -30,6 +30,13 @@ from geometry.part_designer import CustomPartRecipe, build_custom_part, swap_ass
 from optimization.bounded_sweep import run_bounded_sweep  # noqa: E402
 from physics.validation.virtual_evidence_scorecard import compute_virtual_evidence_scorecard  # noqa: E402
 from physics.aerodynamics.fixed_wing import run_fixed_wing_mission  # noqa: E402
+from physics.aerodynamics.aeroacoustics_and_vrs import (  # noqa: E402
+    evaluate_helicopter_vrs_and_asymmetry,
+    evaluate_hydro_cavitation,
+    evaluate_rf_and_rcs,
+    evaluate_rotor_and_jet_aeroacoustics,
+)
+from physics.aerodynamics.rockets_and_cfd import evaluate_multistage_rocket, export_and_run_detailed_cfd_fea  # noqa: E402
 from physics.aerodynamics.rotorcraft_vtol import run_helicopter_autorotation_mission, run_vtol_transition_corridor  # noqa: E402
 from physics.aerodynamics.sixdof_fixed_wing import build_derivatives_from_wing, simulate_6dof_fixed_wing  # noqa: E402
 from physics.autonomy.sitl_and_swarms import run_multi_drone_swarm, run_sitl_closed_loop_mission  # noqa: E402
@@ -78,6 +85,9 @@ def main() -> int:
             "phase1-eval",
             "failure-atlas",
             "load-powerpack",
+            "multiphysics-audit",
+            "rocket-sim",
+            "cfd-fea-export",
             "run",
         ),
     )
@@ -363,6 +373,43 @@ def main() -> int:
             spec = json.loads(args.input.read_text(encoding="utf-8"))
             bat = import_electrophysics_powerpack(spec)
             write_result(args.output, bat.model_dump(mode="json"))
+        elif args.command == "multiphysics-audit":
+            spec = json.loads(args.input.read_text(encoding="utf-8"))
+            payload = {
+                "aeroacoustics": evaluate_rotor_and_jet_aeroacoustics(
+                    is_jet=bool(spec.get("aircraft_family") == "jet"),
+                    rotor_rpm=float(spec.get("rotor_rpm", 4800.0)),
+                    jet_mach=float(spec.get("airspeed_m_s", 92.0)) / 340.3,
+                ),
+                "helicopter_highspeed": evaluate_helicopter_vrs_and_asymmetry(
+                    horizontal_speed_m_s=float(spec.get("airspeed_m_s", 12.0)),
+                ),
+                "cavitation": evaluate_hydro_cavitation(prop_rpm=float(spec.get("rotor_rpm", 3800.0))),
+                "rf_rcs": evaluate_rf_and_rcs(
+                    sweep_deg=float(spec.get("sweep_deg", 26.0)),
+                    rain_mm_h=float(spec.get("rain_mm_h", 0.0)),
+                ),
+            }
+            write_result(args.output, payload)
+        elif args.command == "rocket-sim":
+            spec = json.loads(args.input.read_text(encoding="utf-8"))
+            payload = evaluate_multistage_rocket(
+                payload_mass_kg=float(spec.get("payload_mass_kg", 250.0)),
+                target_altitude_m=float(spec.get("altitude_asl_m", 220000.0)) if float(spec.get("altitude_asl_m", 0.0)) > 50000.0 else 220000.0,
+            )
+            write_result(args.output, payload)
+        elif args.command == "cfd-fea-export":
+            spec = json.loads(args.input.read_text(encoding="utf-8"))
+            export_dir = Path(spec.get("export_dir", str(args.output.parent / "cfd_fea_export")))
+            payload = export_and_run_detailed_cfd_fea(
+                project_name=str(spec.get("name", "AerodynamicsLabDesign")),
+                airspeed_m_s=float(spec.get("airspeed_m_s", 18.0)),
+                wingspan_m=float(spec.get("wingspan_m", 1.65)),
+                root_chord_m=float(spec.get("root_chord_m", 0.28)),
+                mass_kg=float(spec.get("mass_kg", 3.1)),
+                output_dir=export_dir,
+            )
+            write_result(args.output, payload)
         elif args.command == "import-legacy":
             raw = json.loads(args.input.read_text(encoding="utf-8"))
             project = import_legacy_project(raw)
