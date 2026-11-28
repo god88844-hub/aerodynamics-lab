@@ -353,6 +353,29 @@ int main() {
     aerolab::evaluate_live_physics_and_curves(thin_wire, aerolab::build_cad_scene(thin_wire), tw_ev);
     assert(!tw_ev.wire_ok && tw_ev.validation_status == "FAIL");
 
+    // Verify custom BodyShell drag penalty & RingDuct shrouded thrust gain physically update live evidence
+    aerolab::AircraftDesignParams custom_shell;
+    custom_shell.family = aerolab::VehicleFamily::FixedWing;
+    custom_shell.hardware_catalog_idx = 1; custom_shell.battery_cells_s = 4; custom_shell.battery_capacity_ah = 4.5f;
+    custom_shell.battery_r0_ohm = 0.018f; custom_shell.battery_mass_kg = 0.55f; custom_shell.rotor_rpm = 6200.0f;
+    aerolab::LiveEvidenceSummary base_fw, shell_fw;
+    aerolab::evaluate_live_physics_and_curves(custom_shell, aerolab::build_cad_scene(custom_shell), base_fw);
+    custom_shell.attach_custom_part = true;
+    custom_shell.active_part.sketch_kind = aerolab::SketchShapeKind::CustomBodyShell;
+    custom_shell.active_part.width_m = 0.14f;
+    aerolab::evaluate_live_physics_and_curves(custom_shell, aerolab::build_cad_scene(custom_shell), shell_fw);
+    assert(shell_fw.cd > base_fw.cd && shell_fw.validation_status == "UNVALIDATED_CUSTOM");
+    assert(shell_fw.benchmark_match_pct < 0.0);
+
+    aerolab::AircraftDesignParams duct_quad;
+    duct_quad.family = aerolab::VehicleFamily::Multirotor;
+    aerolab::LiveEvidenceSummary plain_q, duct_q;
+    aerolab::evaluate_live_physics_and_curves(duct_quad, aerolab::build_cad_scene(duct_quad), plain_q);
+    duct_quad.attach_custom_part = true;
+    duct_quad.active_part.sketch_kind = aerolab::SketchShapeKind::RingDuct;
+    aerolab::evaluate_live_physics_and_curves(duct_quad, aerolab::build_cad_scene(duct_quad), duct_q);
+    assert(duct_q.thrust_to_weight != plain_q.thrust_to_weight && duct_q.validation_status == "UNVALIDATED_CUSTOM");
+
     // Live Python worker end-to-end check across ALL menu worker commands
     for (const std::string &cmd : {"fixed-wing-sim", "layout-bom", "6dof-fixed-wing", "vtol-transition",
                                    "autorotation-sim", "adverse-weather", "bounded-sweep", "phase1-eval"}) {
