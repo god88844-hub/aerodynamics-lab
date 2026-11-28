@@ -1,0 +1,17 @@
+{
+  "schema_version": "1.0",
+  "bridge_name": "electrophysics_to_aerodynamics_powerpack_v1",
+  "purpose": "Exchange contract allowing Electrophysics Lab (cell chemistry, PCB, ESC FET design) to export verified or experimental power packs and ESCs into Aerodynamics Lab without duplicating chip/PCB tools inside Aerodynamics Lab.",
+  "required_fields": [
+    "component_id",
+    "cells_series",
+    "capacity_ah",
+    "internal_resistance_ohm",
+    "mass_kg",
+    "max_continuous_current_a",
+    "cutoff_cell_voltage_v",
+    "max_temperature_c",
+    "ocv_curve",
+    "validation_origin"
+  ]
+}

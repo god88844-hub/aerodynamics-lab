@@ -7572,6 +7572,15 @@
       "parameter_rule": "Unsourced/typical/generic parameters and assumed uncertainty bands are UNVERIFIED_ESTIMATE, even where a legacy source estimated flag is false; inspect parameter-level notes."
     },
     {
+      "artifact": "data/components/bearings/metric_bearings.json",
+      "id": "materials",
+      "source_metadata": null,
+      "policy_role": "CALIBRATION_OR_SCREENING_NOT_INDEPENDENT_VALIDATION",
+      "physical_acceptance": "UNVALIDATED",
+      "license": "DATA_SPECIFIC_RIGHTS_UNRESOLVED_NOT_INHERITED_FROM_PROJECT",
+      "parameter_rule": "Unsourced/typical/generic parameters and assumed uncertainty bands are UNVERIFIED_ESTIMATE, even where a legacy source estimated flag is false; inspect parameter-level notes."
+    },
+    {
       "artifact": "data/components/controllers/esc_80a_12s.json",
       "id": "generic_esc_80a_12s",
       "source_metadata": {
@@ -7599,6 +7608,30 @@
         "estimated": true,
         "status": "UNVERIFIED_ESTIMATE",
         "notes": "No specific ESC datasheet captured yet; rating is an estimate. Replace with the actual ESC part (e.g. a sourced T-Motor/Hobbywing ESC) before any flight-worthiness claim."
+      },
+      "policy_role": "CALIBRATION_OR_SCREENING_NOT_INDEPENDENT_VALIDATION",
+      "physical_acceptance": "UNVALIDATED",
+      "license": "DATA_SPECIFIC_RIGHTS_UNRESOLVED_NOT_INHERITED_FROM_PROJECT",
+      "parameter_rule": "Unsourced/typical/generic parameters and assumed uncertainty bands are UNVERIFIED_ESTIMATE, even where a legacy source estimated flag is false; inspect parameter-level notes."
+    },
+    {
+      "artifact": "data/components/fasteners/iso_4762_metric_screws.json",
+      "id": "materials",
+      "source_metadata": {
+        "steel_12_9": {
+          "name": "Alloy Steel Grade 12.9",
+          "density_kg_m3": 7850.0,
+          "uts_mpa": 1200.0,
+          "yield_mpa": 1080.0,
+          "shear_mpa": 720.0
+        },
+        "ti_grade5": {
+          "name": "Titanium Ti-6Al-4V Grade 5",
+          "density_kg_m3": 4430.0,
+          "uts_mpa": 950.0,
+          "yield_mpa": 880.0,
+          "shear_mpa": 570.0
+        }
       },
       "policy_role": "CALIBRATION_OR_SCREENING_NOT_INDEPENDENT_VALIDATION",
       "physical_acceptance": "UNVALIDATED",
@@ -7972,6 +8005,24 @@
       "parameter_rule": "Unsourced/typical/generic parameters and assumed uncertainty bands are UNVERIFIED_ESTIMATE, even where a legacy source estimated flag is false; inspect parameter-level notes."
     },
     {
+      "artifact": "data/components/servos/rc_servos.json",
+      "id": "materials",
+      "source_metadata": null,
+      "policy_role": "CALIBRATION_OR_SCREENING_NOT_INDEPENDENT_VALIDATION",
+      "physical_acceptance": "UNVALIDATED",
+      "license": "DATA_SPECIFIC_RIGHTS_UNRESOLVED_NOT_INHERITED_FROM_PROJECT",
+      "parameter_rule": "Unsourced/typical/generic parameters and assumed uncertainty bands are UNVERIFIED_ESTIMATE, even where a legacy source estimated flag is false; inspect parameter-level notes."
+    },
+    {
+      "artifact": "data/components/turbines/micro_turbines_and_edfs.json",
+      "id": "materials",
+      "source_metadata": null,
+      "policy_role": "CALIBRATION_OR_SCREENING_NOT_INDEPENDENT_VALIDATION",
+      "physical_acceptance": "UNVALIDATED",
+      "license": "DATA_SPECIFIC_RIGHTS_UNRESOLVED_NOT_INHERITED_FROM_PROJECT",
+      "parameter_rule": "Unsourced/typical/generic parameters and assumed uncertainty bands are UNVERIFIED_ESTIMATE, even where a legacy source estimated flag is false; inspect parameter-level notes."
+    },
+    {
       "artifact": "data/components/wiring/silicone_awg12_bus.json",
       "id": "silicone_awg12_bus",
       "source_metadata": {
@@ -7984,6 +8035,15 @@
         "status": "UNVERIFIED_ESTIMATE",
         "notes": "DC resistance at 20 C follows ASTM B258 copper cross-section; installed ampacity (60 A) and jacket mass/m depend on airflow/bundling and are UNVERIFIED_ESTIMATE until measured on the exact harness."
       },
+      "policy_role": "CALIBRATION_OR_SCREENING_NOT_INDEPENDENT_VALIDATION",
+      "physical_acceptance": "UNVALIDATED",
+      "license": "DATA_SPECIFIC_RIGHTS_UNRESOLVED_NOT_INHERITED_FROM_PROJECT",
+      "parameter_rule": "Unsourced/typical/generic parameters and assumed uncertainty bands are UNVERIFIED_ESTIMATE, even where a legacy source estimated flag is false; inspect parameter-level notes."
+    },
+    {
+      "artifact": "data/components/wiring/silicone_wire_awg.json",
+      "id": "materials",
+      "source_metadata": null,
       "policy_role": "CALIBRATION_OR_SCREENING_NOT_INDEPENDENT_VALIDATION",
       "physical_acceptance": "UNVALIDATED",
       "license": "DATA_SPECIFIC_RIGHTS_UNRESOLVED_NOT_INHERITED_FROM_PROJECT",
@@ -8238,6 +8298,12 @@
       "hash_semantics": "LF_NORMALIZED_REPOSITORY_TEXT"
     },
     {
+      "path": "data/components/bearings/metric_bearings.json",
+      "bytes_hashed": 415,
+      "sha256": "24e0043420e53284c9b4d305c515c36011015639050e4e7a19892e6a29c47023",
+      "hash_semantics": "LF_NORMALIZED_REPOSITORY_TEXT"
+    },
+    {
       "path": "data/components/controllers/esc_80a_12s.json",
       "bytes_hashed": 1842,
       "sha256": "e7ea4d45d4b2ee83e397e3703b8e71a5d4fccfda951b02cdf5b7e094509f9df2",
@@ -8247,6 +8313,12 @@
       "path": "data/components/controllers/generic_esc_20a.json",
       "bytes_hashed": 1874,
       "sha256": "9359cec714698e99bcd47066590a55e16f9f6e177b00c81cefbbd4bd273d2f44",
+      "hash_semantics": "LF_NORMALIZED_REPOSITORY_TEXT"
+    },
+    {
+      "path": "data/components/fasteners/iso_4762_metric_screws.json",
+      "bytes_hashed": 3015,
+      "sha256": "bac431fdab9b6b36f65d3c858453eda3dd4e239f98f224a8b196882b31c16d20",
       "hash_semantics": "LF_NORMALIZED_REPOSITORY_TEXT"
     },
     {
@@ -8286,9 +8358,27 @@
       "hash_semantics": "LF_NORMALIZED_REPOSITORY_TEXT"
     },
     {
+      "path": "data/components/servos/rc_servos.json",
+      "bytes_hashed": 660,
+      "sha256": "bc6daf5eaf192da9a44ec3f076d1c6c122a4d150d8ce2acf8ec3df2410ddc5ae",
+      "hash_semantics": "LF_NORMALIZED_REPOSITORY_TEXT"
+    },
+    {
+      "path": "data/components/turbines/micro_turbines_and_edfs.json",
+      "bytes_hashed": 1254,
+      "sha256": "c759a0c689ce2e2a9dcd35bd56abfea4b6dd4fdb9b3fc2b82a26a04218444f69",
+      "hash_semantics": "LF_NORMALIZED_REPOSITORY_TEXT"
+    },
+    {
       "path": "data/components/wiring/silicone_awg12_bus.json",
       "bytes_hashed": 2979,
       "sha256": "29ae86adf8abcf25b112d2d4cda9e8c766fe8af6c2871e4561fb497ddaa5db54",
+      "hash_semantics": "LF_NORMALIZED_REPOSITORY_TEXT"
+    },
+    {
+      "path": "data/components/wiring/silicone_wire_awg.json",
+      "bytes_hashed": 847,
+      "sha256": "9ee6b4858a9976530fd57530d8b1e127e43860f05d990f47a87b60de954fc396",
       "hash_semantics": "LF_NORMALIZED_REPOSITORY_TEXT"
     },
     {

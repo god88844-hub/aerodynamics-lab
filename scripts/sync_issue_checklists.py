@@ -80,10 +80,10 @@ def main() -> int:
     for number, block in sorted(blocks.items(), key=lambda kv: int(kv[0])):
         key = str(number)
         body = get_body(number)
-        if body.strip() == block.strip():
+        new_body = replace_block(body, block)
+        if body.strip() == new_body.strip():
             unchanged.append(number)
         else:
-            new_body = replace_block(body, block)
             gh_set_body(number, new_body)
             updated.append(number)
         issues[key] = {

@@ -1,0 +1,12 @@
+{
+  "schema_version": "1.0",
+  "silicone_copper_awg": [
+    {"awg": 10, "area_mm2": 5.26, "resistance_ohm_per_m": 0.0033, "mass_g_per_m": 75.0, "rec_ampacity_a": 50.0},
+    {"awg": 12, "area_mm2": 3.31, "resistance_ohm_per_m": 0.0053, "mass_g_per_m": 50.0, "rec_ampacity_a": 35.0},
+    {"awg": 14, "area_mm2": 2.08, "resistance_ohm_per_m": 0.0086, "mass_g_per_m": 30.0, "rec_ampacity_a": 22.0},
+    {"awg": 16, "area_mm2": 1.31, "resistance_ohm_per_m": 0.0137, "mass_g_per_m": 19.0, "rec_ampacity_a": 14.0},
+    {"awg": 18, "area_mm2": 0.82, "resistance_ohm_per_m": 0.0219, "mass_g_per_m": 11.0, "rec_ampacity_a": 9.0},
+    {"awg": 20, "area_mm2": 0.52, "resistance_ohm_per_m": 0.0348, "mass_g_per_m": 8.0, "rec_ampacity_a": 6.0},
+    {"awg": 22, "area_mm2": 0.33, "resistance_ohm_per_m": 0.0552, "mass_g_per_m": 5.5, "rec_ampacity_a": 4.0}
+  ]
+}

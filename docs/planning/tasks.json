@@ -322,11 +322,11 @@
         "data/research/registry.json"
       ],
       "todos": [
-        "1. DONE \u2014 pinned DEVELOPMENT campaign rows, hashes and clock/time definitions read from docs/M21_BATTERY_CAMPAIGN.md, docs/campaigns/M21_6_10_SIT_MODULE_ELECTROTHERMAL.md, docs/campaigns/M21_11_15_SIT_CUTOFF_FORECAST.md and data/research/registry.json.",
-        "2. DONE \u2014 tests/acceptance/test_p0a_005.py reproduces 63/63 replay and 68/68 forecast missed 80 V crossings from the pinned workbook (full re-execution bit-identical).",
-        "3. DONE \u2014 exact commands, time/event definitions and failing regressions published in docs/acceptance/P0A-005.md with the pinned hashes.",
-        "4. DONE \u2014 packages/physics untouched; the causal fixes are P0A-006.",
-        "5. DONE \u2014 verification commands run and output recorded in docs/acceptance/P0A-005.md."
+        "1. DONE — pinned DEVELOPMENT campaign rows, hashes and clock/time definitions read from docs/M21_BATTERY_CAMPAIGN.md, docs/campaigns/M21_6_10_SIT_MODULE_ELECTROTHERMAL.md, docs/campaigns/M21_11_15_SIT_CUTOFF_FORECAST.md and data/research/registry.json.",
+        "2. DONE — tests/acceptance/test_p0a_005.py reproduces 63/63 replay and 68/68 forecast missed 80 V crossings from the pinned workbook (full re-execution bit-identical).",
+        "3. DONE — exact commands, time/event definitions and failing regressions published in docs/acceptance/P0A-005.md with the pinned hashes.",
+        "4. DONE — packages/physics untouched; the causal fixes are P0A-006.",
+        "5. DONE — verification commands run and output recorded in docs/acceptance/P0A-005.md."
       ],
       "verify_commands": [
         "pytest tests/acceptance/test_p0a_005.py -q",
@@ -466,7 +466,7 @@
         "1. Reproduce the signed-CT disagreement case with original source hashes and the exact pinned rows (no repaired data).",
         "2. Inspect, one at a time and recorded: coordinate axes/normal conventions, advance-ratio handling, RPM units, thrust/power sign definitions, and the near-zero measurement resolution of the source instrument.",
         "3. Write the evidence-backed cause (or the shortlist with the discriminating experiment) into docs/acceptance/P0A-008.md.",
-        "4. Change no model behavior in this task \u2014 diagnosis only."
+        "4. Change no model behavior in this task — diagnosis only."
       ],
       "verify_commands": [
         "pytest tests/acceptance/test_p0a_008.py -q",
@@ -601,7 +601,7 @@
       ],
       "todos": [
         "1. Make DETECT / NO-ALERT / INCONCLUSIVE explicit outcomes of the detector contract (an alert must name its class and deadline).",
-        "2. Correct the detection logic with grouped, disjoint training/evaluation recordings \u2014 no whole-recording leakage in either direction.",
+        "2. Correct the detection logic with grouped, disjoint training/evaluation recordings — no whole-recording leakage in either direction.",
         "3. Add confirmation/hysteresis rules so single-sample false alarms cannot raise an alert.",
         "4. Re-run the P0A-010 reproduction and record the per-class improvements and remaining misses."
       ],
@@ -1277,7 +1277,7 @@
       ],
       "actor": "builder",
       "status": "done",
-      "acceptance": "Freeze model/controller/geometry versions, channels, instrument/clock uncertainties, calibration groups, held-out whole experiments, stopping rules and M21\u2013M27 tolerances before confirmatory reveal; qualified review is required for acceptance.",
+      "acceptance": "Freeze model/controller/geometry versions, channels, instrument/clock uncertainties, calibration groups, held-out whole experiments, stopping rules and M21–M27 tolerances before confirmatory reveal; qualified review is required for acceptance.",
       "proof_file": "docs/acceptance/P0A-026.md",
       "planned_tests": [
         "tests/acceptance/test_p0a_026.py"
@@ -1297,7 +1297,7 @@
         "docs/acceptance/P0A-026.md"
       ],
       "todos": [
-        "1. Freeze and register the validation protocols: model/controller/geometry versions, channels, instrument/clock uncertainties, calibration groups, held-out whole experiments, stopping rules and the M21\u2013M27 tolerance bindings.",
+        "1. Freeze and register the validation protocols: model/controller/geometry versions, channels, instrument/clock uncertainties, calibration groups, held-out whole experiments, stopping rules and the M21–M27 tolerance bindings.",
         "2. Refuse protocol registration with missing calibration groups or held-out definitions (fail closed).",
         "3. Add acceptance tests asserting the frozen protocol records satisfy the registry contract."
       ],
@@ -1335,7 +1335,7 @@
         "1. CUSTODIAN (requires real external receipts): obtain legally usable exact-hardware/configuration battery, propulsion and sensor/controller measurements with original file hashes.",
         "2. Record calibration groups, environmental conditions, instrument identity and clock bases per campaign; preserve source bytes unmodified.",
         "3. Register each campaign in data/research/registry.json and reconcile; mark DEVELOPMENT/holdout partition per the prospective policy.",
-        "4. No acceptance tests exist by design \u2014 the custodian receipts ARE the evidence; the registry reconciliation is the machine check."
+        "4. No acceptance tests exist by design — the custodian receipts ARE the evidence; the registry reconciliation is the machine check."
       ],
       "verify_commands": [
         "python scripts/reconcile_registry.py --check",
@@ -1355,7 +1355,7 @@
       ],
       "actor": "builder",
       "status": "todo",
-      "acceptance": "Each independent component experiment meets applicable M21\u2013M23 frozen error, limit and uncertainty criteria; high-C/endpoints, transient torque/current/RPM and sensor/actuator timing are covered or explicitly outside the accepted envelope.",
+      "acceptance": "Each independent component experiment meets applicable M21–M23 frozen error, limit and uncertainty criteria; high-C/endpoints, transient torque/current/RPM and sensor/actuator timing are covered or explicitly outside the accepted envelope.",
       "proof_file": "docs/acceptance/P0A-028.md",
       "planned_tests": [
         "tests/acceptance/test_p0a_028.py"
@@ -1372,9 +1372,9 @@
         "packages/physics/propulsion/battery.py"
       ],
       "todos": [
-        "1. Score each independent component experiment (P0A-027 receipts) against the frozen M21\u2013M23 error, limit and uncertainty criteria.",
+        "1. Score each independent component experiment (P0A-027 receipts) against the frozen M21–M23 error, limit and uncertainty criteria.",
         "2. Cover high-C discharge endpoints, transient torque/current/RPM and sensor/actuator timing per the frozen protocol.",
-        "3. Publish per-campaign results; a criterion miss is FAILED VALIDATION, recorded \u2014 never re-banded after the fact.",
+        "3. Publish per-campaign results; a criterion miss is FAILED VALIDATION, recorded — never re-banded after the fact.",
         "4. Update the component evidence records with the measured residuals."
       ],
       "verify_commands": [
@@ -1452,7 +1452,7 @@
         "1. CUSTODIAN (requires real external receipts): obtain repeated hover/climb/descent/landing/control/disturbance/endurance flight trials on the frozen installed hardware, plus applicable heat/load evidence.",
         "2. Record telemetry channels, clocks, environmental conditions and custody per flight; keep the professional operational review separate from this acquisition.",
         "3. Register the sealed flight campaigns with original hashes; DEVELOPMENT/holdout partition per policy.",
-        "4. No acceptance tests exist by design \u2014 the custodian receipts ARE the evidence."
+        "4. No acceptance tests exist by design — the custodian receipts ARE the evidence."
       ],
       "verify_commands": [
         "python scripts/reconcile_registry.py --check",
@@ -1472,7 +1472,7 @@
       ],
       "actor": "builder",
       "status": "todo",
-      "acceptance": "Per-flight trajectories, energy, heat/control response and failures meet the frozen M24\u2013M26 applicable criteria; observed failures are retained, conditional replay is separate, and out-of-envelope operation is rejected.",
+      "acceptance": "Per-flight trajectories, energy, heat/control response and failures meet the frozen M24–M26 applicable criteria; observed failures are retained, conditional replay is separate, and out-of-envelope operation is rejected.",
       "proof_file": "docs/acceptance/P0A-031.md",
       "planned_tests": [
         "tests/acceptance/test_p0a_031.py"
@@ -1489,7 +1489,7 @@
         "packages/desktop_worker/"
       ],
       "todos": [
-        "1. Score per-flight trajectories, energy, heat/control response and the frozen failure-mode predictions against the sealed flights (P0A-030) using the frozen M24\u2013M26 criteria.",
+        "1. Score per-flight trajectories, energy, heat/control response and the frozen failure-mode predictions against the sealed flights (P0A-030) using the frozen M24–M26 criteria.",
         "2. Retain observed failures; separate conditional replay from the primary blind scores.",
         "3. Publish per-flight agreement tables and all exclusions with reasons.",
         "4. Report per-channel and gated Physical Evidence Match (%) alongside the M24-M26 pass/fail scores without obscuring any failing channel."
@@ -1528,7 +1528,7 @@
       ],
       "todos": [
         "1. Calibrate the joint whole-flight uncertainty: simultaneous M27 channel coverage and width limits per independent cohort.",
-        "2. Include numerical, measurement, parameter, environment and model-discrepancy uncertainty terms explicitly (no single \u00b1band collapse).",
+        "2. Include numerical, measurement, parameter, environment and model-discrepancy uncertainty terms explicitly (no single ±band collapse).",
         "3. Publish the calibration result and any cohort that fails the width limits as FAILED VALIDATION.",
         "4. Expose Design Pass/Fail Probability (%) from calibrated joint UQ for validated configurations, keeping unmeasured/new designs labeled UNVERIFIED_ESTIMATE / INCONCLUSIVE."
       ],
@@ -1601,7 +1601,7 @@
         "docs/acceptance/P0A-034.md"
       ],
       "todos": [
-        "1. Implement the guided learning workflow: state a hypothesis, build/modify a supported drone, enter environment conditions, compare runs, inspect equations/assumptions and save a reproducible experiment \u2014 all through the normal UI.",
+        "1. Implement the guided learning workflow: state a hypothesis, build/modify a supported drone, enter environment conditions, compare runs, inspect equations/assumptions and save a reproducible experiment — all through the normal UI.",
         "2. Bind every saved experiment to the frozen inputs needed for exact replay.",
         "3. Add acceptance tests for the save -> reopen -> reproduce identity."
       ],
@@ -1773,10 +1773,10 @@
         "docs/prototypes/measurements/native-16gb/native_200part_observation.json"
       ],
       "todos": [
-        "1. DONE \u2014 measured visible 600-frame 200-part native OpenGL workload on 16 GB Intel Core Ultra 7 155U laptop (59.8022 FPS, p95 17.1412 ms, 133,738,496 B peak WS).",
-        "2. DONE \u2014 measured <=5 s cold startup (0.3629 s) and local project creation (4.2223 s).",
-        "3. DONE \u2014 verified constrained-headroom (1 GiB available) low-memory admission refusal contract.",
-        "4. DONE \u2014 kept additional untested 8 GB / Tier 2 GPU PC claims uncertified and assigned to future multi-PC compatibility testing (P0D-027/P0D-031)."
+        "1. DONE — measured visible 600-frame 200-part native OpenGL workload on 16 GB Intel Core Ultra 7 155U laptop (59.8022 FPS, p95 17.1412 ms, 133,738,496 B peak WS).",
+        "2. DONE — measured <=5 s cold startup (0.3629 s) and local project creation (4.2223 s).",
+        "3. DONE — verified constrained-headroom (1 GiB available) low-memory admission refusal contract.",
+        "4. DONE — kept additional untested 8 GB / Tier 2 GPU PC claims uncertified and assigned to future multi-PC compatibility testing (P0D-027/P0D-031)."
       ],
       "verify_commands": [
         "pytest tests/acceptance/test_p0a_038.py -q"
@@ -1828,9 +1828,9 @@
         "docs/ACCEPTANCE_LEDGER.md"
       ],
       "todos": [
-        "1. DONE \u2014 verified all preceding Slice 0A software dependencies (P0A-001..P0A-026, P0A-034..P0A-038) pass acceptance and numerical checks.",
-        "2. DONE \u2014 updated ACCEPTANCE_LEDGER.md keeping physical exit P0A-040 and external custodian/reviewer tracks (P0A-027..P0A-033) explicitly open.",
-        "3. DONE \u2014 published Slice 0A software exit dossier in docs/acceptance/P0A-039.md enabling Slice 0B software execution."
+        "1. DONE — verified all preceding Slice 0A software dependencies (P0A-001..P0A-026, P0A-034..P0A-038) pass acceptance and numerical checks.",
+        "2. DONE — updated ACCEPTANCE_LEDGER.md keeping physical exit P0A-040 and external custodian/reviewer tracks (P0A-027..P0A-033) explicitly open.",
+        "3. DONE — published Slice 0A software exit dossier in docs/acceptance/P0A-039.md enabling Slice 0B software execution."
       ],
       "verify_commands": [
         "pytest tests/acceptance/test_p0a_039.py -q",
@@ -1854,7 +1854,7 @@
       ],
       "actor": "builder",
       "status": "todo",
-      "acceptance": "Independent review accepts only the demonstrated matching multirotor envelope under M21\u2013M27; unresolved physical gates remain open and no universal drone-equivalence claim is made.",
+      "acceptance": "Independent review accepts only the demonstrated matching multirotor envelope under M21–M27; unresolved physical gates remain open and no universal drone-equivalence claim is made.",
       "proof_file": "docs/acceptance/P0A-040.md",
       "planned_tests": [
         "tests/acceptance/test_p0a_040.py"
@@ -1870,7 +1870,7 @@
         "docs/ACCEPTANCE_LEDGER.md"
       ],
       "todos": [
-        "1. Physical exit gate: assemble the P0A-033 signed dossier, the M21\u2013M27 acceptance results and the open physical gates.",
+        "1. Physical exit gate: assemble the P0A-033 signed dossier, the M21–M27 acceptance results and the open physical gates.",
         "2. Accept only the demonstrated matching multirotor envelope under the frozen criteria; make no universal drone-equivalence claim and keep unresolved physical gates open.",
         "3. Record the final envelope statement and open gates in docs/acceptance/P0A-040.md and the ledger."
       ],
@@ -3659,7 +3659,7 @@
       ],
       "actor": "builder",
       "status": "todo",
-      "acceptance": "Every Phase 0 functional requirement and all 12 work-package software checklists are implemented and verified, with traceable supported domains and honest research/physical status. This alone does not close M21\u2013M30.",
+      "acceptance": "Every Phase 0 functional requirement and all 12 work-package software checklists are implemented and verified, with traceable supported domains and honest research/physical status. This alone does not close M21–M30.",
       "proof_file": "docs/acceptance/P0D-030.md",
       "planned_tests": [
         "tests/acceptance/test_p0d_030.py"
@@ -3703,7 +3703,7 @@
       ],
       "actor": "owner",
       "status": "todo",
-      "acceptance": "Owner accepts the completed Phase 0 dossier; all 12 package issues and applicable M21\u2013M30 exits have distinct linked software/scientific evidence. Missing required evidence keeps this gate open and future phases locked.",
+      "acceptance": "Owner accepts the completed Phase 0 dossier; all 12 package issues and applicable M21–M30 exits have distinct linked software/scientific evidence. Missing required evidence keeps this gate open and future phases locked.",
       "proof_file": "docs/acceptance/P0D-032.md",
       "planned_tests": [],
       "completion_evidence": [],
@@ -4128,7 +4128,7 @@
     {
       "id": "P3-002",
       "stage": "3",
-      "title": "Define compressible-flow, turbine and thermal interfaces",
+      "title": "Define compressible, intake/nozzle, fastener BOM & Electrophysics bridge interfaces",
       "work_packages": [],
       "dependencies": [
         "P3-001"
@@ -4149,12 +4149,16 @@
         "packages/physics/aerodynamics/compressible_jet.py",
         "data/benchmarks/public/nasa_jet_m1p63_heated/",
         "data/benchmarks/public/nasa_tm4074_ladson_naca0012/",
-        "docs/JETS_AND_SEAPLANES_RESEARCH_AND_PLAN.md",
+        "data/components/fasteners/iso_4762_metric_screws.json",
+        "data/components/turbines/micro_turbines_and_edfs.json",
+        "data/failure_examples/failure_atlas.json",
+        "docs/WHOLE_AIRCRAFT_AND_CREATOR_RESEARCH.md",
         "tests/acceptance/test_p3_002.py"
       ],
       "todos": [
-        "1. Define compressible Prandtl-Glauert/Karman-Tsien, Modified Korn wave drag M_DD, Brayton turbine/EDF thrust lapse, and NASA Mach 1.63 Jet / TM-4074 benchmarks cleanly in data/registry.json.",
-        "2. Separate preloaded turbine/EDF hardware catalog parameters from custom swept/transonic airframe design parameters."
+        "1. Lock ISO 4762 M2-M6 fasteners, bearings, servos, AWG 10-22 wiring, KingTech/JetCat/FMS-EDF specs, and Electrophysics Lab PowerPack bridge contract.",
+        "2. Freeze 10 curated failure cases in data/failure_examples/failure_atlas.json and register NASA Mach 1.63 / TM-4074 DEVELOPMENT sources.",
+        "3. Lock Cargo slung-load pendulum, Tailsitter propwash, Ducted/Sub-100g, and Flying-Wing reflex contracts."
       ],
       "verify_commands": [
         "pytest tests/acceptance/test_jet_and_seaplane_models.py -q",
@@ -4164,7 +4168,7 @@
     {
       "id": "P3-003",
       "stage": "3",
-      "title": "Implement selected compressible and propulsion models",
+      "title": "Implement coupled jet intake/nozzle, cargo slung-load & creator experimental solvers",
       "work_packages": [],
       "dependencies": [
         "P3-002"
@@ -4184,11 +4188,15 @@
       ],
       "target_files": [
         "packages/physics/aerodynamics/compressible_jet.py",
-        "apps/native/src/cad_mesh_builder.cpp"
+        "packages/physics/dynamics/slung_load_and_tailsitter.py",
+        "packages/engineering-core/",
+        "apps/native/src/cad_mesh_builder.cpp",
+        "tests/acceptance/test_p3_003.py"
       ],
       "todos": [
-        "1. Implement compressible CL/CD_wave, Brayton thrust lapse & EGT thermal limit, and aeroelastic divergence check with fail-closed M > 1.8 / EGT > limit.",
-        "2. Wire Jet/Turbofan/EDF simulation mode into AerodynamicsLab.exe."
+        "1. Implement MIL-E-5008B inlet pressure recovery, choked C-D nozzle mass flow/thrust, fuel-burn CoG shift, and KingTech/JetCat EGT limits.",
+        "2. Implement Cargo slung-load pendulum/blowback dynamics, Tailsitter propwash elevon authority, Flying-Wing reflex stability, and Ducted shroud augmentation.",
+        "3. Couple ISO fastener bolt-shear and Failure Atlas root-cause diagnostics into C++20 lab_core and Python physics."
       ],
       "verify_commands": [
         "pytest tests/acceptance/test_jet_and_seaplane_models.py -q",
@@ -4232,7 +4240,7 @@
     {
       "id": "P3-006",
       "stage": "3",
-      "title": "Integrate and verify high-speed desktop and worker workflows",
+      "title": "Integrate whole-aircraft visual physics, virtual/USB RC controller & Failure Atlas UI",
       "work_packages": [],
       "dependencies": [
         "P3-005"
@@ -4245,7 +4253,17 @@
         "tests/acceptance/test_p3_006.py"
       ],
       "completion_evidence": [],
-      "gate": null
+      "gate": null,
+      "target_files": [
+        "apps/native/src/",
+        "apps/native/tests/native_cad_tests.cpp",
+        "tests/acceptance/test_p3_006.py"
+      ],
+      "todos": [
+        "1. Render real physics visuals in OpenGL 3.3: Mach shock cone & Prandtl-Glauert disk (M>=0.95), supersonic exhaust shock diamonds, rotating blades, deflecting surfaces, and Euler-Bernoulli wing flex.",
+        "2. Add Build-From-Scratch assembly parts/screws BOM inspector, Failure Atlas one-click loader, and Cargo/Tailsitter/FlyingWing/Jet presets.",
+        "3. Add On-Screen Virtual Dual-Stick RC Transmitter HUD and GLFW USB HID controller input driving closed-loop flight & payload drop."
+      ]
     },
     {
       "id": "P3-007",

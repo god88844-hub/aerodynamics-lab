@@ -1,0 +1,8 @@
+{
+  "schema_version": "1.0",
+  "servos": [
+    {"id": "sg90_micro", "name": "SG90 9g Micro Servo", "gear": "nylon", "voltage_range_v": [4.8, 6.0], "stall_torque_nm": 0.157, "stall_current_a": 0.65, "speed_60deg_s": 0.10, "mass_kg": 0.009},
+    {"id": "mg90s_metal", "name": "MG90S 13.4g Metal-Gear Servo", "gear": "metal", "voltage_range_v": [4.8, 6.6], "stall_torque_nm": 0.216, "stall_current_a": 0.75, "speed_60deg_s": 0.08, "mass_kg": 0.0134},
+    {"id": "ds3218_heavy", "name": "DS3218 20kg-cm Digital Servo", "gear": "metal", "voltage_range_v": [4.8, 6.8], "stall_torque_nm": 2.11, "stall_current_a": 2.20, "speed_60deg_s": 0.14, "mass_kg": 0.060}
+  ]
+}

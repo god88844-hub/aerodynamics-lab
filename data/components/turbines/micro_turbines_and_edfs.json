@@ -1,0 +1,46 @@
+{
+  "schema_version": "1.0",
+  "policy_role": "DEVELOPMENT",
+  "propulsors": [
+    {
+      "id": "kingtech_k45g4_plus",
+      "kind": "micro_turbojet",
+      "name": "KingTech K45G4+ Micro Turbojet",
+      "static_thrust_n": 44.145,
+      "max_rpm": 232000,
+      "fuel_flow_full_kg_min": 0.150,
+      "egt_max_c": 720.0,
+      "dry_mass_kg": 0.450,
+      "diameter_mm": 62.9,
+      "length_mm": 158.0,
+      "fuel": "Kerosene / Jet-A1 + 5% synthetic oil"
+    },
+    {
+      "id": "jetcat_p100_rx",
+      "kind": "micro_turbojet",
+      "name": "JetCat P100-RX Micro Turbojet",
+      "static_thrust_n": 100.0,
+      "idle_rpm": 43000,
+      "max_rpm": 153000,
+      "fuel_flow_full_kg_min": 0.312,
+      "egt_max_c": 730.0,
+      "dry_mass_kg": 1.080,
+      "diameter_mm": 97.0,
+      "length_mm": 243.0,
+      "fuel": "Kerosene / Jet-A1 + 5% synthetic oil"
+    },
+    {
+      "id": "fms_70mm_12b_6s_edf",
+      "kind": "edf",
+      "name": "FMS 70mm 12-Blade 6S EDF (2860-1850KV)",
+      "static_thrust_n": 21.58,
+      "loaded_rpm": 33500,
+      "voltage_nominal_v": 22.2,
+      "max_continuous_current_a": 68.0,
+      "max_continuous_power_w": 1510.0,
+      "dry_mass_kg": 0.242,
+      "diameter_mm": 70.0,
+      "blade_re_typical": 45000
+    }
+  ]
+}
