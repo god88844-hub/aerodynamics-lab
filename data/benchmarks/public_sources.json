@@ -173,6 +173,42 @@
       "aircraft_model_match": false,
       "can_validate": "flapping blade-element radial moments (r00..r33), passive feathering stiffness, and hover stroke equilibrium (DEVELOPMENT)",
       "cannot_validate": "biological bird flight kinematics or full free-flight physical certification"
+    },
+    {
+      "id": "nasa_jet_m1p63_heated",
+      "name": "NASA Langley Mach 1.63 Heated Jet Nozzle & Shock Cell Experimental Validation",
+      "url": "https://tmbwg.github.io/turbmodels/",
+      "type": "measured_supersonic_jet_plume_and_shock_decay",
+      "source_status": "CHECKSUM_VERIFIED_DAT_AND_EXTRACT_INCLUDED",
+      "license_status": "NASA Public Domain (TMBWG Turbulence Modeling Resource)",
+      "ingestion_status": "CENTERLINE_TEMP_VEL_AND_SHOCK_EXTRACTED",
+      "aircraft_model_match": false,
+      "can_validate": "compressible heated jet centerline decay and off-design shock cell trends (DEVELOPMENT)",
+      "cannot_validate": "complete airframe/turbine durability, hot-section life, or acoustic certification"
+    },
+    {
+      "id": "nasa_tm4074_ladson_naca0012",
+      "name": "NASA TM-4074 Ladson High-Reynolds NACA 0012 Wind Tunnel Polar (Re=6M)",
+      "url": "https://tmbwg.github.io/turbmodels/naca0012_val.html",
+      "type": "measured_high_reynolds_airfoil_polar",
+      "source_status": "CHECKSUM_VERIFIED_DAT_AND_EXTRACT_INCLUDED",
+      "license_status": "NASA Public Domain (NASA TM-4074, 1988)",
+      "ingestion_status": "RE6M_80GRIT_POLAR_EXTRACTED",
+      "aircraft_model_match": false,
+      "can_validate": "high-Reynolds airfoil lift slope, stall onset, and zero-lift drag trends (DEVELOPMENT)",
+      "cannot_validate": "transonic wing flutter or complete jet aircraft stability without 3D/shock data"
+    },
+    {
+      "id": "savitsky_1964_planing",
+      "name": "Savitsky (1964) & NACA Hydrodynamic Planing Hull Worked Benchmark",
+      "url": "https://ntrs.nasa.gov/",
+      "type": "classical_hydrodynamic_planing_and_hump_drag_benchmark",
+      "source_status": "ANALYTICAL_BENCHMARK_VERIFIED",
+      "license_status": "Published naval architecture equations (Savitsky 1964, SNAME)",
+      "ingestion_status": "WORKED_30KT_CASE_EXTRACTED",
+      "aircraft_model_match": false,
+      "can_validate": "seaplane float dynamic planing lift, wetted length ratio, skin friction, and NACA hump drag peak (DEVELOPMENT)",
+      "cannot_validate": "rough-water slamming structural fatigue or porpoising divergence limits without tank tests"
     }
   ]
 }

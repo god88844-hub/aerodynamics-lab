@@ -56,12 +56,12 @@ Tasks with several WPs appear in each relevant issue but retain one canonical ID
 - [ ] Slice 0D physical exit — **P0D-031**
 - [ ] Phase 1 entry — **P1-001**; prerequisite **P0D-032**
 - [ ] Phase 1 exit — **P1-008**
-- [ ] Phase 2 entry — **P2-001**; prerequisite **P1-008**
-- [ ] Phase 2 exit — **P2-008**
-- [ ] Phase 3 entry — **P3-001**; prerequisite **P2-008**
+- [ ] Phase 3 entry — **P3-001**; prerequisite **P1-008**
 - [ ] Phase 3 exit — **P3-008**
 - [ ] Phase 4 entry — **P4-001**; prerequisite **P3-008**
 - [ ] Phase 4 exit — **P4-008**
+- [ ] Phase 2 entry — **P2-001**; prerequisite **P4-008**
+- [ ] Phase 2 exit — **P2-008**
 
 ## Legacy M21–M30 acceptance crosswalk
 
@@ -1148,12 +1148,12 @@ Tasks with several WPs appear in each relevant issue but retain one canonical ID
   - Acceptance: Owner accepts the completed Phase 0 dossier; all 12 package issues and applicable M21–M30 exits have distinct linked software/scientific evidence. Missing required evidence keeps this gate open and future phases locked.
 
 
-## Phase 1 — Bio-inspired flight
+## Phase 1 — Tiny insect/flapping drones, morphing MAVs & seaplanes (uncrewed only)
 
 **Locked future implementation.** Entry: **P1-001**; prerequisite **P0D-032**; exit **P1-008**. Until entry approval, contracts and dataset registries only.
 
 <a name="p1-001"></a>
-- [ ] **P1-001 — Authorize entry to Bio-inspired flight** (future phase; actor: owner)
+- [ ] **P1-001 — Authorize entry to Tiny insect/flapping MAVs, morphing UAVs & seaplanes (uncrewed)** (future phase; actor: owner)
   - Prerequisites: P0D-032. Proof: [docs/acceptance/P1-001.md](acceptance/P1-001.md).
   - Acceptance: Previous phase exit and Phase 0 acceptance are complete; owner explicitly authorizes this phase. Until then, interfaces and dataset registries only; no new model/product implementation.
 
@@ -1244,75 +1244,37 @@ Tasks with several WPs appear in each relevant issue but retain one canonical ID
   - Verify: `python scripts/check_master_plan.py --check` | `python scripts/export_contracts.py --check` | `python scripts/reconcile_registry.py --check`
 
 
-## Phase 2 — Human-scale and crewed systems
+## Phase 3 — Jets, compressible/high-speed flight and turbine/thermal coupling
 
-**Locked future implementation.** Entry: **P2-001**; prerequisite **P1-008**; exit **P2-008**. Until entry approval, contracts and dataset registries only.
-
-<a name="p2-001"></a>
-- [ ] **P2-001 — Authorize entry to Human-scale and crewed systems** (future phase; actor: owner)
-  - Prerequisites: P1-008. Proof: [docs/acceptance/P2-001.md](acceptance/P2-001.md).
-  - Acceptance: Previous phase exit and Phase 0 acceptance are complete; owner explicitly authorizes this phase. Until then, interfaces and dataset registries only; no new model/product implementation.
-
-<a name="p2-002"></a>
-- [ ] **P2-002 — Define human loads, apparatus mass and recovery contracts** (future phase; actor: builder)
-  - Prerequisites: P2-001. Proof: [docs/acceptance/P2-002.md](acceptance/P2-002.md).
-  - Acceptance: Human mass, complete apparatus, geometry, human-machine control, redundancy/recovery and engineering review requirements are explicit; the 60 kg pilot is an assumption, not total takeoff mass.
-  - Planned verification: `pytest tests/acceptance/test_p2_002.py`; required current-head CI.
-
-<a name="p2-003"></a>
-- [ ] **P2-003 — Implement supported human-scale coupled models and controls** (future phase; actor: builder)
-  - Prerequisites: P2-002. Proof: [docs/acceptance/P2-003.md](acceptance/P2-003.md).
-  - Acceptance: Aerodynamic, structural, thermal, control and failure mechanisms have verified equations/limits, numerical convergence and sourced parameters; no extrapolated drone certification.
-  - Planned verification: `pytest tests/acceptance/test_p2_003.py`; required current-head CI.
-
-<a name="p2-004"></a>
-- [ ] **P2-004 — Freeze professionally reviewed validation and risk protocols** (future phase; actor: builder)
-  - Prerequisites: P2-003. Proof: [docs/acceptance/P2-004.md](acceptance/P2-004.md).
-  - Acceptance: Qualified reviewers approve intended uses, instrumentation, uncertainty, independent data partitions and professional experimental requirements before reveal; software approval authorizes no human flight.
-  - Planned verification: `pytest tests/acceptance/test_p2_004.py`; required current-head CI.
-
-<a name="p2-005"></a>
-- [ ] **P2-005 — Acquire sealed component and uncrewed full-scale measurements** (future phase; actor: custodian)
-  - Prerequisites: P2-004. Proof: [docs/acceptance/P2-005.md](acceptance/P2-005.md).
-  - Acceptance: Independent compatible structural/power/actuator/thermal and uncrewed full-scale records are supplied by qualified custodians with applicable permissions and calibration.
-
-<a name="p2-006"></a>
-- [ ] **P2-006 — Verify and integrate human-scale engineering workflows** (future phase; actor: builder)
-  - Prerequisites: P2-005. Proof: [docs/acceptance/P2-006.md](acceptance/P2-006.md).
-  - Acceptance: Supported design/load/control/redundancy/recovery studies reproduce through desktop/headless paths; conservation, limits, numerical error and prior-family regressions pass.
-  - Planned verification: `pytest tests/acceptance/test_p2_006.py`; required current-head CI.
-
-<a name="p2-007"></a>
-- [ ] **P2-007 — Validate human-scale decision envelopes and uncertainty** (future phase; actor: builder)
-  - Prerequisites: P2-006. Proof: [docs/acceptance/P2-007.md](acceptance/P2-007.md).
-  - Acceptance: Predeclared held-out agreement/failure/uncertainty criteria pass for stated configurations; unsupported human/crewed operating claims remain unvalidated.
-  - Planned verification: `pytest tests/acceptance/test_p2_007.py`; required current-head CI.
-
-<a name="p2-008"></a>
-- [ ] **P2-008 — Review and release the supported human-scale scope** (future phase; actor: reviewer)
-  - Prerequisites: P2-007. Proof: [docs/acceptance/P2-008.md](acceptance/P2-008.md).
-  - Acceptance: Independent qualified engineering review, evidence reproducibility and complete release QA accept only stated uses; no airworthiness or operational permission is inferred.
-
-
-## Phase 3 — Jets and high-speed flight
-
-**Locked future implementation.** Entry: **P3-001**; prerequisite **P2-008**; exit **P3-008**. Until entry approval, contracts and dataset registries only.
+**Locked future implementation.** Entry: **P3-001**; prerequisite **P1-008**; exit **P3-008**. Until entry approval, contracts and dataset registries only.
 
 <a name="p3-001"></a>
 - [ ] **P3-001 — Authorize entry to Jets and high-speed flight** (future phase; actor: owner)
-  - Prerequisites: P2-008. Proof: [docs/acceptance/P3-001.md](acceptance/P3-001.md).
-  - Acceptance: Previous phase exit and Phase 0 acceptance are complete; owner explicitly authorizes this phase. Until then, interfaces and dataset registries only; no new model/product implementation.
+  - Prerequisites: P1-008. Proof: [docs/acceptance/P3-001.md](acceptance/P3-001.md).
+  - Acceptance: Phase 1 exit and Phase 0 acceptance are complete; owner explicitly authorizes Jets/high-speed phase (promoted ahead of deferred crewed/bio-human wings).
 
 <a name="p3-002"></a>
 - [ ] **P3-002 — Define compressible-flow, turbine and thermal interfaces** (future phase; actor: builder)
   - Prerequisites: P3-001. Proof: [docs/acceptance/P3-002.md](acceptance/P3-002.md).
   - Acceptance: Contracts/registries identify Mach/Reynolds/temperature ranges, gas properties, compressor/turbine data, flutter and thermal/structural boundaries with exact source/license roles.
+  - Language: Python.
+  - Target files: `packages/physics/aerodynamics/compressible_jet.py`; `data/benchmarks/public/nasa_jet_m1p63_heated/`; `data/benchmarks/public/nasa_tm4074_ladson_naca0012/`; `docs/JETS_AND_SEAPLANES_RESEARCH_AND_PLAN.md`; `tests/acceptance/test_p3_002.py`.
+  - Todos:
+    - [ ] 1. Define compressible Prandtl-Glauert/Karman-Tsien, Modified Korn wave drag M_DD, Brayton turbine/EDF thrust lapse, and NASA Mach 1.63 Jet / TM-4074 benchmarks cleanly in data/registry.json.
+    - [ ] 2. Separate preloaded turbine/EDF hardware catalog parameters from custom swept/transonic airframe design parameters.
+  - Verify: `pytest tests/acceptance/test_jet_and_seaplane_models.py -q` | `python scripts/reconcile_registry.py --check`
   - Planned verification: `pytest tests/acceptance/test_p3_002.py`; required current-head CI.
 
 <a name="p3-003"></a>
 - [ ] **P3-003 — Implement selected compressible and propulsion models** (future phase; actor: builder)
   - Prerequisites: P3-002. Proof: [docs/acceptance/P3-003.md](acceptance/P3-003.md).
   - Acceptance: Supported shock/viscous/transition/propulsion mechanisms have code verification and mesh/time/iteration studies; closure assumptions and calculation-only benchmarks are explicit.
+  - Language: Python, C++20.
+  - Target files: `packages/physics/aerodynamics/compressible_jet.py`; `apps/native/src/cad_mesh_builder.cpp`.
+  - Todos:
+    - [ ] 1. Implement compressible CL/CD_wave, Brayton thrust lapse & EGT thermal limit, and aeroelastic divergence check with fail-closed M > 1.8 / EGT > limit.
+    - [ ] 2. Wire Jet/Turbofan/EDF simulation mode into AerodynamicsLab.exe.
+  - Verify: `pytest tests/acceptance/test_jet_and_seaplane_models.py -q` | `ctest --test-dir apps/native/build --output-on-failure`
   - Planned verification: `pytest tests/acceptance/test_p3_003.py`; required current-head CI.
 
 <a name="p3-004"></a>
@@ -1392,5 +1354,55 @@ Tasks with several WPs appear in each relevant issue but retain one canonical ID
 - [ ] **P4-008 — Review and release the supported spaceflight scope** (future phase; actor: reviewer)
   - Prerequisites: P4-007. Proof: [docs/acceptance/P4-008.md](acceptance/P4-008.md).
   - Acceptance: Qualified independent review accepts the stated limited uses; source/rights/security, reproducible distributions, compatibility and recovery gates close the phase.
+
+
+## Phase 2 — DEFERRED FUTURE: Human-scale and bio-human wings
+
+**Locked future implementation.** Entry: **P2-001**; prerequisite **P4-008**; exit **P2-008**. Until entry approval, contracts and dataset registries only.
+
+<a name="p2-001"></a>
+- [ ] **P2-001 — DEFERRED FUTURE: Authorize entry to Human-scale and bio-human wings** (future phase; actor: owner)
+  - Prerequisites: P4-008. Proof: [docs/acceptance/P2-001.md](acceptance/P2-001.md).
+  - Acceptance: Deferred by owner until reliable human-scale bio-wing experimental datasets exist; prior non-crewed aircraft, jets, and rockets precede this future gate.
+
+<a name="p2-002"></a>
+- [ ] **P2-002 — Define human loads, apparatus mass and recovery contracts** (future phase; actor: builder)
+  - Prerequisites: P2-001. Proof: [docs/acceptance/P2-002.md](acceptance/P2-002.md).
+  - Acceptance: Human mass, complete apparatus, geometry, human-machine control, redundancy/recovery and engineering review requirements are explicit; the 60 kg pilot is an assumption, not total takeoff mass.
+  - Planned verification: `pytest tests/acceptance/test_p2_002.py`; required current-head CI.
+
+<a name="p2-003"></a>
+- [ ] **P2-003 — Implement supported human-scale coupled models and controls** (future phase; actor: builder)
+  - Prerequisites: P2-002. Proof: [docs/acceptance/P2-003.md](acceptance/P2-003.md).
+  - Acceptance: Aerodynamic, structural, thermal, control and failure mechanisms have verified equations/limits, numerical convergence and sourced parameters; no extrapolated drone certification.
+  - Planned verification: `pytest tests/acceptance/test_p2_003.py`; required current-head CI.
+
+<a name="p2-004"></a>
+- [ ] **P2-004 — Freeze professionally reviewed validation and risk protocols** (future phase; actor: builder)
+  - Prerequisites: P2-003. Proof: [docs/acceptance/P2-004.md](acceptance/P2-004.md).
+  - Acceptance: Qualified reviewers approve intended uses, instrumentation, uncertainty, independent data partitions and professional experimental requirements before reveal; software approval authorizes no human flight.
+  - Planned verification: `pytest tests/acceptance/test_p2_004.py`; required current-head CI.
+
+<a name="p2-005"></a>
+- [ ] **P2-005 — Acquire sealed component and uncrewed full-scale measurements** (future phase; actor: custodian)
+  - Prerequisites: P2-004. Proof: [docs/acceptance/P2-005.md](acceptance/P2-005.md).
+  - Acceptance: Independent compatible structural/power/actuator/thermal and uncrewed full-scale records are supplied by qualified custodians with applicable permissions and calibration.
+
+<a name="p2-006"></a>
+- [ ] **P2-006 — Verify and integrate human-scale engineering workflows** (future phase; actor: builder)
+  - Prerequisites: P2-005. Proof: [docs/acceptance/P2-006.md](acceptance/P2-006.md).
+  - Acceptance: Supported design/load/control/redundancy/recovery studies reproduce through desktop/headless paths; conservation, limits, numerical error and prior-family regressions pass.
+  - Planned verification: `pytest tests/acceptance/test_p2_006.py`; required current-head CI.
+
+<a name="p2-007"></a>
+- [ ] **P2-007 — Validate human-scale decision envelopes and uncertainty** (future phase; actor: builder)
+  - Prerequisites: P2-006. Proof: [docs/acceptance/P2-007.md](acceptance/P2-007.md).
+  - Acceptance: Predeclared held-out agreement/failure/uncertainty criteria pass for stated configurations; unsupported human/crewed operating claims remain unvalidated.
+  - Planned verification: `pytest tests/acceptance/test_p2_007.py`; required current-head CI.
+
+<a name="p2-008"></a>
+- [ ] **P2-008 — Review and release the supported human-scale scope** (future phase; actor: reviewer)
+  - Prerequisites: P2-007. Proof: [docs/acceptance/P2-008.md](acceptance/P2-008.md).
+  - Acceptance: Independent qualified engineering review, evidence reproducibility and complete release QA accept only stated uses; no airworthiness or operational permission is inferred.
 
 Unique task count: **150**; checked **81**, unchecked **69**. These are planning tasks, not a count of physically validated milestones. All ten legacy major acceptance families and all twelve broad Phase 0 package issues remain open until their own actual exit evidence exists.

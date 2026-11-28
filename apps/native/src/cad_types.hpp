@@ -14,6 +14,9 @@ enum class VehicleFamily {
     VTOL = 3,
     CustomPart = 4,
     Benchmark200 = 5,
+    Seaplane = 6,
+    Jet = 7,
+    InsectFlapper = 8,
 };
 
 enum class ViewportLayout {
@@ -99,6 +102,23 @@ struct AircraftDesignParams {
     float mfg_tolerance_pct = 5.0f;   // Manufacturing tolerance / defect margin [0..25 %]
     int motor_cooling_grade = 1;      // 0=Poor, 1=Medium, 2=Good (eCalc style)
 
+    // Preloaded hardware catalog selector (designers invent airframe/wings/props/hulls, not motors/batteries/turbines)
+    int hardware_catalog_idx = 0;     // 0=MN3508+6S, 1=ECOII+4S, 2=70mmEDF+6S, 3=MicroCoreless+1S, 4=KingTechK45, 5=JetCatP100
+
+    // Seaplane / Hydrodynamics
+    float float_beam_m = 0.14f;
+    float float_deadrise_deg = 18.0f;
+    float water_chop_m = 0.04f;
+
+    // Jets / Compressible High-Speed
+    float jet_throttle_pct = 85.0f;
+    float wing_tc_ratio = 0.09f;
+
+    // Tiny Insect-Sized Flapping & Morphing MAV (Uncrewed)
+    float flap_freq_hz = 38.0f;
+    float stroke_amp_deg = 78.0f;
+    float morph_tuck_pct = 0.0f;
+
     // Editable Part Studio feature
     CustomPartParams active_part{};
     bool attach_custom_part = false;
@@ -176,6 +196,10 @@ struct LiveEvidenceSummary {
     double air_density_kg_m3 = 1.225;
     double wind_speed_m_s = 0.0;
     double motor_temp_c = 38.0;
+    double m_dd = 0.0;
+    double cd_wave = 0.0;
+    double hump_resistance_n = 0.0;
+    double strouhal = 0.0;
     double predicted_readiness_pct = 92.5;
     double benchmark_match_pct = 94.2; // < 0 means N/A (custom unmeasured geometry)
     std::string benchmark_source_tag = "Pinned UIUC + SIT + QDrone Ref (DEVELOPMENT)";

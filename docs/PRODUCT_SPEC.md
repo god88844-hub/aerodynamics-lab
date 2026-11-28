@@ -8,7 +8,12 @@ Aerodynamics Lab is a **100 % standalone, local, offline desktop application**. 
 
 ## Purpose
 
-Build an open-source desktop engineering application where people learn by creating, modifying and testing flying machines in a physics-driven 3D environment. Phase 0 covers multirotors, fixed-wing drones, helicopter drones and VTOL. Users can invent configurations and explore unsupported conditions, with their uncertainty and validation status visible.
+Build an open-source desktop engineering application where people learn by creating, modifying and testing flying machines in a physics-driven 3D environment. Phase 0 covers multirotors, fixed-wing drones, helicopter drones and VTOL. Extended aircraft & uncrewed families add **tiny insect-sized flapping/morphing MAVs**, **seaplanes / floatplanes**, and **jets / high-speed compressible aircraft**. Users can invent airframe/wing/blade/hull geometries and explore unsupported conditions, with their uncertainty and validation status visible.
+
+### Airframe Invention vs. Preloaded Hardware Catalog (Locked Scope)
+- **What users design, modify, and invent:** Airframe chassis/body shells, custom propellers/rotors, morphing/flapping/compliant wings, swept transonic wings, shrouds/ducts, seaplane floats/hulls, and harness mounts.
+- **What users select (not invent here):** Real off-the-shelf propulsion/power hardware (motors, LiPo batteries, ESCs, EDFs, micro-turbojets, sensors) comes from the **preloaded catalog** (`data/components/` + UI catalog selector). Aerodynamics Lab tests whether the user's custom airframe overloads, overheats, or stalls that real hardware (`Invention Lab` handles battery/chip/winding design separately).
+- **Bio-human wings deferred:** Crewed/human-scale flapping wings remain deferred to the future because reliable human-scale bio-flapping validation data does not yet exist; priority focuses on high-data machines (**tiny insect/flapping drones, drones, airplanes, seaplanes, helicopters, VTOL, and jets**).
 
 The intended scientific result is agreement with independent physical measurements within declared error limits for an identified hardware configuration, decision and operating envelope. Geometry, material properties, manufacturing variation, actuator behavior, flow and measurement uncertainty affect that agreement.
 

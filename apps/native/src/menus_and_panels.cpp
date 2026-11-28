@@ -164,6 +164,9 @@ void AppWorkbench::draw_menu_bar() {
         if (ImGui::MenuItem("New Fixed-Wing Airplane")) switch_family(VehicleFamily::FixedWing);
         if (ImGui::MenuItem("New Helicopter")) switch_family(VehicleFamily::Helicopter);
         if (ImGui::MenuItem("New VTOL Tiltrotor")) switch_family(VehicleFamily::VTOL);
+        if (ImGui::MenuItem("New Twin-Float Seaplane")) switch_family(VehicleFamily::Seaplane);
+        if (ImGui::MenuItem("New Swept Jet Aircraft")) switch_family(VehicleFamily::Jet);
+        if (ImGui::MenuItem("New Tiny Insect / Morphing MAV")) switch_family(VehicleFamily::InsectFlapper);
         if (ImGui::MenuItem("New Custom Part Sketch")) switch_family(VehicleFamily::CustomPart);
         ImGui::Separator();
         if (ImGui::MenuItem("Open Project (.json)...")) {
@@ -346,8 +349,8 @@ void AppWorkbench::draw_menu_bar() {
 }
 
 void AppWorkbench::draw_quick_toolstrip() {
-    ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(10.0f, 5.0f));
-    ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(6.0f, 4.0f));
+    ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(8.0f, 5.0f));
+    ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(5.0f, 4.0f));
     if (ImGui::Button("Multirotor")) switch_family(VehicleFamily::Multirotor);
     ImGui::SameLine();
     if (ImGui::Button("Fixed-Wing")) switch_family(VehicleFamily::FixedWing);
@@ -356,19 +359,25 @@ void AppWorkbench::draw_quick_toolstrip() {
     ImGui::SameLine();
     if (ImGui::Button("VTOL")) switch_family(VehicleFamily::VTOL);
     ImGui::SameLine();
+    if (ImGui::Button("Seaplane")) switch_family(VehicleFamily::Seaplane);
+    ImGui::SameLine();
+    if (ImGui::Button("Jet")) switch_family(VehicleFamily::Jet);
+    ImGui::SameLine();
+    if (ImGui::Button("Insect MAV")) switch_family(VehicleFamily::InsectFlapper);
+    ImGui::SameLine();
     if (ImGui::Button("Part Designer")) switch_family(VehicleFamily::CustomPart);
     ImGui::SameLine();
     ImGui::SeparatorEx(ImGuiSeparatorFlags_Vertical);
     ImGui::SameLine();
-    if (ImGui::Button(viewport_layout == ViewportLayout::Single3D ? "4-View Ortho" : "Single 3D")) {
+    if (ImGui::Button(viewport_layout == ViewportLayout::Single3D ? "4-View" : "Single 3D")) {
         viewport_layout = (viewport_layout == ViewportLayout::Single3D) ? ViewportLayout::Ortho4View : ViewportLayout::Single3D;
     }
     ImGui::SameLine();
-    if (ImGui::Button(shading_mode == ShadingMode::SurfaceCp ? "CAD Shaded+Edges" : "Aero Cp Map")) {
+    if (ImGui::Button(shading_mode == ShadingMode::SurfaceCp ? "CAD Edges" : "Cp Map")) {
         shading_mode = (shading_mode == ShadingMode::SurfaceCp) ? ShadingMode::ShadedEdges : ShadingMode::SurfaceCp;
     }
     ImGui::SameLine();
-    if (ImGui::Button("Run 6-DoF (C++)")) {
+    if (ImGui::Button("Run 6-DoF")) {
         ipc_->run_cpp_rk4_multirotor(params, evidence);
         if (viewport_) viewport_->upload_trajectory_path(evidence.traj_pos_m);
     }
@@ -502,15 +511,25 @@ void AppWorkbench::draw_right_inspector() {
             changed |= ImGui::SliderFloat("Prop Diameter (m)", &params.prop_diameter_m, 0.15f, 0.65f, "%.3f");
             changed |= ImGui::SliderFloat("Blade Pitch (deg)", &params.prop_pitch_deg, 6.0f, 28.0f, "%.1f");
             changed |= ImGui::SliderInt("Prop Blades", &params.prop_blades, 2, 5);
-        } else if (params.family == VehicleFamily::FixedWing || params.family == VehicleFamily::VTOL) {
-            changed |= ImGui::SliderFloat("Wingspan (m)", &params.wingspan_m, 0.6f, 3.8f, "%.2f");
-            changed |= ImGui::SliderFloat("Root Chord (m)", &params.root_chord_m, 0.12f, 0.55f, "%.3f");
-            changed |= ImGui::SliderFloat("Tip Chord (m)", &params.tip_chord_m, 0.06f, 0.45f, "%.3f");
-            changed |= ImGui::SliderFloat("Sweep (deg)", &params.sweep_deg, -10.0f, 38.0f, "%.1f");
+        } else if (params.family == VehicleFamily::FixedWing || params.family == VehicleFamily::VTOL ||
+                   params.family == VehicleFamily::Seaplane || params.family == VehicleFamily::Jet) {
+            changed |= ImGui::SliderFloat("Wingspan (m)", &params.wingspan_m, 0.5f, 3.8f, "%.2f");
+            changed |= ImGui::SliderFloat("Root Chord (m)", &params.root_chord_m, 0.10f, 0.60f, "%.3f");
+            changed |= ImGui::SliderFloat("Tip Chord (m)", &params.tip_chord_m, 0.05f, 0.45f, "%.3f");
+            changed |= ImGui::SliderFloat("Sweep (deg)", &params.sweep_deg, -10.0f, 45.0f, "%.1f");
             changed |= ImGui::SliderFloat("Dihedral (deg)", &params.dihedral_deg, -5.0f, 12.0f, "%.1f");
             changed |= ImGui::SliderFloat("Washout Twist (deg)", &params.twist_tip_deg, -6.0f, 4.0f, "%.1f");
             if (params.family == VehicleFamily::VTOL) {
                 changed |= ImGui::SliderFloat("Rotor Tilt (deg)", &params.vtol_tilt_deg, 0.0f, 90.0f, "%.0f");
+            }
+            if (params.family == VehicleFamily::Seaplane) {
+                changed |= ImGui::SliderFloat("Float Beam (m)", &params.float_beam_m, 0.06f, 0.30f, "%.3f");
+                changed |= ImGui::SliderFloat("Deadrise (deg)", &params.float_deadrise_deg, 8.0f, 30.0f, "%.0f");
+                changed |= ImGui::SliderFloat("Water Chop (m)", &params.water_chop_m, 0.0f, 0.20f, "%.3f");
+            }
+            if (params.family == VehicleFamily::Jet) {
+                changed |= ImGui::SliderFloat("Jet Throt (%)", &params.jet_throttle_pct, 20.0f, 105.0f, "%.0f");
+                changed |= ImGui::SliderFloat("Wing t/c", &params.wing_tc_ratio, 0.04f, 0.16f, "%.3f");
             }
             const char *airfoils[] = {"2412", "0012", "4412", "23012", "6412"};
             for (int a = 0; a < 5; ++a) {
@@ -520,6 +539,11 @@ void AppWorkbench::draw_right_inspector() {
                     changed = true;
                 }
             }
+        } else if (params.family == VehicleFamily::InsectFlapper) {
+            changed |= ImGui::SliderFloat("Span (m)", &params.wingspan_m, 0.08f, 0.45f, "%.3f");
+            changed |= ImGui::SliderFloat("Flap Freq (Hz)", &params.flap_freq_hz, 8.0f, 160.0f, "%.0f");
+            changed |= ImGui::SliderFloat("Stroke Amp (deg)", &params.stroke_amp_deg, 25.0f, 90.0f, "%.0f");
+            changed |= ImGui::SliderFloat("Morph Tuck (%)", &params.morph_tuck_pct, 0.0f, 80.0f, "%.0f");
         } else if (params.family == VehicleFamily::Helicopter) {
             changed |= ImGui::SliderFloat("Main Rotor Dia (m)", &params.main_rotor_diameter_m, 0.8f, 2.8f, "%.2f");
             changed |= ImGui::SliderFloat("Tail Boom (m)", &params.tail_boom_length_m, 0.45f, 1.5f, "%.2f");
@@ -551,10 +575,31 @@ void AppWorkbench::draw_right_inspector() {
         }
 
         ImGui::Separator();
-        changed |= ImGui::SliderFloat("Battery Mass (kg)", &params.battery_mass_kg, 0.2f, 4.5f, "%.2f");
+        ImGui::TextDisabled("Preloaded Hardware (Select Only):");
+        const char *hw_items[] = {"MN3508 + 6S 10Ah", "ECOII 2807 + 4S", "70mm 12B EDF 6S",
+                                  "Micro Coreless 1S", "KingTech K-45G4 45N", "JetCat P100-RX 100N"};
+        if (ImGui::Combo("Catalog Power", &params.hardware_catalog_idx, hw_items, 6)) {
+            push_undo_snapshot();
+            if (params.hardware_catalog_idx == 0) {
+                params.battery_cells_s = 6; params.battery_capacity_ah = 10.0f; params.battery_r0_ohm = 0.025f; params.battery_mass_kg = 1.55f;
+            } else if (params.hardware_catalog_idx == 1) {
+                params.battery_cells_s = 4; params.battery_capacity_ah = 4.5f; params.battery_r0_ohm = 0.018f; params.battery_mass_kg = 0.55f;
+            } else if (params.hardware_catalog_idx == 2) {
+                params.battery_cells_s = 6; params.battery_capacity_ah = 5.0f; params.battery_r0_ohm = 0.015f; params.battery_mass_kg = 0.78f;
+            } else if (params.hardware_catalog_idx == 3) {
+                params.battery_cells_s = 1; params.battery_capacity_ah = 0.5f; params.battery_r0_ohm = 0.065f; params.battery_mass_kg = 0.012f;
+            } else if (params.hardware_catalog_idx == 4) {
+                params.battery_cells_s = 2; params.battery_capacity_ah = 2.2f; params.battery_r0_ohm = 0.020f; params.battery_mass_kg = 0.90f;
+            } else {
+                params.battery_cells_s = 3; params.battery_capacity_ah = 3.0f; params.battery_r0_ohm = 0.020f; params.battery_mass_kg = 1.45f;
+            }
+            changed = true;
+        }
+        changed |= ImGui::SliderFloat("Battery Mass (kg)", &params.battery_mass_kg, 0.01f, 4.5f, "%.2f");
         changed |= ImGui::SliderFloat("Payload Mass (kg)", &params.payload_mass_kg, 0.0f, 15.0f, "%.2f");
         changed |= ImGui::SliderFloat("Alpha (deg)", &params.alpha_deg, -4.0f, 16.0f, "%.1f");
-        changed |= ImGui::SliderFloat("Airspeed (m/s)", &params.airspeed_m_s, 3.0f, 45.0f, "%.1f");
+        const float max_spd = (params.family == VehicleFamily::Jet) ? 340.0f : 45.0f;
+        changed |= ImGui::SliderFloat("Airspeed (m/s)", &params.airspeed_m_s, 1.0f, max_spd, "%.1f");
     }
 
     ImGui::Spacing();
@@ -635,8 +680,16 @@ void AppWorkbench::draw_right_inspector() {
         ImGui::Text("Wind: %.1f m/s | Rho: %.3f", evidence.wind_speed_m_s, evidence.air_density_kg_m3);
         ImGui::Text("TipM: %.3f | %.0f C | FoS: %.2fx",
                     evidence.rotor_tip_mach, evidence.motor_temp_c, evidence.structural_fos);
-        ImGui::Text("Clearance: %.0f mm (%s)", evidence.min_tip_clearance_m * 1000.0,
-                    evidence.clearance_ok ? "OK" : "FAIL");
+        if (params.family == VehicleFamily::Jet) {
+            ImGui::Text("Mach: %.2f | M_DD: %.2f | CDw: %.3f", evidence.mach, evidence.m_dd, evidence.cd_wave);
+        } else if (params.family == VehicleFamily::Seaplane) {
+            ImGui::Text("Water Hump Drag: %.2f N", evidence.hump_resistance_n);
+        } else if (params.family == VehicleFamily::InsectFlapper) {
+            ImGui::Text("Strouhal St: %.2f | Lift: %.3f N", evidence.strouhal, evidence.lift_n);
+        } else {
+            ImGui::Text("Clearance: %.0f mm (%s)", evidence.min_tip_clearance_m * 1000.0,
+                        evidence.clearance_ok ? "OK" : "FAIL");
+        }
         ImGui::Text("CL: %.2f | CD: %.3f | L/D: %.1f", evidence.cl, evidence.cd, evidence.lift_to_drag);
         draw_polar_plot(evidence);
     }

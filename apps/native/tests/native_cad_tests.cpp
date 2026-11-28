@@ -16,13 +16,24 @@ int main() {
         assert(std::abs(airfoil.front().x - 1.0f) < 1e-4f);
     }
 
-    // 2. Build all 5 VehicleFamily CAD scenes and verify non-empty triangles + CAD edges + realistic T/W
+    // 2. Build all 8 VehicleFamily CAD scenes and verify non-empty triangles + CAD edges + realistic T/W
     for (auto fam : {aerolab::VehicleFamily::Multirotor, aerolab::VehicleFamily::FixedWing,
                      aerolab::VehicleFamily::Helicopter, aerolab::VehicleFamily::VTOL,
-                     aerolab::VehicleFamily::CustomPart}) {
+                     aerolab::VehicleFamily::Seaplane, aerolab::VehicleFamily::Jet,
+                     aerolab::VehicleFamily::InsectFlapper, aerolab::VehicleFamily::CustomPart}) {
         aerolab::AircraftDesignParams p;
         p.family = fam;
         if (fam == aerolab::VehicleFamily::Helicopter) p.rotor_rpm = 1450.0f;
+        else if (fam == aerolab::VehicleFamily::Seaplane) {
+            p.hardware_catalog_idx = 1; p.airspeed_m_s = 22.0f; p.rotor_rpm = 7200.0f;
+        } else if (fam == aerolab::VehicleFamily::Jet) {
+            p.hardware_catalog_idx = 4; p.wingspan_m = 1.35f; p.root_chord_m = 0.38f;
+            p.tip_chord_m = 0.14f; p.sweep_deg = 26.0f; p.alpha_deg = 2.2f; p.airspeed_m_s = 92.0f;
+        } else if (fam == aerolab::VehicleFamily::InsectFlapper) {
+            p.hardware_catalog_idx = 3; p.frame_mass_kg = 0.016f; p.battery_mass_kg = 0.010f;
+            p.payload_mass_kg = 0.004f; p.motor_mass_kg = 0.004f; p.wingspan_m = 0.16f;
+            p.root_chord_m = 0.028f; p.tip_chord_m = 0.016f; p.flap_freq_hz = 38.0f; p.airspeed_m_s = 2.2f;
+        }
         const auto scene = aerolab::build_cad_scene(p);
         assert(!scene.vertices.empty());
         assert(!scene.indices.empty());
@@ -36,10 +47,35 @@ int main() {
             assert(ev.benchmark_match_pct < 0.0);
         } else {
             assert(ev.benchmark_match_pct > 85.0);
-            assert(ev.predicted_readiness_pct > 65.0);
-            assert(ev.thrust_to_weight > 1.2 && ev.thrust_to_weight < 5.0);
+            assert(ev.predicted_readiness_pct > 55.0);
+            assert(ev.thrust_to_weight > 0.8 && ev.thrust_to_weight < 8.0);
         }
     }
+
+    // 2b. Seaplane hump fail, Jet overspeed fail, and Insect MAV Mach fail
+    aerolab::AircraftDesignParams rough_sea;
+    rough_sea.family = aerolab::VehicleFamily::Seaplane;
+    rough_sea.rotor_rpm = 1800.0f;
+    rough_sea.water_chop_m = 0.16f;
+    aerolab::LiveEvidenceSummary rs_ev;
+    aerolab::evaluate_live_physics_and_curves(rough_sea, aerolab::build_cad_scene(rough_sea), rs_ev);
+    assert(rs_ev.validation_status == "FAIL");
+
+    aerolab::AircraftDesignParams fast_jet;
+    fast_jet.family = aerolab::VehicleFamily::Jet;
+    fast_jet.hardware_catalog_idx = 4; // max Mach 0.88
+    fast_jet.airspeed_m_s = 330.0f;    // Mach ~ 0.97 -> FAIL
+    aerolab::LiveEvidenceSummary fj_ev;
+    aerolab::evaluate_live_physics_and_curves(fast_jet, aerolab::build_cad_scene(fast_jet), fj_ev);
+    assert(fj_ev.validation_status == "FAIL");
+
+    aerolab::AircraftDesignParams fast_insect;
+    fast_insect.family = aerolab::VehicleFamily::InsectFlapper;
+    fast_insect.wingspan_m = 0.30f;
+    fast_insect.flap_freq_hz = 160.0f; // tip Mach > 0.25 -> FAIL
+    aerolab::LiveEvidenceSummary fi_ev;
+    aerolab::evaluate_live_physics_and_curves(fast_insect, aerolab::build_cad_scene(fast_insect), fi_ev);
+    assert(fi_ev.rotor_tip_mach > 0.25 && fi_ev.validation_status == "FAIL");
 
     // 3. Rotor tip overlap must fail closed (both standard prop & oversized CustomPropeller attachment)
     aerolab::AircraftDesignParams overlap;

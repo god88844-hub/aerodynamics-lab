@@ -1,0 +1,191 @@
+{
+  "schema_version": "1.0",
+  "source_id": "nasa_jet_m1p63_heated",
+  "license": "NASA Public Domain (TMBWG / NASA Langley Turbulence Modeling Resource)",
+  "design_mach": 1.63,
+  "delta_t_k": 233.0,
+  "raw_hashes": {
+    "Exp_heated_tcl_sha256": "8ab5b8a1ea7b9a20bb70dea8b58aaa2a3d2c41dce605f44f5f75ca59eb016531",
+    "Exp_heated_ucl_sha256": "0f116b789f5438042c75f24d897c3a69d8060236f9a36ad62e374cdac5461b57",
+    "Exp_shock_tcl_sha256": "248844ad4266265ac7ba8f43728f09fa91c8a54341b6771d2d1a204ccec755f3"
+  },
+  "heated_centerline_decay": [
+    {
+      "x_over_d": 1.0,
+      "norm_temp_decay": 0.978039,
+      "temp_rms": 0.023708
+    },
+    {
+      "x_over_d": 2.0,
+      "norm_temp_decay": 1.028406,
+      "temp_rms": 0.017753
+    },
+    {
+      "x_over_d": 4.0,
+      "norm_temp_decay": 1.020296,
+      "temp_rms": 0.026801
+    },
+    {
+      "x_over_d": 5.0,
+      "norm_temp_decay": 1.007064,
+      "temp_rms": 0.023144
+    },
+    {
+      "x_over_d": 6.0,
+      "norm_temp_decay": 0.998527,
+      "temp_rms": 0.033679
+    },
+    {
+      "x_over_d": 7.0,
+      "norm_temp_decay": 0.9981,
+      "temp_rms": 0.040465
+    },
+    {
+      "x_over_d": 8.0,
+      "norm_temp_decay": 0.985295,
+      "temp_rms": 0.049543
+    },
+    {
+      "x_over_d": 9.0,
+      "norm_temp_decay": 0.969929,
+      "temp_rms": 0.067744
+    },
+    {
+      "x_over_d": 10.0,
+      "norm_temp_decay": 0.951148,
+      "temp_rms": 0.080532
+    },
+    {
+      "x_over_d": 11.0,
+      "norm_temp_decay": 0.922549,
+      "temp_rms": 0.076119
+    },
+    {
+      "x_over_d": 12.0,
+      "norm_temp_decay": 0.859377,
+      "temp_rms": 0.081873
+    },
+    {
+      "x_over_d": 14.0,
+      "norm_temp_decay": 0.807729,
+      "temp_rms": 0.085313
+    },
+    {
+      "x_over_d": 16.0,
+      "norm_temp_decay": 0.737727,
+      "temp_rms": 0.088205
+    },
+    {
+      "x_over_d": 20.0,
+      "norm_temp_decay": 0.609675,
+      "temp_rms": 0.089898
+    },
+    {
+      "x_over_d": 24.0,
+      "norm_temp_decay": 0.499976,
+      "temp_rms": 0.081718
+    }
+  ],
+  "offdesign_shock_cell_sample": [
+    {
+      "x_over_d": 0.125,
+      "norm_temp": 0.80899,
+      "temp_rms": 0.03705
+    },
+    {
+      "x_over_d": 0.25,
+      "norm_temp": 0.82651,
+      "temp_rms": 0.03833
+    },
+    {
+      "x_over_d": 0.375,
+      "norm_temp": 1.41363,
+      "temp_rms": 0.03472
+    },
+    {
+      "x_over_d": 0.5,
+      "norm_temp": 1.28031,
+      "temp_rms": 0.03265
+    },
+    {
+      "x_over_d": 0.625,
+      "norm_temp": 1.18502,
+      "temp_rms": 0.03878
+    },
+    {
+      "x_over_d": 0.75,
+      "norm_temp": 1.03974,
+      "temp_rms": 0.03228
+    },
+    {
+      "x_over_d": 0.875,
+      "norm_temp": 0.87779,
+      "temp_rms": 0.03833
+    },
+    {
+      "x_over_d": 1.0,
+      "norm_temp": 0.74276,
+      "temp_rms": 0.04649
+    },
+    {
+      "x_over_d": 1.125,
+      "norm_temp": 0.97351,
+      "temp_rms": 0.06481
+    },
+    {
+      "x_over_d": 1.25,
+      "norm_temp": 1.23801,
+      "temp_rms": 0.03984
+    },
+    {
+      "x_over_d": 1.375,
+      "norm_temp": 1.26749,
+      "temp_rms": 0.042
+    },
+    {
+      "x_over_d": 1.5,
+      "norm_temp": 1.28929,
+      "temp_rms": 0.03765
+    },
+    {
+      "x_over_d": 1.625,
+      "norm_temp": 1.20895,
+      "temp_rms": 0.0367
+    },
+    {
+      "x_over_d": 1.75,
+      "norm_temp": 1.04829,
+      "temp_rms": 0.04268
+    },
+    {
+      "x_over_d": 1.875,
+      "norm_temp": 0.9218,
+      "temp_rms": 0.0431
+    },
+    {
+      "x_over_d": 2.0,
+      "norm_temp": 0.85557,
+      "temp_rms": 0.05594
+    },
+    {
+      "x_over_d": 2.125,
+      "norm_temp": 0.94958,
+      "temp_rms": 0.08401
+    },
+    {
+      "x_over_d": 2.25,
+      "norm_temp": 1.10725,
+      "temp_rms": 0.09888
+    },
+    {
+      "x_over_d": 2.375,
+      "norm_temp": 1.29612,
+      "temp_rms": 0.04095
+    },
+    {
+      "x_over_d": 2.5,
+      "norm_temp": 1.22348,
+      "temp_rms": 0.04224
+    }
+  ]
+}

@@ -171,23 +171,15 @@
     {
       "stage": "1",
       "issue": 111,
-      "title": "Bio-inspired flight",
+      "title": "Tiny insect/flapping drones, morphing MAVs & seaplanes (uncrewed only)",
       "entry": "P1-001",
       "exit": "P1-008",
       "status": "INTERFACES_AND_REGISTRIES_ONLY_UNTIL_ENTRY"
     },
     {
-      "stage": "2",
-      "issue": 112,
-      "title": "Human-scale and crewed systems",
-      "entry": "P2-001",
-      "exit": "P2-008",
-      "status": "INTERFACES_AND_REGISTRIES_ONLY_UNTIL_ENTRY"
-    },
-    {
       "stage": "3",
       "issue": 113,
-      "title": "Jets and high-speed flight",
+      "title": "Jets, compressible/high-speed flight and turbine/thermal coupling",
       "entry": "P3-001",
       "exit": "P3-008",
       "status": "INTERFACES_AND_REGISTRIES_ONLY_UNTIL_ENTRY"
@@ -199,6 +191,14 @@
       "entry": "P4-001",
       "exit": "P4-008",
       "status": "INTERFACES_AND_REGISTRIES_ONLY_UNTIL_ENTRY"
+    },
+    {
+      "stage": "2",
+      "issue": 112,
+      "title": "DEFERRED FUTURE: Human-scale and bio-human wings",
+      "entry": "P2-001",
+      "exit": "P2-008",
+      "status": "DEFERRED_UNTIL_FUTURE_DATA"
     }
   ],
   "tasks": [
@@ -3712,7 +3712,7 @@
     {
       "id": "P1-001",
       "stage": "1",
-      "title": "Authorize entry to Bio-inspired flight",
+      "title": "Authorize entry to Tiny insect/flapping MAVs, morphing UAVs & seaplanes (uncrewed)",
       "work_packages": [],
       "dependencies": [
         "P0D-032"
@@ -3974,14 +3974,14 @@
     {
       "id": "P2-001",
       "stage": "2",
-      "title": "Authorize entry to Human-scale and crewed systems",
+      "title": "DEFERRED FUTURE: Authorize entry to Human-scale and bio-human wings",
       "work_packages": [],
       "dependencies": [
-        "P1-008"
+        "P4-008"
       ],
       "actor": "owner",
       "status": "todo",
-      "acceptance": "Previous phase exit and Phase 0 acceptance are complete; owner explicitly authorizes this phase. Until then, interfaces and dataset registries only; no new model/product implementation.",
+      "acceptance": "Deferred by owner until reliable human-scale bio-wing experimental datasets exist; prior non-crewed aircraft, jets, and rockets precede this future gate.",
       "proof_file": "docs/acceptance/P2-001.md",
       "planned_tests": [],
       "completion_evidence": [],
@@ -4115,11 +4115,11 @@
       "title": "Authorize entry to Jets and high-speed flight",
       "work_packages": [],
       "dependencies": [
-        "P2-008"
+        "P1-008"
       ],
       "actor": "owner",
       "status": "todo",
-      "acceptance": "Previous phase exit and Phase 0 acceptance are complete; owner explicitly authorizes this phase. Until then, interfaces and dataset registries only; no new model/product implementation.",
+      "acceptance": "Phase 1 exit and Phase 0 acceptance are complete; owner explicitly authorizes Jets/high-speed phase (promoted ahead of deferred crewed/bio-human wings).",
       "proof_file": "docs/acceptance/P3-001.md",
       "planned_tests": [],
       "completion_evidence": [],
@@ -4141,7 +4141,25 @@
         "tests/acceptance/test_p3_002.py"
       ],
       "completion_evidence": [],
-      "gate": null
+      "gate": null,
+      "language": [
+        "Python"
+      ],
+      "target_files": [
+        "packages/physics/aerodynamics/compressible_jet.py",
+        "data/benchmarks/public/nasa_jet_m1p63_heated/",
+        "data/benchmarks/public/nasa_tm4074_ladson_naca0012/",
+        "docs/JETS_AND_SEAPLANES_RESEARCH_AND_PLAN.md",
+        "tests/acceptance/test_p3_002.py"
+      ],
+      "todos": [
+        "1. Define compressible Prandtl-Glauert/Karman-Tsien, Modified Korn wave drag M_DD, Brayton turbine/EDF thrust lapse, and NASA Mach 1.63 Jet / TM-4074 benchmarks cleanly in data/registry.json.",
+        "2. Separate preloaded turbine/EDF hardware catalog parameters from custom swept/transonic airframe design parameters."
+      ],
+      "verify_commands": [
+        "pytest tests/acceptance/test_jet_and_seaplane_models.py -q",
+        "python scripts/reconcile_registry.py --check"
+      ]
     },
     {
       "id": "P3-003",
@@ -4159,7 +4177,23 @@
         "tests/acceptance/test_p3_003.py"
       ],
       "completion_evidence": [],
-      "gate": null
+      "gate": null,
+      "language": [
+        "Python",
+        "C++20"
+      ],
+      "target_files": [
+        "packages/physics/aerodynamics/compressible_jet.py",
+        "apps/native/src/cad_mesh_builder.cpp"
+      ],
+      "todos": [
+        "1. Implement compressible CL/CD_wave, Brayton thrust lapse & EGT thermal limit, and aeroelastic divergence check with fail-closed M > 1.8 / EGT > limit.",
+        "2. Wire Jet/Turbofan/EDF simulation mode into AerodynamicsLab.exe."
+      ],
+      "verify_commands": [
+        "pytest tests/acceptance/test_jet_and_seaplane_models.py -q",
+        "ctest --test-dir apps/native/build --output-on-failure"
+      ]
     },
     {
       "id": "P3-004",
