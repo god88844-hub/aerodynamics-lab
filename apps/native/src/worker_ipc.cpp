@@ -1,6 +1,7 @@
 #include "worker_ipc.hpp"
 
 #include "freeform_sketch_cad.hpp"
+#include "library_and_mates_ui.hpp"
 #include "lab/flight_rk4.hpp"
 
 #include <chrono>
@@ -231,6 +232,7 @@ std::string WorkerIPC::build_project_payload_json(const AircraftDesignParams &pa
         << "  \"part_revolve_360\": " << (params.active_part.revolve_360 ? "true" : "false") << ",\n"
         << "  \"part_circular_pattern_count\": " << params.active_part.circular_pattern_count << ",\n"
         << "  \"freeform_payload\": " << serialize_freeform_part_json(params.active_part) << ",\n"
+        << "  \"library_mates_payload\": " << serialize_library_and_mates_json(params) << ",\n"
         << "  \"motor_id\": \"tmotor_mn3508_kv380\",\n"
         << "  \"propeller_id\": \"tmotor_p15x5_cf\",\n"
         << "  \"esc_id\": \"generic_esc_20a\",\n"
@@ -429,6 +431,7 @@ bool WorkerIPC::load_project_payload_json(const std::string &json_text, Aircraft
     if (const auto jr = find_val("jet_ramjet"); !jr.empty()) params.jet_ramjet = (jr == "true");
     if (const auto rsv = find_val("rocket_saturn_v_preset"); !rsv.empty()) params.rocket_saturn_v_preset = (rsv == "true");
     deserialize_freeform_part_json(json_text, params.active_part);
+    deserialize_library_and_mates_json(json_text, params);
     read_f("reentry_alt_km", params.reentry_alt_km);
     read_f("flap_freq_hz", params.flap_freq_hz);
     read_f("stroke_amp_deg", params.stroke_amp_deg);

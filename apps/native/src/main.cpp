@@ -52,6 +52,8 @@ int main(int argc, char **argv) {
     bool motion_study = false;
     bool freeform_demo = false;
     bool cfd_fea_demo = false;
+    bool library_demo = false;
+    bool mates_demo = false;
     float override_airspeed = -1.0f;
     float override_explode = -1.0f;
     std::string preset_name;
@@ -66,6 +68,8 @@ int main(int argc, char **argv) {
         else if (std::strcmp(argv[i], "--motion") == 0) motion_study = true;
         else if (std::strcmp(argv[i], "--freeform-demo") == 0) freeform_demo = true;
         else if (std::strcmp(argv[i], "--cfd-fea-demo") == 0) cfd_fea_demo = true;
+        else if (std::strcmp(argv[i], "--library-demo") == 0) library_demo = true;
+        else if (std::strcmp(argv[i], "--mates-demo") == 0) mates_demo = true;
         else if (std::strcmp(argv[i], "--explode") == 0 && i + 1 < argc) override_explode = static_cast<float>(std::atof(argv[++i]));
         else if (std::strcmp(argv[i], "--rc-hud") == 0) open_rc_hud = true;
         else if (std::strcmp(argv[i], "--airspeed") == 0 && i + 1 < argc) override_airspeed = static_cast<float>(std::atof(argv[++i]));
@@ -302,8 +306,30 @@ int main(int argc, char **argv) {
         while (app.worker() && app.worker()->is_busy()) {
             std::this_thread::sleep_for(std::chrono::milliseconds(15));
         }
-        if (app.worker()) {
-            app.worker()->consume_pending_cfd_fea(app.cfd_fea_cache);
+        if (app.worker() && app.worker()->consume_pending_cfd_fea(app.cfd_fea_cache)) {
+            app.export_banner = app.cfd_fea_cache.status_summary;
+        }
+        app.rebuild_geometry();
+    }
+    if (library_demo) {
+        app.lib_mates_ui.open_library_window = true;
+        if (const auto *b = lab::find_standard_part_by_id("bearing_608zz")) {
+            aerolab::insert_library_item_into_scene(*b, app.params, {0.12f, 0.20f, 0.08f}, "chassis");
+        }
+        if (const auto *m = lab::find_standard_part_by_id("motor_mn501s_kv300")) {
+            aerolab::insert_library_item_into_scene(*m, app.params, {0.22f, -0.22f, 0.06f}, "chassis");
+        }
+        if (const auto *t = lab::find_standard_part_by_id("tube_cf_16x14_400")) {
+            aerolab::insert_library_item_into_scene(*t, app.params, {-0.10f, 0.0f, -0.05f}, "chassis");
+        }
+        app.rebuild_geometry();
+    }
+    if (mates_demo) {
+        app.lib_mates_ui.open_mates_window = true;
+        app.params.show_mate_gizmos = true;
+        app.params.vtol_tilt_deg = 42.0f;
+        if (!app.params.mechanical_mates.empty()) {
+            app.params.mechanical_mates[0].drive_value = 42.0;
         }
         app.rebuild_geometry();
     }

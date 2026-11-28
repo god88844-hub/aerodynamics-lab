@@ -1,5 +1,8 @@
 #pragma once
 
+#include "lab/mechanical_mates.hpp"
+#include "lab/standard_library.hpp"
+
 #include <array>
 #include <cstdint>
 #include <string>
@@ -123,6 +126,26 @@ struct FreeformCadFeature {
     float loft_scale = 0.55f;
     std::vector<int> target_indices;
     FreeformSketchState sketch{};
+};
+
+struct InsertedLibraryPart {
+    std::string instance_id;
+    std::string catalog_id;
+    std::string name;
+    std::string category;
+    lab::StandardPartShape shape = lab::StandardPartShape::MotorCan;
+    double mass_kg = 0.01;
+    float od_mm = 20.0f;
+    float id_mm = 5.0f;
+    float length_mm = 20.0f;
+    float width_mm = 20.0f;
+    float height_mm = 10.0f;
+    int blades = 2;
+    float pitch_deg = 15.0f;
+    std::array<float, 3> pos_m{0.0f, 0.0f, 0.0f};
+    std::array<float, 3> rot_deg{0.0f, 0.0f, 0.0f};
+    std::string attached_body_id = "chassis";
+    std::string provenance = "UNVERIFIED_ESTIMATE";
 };
 
 struct CustomPartParams {
@@ -262,6 +285,16 @@ struct AircraftDesignParams {
     // Editable Part Studio feature
     CustomPartParams active_part{};
     bool attach_custom_part = false;
+
+    // Standard Part & Propulsion Library + Full Multi-Body Mechanical Mates
+    std::vector<InsertedLibraryPart> inserted_parts{};
+    std::vector<lab::RigidBodyNode> mate_bodies{};
+    std::vector<lab::MechanicalMateSpec> mechanical_mates{};
+    bool show_mate_gizmos = false;
+    bool animate_mates = false;
+    float mate_anim_time_s = 0.0f;
+    std::string active_propulsion_part_id = "motor_mn3508_kv380";
+    std::string active_battery_part_id = "bat_6s_10000_hv";
 };
 
 struct FeatureNode {
@@ -344,6 +377,7 @@ struct GeneratedCADScene {
     double custom_part_mass_kg = 0.0;
     double reference_area_m2 = 0.0;
     double aspect_ratio = 0.0;
+    lab::MechanicalMatesSolution latest_mates_solution{};
 };
 
 struct CameraOrbitState {
@@ -380,6 +414,15 @@ struct LiveEvidenceSummary {
     int cfd_fluid_cells = 0;
     int fem_solid_elems = 0;
     bool cfd_fea_solved = false;
+    int library_parts_count = 0;
+    double library_parts_mass_kg = 0.0;
+    int mates_active_count = 0;
+    int mates_free_dof = 0;
+    double mates_min_fos = 5.0;
+    double mates_min_clearance_mm = 999.0;
+    bool mates_limit_violated = false;
+    bool mates_interference = false;
+    std::string mates_summary = "Mates ready";
     double air_density_kg_m3 = 1.225;
     double wind_speed_m_s = 0.0;
     double motor_temp_c = 38.0;

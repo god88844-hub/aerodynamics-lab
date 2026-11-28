@@ -8023,6 +8023,15 @@
       "parameter_rule": "Unsourced/typical/generic parameters and assumed uncertainty bands are UNVERIFIED_ESTIMATE, even where a legacy source estimated flag is false; inspect parameter-level notes."
     },
     {
+      "artifact": "data/components/standards/standard_library_catalog.json",
+      "id": "standard_library_catalog",
+      "source_metadata": null,
+      "policy_role": "CALIBRATION_OR_SCREENING_NOT_INDEPENDENT_VALIDATION",
+      "physical_acceptance": "UNVALIDATED",
+      "license": "DATA_SPECIFIC_RIGHTS_UNRESOLVED_NOT_INHERITED_FROM_PROJECT",
+      "parameter_rule": "Unsourced/typical/generic parameters and assumed uncertainty bands are UNVERIFIED_ESTIMATE, even where a legacy source estimated flag is false; inspect parameter-level notes."
+    },
+    {
       "artifact": "data/components/turbines/micro_turbines_and_edfs.json",
       "id": "materials",
       "source_metadata": null,
@@ -8391,6 +8400,12 @@
       "path": "data/components/standards/silicone_wire_awg.json",
       "bytes_hashed": 847,
       "sha256": "9ee6b4858a9976530fd57530d8b1e127e43860f05d990f47a87b60de954fc396",
+      "hash_semantics": "LF_NORMALIZED_REPOSITORY_TEXT"
+    },
+    {
+      "path": "data/components/standards/standard_library_catalog.json",
+      "bytes_hashed": 23604,
+      "sha256": "5843933baf1f110852d5eee56889bfce0df83c6d80505fc7911482d57b4f3ad2",
       "hash_semantics": "LF_NORMALIZED_REPOSITORY_TEXT"
     },
     {
