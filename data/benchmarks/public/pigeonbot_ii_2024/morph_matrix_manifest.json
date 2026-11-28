@@ -1,0 +1,64 @@
+{
+  "schema_version": "1.0",
+  "source_id": "pigeonbot",
+  "doi": "10.5061/dryad.zkh1893h5",
+  "license": "CC0-1.0",
+  "readme_sha256": "2203327c180c133475b0aca5885203db3c5da137b61ebe15f980e3f97392425f",
+  "sweep_grid": {
+    "dev_idx": [
+      {
+        "idx": 1,
+        "k_dev": 1,
+        "k_tilt": 0.125
+      },
+      {
+        "idx": 2,
+        "k_dev": 2,
+        "k_tilt": 0.25
+      },
+      {
+        "idx": 3,
+        "k_dev": 4,
+        "k_tilt": 0.5
+      }
+    ],
+    "aoa_idx": [
+      "cruise-3deg",
+      "cruise",
+      "cruise+3deg"
+    ],
+    "wing_idx": [
+      "tucked",
+      "middle",
+      "spread"
+    ],
+    "tail_idx": [
+      "tucked",
+      "middle",
+      "spread"
+    ],
+    "turbulence_ti_pct": [
+      3,
+      6,
+      9,
+      12,
+      15,
+      18,
+      21
+    ]
+  },
+  "external_optional_packs": [
+    {
+      "file": "PigeonBot_II_datasupplement.xfl",
+      "size_bytes": 915046
+    },
+    {
+      "file": "PigeonBotII.STEP",
+      "size_bytes": 116869359
+    },
+    {
+      "file": "WindTunnelTrials.mat",
+      "size_bytes": 248583985
+    }
+  ]
+}

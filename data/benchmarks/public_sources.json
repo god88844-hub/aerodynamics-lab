@@ -148,6 +148,31 @@
       "aircraft_model_match": false,
       "can_validate": "freezing-fraction rime vs glaze icing accretion scaling across OAT/LWC/spray time (DEVELOPMENT)",
       "cannot_validate": "rotating drone propeller icing, ice shedding loads, or wet electronics without rotor icing rigs"
+    },
+    {
+      "id": "delfly_flex_2026",
+      "name": "TU Delft DelFly Flex vs Nimble Flapping-Wing Forces & Moments",
+      "url": "https://data.4tu.nl/datasets/eee88ebe-739b-4bff-bf4a-4dd248d91eeb/1",
+      "doi": "10.4121/eee88ebe-739b-4bff-bf4a-4dd248d91eeb.v1",
+      "type": "measured_flapping_wing_force_moment_balance",
+      "source_status": "CHECKSUM_VERIFIED_TXT_AND_EXTRACT_INCLUDED",
+      "license_status": "CC BY 4.0",
+      "ingestion_status": "FIG9B_62_5_PCT_THROTTLE_EXTRACTED",
+      "aircraft_model_match": false,
+      "can_validate": "compliant-unibody vs rigid flapping force/moment authority across Hover, Pitch +/-, and Yaw CW/CCW (DEVELOPMENT)",
+      "cannot_validate": "Phase 1 physical airframe fatigue life or free-flight trajectory certification without matched rig runs"
+    },
+    {
+      "id": "flapsim_single_thrust_flapper",
+      "name": "FlapSim SingleThrustFlapper Wing Geometry & Quasi-Steady Hover Spec",
+      "url": "https://github.com/MingshanHe/FlapSim",
+      "type": "open_flapping_robot_kinematics_and_moment_spec",
+      "source_status": "CHECKSUM_VERIFIED_COPY_INCLUDED",
+      "license_status": "Apache-2.0",
+      "ingestion_status": "WING_PARAMS_AND_ROBOT_YAML_EXTRACTED",
+      "aircraft_model_match": false,
+      "can_validate": "flapping blade-element radial moments (r00..r33), passive feathering stiffness, and hover stroke equilibrium (DEVELOPMENT)",
+      "cannot_validate": "biological bird flight kinematics or full free-flight physical certification"
     }
   ]
 }
