@@ -5,7 +5,7 @@
 
 ## 1. Authoritative Registry & Open-Data Provenance
 
-- **Registered external sources:** `61` (`data/registry.json`)
+- **Registered external sources:** `64` (`data/registry.json`)
 - **Tracked empirical campaigns:** `20` (all `DEVELOPMENT`; zero physical acceptance claims)
 - **Clean-room Apache-2.0 airfoil coordinate sets bundled:** `3` (`data/airfoils/airfoil_manifest.json`)
 - **CycloneDX-subset SBOM components:** `363` (PyPI backend `40`, PyPI CAD `76`, npm web `247`)
@@ -35,4 +35,4 @@
 
 - **Core component & multirotor (`data/research/frozen_protocols.json`):** `P0A026-PROP-BATTERY-COMPONENT-V1`, `P0A026-QUAD-MN3508-FLIGHT-V1`
 - **Extended 4-family & weather/autonomy (`data/research/extended_protocols.json`):** `P0B012-FIXEDWING-GLIDER-V1`, `P0C014-ROTORCRAFT-VTOL-V1`, `P0D009-ADVERSE-WEATHER-V1`, `P0D019-AUTONOMY-SITL-V1`
-<!-- dossier_sha256_prefix: 628c47235fc82164 -->
+<!-- dossier_sha256_prefix: 4979ab5b6f32a700 -->

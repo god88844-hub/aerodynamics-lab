@@ -27,8 +27,8 @@
     },
     {
       "path": "data/benchmarks/public_sources.json",
-      "bytes_hashed": 10424,
-      "sha256": "347f3e7288f9aa26eb9d7b649319c30e96c50bd263869e310440ac28a5c3a60f",
+      "bytes_hashed": 12615,
+      "sha256": "c661f1cf39a44906dd515e633a07e41b079486a3ba2a304e3255c5aa3fe70893",
       "hash_semantics": "LF_NORMALIZED_REPOSITORY_TEXT"
     },
     {
@@ -2360,6 +2360,75 @@
         "biological bird flight kinematics or full free-flight physical certification"
       ],
       "catalog_reference": "data/benchmarks/public_sources.json#/datasets/13",
+      "campaigns": [],
+      "policy_role": "UNASSIGNED_BEFORE_ACQUISITION_AND_PROTOCOL_REVIEW",
+      "physical_acceptance": "UNVALIDATED",
+      "unacquired_original_sha256": null,
+      "original_hash_location": "Linked campaign pins and dated custody; null means unacquired/unidentified, not a missing hash to invent"
+    },
+    {
+      "id": "nasa_jet_m1p63_heated",
+      "title": "NASA Langley Mach 1.63 Heated Jet Nozzle & Shock Cell Experimental Validation",
+      "kind": "measured_supersonic_jet_plume_and_shock_decay",
+      "urls": [
+        "https://tmbwg.github.io/turbmodels/"
+      ],
+      "license": {
+        "identifier": "NASA Public Domain (TMBWG Turbulence Modeling Resource)",
+        "scope": "Legacy metadata claim; inspect dataset-specific original terms before acquisition/reuse",
+        "terms_url": "https://tmbwg.github.io/turbmodels/",
+        "redistribution": "Not granted by this registry"
+      },
+      "uncertainty_and_gaps": [
+        "complete airframe/turbine durability, hot-section life, or acoustic certification"
+      ],
+      "catalog_reference": "data/benchmarks/public_sources.json#/datasets/14",
+      "campaigns": [],
+      "policy_role": "UNASSIGNED_BEFORE_ACQUISITION_AND_PROTOCOL_REVIEW",
+      "physical_acceptance": "UNVALIDATED",
+      "unacquired_original_sha256": null,
+      "original_hash_location": "Linked campaign pins and dated custody; null means unacquired/unidentified, not a missing hash to invent"
+    },
+    {
+      "id": "nasa_tm4074_ladson_naca0012",
+      "title": "NASA TM-4074 Ladson High-Reynolds NACA 0012 Wind Tunnel Polar (Re=6M)",
+      "kind": "measured_high_reynolds_airfoil_polar",
+      "urls": [
+        "https://tmbwg.github.io/turbmodels/naca0012_val.html"
+      ],
+      "license": {
+        "identifier": "NASA Public Domain (NASA TM-4074, 1988)",
+        "scope": "Legacy metadata claim; inspect dataset-specific original terms before acquisition/reuse",
+        "terms_url": "https://tmbwg.github.io/turbmodels/naca0012_val.html",
+        "redistribution": "Not granted by this registry"
+      },
+      "uncertainty_and_gaps": [
+        "transonic wing flutter or complete jet aircraft stability without 3D/shock data"
+      ],
+      "catalog_reference": "data/benchmarks/public_sources.json#/datasets/15",
+      "campaigns": [],
+      "policy_role": "UNASSIGNED_BEFORE_ACQUISITION_AND_PROTOCOL_REVIEW",
+      "physical_acceptance": "UNVALIDATED",
+      "unacquired_original_sha256": null,
+      "original_hash_location": "Linked campaign pins and dated custody; null means unacquired/unidentified, not a missing hash to invent"
+    },
+    {
+      "id": "savitsky_1964_planing",
+      "title": "Savitsky (1964) & NACA Hydrodynamic Planing Hull Worked Benchmark",
+      "kind": "classical_hydrodynamic_planing_and_hump_drag_benchmark",
+      "urls": [
+        "https://ntrs.nasa.gov/"
+      ],
+      "license": {
+        "identifier": "Published naval architecture equations (Savitsky 1964, SNAME)",
+        "scope": "Legacy metadata claim; inspect dataset-specific original terms before acquisition/reuse",
+        "terms_url": "https://ntrs.nasa.gov/",
+        "redistribution": "Not granted by this registry"
+      },
+      "uncertainty_and_gaps": [
+        "rough-water slamming structural fatigue or porpoising divergence limits without tank tests"
+      ],
+      "catalog_reference": "data/benchmarks/public_sources.json#/datasets/16",
       "campaigns": [],
       "policy_role": "UNASSIGNED_BEFORE_ACQUISITION_AND_PROTOCOL_REVIEW",
       "physical_acceptance": "UNVALIDATED",
@@ -8091,6 +8160,18 @@
       "hash_semantics": "LF_NORMALIZED_REPOSITORY_TEXT"
     },
     {
+      "path": "data/benchmarks/public/nasa_jet_m1p63_heated/jet_nozzle_benchmark.json",
+      "bytes_hashed": 3883,
+      "sha256": "ee01fabcb69e76ae1f38e58050bd742100dc04b4cf1b53d46a897e44a8aac742",
+      "hash_semantics": "LF_NORMALIZED_REPOSITORY_TEXT"
+    },
+    {
+      "path": "data/benchmarks/public/nasa_tm4074_ladson_naca0012/ladson_naca0012_benchmark.json",
+      "bytes_hashed": 1619,
+      "sha256": "198a0b45cff14146a6d20185587e11c242a8199f37497958ac276dd5dda10f7c",
+      "hash_semantics": "LF_NORMALIZED_REPOSITORY_TEXT"
+    },
+    {
       "path": "data/benchmarks/public/pigeonbot_ii_2024/morph_matrix_manifest.json",
       "bytes_hashed": 1091,
       "sha256": "3105b14c207c920f83a2fb81c7596b8c335e0b009cad406f8e22af795a74f4d6",
@@ -8121,9 +8202,15 @@
       "hash_semantics": "LF_NORMALIZED_REPOSITORY_TEXT"
     },
     {
+      "path": "data/benchmarks/public/savitsky_1964_planing/savitsky_worked_benchmark.json",
+      "bytes_hashed": 607,
+      "sha256": "a12b35569761cd762ad261e580b2e08d2169d6a98a91013f9540faa951de508b",
+      "hash_semantics": "LF_NORMALIZED_REPOSITORY_TEXT"
+    },
+    {
       "path": "data/benchmarks/public_sources.json",
-      "bytes_hashed": 10424,
-      "sha256": "347f3e7288f9aa26eb9d7b649319c30e96c50bd263869e310440ac28a5c3a60f",
+      "bytes_hashed": 12615,
+      "sha256": "c661f1cf39a44906dd515e633a07e41b079486a3ba2a304e3255c5aa3fe70893",
       "hash_semantics": "LF_NORMALIZED_REPOSITORY_TEXT"
     },
     {

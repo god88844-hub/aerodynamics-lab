@@ -65,20 +65,98 @@ void AppWorkbench::switch_family(VehicleFamily family) {
     selected_part_idx = -1;
     if (family == VehicleFamily::Multirotor) {
         params.project_name = "Quad MN3508 Baseline";
+        params.hardware_catalog_idx = 0;
+        params.frame_mass_kg = 1.20f;
+        params.battery_mass_kg = 1.55f;
+        params.payload_mass_kg = 0.35f;
+        params.motor_mass_kg = 0.103f;
+        params.battery_cells_s = 6;
+        params.battery_capacity_ah = 10.0f;
+        params.battery_r0_ohm = 0.025f;
         params.rotor_rpm = 4800.0f;
+        params.airspeed_m_s = 18.0f;
         camera.distance_m = 1.65f;
     } else if (family == VehicleFamily::FixedWing) {
         params.project_name = "Fixed-Wing Trainer";
+        params.hardware_catalog_idx = 1;
+        params.frame_mass_kg = 1.20f;
+        params.battery_mass_kg = 0.85f;
+        params.payload_mass_kg = 0.35f;
+        params.wingspan_m = 1.65f;
+        params.sweep_deg = 12.0f;
+        params.airspeed_m_s = 18.0f;
         params.rotor_rpm = 6200.0f;
         camera.distance_m = 2.40f;
     } else if (family == VehicleFamily::Helicopter) {
         params.project_name = "Helicopter Rotorcraft";
+        params.hardware_catalog_idx = 0;
+        params.frame_mass_kg = 1.20f;
+        params.battery_mass_kg = 1.55f;
+        params.payload_mass_kg = 0.35f;
         params.rotor_rpm = 1450.0f;
+        params.airspeed_m_s = 18.0f;
         camera.distance_m = 2.25f;
     } else if (family == VehicleFamily::VTOL) {
         params.project_name = "VTOL Tiltrotor";
+        params.hardware_catalog_idx = 0;
+        params.frame_mass_kg = 1.20f;
+        params.battery_mass_kg = 1.55f;
+        params.payload_mass_kg = 0.35f;
+        params.wingspan_m = 1.65f;
         params.rotor_rpm = 4200.0f;
+        params.airspeed_m_s = 20.0f;
         camera.distance_m = 2.45f;
+    } else if (family == VehicleFamily::Seaplane) {
+        params.project_name = "Twin-Float Seaplane";
+        params.hardware_catalog_idx = 1;
+        params.frame_mass_kg = 1.45f;
+        params.battery_mass_kg = 0.95f;
+        params.payload_mass_kg = 0.35f;
+        params.wingspan_m = 1.75f;
+        params.root_chord_m = 0.28f;
+        params.tip_chord_m = 0.18f;
+        params.sweep_deg = 4.0f;
+        params.alpha_deg = 4.5f;
+        params.airspeed_m_s = 22.0f;
+        params.rotor_rpm = 7200.0f;
+        params.float_beam_m = 0.14f;
+        params.float_deadrise_deg = 18.0f;
+        params.water_chop_m = 0.04f;
+        camera.distance_m = 2.55f;
+    } else if (family == VehicleFamily::Jet) {
+        params.project_name = "Swept Micro-Turbojet UAV";
+        params.hardware_catalog_idx = 4; // KingTech K-45G4 45 N
+        params.frame_mass_kg = 2.80f;
+        params.battery_mass_kg = 0.90f; // Jet-A1 + ECU pack
+        params.payload_mass_kg = 0.60f;
+        params.wingspan_m = 1.35f;
+        params.root_chord_m = 0.38f;
+        params.tip_chord_m = 0.14f;
+        params.sweep_deg = 26.0f;
+        params.dihedral_deg = 2.0f;
+        params.alpha_deg = 2.2f;
+        params.airspeed_m_s = 92.0f;
+        params.jet_throttle_pct = 85.0f;
+        params.wing_tc_ratio = 0.09f;
+        camera.distance_m = 2.25f;
+    } else if (family == VehicleFamily::InsectFlapper) {
+        params.project_name = "Insect Micro-Flapper MAV";
+        params.hardware_catalog_idx = 3; // Coreless 7x20mm + 1S
+        params.frame_mass_kg = 0.016f;
+        params.battery_mass_kg = 0.010f;
+        params.payload_mass_kg = 0.004f;
+        params.motor_mass_kg = 0.004f;
+        params.battery_cells_s = 1;
+        params.battery_capacity_ah = 0.50f;
+        params.battery_r0_ohm = 0.065f;
+        params.wingspan_m = 0.16f;
+        params.root_chord_m = 0.028f;
+        params.tip_chord_m = 0.016f;
+        params.flap_freq_hz = 38.0f;
+        params.stroke_amp_deg = 78.0f;
+        params.airspeed_m_s = 2.2f;
+        params.alpha_deg = 8.0f;
+        camera.distance_m = 0.55f;
     } else {
         params.project_name = "Part Designer Studio";
         camera.distance_m = 0.75f;
@@ -128,6 +206,15 @@ void AppWorkbench::sync_feature_tree() {
     } else if (params.family == VehicleFamily::Helicopter) {
         feature_tree.push_back({"heli_fuse", "Pod & Tail Boom", "Fuselage"});
         feature_tree.push_back({"main_rotor", "Main + Tail Rotors", "RotorArray"});
+    } else if (params.family == VehicleFamily::Seaplane) {
+        feature_tree.push_back({"sea_fuse", "Hull Pod + Twin Stepped Floats", "Fuselage"});
+        feature_tree.push_back({"sea_wing", "High Wing + Empennage", "WingLoft"});
+    } else if (params.family == VehicleFamily::Jet) {
+        feature_tree.push_back({"jet_fuse", "Area-Ruled Fuselage + Intake/Nozzle", "Fuselage"});
+        feature_tree.push_back({"jet_wing", "Swept Transonic Wing", "WingLoft"});
+    } else if (params.family == VehicleFamily::InsectFlapper) {
+        feature_tree.push_back({"bio_thorax", "Micro Thorax & Actuator Frame", "Fuselage"});
+        feature_tree.push_back({"bio_wings", "Compliant Flapping Membrane Wings", "WingLoft"});
     }
 }
 

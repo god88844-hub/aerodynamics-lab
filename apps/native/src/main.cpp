@@ -208,6 +208,9 @@ int main(int argc, char **argv) {
     if (preset_name == "fixed-wing") app.switch_family(aerolab::VehicleFamily::FixedWing);
     else if (preset_name == "helicopter") app.switch_family(aerolab::VehicleFamily::Helicopter);
     else if (preset_name == "vtol") app.switch_family(aerolab::VehicleFamily::VTOL);
+    else if (preset_name == "seaplane") app.switch_family(aerolab::VehicleFamily::Seaplane);
+    else if (preset_name == "jet") app.switch_family(aerolab::VehicleFamily::Jet);
+    else if (preset_name == "insect") app.switch_family(aerolab::VehicleFamily::InsectFlapper);
     else if (preset_name == "part") app.switch_family(aerolab::VehicleFamily::CustomPart);
     if (four_view) {
         app.viewport_layout = aerolab::ViewportLayout::Ortho4View;

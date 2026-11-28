@@ -21,14 +21,14 @@ A software exit permits dependency-ready software in the next slice with physica
 
 The [master plan](MASTER_PLAN.md#work-packages-and-slice-mapping) maps **all 12 work packages** to their slices and issues: WP1 #99, WP2 #100, WP3 #101, WP4 #102, WP5 #103, WP6 #104, WP7 #110, WP8 #105, WP9 #106, WP10 #107, WP11 #108, WP12 #109. Cross-cutting tasks retain one ID even when listed under several packages. WP7 detailed analysis, WP8 advanced weather and WP9 autonomy follow their listed prerequisites; qualification is not reopened.
 
-## Phases 1–4
+## Phases 1–4 (Owner Priority Re-ordered: Jets, Seaplanes & Insect MAVs First; Bio-Human Wings Deferred)
 
 | Phase / issue | Scope | Prerequisite / entry | Exit |
 | --- | --- | --- | --- |
-| 1 / #111 | Bio-inspired morphing/flapping/flexible flight | Phase 0 P0D-032 plus owner gate P1-001 | P1-008 |
-| 2 / #112 | Human-scale and crewed engineering | P1-008 plus owner gate P2-001 | P2-008 |
-| 3 / #113 | Jets, compressible/high-speed flight and turbine/thermal coupling | P2-008 plus owner gate P3-001 | P3-008 |
+| 1 / #111 | Tiny insect/flapping MAVs, morphing UAVs & seaplanes (uncrewed only) | Phase 0 P0D-032 plus owner gate P1-001 | P1-008 |
+| 3 / #113 | Jets, compressible/high-speed flight and turbine/thermal coupling (promoted ahead of crewed) | P1-008 plus owner gate P3-001 | P3-008 |
 | 4 / #114 | Rockets, variable mass/staging, orbital/re-entry/recovery models | P3-008 plus owner gate P4-001 | P4-008 |
+| 2 / #112 | Human-scale and crewed / bio-human wings (**DEFERRED FUTURE**) | P4-008 plus owner gate P2-001 | P2-008 |
 
 Each phase has eight concrete checklist tasks covering entry, contracts/sources, implementation, frozen protocols, independent measurements, verification, physical validation/uncertainty and qualified review/release. Until entry is approved, **interfaces and dataset registries only**. Drone results do not automatically validate another flying system. The 60 kg pilot concept remains a later study assumption, including apparatus mass; calculated thermochemistry remains calculated evidence.
 

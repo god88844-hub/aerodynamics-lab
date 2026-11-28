@@ -1,0 +1,18 @@
+{
+  "schema_version": "1.0",
+  "source_id": "savitsky_1964_planing",
+  "reference": "D. Savitsky, Hydrodynamic Design of Planing Hulls, SNAME Marine Technology 1(1), 1964; NACA hump speed Fn_L ~ 0.45",
+  "license": "Published classical analytical/empirical equations (standard marine naval architecture text)",
+  "worked_case": {
+    "beam_m": 3.2,
+    "deadrise_deg": 18.0,
+    "trim_deg": 4.0,
+    "lambda_wetted_ratio": 1.718,
+    "speed_m_s": 15.43,
+    "water_rho_kg_m3": 1025.0,
+    "expected_cv": 2.754,
+    "expected_cl0": 0.085,
+    "expected_cl_beta": 0.0584,
+    "expected_lift_n": 73100.0
+  }
+}
