@@ -38,6 +38,9 @@ public:
 
     std::string build_project_payload_json(const AircraftDesignParams &params) const;
     std::string build_part_payload_json(const AircraftDesignParams &params, const std::filesystem::path &export_dir) const;
+    std::string build_drawing_payload_json(const AircraftDesignParams &params, const std::filesystem::path &export_dir) const;
+    std::string build_compare_payload_json(const AircraftDesignParams &params, const LiveEvidenceSummary &summary) const;
+    static bool load_project_payload_json(const std::string &json_text, AircraftDesignParams &params);
 
 private:
     void append_log(const std::string &line);

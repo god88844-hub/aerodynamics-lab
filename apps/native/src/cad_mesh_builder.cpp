@@ -43,6 +43,12 @@ Vec3 rotate_y(Vec3 v, float rad) {
     return {v.x * c + v.z * s, v.y, -v.x * s + v.z * c};
 }
 
+Vec3 rotate_x(Vec3 v, float rad) {
+    const float c = std::cos(rad);
+    const float s = std::sin(rad);
+    return {v.x, v.y * c - v.z * s, v.y * s + v.z * c};
+}
+
 void push_edge(GeneratedCADScene &out, Vec3 a, Vec3 b, float r = 0.12f, float g = 0.16f, float bl = 0.22f) {
     out.cad_edges.push_back({a.x, a.y, a.z, r, g, bl});
     out.cad_edges.push_back({b.x, b.y, b.z, r, g, bl});
@@ -135,7 +141,7 @@ void add_cylinder_z(GeneratedCADScene &out, Vec3 center, float radius, float hei
 }
 
 void add_twisted_propeller(GeneratedCADScene &out, Vec3 hub, float diameter_m, float pitch_deg,
-                           int blades, float tilt_y_rad, bool highlight) {
+                           int blades, float tilt_y_rad, bool highlight, float tilt_x_rad = 0.0f) {
     const float r_base = highlight ? 0.19f : 0.24f;
     const float g_base = highlight ? 0.45f : 0.52f;
     const float b_base = highlight ? 0.88f : 0.86f;
@@ -167,6 +173,9 @@ void add_twisted_propeller(GeneratedCADScene &out, Vec3 hub, float diameter_m, f
                 local = rotate_z(local, az0);
                 if (std::abs(tilt_y_rad) > 1e-5f) {
                     local = rotate_y(local, tilt_y_rad);
+                }
+                if (std::abs(tilt_x_rad) > 1e-5f) {
+                    local = rotate_x(local, tilt_x_rad);
                 }
                 rings[i][j] = hub + local;
             }
@@ -426,6 +435,14 @@ GeneratedCADScene build_cad_scene(const AircraftDesignParams &params, int select
         out.assembly_parts.push_back({"avionics_and_payload", "Aluminum + PCB", params.payload_mass_kg, {0.0, 0.0, hh * 0.52}});
 
         const int nr = std::clamp(params.rotor_count, 3, 8);
+        const float active_prop_d =
+            (params.attach_custom_part && params.active_part.sketch_kind == SketchShapeKind::CustomPropeller)
+                ? std::max(0.12f, params.active_part.length_m * 1.4f)
+                : params.prop_diameter_m;
+        const int active_blades =
+            (params.attach_custom_part && params.active_part.sketch_kind == SketchShapeKind::CustomPropeller)
+                ? std::clamp(params.active_part.circular_pattern_count < 2 ? 2 : params.active_part.circular_pattern_count, 2, 6)
+                : params.prop_blades;
         const double arm_mass_each = (params.frame_mass_kg * 0.55) / static_cast<double>(nr);
         for (int i = 0; i < nr; ++i) {
             const float angle = (kPi / static_cast<float>(nr)) + 2.0f * kPi * static_cast<float>(i) / static_cast<float>(nr);
@@ -433,12 +450,13 @@ GeneratedCADScene build_cad_scene(const AircraftDesignParams &params, int select
             add_oriented_box(out, {tip.x * 0.5f, tip.y * 0.5f, 0.0f}, {params.arm_length_m, 0.028f, 0.018f}, angle,
                              0.78f, 0.82f, 0.86f);
             add_cylinder_z(out, tip, 0.024f, 0.026f, 16, 0.30f, 0.35f, 0.42f);
-            add_twisted_propeller(out, {tip.x, tip.y, tip.z + 0.022f}, params.prop_diameter_m,
-                                  params.prop_pitch_deg, params.prop_blades, 0.0f, is_sel(3 + i));
+            add_twisted_propeller(out, {tip.x, tip.y, tip.z + 0.022f}, active_prop_d,
+                                  params.prop_pitch_deg, active_blades, 0.0f,
+                                  is_sel(3 + i) || (params.attach_custom_part && params.active_part.sketch_kind == SketchShapeKind::CustomPropeller));
             out.assembly_parts.push_back({"motor_rotor_" + std::to_string(i + 1), "BLDC + Carbon Prop",
                                           params.motor_mass_kg + arm_mass_each, {tip.x, tip.y, tip.z}});
         }
-        out.reference_area_m2 = nr * kPi * std::pow(params.prop_diameter_m * 0.5, 2.0);
+        out.reference_area_m2 = nr * kPi * std::pow(active_prop_d * 0.5, 2.0);
     } else if (params.family == VehicleFamily::FixedWing) {
         add_fuselage_loft(out, {0.0f, 0.0f, 0.0f}, params.fuselage_length_m, params.fuselage_radius_m, 0.84f, 0.87f, 0.90f);
         add_lofted_wing(out, {params.root_chord_m * 0.42f, 0.0f, params.fuselage_radius_m * 0.45f},
@@ -467,11 +485,15 @@ GeneratedCADScene build_cad_scene(const AircraftDesignParams &params, int select
         add_cylinder_z(out, {0.05f, 0.0f, params.fuselage_radius_m * 1.4f}, 0.025f, 0.16f, 14, 0.30f, 0.35f, 0.42f);
         add_twisted_propeller(out, {0.05f, 0.0f, params.fuselage_radius_m * 2.15f},
                               params.main_rotor_diameter_m, 10.0f, std::max(2, params.prop_blades), 0.0f, true);
-        add_twisted_propeller(out, {-params.tail_boom_length_m * 0.90f, 0.055f, 0.04f},
-                              params.main_rotor_diameter_m * 0.22f, 12.0f, 2, 0.0f, false);
-        // Landing skids
+        add_oriented_box(out, {-params.tail_boom_length_m * 0.90f, 0.0f, 0.08f}, {0.11f, 0.014f, 0.16f}, 0.0f, 0.72f, 0.77f, 0.83f);
+        add_twisted_propeller(out, {-params.tail_boom_length_m * 0.90f, 0.045f, 0.08f},
+                              params.main_rotor_diameter_m * 0.22f, 12.0f, 2, 0.0f, false, kPi * 0.5f);
+        // Landing skids + structural cross-tubes to fuselage
         for (float side : {-0.14f, 0.14f}) {
-            add_oriented_box(out, {0.05f, side, -0.18f}, {0.65f, 0.018f, 0.018f}, 0.0f, 0.32f, 0.36f, 0.42f);
+            add_oriented_box(out, {0.08f, side, -0.18f}, {0.65f, 0.018f, 0.018f}, 0.0f, 0.32f, 0.36f, 0.42f);
+        }
+        for (float fx : {-0.08f, 0.24f}) {
+            add_oriented_box(out, {fx, 0.0f, -0.12f}, {0.018f, 0.28f, 0.12f}, 0.0f, 0.36f, 0.40f, 0.46f);
         }
         out.reference_area_m2 = kPi * std::pow(params.main_rotor_diameter_m * 0.5, 2.0);
         out.assembly_parts.push_back({"helicopter_fuselage_skids", "Alloy + Composite", params.frame_mass_kg, {0.05, 0.0, 0.0}});
@@ -501,9 +523,23 @@ GeneratedCADScene build_cad_scene(const AircraftDesignParams &params, int select
     }
 
     if (params.attach_custom_part && params.family != VehicleFamily::CustomPart) {
-        build_custom_sketch_solid(out, params.active_part, {0.0f, 0.0f, -0.08f});
-        out.assembly_parts.push_back({params.active_part.part_name + " (Redesigned)", params.active_part.material_name,
-                                      out.custom_part_mass_kg, {0.0, 0.0, -0.08}, true});
+        if (params.active_part.sketch_kind == SketchShapeKind::CustomBodyShell) {
+            build_custom_sketch_solid(out, params.active_part, {0.0f, 0.0f, 0.01f});
+            out.assembly_parts.push_back({params.active_part.part_name + " (Redesigned Body)", params.active_part.material_name,
+                                          out.custom_part_mass_kg, {0.0, 0.0, 0.01}, true});
+        } else if (params.active_part.sketch_kind == SketchShapeKind::CustomPropeller) {
+            const int blades = std::clamp(params.active_part.circular_pattern_count < 2 ? 2 : params.active_part.circular_pattern_count, 2, 6);
+            const float prop_d = std::max(0.12f, params.active_part.length_m * 1.4f);
+            const double unit_vol = static_cast<double>(blades) * (0.45 * prop_d * 0.5) * params.active_part.width_m * params.active_part.thickness_m;
+            out.custom_part_volume_m3 = unit_vol;
+            out.custom_part_mass_kg = out.custom_part_volume_m3 * static_cast<double>(params.active_part.density_kg_m3);
+            out.assembly_parts.push_back({params.active_part.part_name + " (Redesigned Props)", params.active_part.material_name,
+                                          out.custom_part_mass_kg, {0.0, 0.0, 0.015}, true});
+        } else {
+            build_custom_sketch_solid(out, params.active_part, {0.0f, 0.0f, -0.08f});
+            out.assembly_parts.push_back({params.active_part.part_name + " (Redesigned)", params.active_part.material_name,
+                                          out.custom_part_mass_kg, {0.0, 0.0, -0.08}, true});
+        }
     }
 
     // 3D Wind velocity vector indicator when manual wind is active
@@ -595,12 +631,16 @@ void evaluate_live_physics_and_curves(const AircraftDesignParams &params, const 
 
     if (params.family == VehicleFamily::Multirotor) {
         const int nr = std::clamp(params.rotor_count, 3, 8);
+        const double clr_prop_d =
+            (params.attach_custom_part && params.active_part.sketch_kind == SketchShapeKind::CustomPropeller)
+                ? std::max(0.12, static_cast<double>(params.active_part.length_m) * 1.4)
+                : static_cast<double>(params.prop_diameter_m);
         std::vector<lab::RotorDisk> disks;
         disks.reserve(nr);
         for (int i = 0; i < nr; ++i) {
             const float angle = (kPi / static_cast<float>(nr)) + 2.0f * kPi * static_cast<float>(i) / static_cast<float>(nr);
             disks.push_back({{params.arm_length_m * std::cos(angle), params.arm_length_m * std::sin(angle), 0.015},
-                             params.prop_diameter_m * 0.5});
+                             clr_prop_d * 0.5});
         }
         const auto clr = lab::evaluate_rotor_pair_clearance(disks, 0.020);
         summary.clearance_ok = clr.clear;
@@ -680,8 +720,10 @@ void evaluate_live_physics_and_curves(const AircraftDesignParams &params, const 
                                         ? (4.0 * kPi * r_rot * r_rot)
                                         : (kPi * r_rot * r_rot));
     const double pitch_scale = std::clamp(static_cast<double>(params.prop_pitch_deg) / 16.0, 0.5, 1.8);
+    // Helicopter lower-solidity single rotor operates near C_T ~ 0.0028 vs high-solidity drone props
+    const double ct_coeff = (params.family == VehicleFamily::Helicopter) ? 0.0028 : 0.016;
     // Max available thrust reduced by manufacturing tolerance / unbalance loss
-    const double max_rotor_thrust_n = 0.016 * rho * disk_area * v_tip * v_tip * pitch_scale * tol_factor;
+    const double max_rotor_thrust_n = ct_coeff * rho * disk_area * v_tip * v_tip * pitch_scale * tol_factor;
     // Wind + turbulence tilt drag increases required thrust vector magnitude sqrt(W^2 + F_wind_gust^2)
     const double f_wind_gust_n = 0.5 * rho * (0.28 + 0.08 * s_ref) * peak_wind * peak_wind;
     const double req_hover_thrust_n = std::hypot(weight_n, f_wind_gust_n);
