@@ -27,8 +27,8 @@
     },
     {
       "path": "data/benchmarks/public_sources.json",
-      "bytes_hashed": 8904,
-      "sha256": "1d86f711e584f9c1ba08328331c87c6825c1a77865fa8b7acc3ad81d59640b5a",
+      "bytes_hashed": 10424,
+      "sha256": "347f3e7288f9aa26eb9d7b649319c30e96c50bd263869e310440ac28a5c3a60f",
       "hash_semantics": "LF_NORMALIZED_REPOSITORY_TEXT"
     },
     {
@@ -2314,6 +2314,52 @@
         "rotating drone propeller icing, ice shedding loads, or wet electronics without rotor icing rigs"
       ],
       "catalog_reference": "data/benchmarks/public_sources.json#/datasets/11",
+      "campaigns": [],
+      "policy_role": "UNASSIGNED_BEFORE_ACQUISITION_AND_PROTOCOL_REVIEW",
+      "physical_acceptance": "UNVALIDATED",
+      "unacquired_original_sha256": null,
+      "original_hash_location": "Linked campaign pins and dated custody; null means unacquired/unidentified, not a missing hash to invent"
+    },
+    {
+      "id": "delfly_flex_2026",
+      "title": "TU Delft DelFly Flex vs Nimble Flapping-Wing Forces & Moments",
+      "kind": "measured_flapping_wing_force_moment_balance",
+      "urls": [
+        "https://data.4tu.nl/datasets/eee88ebe-739b-4bff-bf4a-4dd248d91eeb/1"
+      ],
+      "license": {
+        "identifier": "CC BY 4.0",
+        "scope": "Legacy metadata claim; inspect dataset-specific original terms before acquisition/reuse",
+        "terms_url": "https://data.4tu.nl/datasets/eee88ebe-739b-4bff-bf4a-4dd248d91eeb/1",
+        "redistribution": "Not granted by this registry"
+      },
+      "uncertainty_and_gaps": [
+        "Phase 1 physical airframe fatigue life or free-flight trajectory certification without matched rig runs"
+      ],
+      "catalog_reference": "data/benchmarks/public_sources.json#/datasets/12",
+      "campaigns": [],
+      "policy_role": "UNASSIGNED_BEFORE_ACQUISITION_AND_PROTOCOL_REVIEW",
+      "physical_acceptance": "UNVALIDATED",
+      "unacquired_original_sha256": null,
+      "original_hash_location": "Linked campaign pins and dated custody; null means unacquired/unidentified, not a missing hash to invent"
+    },
+    {
+      "id": "flapsim_single_thrust_flapper",
+      "title": "FlapSim SingleThrustFlapper Wing Geometry & Quasi-Steady Hover Spec",
+      "kind": "open_flapping_robot_kinematics_and_moment_spec",
+      "urls": [
+        "https://github.com/MingshanHe/FlapSim"
+      ],
+      "license": {
+        "identifier": "Apache-2.0",
+        "scope": "Legacy metadata claim; inspect dataset-specific original terms before acquisition/reuse",
+        "terms_url": "https://github.com/MingshanHe/FlapSim",
+        "redistribution": "Not granted by this registry"
+      },
+      "uncertainty_and_gaps": [
+        "biological bird flight kinematics or full free-flight physical certification"
+      ],
+      "catalog_reference": "data/benchmarks/public_sources.json#/datasets/13",
       "campaigns": [],
       "policy_role": "UNASSIGNED_BEFORE_ACQUISITION_AND_PROTOCOL_REVIEW",
       "physical_acceptance": "UNVALIDATED",
@@ -8009,9 +8055,27 @@
       "hash_semantics": "LF_NORMALIZED_REPOSITORY_TEXT"
     },
     {
+      "path": "data/benchmarks/public/calibrated_ct_avian_inertia_2021/calibration_curves.json",
+      "bytes_hashed": 1503,
+      "sha256": "12409c0328f59011d3a191778d9eb39eb6ea3f4e084b81df2d6e1af54187b23a",
+      "hash_semantics": "LF_NORMALIZED_REPOSITORY_TEXT"
+    },
+    {
       "path": "data/benchmarks/public/caradonna_tung_1981/hover_performance.json",
       "bytes_hashed": 1983,
       "sha256": "9dd5e06ab37308dc729b4ea3a62bc844b430ccabd630711084a4f2f5fb6ad7e7",
+      "hash_semantics": "LF_NORMALIZED_REPOSITORY_TEXT"
+    },
+    {
+      "path": "data/benchmarks/public/delfly_flex_2026/forces_moments_benchmark.json",
+      "bytes_hashed": 7671,
+      "sha256": "41dd0574819f28644763d471b37ce58cd85b7dfc465ac68fc6682b2e4380be0d",
+      "hash_semantics": "LF_NORMALIZED_REPOSITORY_TEXT"
+    },
+    {
+      "path": "data/benchmarks/public/flapsim_single_thrust_flapper/wing_parameters.json",
+      "bytes_hashed": 322,
+      "sha256": "460220ef52bf7d62a4dc162ef47012bc818fe484824ff0fdfb396b51182628f8",
       "hash_semantics": "LF_NORMALIZED_REPOSITORY_TEXT"
     },
     {
@@ -8024,6 +8088,12 @@
       "path": "data/benchmarks/public/nasa_crm_irt_icing/irt_midspan_ice_mass.json",
       "bytes_hashed": 1389,
       "sha256": "324597f5d07b9cfe2a44fcfa982bcbfb337ee604d6e8535fd4d6b3b7d5155d8f",
+      "hash_semantics": "LF_NORMALIZED_REPOSITORY_TEXT"
+    },
+    {
+      "path": "data/benchmarks/public/pigeonbot_ii_2024/morph_matrix_manifest.json",
+      "bytes_hashed": 1091,
+      "sha256": "3105b14c207c920f83a2fb81c7596b8c335e0b009cad406f8e22af795a74f4d6",
       "hash_semantics": "LF_NORMALIZED_REPOSITORY_TEXT"
     },
     {
@@ -8052,8 +8122,8 @@
     },
     {
       "path": "data/benchmarks/public_sources.json",
-      "bytes_hashed": 8904,
-      "sha256": "1d86f711e584f9c1ba08328331c87c6825c1a77865fa8b7acc3ad81d59640b5a",
+      "bytes_hashed": 10424,
+      "sha256": "347f3e7288f9aa26eb9d7b649319c30e96c50bd263869e310440ac28a5c3a60f",
       "hash_semantics": "LF_NORMALIZED_REPOSITORY_TEXT"
     },
     {

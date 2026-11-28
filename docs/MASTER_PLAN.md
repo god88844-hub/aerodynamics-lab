@@ -1161,41 +1161,87 @@ Tasks with several WPs appear in each relevant issue but retain one canonical ID
 - [ ] **P1-002 — Define morphing/flapping geometry and measured parameter contracts** (future phase; actor: builder)
   - Prerequisites: P1-001. Proof: [docs/acceptance/P1-002.md](acceptance/P1-002.md).
   - Acceptance: Versioned geometry, articulated/flexible state, actuator/energy, source-role and bird/robot measurement interfaces are reviewed; biological measurements are not silently scaled into validated aircraft.
+  - Language: Python.
+  - Target files: `packages/shared-schemas/aeroforge_schemas/bioinspired.py`; `packages/physics/validation/phase1_dataset_eval.py`; `data/registry.json`; `docs/PHASE1_BIOINSPIRED_RESEARCH_AND_PLAN.md`; `tests/acceptance/test_p1_002.py`; `tests/acceptance/test_phase1_contracts_and_datasets.py`; `docs/acceptance/P1-002.md`.
+  - Todos:
+    - [ ] 1. Lock versioned pydantic contracts for FlappingWingKinematics, MorphingWingState, CompliantFlexureSpec, and UnsteadyAeroEnvelope with SI Frames, active wxyz quaternions, and biological_scaling_prohibited=true.
+    - [ ] 2. Refuse out-of-envelope Mach (> 0.25), missing density_source provenance, and unordered radial moments or Reynolds/Strouhal bounds.
+    - [ ] 3. Register and checksum-verify compact open Phase 1 public datasets (delfly_flex_2026, pigeonbot, avian_inertia, flapsim_single_thrust_flapper) strictly as DEVELOPMENT.
+    - [ ] 4. Publish acceptance tests covering contract round-trips, fail-closed bounds, and dataset evaluation.
+  - Verify: `pytest tests/acceptance/test_phase1_contracts_and_datasets.py tests/acceptance/test_p1_002.py -q` | `python scripts/reconcile_registry.py --check` | `python scripts/check_master_plan.py --check`
   - Planned verification: `pytest tests/acceptance/test_p1_002.py`; required current-head CI.
 
 <a name="p1-003"></a>
 - [ ] **P1-003 — Implement supported unsteady aeroelastic and flapping dynamics** (future phase; actor: builder)
   - Prerequisites: P1-002. Proof: [docs/acceptance/P1-003.md](acceptance/P1-003.md).
   - Acceptance: Selected equations/closures and numerical discretization have analytic/limiting/convergence checks; unsourced coefficients remain UNVERIFIED_ESTIMATE and unsupported mechanisms are rejected.
+  - Language: Python, C++20.
+  - Target files: `packages/physics/aerodynamics/bioinspired_flapping.py`; `packages/engineering-core/`; `tests/acceptance/test_p1_003.py`; `docs/acceptance/P1-003.md`.
+  - Todos:
+    - [ ] 1. Implement Strouhal / reduced-frequency Theodorsen C(k), Wagner lag, Polhamus LEV suction, and Sane-Dickinson rotational circulation per-strip integration.
+    - [ ] 2. Implement PigeonBot-style reflexive wing/tail morphing span/area/roll-yaw derivatives and Euler-Bernoulli flexible beam + torsion divergence / flutter / cyclic fatigue checks.
+    - [ ] 3. Couple bio-inspired actuator and passive-feathering torque demands into the causal 2-RC Thevenin battery solver.
+    - [ ] 4. Verify analytic limiting cases, timestep/strip convergence, and fail-closed refusal above M_tip=0.25 or fatigue failure.
+  - Verify: `pytest tests/acceptance/test_p1_003.py -q` | `pytest tests/physics -q`
   - Planned verification: `pytest tests/acceptance/test_p1_003.py`; required current-head CI.
 
 <a name="p1-004"></a>
 - [ ] **P1-004 — Freeze bio-inspired actuation, structure and mission protocols** (future phase; actor: builder)
   - Prerequisites: P1-003. Proof: [docs/acceptance/P1-004.md](acceptance/P1-004.md).
   - Acceptance: Freeze configurations, control, compliant structure, fatigue/energy limits, intended uses and reviewed independent component/mission criteria before reveal.
+  - Language: Python.
+  - Target files: `data/research/frozen_protocols.json`; `docs/PHASE1_BIOINSPIRED_RESEARCH_AND_PLAN.md`; `tests/acceptance/test_p1_004.py`; `docs/acceptance/P1-004.md`.
+  - Todos:
+    - [ ] 1. Freeze flapping-wing, morphing-glider, and compliant-flex benchmark protocols with SHA-256 hashes before confirmatory reveal.
+    - [ ] 2. Bind error tolerances, fatigue endurance thresholds, and whole-experiment partition splits to target hardware classes.
+  - Verify: `pytest tests/acceptance/test_p1_004.py -q`
   - Planned verification: `pytest tests/acceptance/test_p1_004.py`; required current-head CI.
 
 <a name="p1-005"></a>
 - [ ] **P1-005 — Acquire sealed mechanism and uncrewed mission measurements** (future phase; actor: custodian)
   - Prerequisites: P1-004. Proof: [docs/acceptance/P1-005.md](acceptance/P1-005.md).
   - Acceptance: Matching independent force/deformation/actuator/energy/trajectory data include calibration, clocks, conditions and whole-experiment splits.
+  - Language: Python.
+  - Target files: `data/campaigns/`; `data/registry.json`; `docs/acceptance/P1-005.md`.
+  - Todos:
+    - [ ] 1. CUSTODIAN (requires real external receipts): supply time-synchronized load-cell force/moment, strain/deflection, stroke kinematics, battery V/I, and indoor/outdoor flight logs.
+    - [ ] 2. Hash and register original raw files with instrument calibration and whole-experiment split metadata.
+  - Verify: `python scripts/reconcile_registry.py --check`
 
 <a name="p1-006"></a>
 - [ ] **P1-006 — Verify and integrate the bio-inspired desktop design/run loop** (future phase; actor: builder)
   - Prerequisites: P1-005. Proof: [docs/acceptance/P1-006.md](acceptance/P1-006.md).
   - Acceptance: Build/edit/control/run/cancel/save/reopen learning workflows and all prior supported drone regressions pass with numerical error reported.
+  - Language: C++20, Python.
+  - Target files: `apps/native/src/`; `apps/native/tests/native_cad_tests.cpp`; `tests/acceptance/test_p1_006.py`; `docs/acceptance/P1-006.md`.
+  - Todos:
+    - [ ] 1. Add Bio-Inspired MorphingWing and FlappingWing presets, articulated wing/stroke animations, and compliant flexure/fatigue HUD panels to AerodynamicsLab.exe.
+    - [ ] 2. Keep save/open/undo/redo, C++20 RK4 playback, and Tier 1 60 FPS performance intact across all Phase 0 drone families.
+  - Verify: `ctest --test-dir apps/native/build --output-on-failure` | `pytest tests/acceptance/test_p1_006.py -q`
   - Planned verification: `pytest tests/acceptance/test_p1_006.py`; required current-head CI.
 
 <a name="p1-007"></a>
 - [ ] **P1-007 — Validate bio-inspired operating envelopes and joint uncertainty** (future phase; actor: builder)
   - Prerequisites: P1-006. Proof: [docs/acceptance/P1-007.md](acceptance/P1-007.md).
   - Acceptance: Frozen held-out mechanism and complete-mission criteria, failure detection, discrepancy and cohort coverage pass; drone acceptance is not inherited.
+  - Language: Python.
+  - Target files: `packages/physics/validation/phase1_dataset_eval.py`; `tests/acceptance/test_p1_007.py`; `docs/acceptance/P1-007.md`.
+  - Todos:
+    - [ ] 1. Score blind held-out flapping forces/moments, morphing stability derivatives, aeroelastic deflection, and battery endurance against frozen P1-004 criteria.
+    - [ ] 2. Publish joint model/measurement uncertainty bands and surface Physical vs UNVALIDATED_BIOINSPIRED badges honestly.
+  - Verify: `pytest tests/acceptance/test_p1_007.py -q` | `python scripts/reconcile_registry.py --check`
   - Planned verification: `pytest tests/acceptance/test_p1_007.py`; required current-head CI.
 
 <a name="p1-008"></a>
 - [ ] **P1-008 — Review and release the supported bio-inspired scope** (future phase; actor: reviewer)
   - Prerequisites: P1-007. Proof: [docs/acceptance/P1-008.md](acceptance/P1-008.md).
   - Acceptance: Independent qualified review accepts the limited intended uses; reproducible installation/security/recovery and a signed evidence dossier close the phase.
+  - Language: Python.
+  - Target files: `docs/acceptance/P1-008.md`; `docs/ACCEPTANCE_LEDGER.md`.
+  - Todos:
+    - [ ] 1. REVIEWER (independent external qualified engineering review): reproduce and sign off Phase 1 bio-inspired validation dossier.
+    - [ ] 2. Verify reproducible installer ZIP/SBOM, unbypassed CI security audits, and prior Phase 0 regression compatibility.
+  - Verify: `python scripts/check_master_plan.py --check` | `python scripts/export_contracts.py --check` | `python scripts/reconcile_registry.py --check`
 
 
 ## Phase 2 — Human-scale and crewed systems

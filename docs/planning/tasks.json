@@ -3741,7 +3741,30 @@
         "tests/acceptance/test_p1_002.py"
       ],
       "completion_evidence": [],
-      "gate": null
+      "gate": null,
+      "language": [
+        "Python"
+      ],
+      "target_files": [
+        "packages/shared-schemas/aeroforge_schemas/bioinspired.py",
+        "packages/physics/validation/phase1_dataset_eval.py",
+        "data/registry.json",
+        "docs/PHASE1_BIOINSPIRED_RESEARCH_AND_PLAN.md",
+        "tests/acceptance/test_p1_002.py",
+        "tests/acceptance/test_phase1_contracts_and_datasets.py",
+        "docs/acceptance/P1-002.md"
+      ],
+      "todos": [
+        "1. Lock versioned pydantic contracts for FlappingWingKinematics, MorphingWingState, CompliantFlexureSpec, and UnsteadyAeroEnvelope with SI Frames, active wxyz quaternions, and biological_scaling_prohibited=true.",
+        "2. Refuse out-of-envelope Mach (> 0.25), missing density_source provenance, and unordered radial moments or Reynolds/Strouhal bounds.",
+        "3. Register and checksum-verify compact open Phase 1 public datasets (delfly_flex_2026, pigeonbot, avian_inertia, flapsim_single_thrust_flapper) strictly as DEVELOPMENT.",
+        "4. Publish acceptance tests covering contract round-trips, fail-closed bounds, and dataset evaluation."
+      ],
+      "verify_commands": [
+        "pytest tests/acceptance/test_phase1_contracts_and_datasets.py tests/acceptance/test_p1_002.py -q",
+        "python scripts/reconcile_registry.py --check",
+        "python scripts/check_master_plan.py --check"
+      ]
     },
     {
       "id": "P1-003",
@@ -3759,7 +3782,27 @@
         "tests/acceptance/test_p1_003.py"
       ],
       "completion_evidence": [],
-      "gate": null
+      "gate": null,
+      "language": [
+        "Python",
+        "C++20"
+      ],
+      "target_files": [
+        "packages/physics/aerodynamics/bioinspired_flapping.py",
+        "packages/engineering-core/",
+        "tests/acceptance/test_p1_003.py",
+        "docs/acceptance/P1-003.md"
+      ],
+      "todos": [
+        "1. Implement Strouhal / reduced-frequency Theodorsen C(k), Wagner lag, Polhamus LEV suction, and Sane-Dickinson rotational circulation per-strip integration.",
+        "2. Implement PigeonBot-style reflexive wing/tail morphing span/area/roll-yaw derivatives and Euler-Bernoulli flexible beam + torsion divergence / flutter / cyclic fatigue checks.",
+        "3. Couple bio-inspired actuator and passive-feathering torque demands into the causal 2-RC Thevenin battery solver.",
+        "4. Verify analytic limiting cases, timestep/strip convergence, and fail-closed refusal above M_tip=0.25 or fatigue failure."
+      ],
+      "verify_commands": [
+        "pytest tests/acceptance/test_p1_003.py -q",
+        "pytest tests/physics -q"
+      ]
     },
     {
       "id": "P1-004",
@@ -3777,7 +3820,23 @@
         "tests/acceptance/test_p1_004.py"
       ],
       "completion_evidence": [],
-      "gate": null
+      "gate": null,
+      "language": [
+        "Python"
+      ],
+      "target_files": [
+        "data/research/frozen_protocols.json",
+        "docs/PHASE1_BIOINSPIRED_RESEARCH_AND_PLAN.md",
+        "tests/acceptance/test_p1_004.py",
+        "docs/acceptance/P1-004.md"
+      ],
+      "todos": [
+        "1. Freeze flapping-wing, morphing-glider, and compliant-flex benchmark protocols with SHA-256 hashes before confirmatory reveal.",
+        "2. Bind error tolerances, fatigue endurance thresholds, and whole-experiment partition splits to target hardware classes."
+      ],
+      "verify_commands": [
+        "pytest tests/acceptance/test_p1_004.py -q"
+      ]
     },
     {
       "id": "P1-005",
@@ -3793,7 +3852,22 @@
       "proof_file": "docs/acceptance/P1-005.md",
       "planned_tests": [],
       "completion_evidence": [],
-      "gate": null
+      "gate": null,
+      "language": [
+        "Python"
+      ],
+      "target_files": [
+        "data/campaigns/",
+        "data/registry.json",
+        "docs/acceptance/P1-005.md"
+      ],
+      "todos": [
+        "1. CUSTODIAN (requires real external receipts): supply time-synchronized load-cell force/moment, strain/deflection, stroke kinematics, battery V/I, and indoor/outdoor flight logs.",
+        "2. Hash and register original raw files with instrument calibration and whole-experiment split metadata."
+      ],
+      "verify_commands": [
+        "python scripts/reconcile_registry.py --check"
+      ]
     },
     {
       "id": "P1-006",
@@ -3811,7 +3885,25 @@
         "tests/acceptance/test_p1_006.py"
       ],
       "completion_evidence": [],
-      "gate": null
+      "gate": null,
+      "language": [
+        "C++20",
+        "Python"
+      ],
+      "target_files": [
+        "apps/native/src/",
+        "apps/native/tests/native_cad_tests.cpp",
+        "tests/acceptance/test_p1_006.py",
+        "docs/acceptance/P1-006.md"
+      ],
+      "todos": [
+        "1. Add Bio-Inspired MorphingWing and FlappingWing presets, articulated wing/stroke animations, and compliant flexure/fatigue HUD panels to AerodynamicsLab.exe.",
+        "2. Keep save/open/undo/redo, C++20 RK4 playback, and Tier 1 60 FPS performance intact across all Phase 0 drone families."
+      ],
+      "verify_commands": [
+        "ctest --test-dir apps/native/build --output-on-failure",
+        "pytest tests/acceptance/test_p1_006.py -q"
+      ]
     },
     {
       "id": "P1-007",
@@ -3829,7 +3921,23 @@
         "tests/acceptance/test_p1_007.py"
       ],
       "completion_evidence": [],
-      "gate": null
+      "gate": null,
+      "language": [
+        "Python"
+      ],
+      "target_files": [
+        "packages/physics/validation/phase1_dataset_eval.py",
+        "tests/acceptance/test_p1_007.py",
+        "docs/acceptance/P1-007.md"
+      ],
+      "todos": [
+        "1. Score blind held-out flapping forces/moments, morphing stability derivatives, aeroelastic deflection, and battery endurance against frozen P1-004 criteria.",
+        "2. Publish joint model/measurement uncertainty bands and surface Physical vs UNVALIDATED_BIOINSPIRED badges honestly."
+      ],
+      "verify_commands": [
+        "pytest tests/acceptance/test_p1_007.py -q",
+        "python scripts/reconcile_registry.py --check"
+      ]
     },
     {
       "id": "P1-008",
@@ -3845,7 +3953,23 @@
       "proof_file": "docs/acceptance/P1-008.md",
       "planned_tests": [],
       "completion_evidence": [],
-      "gate": "phase_exit"
+      "gate": "phase_exit",
+      "language": [
+        "Python"
+      ],
+      "target_files": [
+        "docs/acceptance/P1-008.md",
+        "docs/ACCEPTANCE_LEDGER.md"
+      ],
+      "todos": [
+        "1. REVIEWER (independent external qualified engineering review): reproduce and sign off Phase 1 bio-inspired validation dossier.",
+        "2. Verify reproducible installer ZIP/SBOM, unbypassed CI security audits, and prior Phase 0 regression compatibility."
+      ],
+      "verify_commands": [
+        "python scripts/check_master_plan.py --check",
+        "python scripts/export_contracts.py --check",
+        "python scripts/reconcile_registry.py --check"
+      ]
     },
     {
       "id": "P2-001",
